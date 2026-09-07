@@ -1,7 +1,7 @@
 ---
 name: arch-init
 description: >-
-  Identifica el punto de partida de un proyecto (sin código / con código base / con implementación) e inicializa lo que falte de su harness multi-agente: repo git —o, si la solución abarca varios repositorios, un repo de especificaciones que los agrega como submódulos—, placeholders `AGENTS.md`/`CLAUDE.md`/`.agents/MEMORY.md`/`.sdd-devkit/settings.json`/`docs/adr/README.md`/`docs/standards/README.md`/`README.md` (raíz, con descripción del proyecto), el stack tecnológico (investigando con `work-research` si hace falta), candidatos de ADR/estándares (vía `arch-discover` si ya hay implementación, por repositorio si es multi-repo) y la compuerta de calidad (vía `quality-check`). Cierra actualizando el stack y sugiriendo `work-define` o `work-plan`. Activar al pedir inicializar, bootstrapear o preparar uno o varios repos de una misma solución para agentes, configurar su harness, crear `AGENTS.md`/`CLAUDE.md`/`MEMORY.md` desde cero, o mencionar "arch-init", "/arch-init", "inicializa el harness".
+  Identifica el punto de partida de un proyecto (sin código / con código base / con implementación) e inicializa lo que falte de su harness multi-agente: repo git —o, si la solución abarca varios repositorios, un repo de especificaciones que los agrega como submódulos—, placeholders `AGENTS.md`/`CLAUDE.md`/`.agents/MEMORY.md`/`.sdd-devkit/settings.json`/`docs/adr/README.md`/`docs/standards/README.md`/`README.md` (raíz, con descripción del proyecto), el stack tecnológico (investigando con `work-research` si hace falta), candidatos de ADR/estándares (vía `arch-discover` si ya hay implementación, por repositorio si es multi-repo) y la compuerta de calidad (vía `quality-check`). Cierra actualizando el stack y sugiriendo `work-define` o `work-plan`. Activar al pedir inicializar, bootstrapear o preparar uno o varios repos de una solución para agentes, configurar su harness, crear `AGENTS.md`/`CLAUDE.md`/`MEMORY.md` desde cero, o mencionar "arch-init", "/arch-init", "inicializa el harness".
 license: MIT
 ---
 
@@ -31,7 +31,7 @@ Inicializa, en un proyecto **en cualquier punto de partida**, las primeras instr
 
 ## Cómo preguntar al usuario
 
-Mecanismo, ritmo y fallback compartidos: [`../../reference/asking.md`](../../reference/asking.md).
+Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md).
 
 Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar*, *validar* o *sugerir* algo al usuario, asume ese mecanismo; no se repite allí.
 
@@ -41,9 +41,13 @@ Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar
 
 ---
 
+## Rutas de las referencias compartidas
+
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -69,7 +73,7 @@ Los archivos del harness que **ya existan** en el proyecto se revisan en el Paso
 
 > **Raíz de los índices de arquitectura.** Los dos índices (`docs/adr/README.md`, `docs/standards/README.md`)
 > son artefactos de **arquitectura**: pertenecen a la raíz del repositorio cuyo código documentan (ver
-> [`../../reference/artifacts.md`](../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions)).
+> [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions)).
 > La raíz principal los recibe (`AGENTS.md` los referencia) **salvo que esté clasificada "Solo specs"**
 > (Paso 1.2) — un repositorio sin código de aplicación nunca los recibe, sin excepción y sin preguntarlo; el
 > repositorio de especificaciones en multi-repo es siempre "Solo specs", así que nunca tiene los suyos
@@ -360,9 +364,9 @@ No confirmar el cierre antes de que `AGENTS.md` tenga el stack ya escrito.
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`../../reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
-- [`../../reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
+- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 
 ---
 

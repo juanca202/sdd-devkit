@@ -453,7 +453,7 @@ Si el repo tiene un runner de validaciones de arquitectura (`scripts/arch/verify
 
 **Antes de integrar, corre en orden:** `quality-check` → `code-review` → `trace-validate`. Si tienes cambios sin commitear, los comitea primero automáticamente.
 
-**Al terminar**, te pregunta si quieres archivar la historia o tarea ya cerrada (mover su carpeta a `docs/archive/`). Puedes declinar sin que eso bloquee la integración.
+**Después del merge**, marca el trabajo como `Done` en su `progress.md` y te pregunta si quieres archivar la historia o tarea (mover su carpeta a `docs/archive/`), todo en un commit de cierre propio sobre la rama base. Va después del merge a propósito: primero integras y pruebas, luego cierras. Puedes declinar el archivado sin que eso afecte a la integración, que ya está hecha.
 
 **Ejemplos de invocación:**
 

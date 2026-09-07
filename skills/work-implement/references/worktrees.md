@@ -11,7 +11,7 @@ sobre el; tampoco se le pide al usuario que cambie de rama.
 **Antes de crear el primer worktree, `uncommittedChanges` se aplica tal cual.** La regla de solo lectura
 empieza *despues* de la condicion de entrada, no en lugar de ella: si al iniciar (o reanudar) el arbol
 principal tiene cambios sin commitear, se resuelve primero con la politica de
-[`../../../reference/implementation.md`](../../../reference/implementation.md) — `commit` los comitea via
+[`${PLUGIN_ROOT}/reference/implementation.md`](../../../reference/implementation.md) — `commit` los comitea via
 `git-commit` en la rama actual, `stash` los guarda avisando donde quedaron, `ask` para e informa hasta que el
 usuario decida — **exactamente igual que en una ejecucion sin worktrees**. Solo con el arbol principal
 resuelto se crea el worktree del artefacto, y desde ahi el arbol principal ya no se toca. Motivo: un stash o

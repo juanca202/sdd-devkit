@@ -131,7 +131,7 @@ Por cada `TC-XXX` automatizable de la unidad, en el orden del indice:
    - `Resultado esperado del paso` y `Resultado esperado final` => *assert* sobre **comportamiento observable**, nunca sobre detalle de implementacion interna.
    - **Trazabilidad obligatoria:** el nombre del bloque o del caso incluye el ID del TC (p. ej. `TC-004: should reject login when password is invalid`), o la anotacion/tag equivalente del framework. Sin ese identificador la prueba no es trazable al TC.
    - Un `TC-XXX` => al menos una prueba; si el TC lista varios tipos (`Unit, E2E`), escribir una prueba por nivel.
-4. **Ejecutar la prueba.**
+4. **Ejecutar la prueba — solo esa.** El archivo (o el caso, con el filtro del runner) que se acaba de escribir: nunca la suite del paquete ni la del repo, ver [`scoped-tests.md`](scoped-tests.md).
    - **Verde a la primera** => la prueba confirma el comportamiento documentado. Continuar con el siguiente TC. Esto es lo **esperado**, no una senal de error: el comportamiento ya estaba implementado.
    - **Rojo** => hay una discrepancia real entre el TC y el codigo. **Antes de tocar nada**, revisar si la prueba es fiel al TC; si lo es, **parar y preguntar al usuario** (herramienta estructurada) con la evidencia (que se esperaba, que ocurrio):
 

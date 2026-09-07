@@ -1,6 +1,7 @@
 ---
 name: work-define
-description: Crear o actualizar Historias de Usuario (US-XXX). Activar cuando el usuario pida una historia de usuario nueva, describa una funcionalidad o necesidad de negocio concreta que deba documentarse como historia, quiera crear varias historias relacionadas a la vez, o pida actualizar, estandarizar o alinear historias existentes a las convenciones del proyecto. Activar también cuando pida descomponer en historias un SRS-XXX ya terminado por /requirement-refine («arma las historias del SRS-003»): ese flujo agrupa FR-XXX/NFR-XXX en historias y hereda repos, wireframes y criterios — la entrada por defecto sigue siendo la necesidad descrita directamente, sin SRS. NO activar para redactar, refinar o decidir el contenido de un SRS o de sus requisitos funcionales/no funcionales (eso corresponde a /requirement-refine), ni para registrar bugs, incidentes o work items de mantenimiento que no son historias de usuario, ni para implementar o planificar tareas TK-XXX. El ID de una US archivada en docs/archive/ sigue ocupado, y una US archivada no se actualiza sin desarchivarla antes.
+description: >-
+  Crear o actualizar Historias de Usuario (US-XXX). Activar cuando el usuario pida una historia de usuario nueva, describa una funcionalidad o necesidad de negocio concreta que deba documentarse como historia, quiera crear varias historias relacionadas a la vez, o pida actualizar, estandarizar o alinear historias existentes a las convenciones del proyecto. Activar también para descomponer en historias un SRS-XXX terminado por /requirement-refine («arma las historias del SRS-003»): agrupa FR-XXX/NFR-XXX en historias y hereda repos, wireframes y criterios; la entrada por defecto sigue siendo la necesidad descrita directamente. NO activar para redactar, refinar o decidir el contenido de un SRS o de sus requisitos funcionales/no funcionales (eso corresponde a /requirement-refine), ni para registrar bugs, incidentes o work items de mantenimiento, ni para implementar o planificar tareas TK-XXX. El ID de una US archivada sigue ocupado; una US archivada no se actualiza sin desarchivarla.
 license: MIT
 ---
 
@@ -29,15 +30,19 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`../../reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
-- [`../../reference/planning.md`](../../reference/planning.md): **Política de planificación** — si se pregunta, se invoca automáticamente o nunca se sugiere `test-define` al dejar la US en Ready. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/reference/planning.md`](../../reference/planning.md): **Política de planificación** — si se pregunta, se invoca automáticamente o nunca se sugiere `test-define` al dejar la US en Ready. *Lectura obligatoria antes de ejecutar el skill.*
 
 ---
 
+## Rutas de las referencias compartidas
+
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -47,7 +52,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 ## Política de planificación
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/planning.md`](../../reference/planning.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/planning.md`](../../reference/planning.md).
 
 Las reglas de `planning.md` son obligatorias y determinan, vía `specification.testCases.mode`, si al dejar la US en `Ready` se pregunta si definir los casos de prueba (`ask`, comportamiento por defecto), se invoca `/test-define` automáticamente sin preguntar (`always`), o nunca se sugiere ni se invoca (`never`). La otra clave del objeto, `askDetails`, **no la consume este skill**: la lee `test-define`. Ver [Flujo (resumen)](#flujo-resumen).
 
@@ -57,7 +62,7 @@ No continúes hasta haber leído y aplicado `planning.md`.
 
 ## Ubicación de archivos
 
-Layout completo del harness, identificadores y contrato de archivado: [`../../reference/artifacts.md`](../../reference/artifacts.md).
+Layout completo del harness, identificadores y contrato de archivado: [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md).
 
 Lo propio de este skill:
 
@@ -72,7 +77,7 @@ Lo propio de este skill:
 
 ### Convenciones del nombre de carpeta
 
-> Reglas comunes de slug e identificadores: [`../../reference/artifacts.md`](../../reference/artifacts.md). Lo específico de las US:
+> Reglas comunes de slug e identificadores: [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md). Lo específico de las US:
 
 - Formato: `US-XXX-[nombre-corto]` con `US-XXX` en mayúsculas y número de 3 dígitos.
 - Nombre corto: minúsculas, kebab-case, sin artículos ni palabras vacías.

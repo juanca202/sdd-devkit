@@ -23,7 +23,7 @@ Guia general para **ejecutar en codigo** trabajo ya especificado, de **distintos
 
 ## Como preguntar al usuario
 
-Mecanismo, ritmo y fallback compartidos: [`../../reference/asking.md`](../../reference/asking.md).
+Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md).
 
 Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar*, *validar* o *sugerir* algo al usuario, asume ese mecanismo; no se repite allí.
 
@@ -31,9 +31,11 @@ Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar
 
 ---
 
+> **Rutas de las referencias compartidas.** `${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -45,7 +47,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 ## Resolucion de la politica de implementacion
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/implementation.md`](../../reference/implementation.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/implementation.md`](../../reference/implementation.md).
 
 Las reglas de `implementation.md` son obligatorias y tienen prioridad para determinar el ritmo de confirmacion entre unidades (`confirmByUnit`), que hacer con cambios sin commitear al iniciar o reanudar (`uncommittedChanges`), el uso y la ubicacion de los worktrees (`workTree`, `workTreePath`), el maximo de subagentes concurrentes (`maxParallel`) y si el cierre pasa al siguiente skill sin preguntar (`handoff`, ver [Regla de handoff](#regla-de-handoff-transversal)).
 
@@ -57,7 +59,7 @@ No continues hasta haber leido y aplicado `implementation.md`.
 
 ## Límite de intentos y escalamiento
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/escalation.md`](../../reference/escalation.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md).
 
 Las reglas de `escalation.md` son obligatorias y determinan, vía `escalation.maxAttempts` y `escalation.onLimit`, cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve —una prueba en rojo, un build que no compila o un check que sigue fallando en modo correccion— y qué se hace al agotarlos: detener el trabajo sobre ese problema, presentar el **parte de bloqueo** y preguntar al usuario cómo seguir (`ask`), o marcarlo como `BLOCKED` en el informe y continuar con el alcance que no dependa de él (`report`).
 
@@ -109,7 +111,7 @@ Verificar estas condiciones antes de implementar, sea cual sea el tipo. Si algun
 > **Excepcion — modo correccion.** En la correccion delegada desde `quality-check` (ver [Modo correccion](#modo-correccion-delegado-desde-quality-check)) **no aplican** ni «Working tree limpio» ni «Artefacto en `Ready`»: el cierre corre sobre la rama consolidada, con el artefacto ya implementado y posiblemente con cambios sin commitear. El resto de condiciones (rama del artefacto, solo trabajo de la rama actual) siguen vigentes.
 
 - **No iniciar en la rama de otro trabajo (primera verificacion):** obtener la rama actual con `git branch --show-current`. Si ya tiene un prefijo de implementacion (`feature/`, `fix/`, `chore/`, `refactor/`, `test/`) y **no** corresponde al artefacto que se va a implementar, **parar** e indicar al usuario que no se puede iniciar la implementacion desde la rama de otro trabajo; debe situarse en la rama base acordada (p. ej. `develop`/`main`) para que el skill cree o cambie a la rama del artefacto. **Con worktrees esta verificacion no aplica al arbol principal:** la rama en la que este el usuario es irrelevante, porque el skill no va a cambiarla; solo se comprueba que el worktree del artefacto quede en su rama. **Excepcion - reanudar:** si la rama actual es precisamente la del artefacto pedido, continuar normalmente.
-- **Cambios sin commitear al iniciar:** `git status --porcelain` **al iniciar la sesion de implementacion** (o al reanudarla). Si hay salida, resolver segun `implementation.uncommittedChanges` (ver [`../../reference/implementation.md`](../../reference/implementation.md)): `commit` los comitea (invocando `git-commit`) y continua; `stash` los guarda con `git stash` y continua, avisando donde quedaron; `ask` (por defecto) para e informa al usuario, sin continuar hasta que lo resuelva. No aplica durante la pausa de confirmacion entre unidades: los cambios de la unidad recien terminada quedan sin commitear ahi a proposito (ver *Ritmo obligatorio*), hasta que el usuario confirma avanzar.
+- **Cambios sin commitear al iniciar:** `git status --porcelain` **al iniciar la sesion de implementacion** (o al reanudarla). Si hay salida, resolver segun `implementation.uncommittedChanges` (ver [`${PLUGIN_ROOT}/reference/implementation.md`](../../reference/implementation.md)): `commit` los comitea (invocando `git-commit`) y continua; `stash` los guarda con `git stash` y continua, avisando donde quedaron; `ask` (por defecto) para e informa al usuario, sin continuar hasta que lo resuelva. No aplica durante la pausa de confirmacion entre unidades: los cambios de la unidad recien terminada quedan sin commitear ahi a proposito (ver *Ritmo obligatorio*), hasta que el usuario confirma avanzar.
 - **Rama correcta:** estar en (o crear) la rama de trabajo del artefacto — **en el arbol principal solo si la ejecucion no usa worktrees**; con worktrees, en el worktree del artefacto. No implementar en `main` ni en ramas de otro trabajo sin instruccion explicita. El nombre de rama lo define cada referencia segun el tipo. **Excepcion — `WI-XXX` de tipo `bug-fix` o `security-update`:** no llevan rama propia; se implementan **directamente sobre la rama de integracion** y cierran sin handoff (ver [`references/work-items.md`](references/work-items.md#excepcion-bug-fix-y-security-update-no-crean-rama)). Ahi la verificacion no es "estar en la rama del artefacto" sino **estar en la rama de integracion confirmada** con el usuario — que tampoco se asume.
 - **Solo trabajo de la rama actual:** solo se implementan unidades (TK / WI / TC / FT) que pertenezcan al artefacto asociado a la rama de implementacion actual. No implementar tareas de otro artefacto o de otra rama: si la unidad pedida no corresponde a la rama actual, **parar** y cambiar a su rama correspondiente (o pedir al usuario que lo haga) antes de continuar; nunca mezclar trabajo de distintos artefactos en una misma rama.
 - **Artefacto en `Ready`:** el artefacto a implementar existe y esta en `Estado: Ready` (lo verifica cada referencia con su regla propia).
@@ -146,10 +148,7 @@ en el worktree del artefacto; «Cambios sin commitear al iniciar» se evalua **s
 de crear el worktree**, como en cualquier ejecucion. Al cerrar se
 eliminan todos los worktrees; la rama del artefacto queda para `work-integrate` / `pr-create`.
 
-Casos particulares —reanudar con la rama del artefacto ya en el arbol principal, `bug-fix` /
-`security-update` sin rama propia, `workTreePath` dentro del repo— en
-[`references/worktrees.md`](references/worktrees.md). **Una peticion explicita del usuario gana** («sin
-worktrees», «implementalo aqui mismo») para esa ejecucion, sin modificar `settings.json`.
+Casos particulares (reanudar con la rama del artefacto ya en el arbol principal, `bug-fix`/`security-update` sin rama propia, `workTreePath` dentro del repo) en [`references/worktrees.md`](references/worktrees.md). **Una peticion explicita del usuario gana** («sin worktrees», «implementalo aqui mismo») para esa ejecucion, sin modificar `settings.json`.
 
 ---
 
@@ -245,11 +244,11 @@ pero **ejecutarlas todas y completas en cada iteracion es caro**. Escalonar la *
   **alcance**: ejecutar unicamente el archivo, la suite o el paquete de lo que se acaba de tocar —
   **nunca la suite completa del nivel** ni la del repositorio. Usar los filtros del runner (patron de
   ruta, nombre de test, proyecto/paquete). La corrida completa es tarea exclusiva de `quality-check`.
-- **E2E — se escriben durante, se ejecutan solo al final.** Se definen dentro del ciclo TDD como
-  cualquier otra prueba, pero **no se ejecutan en las iteraciones** (son lentas y fragiles). Su unica
-  corrida en este skill es en el **cierre de la implementacion** (Paso 4 de la referencia del tipo, o el
-  paso de Integracion en modo paralelo), una sola vez sobre el codigo consolidado. La corrida exhaustiva
-  como **puerta formal** la realiza `quality-check` en `work-integrate` / `pr-create`.
+  **En Red y Green se ejecuta solo el archivo de test que se acaba de escribir** (y, si el runner lo
+  permite, solo el caso en curso); al cerrar la unidad, los tests de los archivos/paquete afectados. Un
+  `npm test`, `pytest` o `go test ./...` a secas es la bateria completa con otro nombre. Filtros por
+  runner y anti-patrones en [`references/scoped-tests.md`](references/scoped-tests.md).
+- **E2E — se escriben durante, se ejecutan solo al final.** Se definen dentro del ciclo TDD como cualquier otra prueba, pero **no se ejecutan en las iteraciones** (son lentas y fragiles). Su unica corrida en este skill es en el **cierre de la implementacion** (Paso 4 de la referencia del tipo, o el paso de Integracion en modo paralelo), una sola vez sobre el codigo consolidado. La corrida exhaustiva como **puerta formal** la realiza `quality-check` en `work-integrate` / `pr-create`.
 
 **En modo paralelo (worktrees):** el subagente ejecuta la integracion de su unidad **cuando puede aislar
 la infraestructura** (base de datos por worktree, contenedor efimero, testcontainers, esquema o namespace
@@ -403,7 +402,7 @@ cuando el arreglo **excede el alcance acotado** (crece hasta ser un desarrollo =
 como `WI-XXX`), cuando el fallo revela una **discrepancia entre el `TC-XXX` y el codigo** que el usuario
 decide resolver en la especificacion (=> escalar a `test-define`), cuando el fallo es **preexistente** y
 ajeno al trabajo de la rama, o cuando se **agota el limite de intentos** de
-[`../../reference/escalation.md`](../../reference/escalation.md) sobre ese mismo fallo (=> escalar al usuario).
+[`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md) sobre ese mismo fallo (=> escalar al usuario).
 
 En esos casos, **no seguir intentando ni improvisar un arreglo parcial**. Devolver el control a
 `quality-check` con un resultado explicito de **correccion no aplicada**, indicando: el check que seguia
@@ -428,7 +427,7 @@ Todo paso a otra fase del ciclo se realiza **invocando el skill correspondiente*
 - **Para validar la cobertura** de los criterios de aceptacion tras automatizar las pruebas (tipos `TC-XXX` / `FT-XXX`): **invocar `/trace-validate`**. Este skill no genera la matriz de trazabilidad.
 - **`quality-check` es el unico origen entrante:** ademas de los handoffs salientes de arriba, este skill **recibe** correcciones delegadas desde [`quality-check`](../quality-check/SKILL.md#corrección-de-fallos) en el cierre (ver [Modo correccion](#modo-correccion-delegado-desde-quality-check)). Es la unica entrada que no viene de una especificacion recien planificada.
 
-Las opciones de cierre se resuelven segun `implementation.handoff` (ver [`../../reference/implementation.md`](../../reference/implementation.md)): con `ask` (comportamiento por defecto), se ofrecen con la herramienta de preguntas estructuradas (ver el Paso 4 de cada referencia) y se espera la eleccion del usuario; con `always`, se invoca directo el primer handoff saliente que aplique, sin presentar el menu. En ambos casos, cada opcion hace handoff **invocando** el skill dueño de esa fase.
+Las opciones de cierre se resuelven segun `implementation.handoff` (ver [`${PLUGIN_ROOT}/reference/implementation.md`](../../reference/implementation.md)): con `ask` (comportamiento por defecto), se ofrecen con la herramienta de preguntas estructuradas (ver el Paso 4 de cada referencia) y se espera la eleccion del usuario; con `always`, se invoca directo el primer handoff saliente que aplique, sin presentar el menu. En ambos casos, cada opcion hace handoff **invocando** el skill dueño de esa fase.
 
 > **Excepcion — `WI-XXX` de tipo `bug-fix` / `security-update`.** Al implementarse directamente sobre la rama de integracion, **no hay handoff de cierre**: no queda rama que mergear ni PR que crear, asi que no se ofrecen las opciones ni se invoca `work-integrate` / `pr-create`. El ciclo termina con el commit. Los handoffs de escalado (`work-plan`, `work-define`, `test-define`) siguen vigentes igual.
 
@@ -448,6 +447,7 @@ Solo resultados y lo que el usuario debe saber o decidir. No incluir razonamient
 | `references/work-items.md` | Tipo = tarea de mantenimiento (`WI-XXX`). Documento unico combinado, validacion por criterios de aceptacion, ciclo por WI completo, cierre, ejemplos y anti-patrones. |
 | `references/test-cases.md` | Tipo = caso de prueba (`TC-XXX`) o feature (`FT-XXX`). Automatizacion de las pruebas documentadas por `test-define`: ubicaciones por artefacto padre, rama `test/`, matriz AC=>TC, traduccion del TC a codigo de prueba, que hacer ante una prueba en rojo, cierre con `trace-validate`, ejemplos y anti-patrones. |
 | `references/worktrees.md` | La ejecucion usa worktrees (`workTree: always`, `ask` afirmativo o modo paralelo). Regla completa del arbol principal intocable: niveles de worktree, donde corre cada operacion, reanudar, `bug-fix`/`security-update`, limpieza. |
+| `references/scoped-tests.md` | Antes de ejecutar cualquier prueba, lint, typecheck o build durante la implementacion: como acotar la orden al archivo/caso (Red/Green) o al paquete afectado (cierre de unidad), filtros por runner, y por que nunca la bateria completa. |
 | `assets/progress-template.md` | Plantilla de `progress.md`. Adaptar encabezado y unidades al tipo. |
 
 
@@ -455,12 +455,12 @@ Solo resultados y lo que el usuario debe saber o decidir. No incluir razonamient
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`../../reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/implementation.md`](../../reference/implementation.md): **Política de implementación** — ritmo de confirmación, cambios sin commitear al iniciar, worktrees, concurrencia y handoff de cierre desde `.sdd-devkit/settings.json`. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
-- [`../../reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
-- [`../../reference/git.md`](../../reference/git.md): **Política de commit y push** — `integrationBranches` y su `commitPolicy`, al resolver sobre qué rama se trabaja y se commitea. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/escalation.md`](../../reference/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/implementation.md`](../../reference/implementation.md): **Política de implementación** — ritmo de confirmación, cambios sin commitear al iniciar, worktrees, concurrencia y handoff de cierre desde `.sdd-devkit/settings.json`. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
+- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/reference/git.md`](../../reference/git.md): **Política de commit y push** — `integrationBranches` y su `commitPolicy`, al resolver sobre qué rama se trabaja y se commitea. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 
 ---
 

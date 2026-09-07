@@ -40,7 +40,7 @@ No asumir la rama base ni la de integracion; acordarla con el usuario.
 Un WI de tipo **`bug-fix`** o **`security-update`** se implementa **directamente sobre la rama de integracion**. **No se crea ni se cambia a una rama `fix/`.**
 
 - **Es el comportamiento por defecto y no se pregunta.** Basta con leer `Tipo` del WI: si es uno de esos dos, no hay eleccion de rama que ofrecer al usuario.
-- **La rama de integracion la declara el repo, no el usuario.** Antes de tocar codigo, resolverla con [`../../../reference/git.md`](../../../reference/git.md) — lectura obligatoria — y actuar segun lo que devuelva para la **rama actual**:
+- **La rama de integracion la declara el repo, no el usuario.** Antes de tocar codigo, resolverla con [`${PLUGIN_ROOT}/reference/git.md`](../../../reference/git.md) — lectura obligatoria — y actuar segun lo que devuelva para la **rama actual**:
 
   | Politica de la rama actual | Que hacer |
   |----------------------------|-----------|
@@ -123,8 +123,8 @@ Por cada WI aprobado:
    1. **Antes de escribir codigo de la tarea:** marcar `[ ]` => `[~]` (en progreso) en la seccion del plan de implementacion del `README.md` del WI y marcar su entrada en la lista de to-dos del agente como `in_progress`. Solo una tarea puede estar `[~]` a la vez.
    2. Aplicar el ciclo **TDD (Red → Green → Refactor)** por cada comportamiento de la tarea:
       - **Red:** escribir el test que describe el comportamiento esperado, basandose en los insumos de comportamiento del WI: sus criterios de aceptacion (`AC-XXX`) y —cuando existan— las reglas de negocio (`BR-XX`) o los casos de prueba (`TC-XXX`) disponibles. Cuando el WI tenga test cases, tomar del `test-cases/README.md` los `TC-XXX` automatizables que apliquen y crear su prueba correspondiente. El test debe fallar antes de escribir codigo de produccion. **Excepcion — e2e:** se escriben aqui igual que las demas, pero **no se ejecutan en las iteraciones**, asi que no tienen paso Red (ver [Uso escalonado de pruebas](../SKILL.md#uso-escalonado-de-pruebas-optimizacion)).
-      - **Green:** escribir el minimo codigo de produccion para que el test pase.
-      - **Refactor:** limpiar codigo de produccion y test sin romper los tests. Aplicar principios de Clean Architecture (ver `SKILL.md`).
+      - **Green:** escribir el minimo codigo de produccion para que el test pase. **En Red y en Green se ejecuta unicamente el archivo de test recien escrito** (o el caso en curso, con el filtro del runner) — nunca la suite del paquete ni la del repo; ver [`scoped-tests.md`](scoped-tests.md).
+      - **Refactor:** limpiar codigo de produccion y test sin romper los tests — ejecutando los tests **de los archivos afectados**, no mas. Aplicar principios de Clean Architecture (ver `SKILL.md`).
    3. Si genera o modifica UI: ejecutar bajo `ui-specialist`. Si la referencia de diseno es Figma: usar el MCP de Figma.
    4. **Al terminar la tarea:** marcar `[~]` => `[x]` en la seccion del plan de implementacion del `README.md` del WI y marcar su entrada en la lista de to-dos del agente como `completed`, **en ese mismo momento**. El marcado acompana la ejecucion: **nunca se acumula para actualizarlo en bloque al final del WI.**
 3. Al terminar todas las tareas del plan, ejecutar lint/typecheck/build y las **pruebas unitarias y de integracion** del paquete/archivos afectados, **acotadas exclusivamente al cambio** — nunca la suite completa de un nivel ni la bateria del repo. **Unit e integracion estan al mismo nivel:** no se decide caso por caso si el cambio «cruza una frontera». **E2E se difiere al cierre** (Paso 4). Ver [Uso escalonado de pruebas](../SKILL.md#uso-escalonado-de-pruebas-optimizacion) en `SKILL.md`. Si algo falla, corregir antes de continuar.

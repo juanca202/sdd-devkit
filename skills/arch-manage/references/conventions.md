@@ -7,7 +7,7 @@ requisito o un criterio (CR). Leer al redactar/editar cualquiera de estos artefa
 > raíz de arquitectura (`<raíz-arq>`)** — el repositorio (principal o submódulo) al que pertenece el código
 > de la decisión, resuelto antes de escribir nada. La **numeración también es por raíz**: el correlativo
 > `ADR-XXX` se calcula sobre el `docs/adr/` de esa raíz y nunca continúa la serie de otra. Ver
-> [`../../../reference/artifacts.md`](../../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
+> [`${PLUGIN_ROOT}/reference/artifacts.md`](../../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
 
 ## Identidad y numeración
 

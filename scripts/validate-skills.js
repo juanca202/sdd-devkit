@@ -153,6 +153,39 @@ function checkLicense(fields) {
   return [];
 }
 
+/**
+ * Un SKILL.md que cita `../../reference/` debe declarar como se resuelve esa
+ * ruta (seccion "Rutas de las referencias compartidas"): sin ella, un agente
+ * que corre con el cwd en el proyecto busca `<proyecto>/reference/x.md`.
+ */
+function checkSharedReferenceResolution(content) {
+  if (!/(\.\.\/)+reference\//.test(content)) return [];
+  if (/Rutas de las referencias compartidas/.test(content)) return [];
+  return [{
+    severity: 'ERROR',
+    message: 'cita `reference/` del plugin pero no declara la seccion "Rutas de las referencias compartidas" (${PLUGIN_ROOT}, no la raiz del proyecto)',
+  }];
+}
+
+/**
+ * El TEXTO de un enlace a `reference/` del plugin debe ser `${PLUGIN_ROOT}/reference/<archivo>`;
+ * el destino relativo (`../../reference/...`) queda solo para navegar el repo. Un texto
+ * relativo es lo que el agente intenta leer desde el cwd del proyecto — y no existe.
+ * Se aplica a SKILL.md y a todos los .md bajo references/.
+ */
+function checkPluginRootPlaceholder(content) {
+  const findings = [];
+  const re = /\[`((?:\.\.\/)+reference\/[^`]+)`\]\(/g;
+  let m;
+  while ((m = re.exec(content)) !== null) {
+    findings.push({
+      severity: 'ERROR',
+      message: `enlace con texto relativo \`${m[1]}\`: el texto debe ser \`\${PLUGIN_ROOT}/reference/<archivo>\` (la ruta relativa va solo en el destino)`,
+    });
+  }
+  return findings;
+}
+
 // --- Capa 3: senales blandas — severidad WARNING ---------------------------
 
 function checkLineCount(content) {
@@ -205,11 +238,21 @@ function extractHeadingSlugs(content) {
 // Extrae los enlaces markdown relativos de `content` (ignora externos y
 // anclas puras al propio archivo). Cada entrada trae `targetPath` (sin
 // ancla) y `anchor` (sin `#`, o null si el enlace no tiene ancla).
+// Quita los bloques de codigo cercados y los spans de codigo inline: lo que va
+// en codigo es literal (ejemplos de como debe quedar un artefacto generado,
+// plantillas con placeholders), no un enlace del repositorio que haya que resolver.
+function stripCode(content) {
+  return content
+    .replace(/```[\s\S]*?```/g, '')
+    .replace(/`[^`\n]*`/g, '');
+}
+
 function extractLinks(content) {
   const links = [];
   let match;
+  const text = stripCode(content);
   LINK_RE.lastIndex = 0;
-  while ((match = LINK_RE.exec(content)) !== null) {
+  while ((match = LINK_RE.exec(text)) !== null) {
     const raw = match[1];
     if (/^[a-z]+:\/\//i.test(raw)) continue; // enlace externo
     if (raw.startsWith('#')) continue; // ancla al propio archivo
@@ -332,9 +375,15 @@ function validateSkill(skillDir, repoRoot) {
     ...checkNaming(fields, dirName).map((f) => ({ ...f, file: 'SKILL.md' })),
     ...checkDescription(fields).map((f) => ({ ...f, file: 'SKILL.md' })),
     ...checkLicense(fields).map((f) => ({ ...f, file: 'SKILL.md' })),
+    ...checkSharedReferenceResolution(content).map((f) => ({ ...f, file: 'SKILL.md' })),
     ...checkLineCount(content).map((f) => ({ ...f, file: 'SKILL.md' })),
     ...checkLinksAndAnchors(skillDir, repoRoot),
   ];
+  for (const mdPath of walkMarkdownFiles(skillDir)) {
+    const rel = path.relative(skillDir, mdPath);
+    const body = mdPath === skillMdPath ? content : fs.readFileSync(mdPath, 'utf-8');
+    findings.push(...checkPluginRootPlaceholder(body).map((f) => ({ ...f, file: rel })));
+  }
 
   return { skill: dirName, findings };
 }
@@ -391,6 +440,8 @@ module.exports = {
   checkDescription,
   checkLicense,
   checkLineCount,
+  checkSharedReferenceResolution,
+  checkPluginRootPlaceholder,
   slugifyHeading: slugifyHeadingText,
   extractHeadingSlugs,
   extractLinks,

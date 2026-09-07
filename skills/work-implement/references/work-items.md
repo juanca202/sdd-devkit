@@ -40,16 +40,18 @@ No asumir la rama base ni la de integracion; acordarla con el usuario.
 Un WI de tipo **`bug-fix`** o **`security-update`** se implementa **directamente sobre la rama de integracion**. **No se crea ni se cambia a una rama `fix/`.**
 
 - **Es el comportamiento por defecto y no se pregunta.** Basta con leer `Tipo` del WI: si es uno de esos dos, no hay eleccion de rama que ofrecer al usuario.
-- **La rama de integracion la declara el repo, no el usuario.** Antes de tocar codigo, resolverla con [`../../../reference/git.md`](../../../reference/git.md) — lectura obligatoria — y actuar segun lo que devuelva para la **rama actual**:
+- **La rama de integracion la declara el repo, no el usuario.** Antes de tocar codigo, resolverla con [`${PLUGIN_ROOT}/reference/git.md`](../../../reference/git.md) — lectura obligatoria — y actuar segun lo que devuelva para la **rama actual**:
 
   | Politica de la rama actual | Que hacer |
   |----------------------------|-----------|
-  | `direct` | **Trabajar aqui, sin preguntar nada.** El repo ya declaro esta rama como valida para comitear directo. |
+  | `merge` | **Trabajar aqui, sin preguntar nada.** El repo ya declaro esta rama como valida para comitear directo. |
   | `pull_request` | **No comitear aqui.** Ofrecer exactamente dos opciones: *cambiar a una rama `merge` de la lista* (checkout y continuar) o *terminar aqui*. Si el usuario elige terminar, cerrar sin tocar codigo y decir por que. |
   | No esta en la lista | Resolver contra la lista: una sola rama `merge` -> usar esa (checkout previo); varias -> preguntar entre ellas; ninguna declarada -> preguntar al usuario cual es, sin proponer `main` ni `develop` por cuenta propia. |
 
+  > **Con worktrees, los «checkout» de esta tabla no se hacen en el arbol principal.** La unidad se implementa en un worktree `wt/WI-XXX` derivado de la rama de integracion resuelta, y al terminar: si el arbol principal **esta en esa rama y limpio**, se integra ahi con `git merge --ff-only wt/WI-XXX` (la rama recibe sus commits sin que el arbol cambie de rama); si esta en otra rama o sucio, **no se toca**: se deja `wt/WI-XXX`, se informa y se cierra con handoff a `work-integrate`, que es quien integra. Es la unica variante en la que un `bug-fix` hace handoff. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
+
 - **El commit no avisa dos veces.** En una rama `merge`, `git-commit` **no** pide la confirmacion extra de rama protegida: el repo ya la autorizo al declararla asi. Solo la pide cuando la rama de integracion no esta declarada en `integrationBranches`.
-- **El cierre no hace handoff:** ver [Paso 4](#paso-4---cierre). No hay rama que mergear, asi que no se invoca `work-integrate` ni `pr-create`.
+- **El cierre no hace handoff:** ver [Paso 4](#paso-4---cierre). No hay rama que mergear, asi que no se invoca `work-integrate` ni `pr-create`. **Salvo** el caso con worktrees en que el arbol principal no esta en la rama de integracion (o esta sucio): ahi queda `wt/WI-XXX` sin integrar y el handoff a `work-integrate` es obligatorio — nunca se resuelve con un checkout en el arbol del usuario.
 - **Sigue rigiendo todo lo demas:** `Ready` con criterios de aceptacion, ciclo TDD, lint/build, `progress.md`, checkboxes y la pausa de confirmacion antes de comitear.
 
 > Si el repo tiene activada la integracion con un gestor de proyectos (`projectManagement.enabled` en `.sdd-devkit/settings.json`), el numero del WI es el ID del work item en ese sistema (`WI-1847`); si no, es un secuencial local (`WI-001`). Respetar el numero tal cual aparece en el archivo.
@@ -95,9 +97,11 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
 1. Verificar working tree limpio; si no, parar y avisar.
 2. Resolver la rama segun el `Tipo` del WI:
-   - **`bug-fix` / `security-update`:** no crear rama. Resolver la rama de integracion con `reference/git.md` y hacer checkout de ella si no se esta ya ahi (ver [Excepcion](#excepcion-bug-fix-y-security-update-no-crean-rama)).
-   - **Resto de tipos:** hacer checkout de la rama del WI (crear desde la rama base acordada si no existe).
+   - **`bug-fix` / `security-update`:** no crear rama. Resolver la rama de integracion con `reference/git.md`; **sin worktrees**, hacer checkout de ella si no se esta ya ahi; **con worktrees**, no tocar el arbol principal: la unidad va en `wt/WI-XXX` derivada de esa rama (ver [Excepcion](#excepcion-bug-fix-y-security-update-no-crean-rama)).
+   - **Resto de tipos:** situarse en la rama del WI — **sin worktrees**, `git checkout` (crear desde la rama base acordada si no existe); **con worktrees**, ver la nota de abajo.
 3. Leer o crear `progress.md` dentro de la carpeta del WI (`docs/specs/work-items/WI-XXX-[kebab-case]/progress.md`) desde `assets/progress-template.md`. El `progress.md` es específico de este WI — contiene únicamente las entradas del plan de implementación del `README.md`.
+
+> **Con worktrees (`workTree: always`, `ask` afirmativo o modo paralelo), este paso NO hace `git checkout` en el arbol principal.** Se cumple creando el worktree del artefacto (`git worktree add <workTreePath>/<artefacto> [-b <rama>] <rama-base>`) y el resto del flujo corre dentro de el. **El punto 1 (working tree limpio) sigue siendo sobre el arbol principal y va antes:** con cambios sin commitear se aplica `uncommittedChanges` (`commit` / `stash` / `ask`) igual que sin worktrees, y solo despues se crea el worktree. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
 
 ### Paso 2 - Presentar alcance
 
@@ -119,8 +123,8 @@ Por cada WI aprobado:
    1. **Antes de escribir codigo de la tarea:** marcar `[ ]` => `[~]` (en progreso) en la seccion del plan de implementacion del `README.md` del WI y marcar su entrada en la lista de to-dos del agente como `in_progress`. Solo una tarea puede estar `[~]` a la vez.
    2. Aplicar el ciclo **TDD (Red → Green → Refactor)** por cada comportamiento de la tarea:
       - **Red:** escribir el test que describe el comportamiento esperado, basandose en los insumos de comportamiento del WI: sus criterios de aceptacion (`AC-XXX`) y —cuando existan— las reglas de negocio (`BR-XX`) o los casos de prueba (`TC-XXX`) disponibles. Cuando el WI tenga test cases, tomar del `test-cases/README.md` los `TC-XXX` automatizables que apliquen y crear su prueba correspondiente. El test debe fallar antes de escribir codigo de produccion. **Excepcion — e2e:** se escriben aqui igual que las demas, pero **no se ejecutan en las iteraciones**, asi que no tienen paso Red (ver [Uso escalonado de pruebas](../SKILL.md#uso-escalonado-de-pruebas-optimizacion)).
-      - **Green:** escribir el minimo codigo de produccion para que el test pase.
-      - **Refactor:** limpiar codigo de produccion y test sin romper los tests. Aplicar principios de Clean Architecture (ver `SKILL.md`).
+      - **Green:** escribir el minimo codigo de produccion para que el test pase. **En Red y en Green se ejecuta unicamente el archivo de test recien escrito** (o el caso en curso, con el filtro del runner) — nunca la suite del paquete ni la del repo; ver [`scoped-tests.md`](scoped-tests.md).
+      - **Refactor:** limpiar codigo de produccion y test sin romper los tests — ejecutando los tests **de los archivos afectados**, no mas. Aplicar principios de Clean Architecture (ver `SKILL.md`).
    3. Si genera o modifica UI: ejecutar bajo `ui-specialist`. Si la referencia de diseno es Figma: usar el MCP de Figma.
    4. **Al terminar la tarea:** marcar `[~]` => `[x]` en la seccion del plan de implementacion del `README.md` del WI y marcar su entrada en la lista de to-dos del agente como `completed`, **en ese mismo momento**. El marcado acompana la ejecucion: **nunca se acumula para actualizarlo en bloque al final del WI.**
 3. Al terminar todas las tareas del plan, ejecutar lint/typecheck/build y las **pruebas unitarias y de integracion** del paquete/archivos afectados, **acotadas exclusivamente al cambio** — nunca la suite completa de un nivel ni la bateria del repo. **Unit e integracion estan al mismo nivel:** no se decide caso por caso si el cambio «cruza una frontera». **E2E se difiere al cierre** (Paso 4). Ver [Uso escalonado de pruebas](../SKILL.md#uso-escalonado-de-pruebas-optimizacion) en `SKILL.md`. Si algo falla, corregir antes de continuar.

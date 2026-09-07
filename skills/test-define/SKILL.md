@@ -26,18 +26,18 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`../../reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
-- [`../../reference/planning.md`](../../reference/planning.md): **Casos de prueba** — de ahí sale `askDetails`, que decide si este skill entrevista o aplica valores por defecto. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
-- [`../../reference/project-management.md`](../../reference/project-management.md): **Gestor de proyectos** — si la integración está activa, proveedor y datos de conexión. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/project-managers/azure-devops.md`](../../reference/project-managers/azure-devops.md): **Azure DevOps** — MCP, URL, límites, sincronización. *Solo si el `provider` resuelto es `azure-devops`.*
+- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
+- [`${PLUGIN_ROOT}/reference/planning.md`](../../reference/planning.md): **Casos de prueba** — de ahí sale `askDetails`, que decide si este skill entrevista o aplica valores por defecto. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/reference/project-management.md`](../../reference/project-management.md): **Gestor de proyectos** — si la integración está activa, proveedor y datos de conexión. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/project-managers/azure-devops.md`](../../reference/project-managers/azure-devops.md): **Azure DevOps** — MCP, URL, límites, sincronización. *Solo si el `provider` resuelto es `azure-devops`.*
 
 ---
 
 ## Cómo preguntar al usuario
 
-Mecanismo, ritmo y fallback compartidos: [`../../reference/asking.md`](../../reference/asking.md).
+Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md).
 
 Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar*, *validar* o *sugerir* algo al usuario, asume ese mecanismo; no se repite allí.
 
@@ -45,9 +45,13 @@ No repreguntar lo que ya conste en el artefacto origen.
 
 ---
 
+## Rutas de las referencias compartidas
+
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -59,7 +63,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 ## Política de definición de casos de prueba
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/planning.md`](../../reference/planning.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/planning.md`](../../reference/planning.md).
 
 De ese bloque, este skill consume **`specification.testCases.askDetails`** y **`specification.testCases.mode`**:
 
@@ -77,7 +81,7 @@ Ambas claves se aplican igual venga este skill invocado por la planificación o 
 
 ## Resolución de la integración con el gestor de proyectos
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/project-management.md`](../../reference/project-management.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/project-management.md`](../../reference/project-management.md).
 
 Las reglas de `project-management.md` son obligatorias y tienen prioridad para determinar si hay integración con un gestor de proyectos, con qué proveedor y con qué datos de conexión.
 
@@ -213,7 +217,7 @@ Si dentro de una perspectiva hay múltiples escenarios distintos que vale la pen
 
 ### Numeración y nombres de archivo
 
-> Reglas comunes de identificadores y secuenciales: [`../../reference/artifacts.md`](../../reference/artifacts.md). Lo específico de los TC:
+> Reglas comunes de identificadores y secuenciales: [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md). Lo específico de los TC:
 
 - **Sin tracker externo vinculado**: el secuencial `XXX` (tres dígitos: 001, 002, …) es por artefacto padre, siguiendo el orden criterio-a-criterio (happy → error → límite). Si la carpeta `test-cases/` ya existe con TCs previos, leer los archivos presentes, determinar el número más alto y continuar desde el siguiente. El escaneo se hace sobre el `test-cases/` del padre **realmente resuelto**, no sobre una ruta activa que se dé por vacía sin haberla comprobado: si el padre no aparece ahí, la regla de artefacto archivado ya obligó a parar (ver [Selección del artefacto](#selección-del-artefacto)). Reiniciar en `001` dentro de una carpeta recién creada porque «no había nada» duplicaría identificadores.
 - **Con la integración activa**: `XXX` es el identificador que asigna ese proveedor al work item «Test Case» creado; su formato exacto (numérico, con o sin padding, etc.) lo define el archivo de referencia del proveedor. Ver [Resolución de la integración con el gestor de proyectos](#resolución-de-la-integración-con-el-gestor-de-proyectos).
@@ -258,9 +262,11 @@ Usar `assets/test-case-template.md` para todos los campos. Reglas de llenado:
 2. Escribir cada `TC-XXX-{slug}.md` en la ruta correcta según la tabla de Selección del artefacto. Guardar cada TC con `Estado: Ready` salvo que el usuario indique lo contrario.
 3. Crear o actualizar el índice `test-cases/README.md` con una tabla que liste **todos** los TCs de la carpeta (los recién creados más los que ya existieran), ordenados por número de TC. La tabla lleva estas columnas:
 
+   ```markdown
    | TC | Perspectiva | Tipo de prueba | Estado | Prioridad | Criterio de aceptación |
    |----|-------------|----------------|--------|-----------|------------------------|
    | [TC-001](./TC-001-{slug}.md) | Happy Path | Unit, E2E | Ready | Alta | AC-001 |
+   ```
 
    Reglas del índice:
    - **TC:** ID enlazado por ruta relativa a su archivo `TC-XXX-{slug}.md`.

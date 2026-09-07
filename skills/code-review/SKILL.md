@@ -50,19 +50,32 @@ Carga cada archivo **solo cuando lo necesites** (rutas relativas a la raíz del 
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`../../reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
-- [`../../reference/verification.md`](../../reference/verification.md): **Política de corrección** — si se pregunta antes de corregir un hallazgo bloqueante o se corrige directo. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/reference/verification.md`](../../reference/verification.md): **Política de corrección** — si se pregunta antes de corregir un hallazgo bloqueante o se corrige directo. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 
 ---
 
 ## Política de corrección
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/verification.md`](../../reference/verification.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/verification.md`](../../reference/verification.md).
 
 Las reglas de `verification.md` son obligatorias y determinan, vía `verification.codeReview.confirmFix`, si se pausa a preguntar «corregir o justificar» ante cada hallazgo bloqueante (`always`, comportamiento por defecto) o si se aplica directamente el cambio sugerido sin preguntar (`never`). Ver [Severidad y veredicto](#severidad-y-veredicto).
 
 No continúes hasta haber leído y aplicado `verification.md`.
+
+---
+
+## Límite de intentos y escalamiento
+
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md).
+
+Las reglas de `escalation.md` son obligatorias y determinan, vía `escalation.maxAttempts` y `escalation.onLimit`, cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve —un hallazgo bloqueante cuya corrección no logra superar la revisión al reiniciarla— y qué se hace al agotarlos: detener el trabajo sobre ese problema, presentar el **parte de bloqueo** y preguntar al usuario cómo seguir (`ask`), o marcarlo como `BLOCKED` en el informe y continuar con el alcance que no dependa de él (`report`).
+
+El contador es **por problema**, no global, y **el límite es un techo, no una cuota**: si no hay una hipótesis nueva que justifique el siguiente intento, se escala ya. Nunca se «resuelve» un bloqueo desactivando o saltando una prueba, relajando una aserción ni bajando un umbral.
+
+No continúes hasta haber leído y aplicado `escalation.md`.
 
 ---
 
@@ -114,7 +127,7 @@ Clasifica cada hallazgo. Solo los dos primeros niveles **bloquean**.
 
 ## Vocabulario de veredictos y estados
 
-Antes de redactar cualquier informe, DEBES leer [`../../reference/verdicts.md`](../../reference/verdicts.md).
+Antes de redactar cualquier informe, DEBES leer [`${PLUGIN_ROOT}/reference/verdicts.md`](../../reference/verdicts.md).
 
 Las reglas de `verdicts.md` son obligatorias: el valor canónico y el símbolo son estables, y la **etiqueta que lee la persona se redacta siempre en el idioma resuelto** por `language.md`. Ninguna etiqueta de este skill se fija en un idioma concreto.
 
@@ -139,7 +152,7 @@ Precedencia: `REJECTED` > `INCOMPLETE` > `APPROVED`.
 **Ante un hallazgo bloqueante (🔴/🟠)**, lo que sigue depende de `verification.codeReview.confirmFix` (ver [Política de corrección](#política-de-corrección)):
 
 - **`always`** (o sin `settings.json`, comportamiento por defecto) — se ofrecen **DOS caminos** al usuario, y se **pausa** a que elija antes de continuar:
-  1. **Corregir** — el skill presenta el cambio sugerido. Sea corrección automática autorizada o manual del usuario, tras aplicarla se **reinicia la revisión desde el Paso 1** sobre el diff ya corregido. Si la corrección toca lógica cubierta por pruebas, **sugerir** re-ejecutar `quality-check`; no ejecutarlo desde aquí.
+  1. **Corregir** — el skill presenta el cambio sugerido. Sea corrección automática autorizada o manual del usuario, tras aplicarla se **reinicia la revisión desde el Paso 1** sobre el diff ya corregido — con el **límite de `escalation.maxAttempts`** por hallazgo (ver [Límite de intentos y escalamiento](#límite-de-intentos-y-escalamiento)): si el mismo hallazgo sigue vivo tras agotarlo, se escala con el parte de bloqueo en vez de reiniciar otra vez. Si la corrección toca lógica cubierta por pruebas, **sugerir** re-ejecutar `quality-check`; no ejecutarlo desde aquí.
   2. **Justificar** — el usuario explica por qué el estado actual es aceptable; si se acepta, el hallazgo deja de bloquear y la justificación **se registra** en el informe (queda trazado quién aceptó el estado actual y por qué).
 
   Si no autoriza ni justifica, el hallazgo sigue bloqueando.
@@ -179,7 +192,7 @@ Mismo principio de caché que [`quality-check`](../quality-check/SKILL.md#caché
 
 | Componente | Qué cubre | Cómo se obtiene |
 |------------|-----------|-----------------|
-| `FINGERPRINT` | El lado de la rama: contenido trackeado, cambios sin stagear y rutas sin trackear, **excluyendo toda carpeta oculta, cualquier `docs/` y los `coverage.md` sueltos**. Es **el mismo valor** que calculan `quality-check` y `trace-validate`; receta exacta en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate). | `git hash-object` sobre `ls-files -s` + `status` + `diff` (ver receta) |
+| `FINGERPRINT` | El lado de la rama: contenido trackeado, cambios sin stagear y rutas sin trackear, **excluyendo toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`** — se mueve solo cuando cambia el código. Es **el mismo valor** que calculan `quality-check` y `trace-validate`; receta exacta en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate). | `git hash-object` sobre `ls-files -s` + `status` + `diff` (ver receta) |
 | `BASE_COMMIT` | El otro lado: el commit de la **rama base** contra la que se diffea. Un `git fetch` que mueva la base cambia el diff sin tocar el árbol local, así que el `FINGERPRINT` solo no lo detectaría. Compara **commits**, no nombres de ref: `base develop` y `base origin/develop` apuntando al mismo commit son el mismo valor. | `git rev-parse --short <base>` con la base ya resuelta (Paso 0.1) |
 
 La exclusión de `docs/` es la que hace que **escribir el propio `code-review.md` no invalide su caché**.
@@ -230,7 +243,7 @@ Usar este skill **solo cuando se le invoca explícitamente** (ni de forma proact
 | | `quality-check` | `code-review` | `trace-validate` |
 |---|---|---|---|
 | Pregunta que responde | ¿El código corre y cumple las reglas? | ¿Resuelve el problema correcto y está bien diseñado? | ¿Cada criterio de aceptación está probado? |
-| Qué hace | Ejecuta tipado, linter, unit, coverage, build, e2e, sonar y las suites del estándar de testing | Analiza el diff en intención, arquitectura/diseño y feedback | Cruza criterios ↔ casos de prueba ↔ artefactos |
+| Qué hace | Ejecuta tipado, linter, validaciones de arquitectura, unit, coverage, build, e2e, sonar y las suites del estándar de testing | Analiza el diff en intención, arquitectura/diseño y feedback | Cruza criterios ↔ casos de prueba ↔ artefactos |
 | Artefactos | `docs/audits/quality-check.md`, `.sdd-devkit/test-run.json` | `docs/audits/code-review.md` | `coverage.md` del trabajo |
 | Veredicto | Propio, solo del plano automatizado | Propio, solo del plano cualitativo | Propio, solo de la cobertura funcional |
 
@@ -244,11 +257,15 @@ Es un proceso **posterior a la implementación**: no forma parte de `work-implem
 
 Las **tres** puertas del cierre usan el **mismo** fingerprint canónico como clave de frescura, con el mismo nombre de variable (`FINGERPRINT`) y la misma receta —que vive en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate)—, cada una sobre su propio artefacto: `test-run.json` en `quality-check`, `coverage.md` en `trace-validate` y `docs/audits/code-review.md` aquí. Este skill le añade un segundo componente, el commit de la **rama base**, porque su unidad de trabajo es un diff con dos lados (ver [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia)); el `FINGERPRINT` en sí **no** cambia de definición.
 
-Que la receta excluya **toda carpeta oculta, todo `docs/` y los `coverage.md` sueltos** es lo que permite que escribir `code-review.md` no desplace la clave de frescura de ninguna de las tres. La contrapartida —que los criterios de aceptación de `docs/specs/` tampoco cuenten— está en [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia).
+Que la receta excluya **toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`** es lo que permite que escribir `code-review.md` no desplace la clave de frescura de ninguna de las tres. La contrapartida —que ni los criterios de aceptación de `docs/specs/` ni ningún otro `.md` del diff cuenten para la frescura de este informe— está en [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia).
+
+### Rutas de las referencias compartidas
+
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
 
 ### Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 

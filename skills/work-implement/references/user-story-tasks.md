@@ -27,7 +27,7 @@ Flujo para **ejecutar en codigo** las tareas tecnicas `TK-XXX` de una historia d
 | **US padre** | Indicada por el usuario o inferida de la ruta | Preguntar a que `US-XXX` pertenece; no implementar hasta tenerla |
 | **Alcance** | Del mensaje: toda la US, una lista de TK, o un TK concreto | Preguntar si hay ambiguedad |
 | **Repositorio** | Campo `Repositorio` de cada TK (nombre del repositorio git al que afecta) | Leer del archivo; para `Ready` es obligatorio |
-| **Rama de la US** | `feature/US-XXX-[nombre-corto]` | Crear con `git checkout -b ...` desde la rama base acordada |
+| **Rama de la US** | `feature/US-XXX-[nombre-corto]` | Crear desde la rama base acordada: `git checkout -b ...` sin worktrees, o `git worktree add … -b …` con worktrees (sin tocar el arbol principal) |
 | **Usuario asignado** | Campo `Asignado a` del TK; si no: `git config user.name` | Aplicar como filtro salvo instruccion explicita |
 
 > Si el usuario indica una lista concreta de TK, un implementador distinto o pide implementar sin filtro, esa instruccion explicita prevalece sobre los filtros automaticos.
@@ -60,8 +60,10 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
 1. Verificar working tree limpio; si no, parar y avisar.
 2. Resolver nombre de rama: `feature/US-XXX-[nombre-corto]`.
-3. `git checkout feature/US-XXX-[nombre-corto]` si existe; si no, `git checkout -b feature/US-XXX-[nombre-corto]` desde la rama base acordada (no asumir `main`/`develop`).
+3. Situarse en la rama: **sin worktrees**, `git checkout feature/US-XXX-[nombre-corto]` si existe; si no, `git checkout -b feature/US-XXX-[nombre-corto]` desde la rama base acordada (no asumir `main`/`develop`). **Con worktrees**, ver la nota de abajo.
 4. Leer o crear `progress.md` (desde `assets/progress-template.md`). Al crearlo, anadir **una entrada por cada TK del alcance** con `Estado: Pending` salvo las ya `Done`.
+
+> **Con worktrees (`workTree: always`, `ask` afirmativo o modo paralelo), este paso NO hace `git checkout` en el arbol principal.** Se cumple creando el worktree del artefacto (`git worktree add <workTreePath>/<artefacto> [-b <rama>] <rama-base>`) y el resto del flujo corre dentro de el. **El punto 1 (working tree limpio) sigue siendo sobre el arbol principal y va antes:** con cambios sin commitear se aplica `uncommittedChanges` (`commit` / `stash` / `ask`) igual que sin worktrees, y solo despues se crea el worktree. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
 
 ### Paso 2 - Filtrar y presentar cola
 
@@ -83,8 +85,8 @@ Por cada tarea aprobada, en orden numerico salvo dependencias obvias en el texto
    1. **Antes de escribir codigo de la tarea:** marcar `[ ]` => `[~]` (en progreso) en la seccion de subtareas del `TK-XXX.md` correspondiente y marcar su entrada en la lista de to-dos del agente como `in_progress`. Solo una subtarea puede estar `[~]` a la vez.
    2. Aplicar el ciclo **TDD (Red → Green → Refactor)** por cada unidad de comportamiento de la tarea:
       - **Red:** escribir el test que describe el comportamiento esperado, basandose en los insumos de comportamiento de la US: los criterios de aceptacion (`AC-XXX`) del `README.md` y —cuando existan— las reglas de negocio (`BR-XX`) o los casos de prueba (`TC-XXX`) disponibles. Cuando la US tenga test cases, tomar del `test-cases/README.md` los `TC-XXX` automatizables que apliquen a la TK y crear su prueba correspondiente. El test debe fallar antes de escribir codigo de produccion. **Excepcion — e2e:** se escriben aqui igual que las demas, pero **no se ejecutan en las iteraciones**, asi que no tienen paso Red (ver [Uso escalonado de pruebas](../SKILL.md#uso-escalonado-de-pruebas-optimizacion)).
-      - **Green:** escribir el minimo codigo de produccion para que el test pase.
-      - **Refactor:** limpiar codigo de produccion y test sin romper los tests. Aplicar principios de Clean Architecture (ver `SKILL.md`).
+      - **Green:** escribir el minimo codigo de produccion para que el test pase. **En Red y en Green se ejecuta unicamente el archivo de test recien escrito** (o el caso en curso, con el filtro del runner) — nunca la suite del paquete ni la del repo; ver [`scoped-tests.md`](scoped-tests.md).
+      - **Refactor:** limpiar codigo de produccion y test sin romper los tests — ejecutando los tests **de los archivos afectados**, no mas. Aplicar principios de Clean Architecture (ver `SKILL.md`).
    3. Si genera o modifica UI: ejecutar bajo `ui-specialist`. Si la referencia de diseno es Figma: usar el MCP de Figma.
    4. **Al terminar la tarea:** marcar `[~]` => `[x]` en la seccion de subtareas del `TK-XXX.md` y marcar su entrada en la lista de to-dos del agente como `completed`, **en ese mismo momento**. El marcado acompana la ejecucion: **nunca se acumula para actualizarlo en bloque al final de la TK.**
 3. Al terminar todas las tareas del plan, ejecutar lint/typecheck/build y las **pruebas unitarias y de integracion** del paquete/archivos afectados, **acotadas exclusivamente al cambio** — nunca la suite completa de un nivel ni la bateria del repo. **Unit e integracion estan al mismo nivel:** no se decide caso por caso si el cambio «cruza una frontera». **E2E se difiere al cierre** (Paso 4). Ver [Uso escalonado de pruebas](../SKILL.md#uso-escalonado-de-pruebas-optimizacion) en `SKILL.md`. Si algo falla, corregir antes de continuar.

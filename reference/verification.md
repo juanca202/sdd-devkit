@@ -80,7 +80,8 @@ if (verification) {
 > y en el mensaje de merge. Nunca se omite en silencio ni se lista como aprobada.
 
 > **Dependencia entre puertas.** `trace-validate` reutiliza el `test-run.json` que produce
-> `quality-check`. Si `qualityCheck.enabled` es `false` y `requirementCoverage.enabled` es `true`, no hay
+> `quality-check` (y `arch-audit`, fuera de las puertas, reutiliza de ese mismo archivo la entrada
+> `architecture`: la corrida del runner de validaciones de arquitectura). Si `qualityCheck.enabled` es `false` y `requirementCoverage.enabled` es `true`, no hay
 > caché que reutilizar: `trace-validate` invocará `quality-check` en modo `tests-only` por su cuenta, que
 > es su comportamiento normal cuando no hay corrida fresca. Omitir `quality-check` no evita, por tanto,
 > que se ejecuten pruebas si la tercera puerta sigue activa.

@@ -95,9 +95,11 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
 ### Paso 1 - Preparar repositorio y rama
 
 1. Verificar working tree limpio; si no, parar y avisar.
-2. Resolver nombre de rama: `test/[ID del artefacto padre]-[slug]`. `git checkout` si existe; si no, `git checkout -b` desde la rama base acordada (no asumir `main`/`develop`).
+2. Resolver nombre de rama: `test/[ID del artefacto padre]-[slug]`. **Sin worktrees**, `git checkout` si existe; si no, `git checkout -b` desde la rama base acordada (no asumir `main`/`develop`). **Con worktrees**, ver la nota de abajo.
 3. Leer o crear `progress.md` en la carpeta del artefacto padre (desde `assets/progress-template.md`). Al crearlo, anadir **una entrada por unidad**: una sola entrada `FT-XXX` si la entrada es un feature, o una entrada por cada `TC-XXX` del alcance si la entrada son test cases sueltos.
 4. **Descubrir el stack de pruebas** del repositorio antes de escribir nada: runner y scripts de test del manifest, configs, convenciones de los tests vecinos y reglas de testing en `.agents/MEMORY.md`. No inventar infraestructura que el repo no tenga.
+
+> **Con worktrees (`workTree: always`, `ask` afirmativo o modo paralelo), este paso NO hace `git checkout` en el arbol principal.** Se cumple creando el worktree del artefacto (`git worktree add <workTreePath>/<artefacto> [-b <rama>] <rama-base>`) y el resto del flujo corre dentro de el. **El punto 1 (working tree limpio) sigue siendo sobre el arbol principal y va antes:** con cambios sin commitear se aplica `uncommittedChanges` (`commit` / `stash` / `ask`) igual que sin worktrees, y solo despues se crea el worktree. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
 
 ### Paso 2 - Presentar alcance
 
@@ -129,7 +131,7 @@ Por cada `TC-XXX` automatizable de la unidad, en el orden del indice:
    - `Resultado esperado del paso` y `Resultado esperado final` => *assert* sobre **comportamiento observable**, nunca sobre detalle de implementacion interna.
    - **Trazabilidad obligatoria:** el nombre del bloque o del caso incluye el ID del TC (p. ej. `TC-004: should reject login when password is invalid`), o la anotacion/tag equivalente del framework. Sin ese identificador la prueba no es trazable al TC.
    - Un `TC-XXX` => al menos una prueba; si el TC lista varios tipos (`Unit, E2E`), escribir una prueba por nivel.
-4. **Ejecutar la prueba.**
+4. **Ejecutar la prueba — solo esa.** El archivo (o el caso, con el filtro del runner) que se acaba de escribir: nunca la suite del paquete ni la del repo, ver [`scoped-tests.md`](scoped-tests.md).
    - **Verde a la primera** => la prueba confirma el comportamiento documentado. Continuar con el siguiente TC. Esto es lo **esperado**, no una senal de error: el comportamiento ya estaba implementado.
    - **Rojo** => hay una discrepancia real entre el TC y el codigo. **Antes de tocar nada**, revisar si la prueba es fiel al TC; si lo es, **parar y preguntar al usuario** (herramienta estructurada) con la evidencia (que se esperaba, que ocurrio):
 

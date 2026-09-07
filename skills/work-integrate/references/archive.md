@@ -2,8 +2,12 @@
 
 Procedimiento **compartido** por `work-integrate` (merge local) y `pr-create` (PR de
 implementación): cuando el trabajo ya está cerrado y verificado, su carpeta de
-especificación se mueve a `docs/archive/` **dentro de la rama del trabajo**, de
-modo que el archivado viaje en el mismo merge/PR que el código.
+especificación se mueve a `docs/archive/`. **Dónde y cuándo depende del skill:**
+
+| Skill | Dónde se hace el `git mv` | Cuándo |
+|-------|---------------------------|--------|
+| `work-integrate` | **En la rama base, después del merge** (paso 11), en un commit de cierre propio junto con el `progress.md` del trabajo en `Done`. | Tras integrar: el código ya está en la base y el usuario pudo probarlo; solo entonces el trabajo está cerrado. |
+| `pr-create` | **En la rama del trabajo, antes del PR** (Paso 5), para que viaje en el mismo PR que el código. | El merge lo hace la plataforma y el skill no recupera el control después; es el último momento en que puede archivar. |
 
 ---
 
@@ -19,20 +23,23 @@ modo que el archivado viaje en el mismo merge/PR que el código.
    cuando existe `docs/policies/definition-of-done.md`.
 3. El tipo de trabajo es **`US-XXX` o `WI-XXX`** (ver [Qué no se archiva](#qué-no-se-archiva)).
 4. **No queda ninguna comprobación previa que pueda abortar el flujo sin integrar.** En
-   `work-integrate` eso significa que el **delta** `<base>..HEAD` ya se verificó > 0: si la
-   rama ya estaba integrada, el flujo para ahí y no se archiva ni se commitea nada. En
+   `work-integrate` eso significa que **el merge ya se hizo** (paso 10): el archivado va después,
+   así que un delta `0` o un merge abortado por conflictos nunca dejan un archivado a medias. En
    `pr-create` el equivalente es la comprobación del rango del Paso 3, que ocurre mucho
    antes.
 
 Si alguna falla, **no se archiva**.
 
-- En `work-integrate` esto no llega a ocurrir: el flujo ya se detuvo antes por esa misma razón (el `progress.md` se valida en su paso 4, las puertas en el paso 6, el delta en el paso 7).
+- En `work-integrate` esto no llega a ocurrir: el flujo ya se detuvo antes por esa misma razón (el `progress.md` se valida en su paso 4, las puertas en el paso 6, el delta en el paso 7, y el merge del paso 10 ya prosperó).
 - En `pr-create` el `progress.md` **no** se valida en el pre-flight, así que se lee en el propio paso de archivado. Si no está completo en `Done`, se **omite el archivado y se avisa** — el PR se crea igual: las puertas pasaron y no es ese el momento de bloquearlo.
 
-**Orden.** El archivado ocurre **después** de la última puerta y **antes** del commit
-final que deja el árbol limpio. No al revés: `trace-validate` escribe el `coverage.md`
-dentro de la carpeta del trabajo, así que mover antes lo dejaría escribiendo en una ruta
-que ya no existe, o generando una carpeta huérfana en el origen.
+**Orden.** El archivado ocurre siempre **después** de la última puerta. No al revés:
+`trace-validate` escribe el `coverage.md` dentro de la carpeta del trabajo, así que mover
+antes lo dejaría escribiendo en una ruta que ya no existe, o generando una carpeta huérfana
+en el origen. En `pr-create`, además, va **antes** del commit final que deja el árbol limpio
+(viaja en la rama). En `work-integrate` va **después del merge, en la rama base**, y su
+`git mv` se commitea junto con el `progress.md` en `Done` en el commit de cierre del paso 11 —
+nunca dentro del commit de merge.
 
 ---
 
@@ -66,7 +73,7 @@ que ya no existe, o generando una carpeta huérfana en el origen.
 ## Política (`implementation.archiveMode`)
 
 Cumplidas las condiciones de arriba y descartados los casos de [Qué no se archiva](#qué-no-se-archiva),
-lo que sigue depende de `implementation.archiveMode` (ver [`../../../reference/implementation.md`](../../../reference/implementation.md)):
+lo que sigue depende de `implementation.archiveMode` (ver [`${PLUGIN_ROOT}/reference/implementation.md`](../../../reference/implementation.md)):
 
 | `archiveMode` | Qué hace el skill |
 |----------------|--------------------|
@@ -149,7 +156,7 @@ coste de no pararse ahí es bajo comparado con obligar a archivar.
 ## Destinos
 
 `docs/archive/` es el valor por defecto de `specification.archivePath`
-(`.sdd-devkit/settings.json`) — ver [`../../../reference/artifacts.md`](../../../reference/artifacts.md).
+(`.sdd-devkit/settings.json`) — ver [`${PLUGIN_ROOT}/reference/artifacts.md`](../../../reference/artifacts.md).
 **Resolverlo primero**: si el repo declaró un valor distinto, sustituirlo por ese valor en la
 columna Destino y en el resto de esta sección.
 

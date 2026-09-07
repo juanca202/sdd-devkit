@@ -148,7 +148,7 @@ Una TK completa puede alcanzar `Estado: Ready` si cumple todas las condiciones d
    - **Observaciones**: solo si hay pendientes reales. Si no hay nada, **omitir la sección** (o una línea *Sin pendientes documentados* si el equipo lo exige). Con pendientes reales: `Estado: Draft`.
 3. **Documentación técnica y glosario**: si la TK requiere crear o actualizar especificaciones en `technical-docs/`, **delegar a `/design-define` vía subagente** (nunca editarlas desde este skill) y enlazar las referencias devueltas; glossary sí puede actualizarse aquí con entradas breves (no sustituye ADR ni technical-doc).
 4. **Verificar el checklist** antes de asignar `Estado: Ready`.
-5. **Handoff:** con todas las TK del alcance en `Ready`, aplicar antes `specification.testCases.mode` sobre la US padre (ver [`../../../reference/planning.md`](../../../reference/planning.md)); después, si el usuario quiere implementar, **invocar `/work-implement`** (no implementar directamente desde este skill). Si otras siguen en `Draft`, listar cuáles completar antes.
+5. **Handoff:** con todas las TK del alcance en `Ready`, aplicar antes `specification.testCases.mode` sobre la US padre (ver [`${PLUGIN_ROOT}/reference/planning.md`](../../../reference/planning.md)); después, si el usuario quiere implementar, **invocar `/work-implement`** (no implementar directamente desde este skill). Si otras siguen en `Draft`, listar cuáles completar antes.
 
 ---
 
@@ -203,7 +203,7 @@ Aplica cuando el input es **solo una referencia a una historia** (modo B). El pr
    **7b. Crear stubs** — por cada tarea confirmada, seguir el *[Flujo: Crear stub](#flujo-crear-stub-anclaje-de-id)*: `Estado: Draft`, descripción breve del objetivo, Plan vacío, sin referenciar `AC-XXX` en el documento.
 
 8. **Reportar al usuario** la lista de TK creadas, agrupadas por repositorio, indicando por cada una su `Estado` y qué `AC-XXX` cubre. Si el lote quedó mixto, listar aparte las que siguen en `Draft` y qué les falta.
-9. **Casos de prueba:** aplicar [`../../../reference/planning.md`](../../../reference/planning.md) sobre la **US padre**. Si ya tiene `test-cases/` con algún `TC-XXX`, saltar este paso. Si no: con `always`, invocar `/test-define` sobre la US sin preguntar; con `ask`, ofrecerlo junto al handoff del paso 10; con `never`, no mencionarlo.
+9. **Casos de prueba:** aplicar [`${PLUGIN_ROOT}/reference/planning.md`](../../../reference/planning.md) sobre la **US padre**. Si ya tiene `test-cases/` con algún `TC-XXX`, saltar este paso. Si no: con `always`, invocar `/test-define` sobre la US sin preguntar; con `ask`, ofrecerlo junto al handoff del paso 10; con `never`, no mencionarlo.
 10. **Handoff:** las TK en `Ready` habilitan implementación — cuando el usuario quiera implementarlas, **invocar `/work-implement`**; nunca implementar directamente desde este skill. Las que quedaron en `Draft` deben completarse antes con **`work-plan`** (modo A); no sugerir implementación mientras las TK del alcance sigan en Draft.
 
 **Reglas invariantes:**

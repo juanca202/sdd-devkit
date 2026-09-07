@@ -41,7 +41,7 @@ Referencias del skill **work-integrate**. Cubren los dos tipos de trabajo (`US-X
 **Ejemplo 6 — Conflicto en el merge**
 
 - *Entrada:* Verificaciones OK, rama base `main`, `git merge --no-ff --no-commit` produce conflictos en `src/app/Module.java`.
-- *Comportamiento:* El agente ejecuta `git merge --abort`, deja el repo en el estado previo **al merge**, lista los archivos en conflicto y pide al usuario resolverlos manualmente. No reintenta. El commit del paso 7 —artefactos de las puertas, más el archivado si se confirmó— sigue en la rama del trabajo y **no se revierte**: es parte de ella y se integrará cuando el merge prospere. Se menciona en el reporte.
+- *Comportamiento:* El agente ejecuta `git merge --abort`, deja el repo en el estado previo **al merge**, lista los archivos en conflicto y pide al usuario resolverlos manualmente. No reintenta. El commit del paso 8 —correcciones y artefactos de las puertas— sigue en la rama del trabajo y **no se revierte**: es parte de ella y se integrará cuando el merge prospere. Como el cierre (`Done` + archivado) va después del merge, no quedó nada archivado ni marcado a medias. Se menciona en el reporte.
 
 **Ejemplo 7 — Rama con prefijo inválido**
 
@@ -56,7 +56,7 @@ Referencias del skill **work-integrate**. Cubren los dos tipos de trabajo (`US-X
 **Ejemplo 9 — El usuario declina el archivado**
 
 - *Entrada:* Rama `feature/US-061-…`, todo en `Done`, las tres puertas en `APPROVED`, delta contra `develop` = 4.
-- *Comportamiento:* El paso 8 muestra `docs/specs/user-stories/US-061-…/` → `docs/archive/user-stories/` y pregunta. El usuario responde **No archivar** (prefiere dejarlo visible hasta cerrar el épico). No se ejecuta ningún `git mv`: el paso 7 commitea solo los artefactos de las puertas y el merge continúa con normalidad. El reporte final incluye «📦 Archivado: omitido — `US-061` se queda en `docs/specs/user-stories/` (no confirmado por el usuario).» **Ni se bloquea el merge ni se vuelve a preguntar.**
+- *Comportamiento:* El merge (paso 10) ya está hecho. El paso 11 marca el `progress.md` de la US en `Done`, muestra `docs/specs/user-stories/US-061-…/` → `docs/archive/user-stories/` y pregunta. El usuario responde **No archivar** (prefiere dejarlo visible hasta cerrar el épico). No se ejecuta ningún `git mv`: el commit de cierre en la rama base lleva solo el `progress.md` en `Done`. El reporte final incluye «📦 Archivado: omitido — `US-061` se queda en `docs/specs/user-stories/` (no confirmado por el usuario).» **El merge no dependía de esto, y no se vuelve a preguntar.**
 
 **Ejemplo 10 — Cierre desatendido, sin nadie que confirme**
 
@@ -68,7 +68,7 @@ Referencias del skill **work-integrate**. Cubren los dos tipos de trabajo (`US-X
 ## Anti-patterns
 
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
-- **Correr este skill sobre una rama que ya se integró por un PR en la plataforma.** El delta contra la base es `0`, git responde *Already up to date*, y seguir adelante crea un commit que no es un merge y que solo borra los dos informes. El paso 7 lo corta antes — y por eso va delante del archivado: nada se mueve ni se commitea en una rama que solo había que dejar en paz.
+- **Correr este skill sobre una rama que ya se integró por un PR en la plataforma.** El delta contra la base es `0`, git responde *Already up to date*, y seguir adelante crea un commit que no es un merge y que solo borra los dos informes. El paso 7 lo corta antes de commitear nada: nada se mueve ni se commitea en una rama que solo había que dejar en paz.
 - Encadenar `pr-create` (PR de implementación) **y** este skill sobre el mismo trabajo: son rutas de integración alternativas, no fases sucesivas.
 - Hacer merge sin verificar `progress.md` o ignorando unidades no `Done`.
 - **Archivar antes de que pasen las tres puertas**, o antes de que `trace-validate` escriba su `coverage.md` dentro de la carpeta del trabajo.

@@ -33,13 +33,14 @@ Leyenda de estados — **redactar cada etiqueta en el idioma resuelto**, en este
 | - | ---------- | ------------------ | ------------- | -------------- | --------------------- | -------- |
 | 1 | tipado     | {{comando}}          | {{BLOCKING}}    | {{✅ PASS}}       | {{0 errores}}           | {{4.1s}}   |
 | 2 | linter     | {{comando}}          | {{BLOCKING}}    | {{❌ FAIL}}       | {{3 errors, 5 warnings}}| {{2.3s}}   |
-| 3 | unit tests | {{comando}}          | {{BLOCKING}}    | {{✅ PASS}}       | {{142 passed, 0 failed}}| {{18.7s}}  |
-| 4 | coverage   | {{comando}}          | {{BLOCKING}}    | {{✅ PASS}}       | {{87% (umbral 80%)}}    | {{19.0s}}  |
-| 5 | {{integración}} | {{comando}}     | {{BLOCKING}}    | {{✅ PASS}}       | {{18 passed}}           | {{41.2s}}  |
-| 6 | {{contrato}}    | {{comando}}     | {{CONDITIONAL}} | {{⏭️ SKIPPED}}    | {{config rota}}         | {{—}}      |
-| 7 | build      | {{comando}}          | {{BLOCKING}}    | {{✅ PASS}}       | {{OK}}                  | {{12.4s}}  |
-| 8 | e2e        | {{comando}}          | {{CONDITIONAL}} | {{✅ PASS}}       | {{7 passed}}            | {{63.5s}}  |
-| 9 | sonar      | {{comando}}          | {{INFORMATIVE}} | {{❌ FAIL}}       | {{2 code smells}}       | {{31.0s}}  |
+| 3 | {{arquitectura}} | {{comando}}    | {{BLOCKING}}    | {{✅ PASS}}       | {{9 criterios, 0 violaciones}} | {{3.2s}} |
+| 4 | unit tests | {{comando}}          | {{BLOCKING}}    | {{✅ PASS}}       | {{142 passed, 0 failed}}| {{18.7s}}  |
+| 5 | coverage   | {{comando}}          | {{BLOCKING}}    | {{✅ PASS}}       | {{87% (umbral 80%)}}    | {{19.0s}}  |
+| 6 | {{integración}} | {{comando}}     | {{BLOCKING}}    | {{✅ PASS}}       | {{18 passed}}           | {{41.2s}}  |
+| 7 | {{contrato}}    | {{comando}}     | {{CONDITIONAL}} | {{⏭️ SKIPPED}}    | {{config rota}}         | {{—}}      |
+| 8 | build      | {{comando}}          | {{BLOCKING}}    | {{✅ PASS}}       | {{OK}}                  | {{12.4s}}  |
+| 9 | e2e        | {{comando}}          | {{CONDITIONAL}} | {{✅ PASS}}       | {{7 passed}}            | {{63.5s}}  |
+| 10 | sonar     | {{comando}}          | {{INFORMATIVE}} | {{❌ FAIL}}       | {{2 code smells}}       | {{31.0s}}  |
 
 <!-- En las celdas de Categoría y Estado, {{VALOR}} significa: escribir la ETIQUETA de ese valor
      canónico en el idioma resuelto (precedida de su símbolo cuando lo tenga). El valor canónico en sí

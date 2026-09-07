@@ -16,21 +16,25 @@ Encaja al final de los ciclos **work-define** → **work-plan** → **work-imple
 
 ## Cómo preguntar al usuario
 
-Mecanismo, ritmo y fallback compartidos: [`../../reference/asking.md`](../../reference/asking.md).
+Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md).
 
 Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar*, *validar* o *sugerir* algo al usuario, asume ese mecanismo; no se repite allí.
 
 **La tanda inicial va antes de cualquier operación git** y cubre: trabajo asociado a la rama, carpeta ambigua y rama base. No empezar a mover, mergear ni archivar con lagunas abiertas.
 
-**Excepción al ritmo:** la confirmación del archivado (paso 8) va por fuerza después de las puertas — hasta entonces no se sabe si el trabajo llega a cerrarse ni qué se movería.
+**Excepción al ritmo:** la confirmación del archivado (paso 11) va por fuerza **después del merge** — hasta entonces no se sabe si el trabajo llega a integrarse, y el cierre (`Done` + archivado) solo tiene sentido con el código ya en la rama base.
 
 **Rama base ambigua:** listar los candidatos detectados como opciones tappables (p. ej. `develop`, `main`, `release/2026.q2`); no proponer un default implícito.
 
 ---
 
+## Rutas de las referencias compartidas
+
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -40,13 +44,25 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 ## Resolución de las puertas de cierre
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/verification.md`](../../reference/verification.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/verification.md`](../../reference/verification.md).
 
 Las reglas de `verification.md` son obligatorias y determinan, vía `verification.qualityCheck.enabled` / `verification.codeReview.enabled` / `verification.requirementCoverage.enabled`, **si corre cada puerta** antes del merge (`true` la ejecuta, `false` la omite).
 
 No continúes hasta haber leído y aplicado `verification.md`.
 
 **Excepción deliberada:** esto decide si la puerta **corre**, nunca si **aprueba**. Una puerta que se ejecuta manda con su veredicto igual que siempre; una omitida no bloquea, pero **tampoco cuenta como aprobada** y se reporta como tal, con su motivo.
+
+---
+
+## Límite de intentos y escalamiento
+
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md).
+
+Las reglas de `escalation.md` son obligatorias y determinan, vía `escalation.maxAttempts` y `escalation.onLimit`, cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve —una puerta de cierre que sigue en rojo tras corregir, o una validación previa que no se logra dejar en verde— y qué se hace al agotarlos: detener el trabajo sobre ese problema, presentar el **parte de bloqueo** y preguntar al usuario cómo seguir (`ask`), o marcarlo como `BLOCKED` en el informe y continuar con el alcance que no dependa de él (`report`).
+
+El contador es **por problema**, no global, y **el límite es un techo, no una cuota**: si no hay una hipótesis nueva que justifique el siguiente intento, se escala ya. Nunca se «resuelve» un bloqueo desactivando o saltando una prueba, relajando una aserción ni bajando un umbral.
+
+No continúes hasta haber leído y aplicado `escalation.md`.
 
 ---
 
@@ -68,7 +84,7 @@ El tipo se determina por el **identificador presente en el nombre de rama**. Cad
 
 ## Ubicación de archivos
 
-Layout completo del harness e identificadores: [`../../reference/artifacts.md`](../../reference/artifacts.md). Este skill es el que **ejecuta** el archivado; su contrato para el resto del catálogo está en [`references/archive.md`](references/archive.md).
+Layout completo del harness e identificadores: [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md). Este skill es el que **ejecuta** el archivado; su contrato para el resto del catálogo está en [`references/archive.md`](references/archive.md).
 
 Lo que este skill lee y mueve:
 
@@ -77,7 +93,7 @@ Lo que este skill lee y mueve:
 | Carpeta / documento del trabajo | US: `docs/specs/user-stories/US-XXX-[nombre-corto]/` · WI: `docs/specs/work-items/WI-XXX-[kebab-case]/` · FT: `docs/specs/features/FT-XXX-[slug]/` |
 | Progreso del trabajo | `progress.md` dentro de esa carpeta |
 | Unidades referenciadas | US: `…/TK-XXX-[kebab-case].md` · WI: el propio `…/README.md` · pruebas: `…/test-cases/TC-XXX-[slug].md` |
-| Destino del archivado (paso 8) | US: `docs/archive/user-stories/US-XXX-[nombre-corto]/` · WI: `docs/archive/work-items/WI-XXX-[kebab-case]/` · investigaciones sueltas huérfanas: `docs/archive/research/RS-XXX-[slug]/` |
+| Destino del archivado (paso 11) | US: `docs/archive/user-stories/US-XXX-[nombre-corto]/` · WI: `docs/archive/work-items/WI-XXX-[kebab-case]/` · investigaciones sueltas huérfanas: `docs/archive/research/RS-XXX-[slug]/` |
 
 ---
 
@@ -127,7 +143,7 @@ Antes de cambiar de rama o ejecutar el merge, verificar las siguientes condicion
 - **Trazabilidad — solo si `verification.requirementCoverage.enabled` la activa:** ejecutar **`trace-validate`** sobre el trabajo de la rama (`US-XXX`/`WI-XXX`), **después** de `quality-check` para que reutilice su `test-run.json` sin re-ejecutar pruebas. Cuando corre, solo `APPROVED` (o `APPROVED_WITH_NOTES`, mostrando las observaciones) permite continuar; `REJECTED` (algún criterio de aceptación sin cubrir o con prueba fallida) bloquea el merge. Si la política la omite, el merge continúa **sin evidencia de cobertura** y así se reporta.
 
 > **Una puerta omitida no es una puerta aprobada.** Registrar cada omisión con su motivo (`policy`, `enabled: false`) y arrastrarla hasta el reporte del cierre y el mensaje al usuario. Nunca listarla como aprobada ni callarla. Si las tres quedan omitidas, decirlo de forma destacada: el merge se hace sin ninguna verificación de cierre.
-> **Cómo se lee un veredicto.** Los informes de las puertas se redactan en el idioma resuelto del repo, así que **ni la palabra ni el símbolo del encabezado son comparables**. Lo que se lee es la **marca oculta del pie** del informe: `<!-- <skill>:verdict=<VALOR> … -->`. `APPROVED` deja pasar; `REJECTED` e `INCOMPLETE` bloquean; `APPROVED_WITH_NOTES` (solo `trace-validate`) **no** bloquea: se muestran las observaciones y se continúa. Contrato completo en [`../../reference/verdicts.md`](../../reference/verdicts.md).
+> **Cómo se lee un veredicto.** Los informes de las puertas se redactan en el idioma resuelto del repo, así que **ni la palabra ni el símbolo del encabezado son comparables**. Lo que se lee es la **marca oculta del pie** del informe: `<!-- <skill>:verdict=<VALOR> … -->`. `APPROVED` deja pasar; `REJECTED` e `INCOMPLETE` bloquean; `APPROVED_WITH_NOTES` (solo `trace-validate`) **no** bloquea: se muestran las observaciones y se continúa. Contrato completo en [`${PLUGIN_ROOT}/reference/verdicts.md`](../../reference/verdicts.md).
 
 - **Archivado (no es una condición, es una oferta):** superadas las tres puertas se resuelve el archivado de la carpeta del trabajo en `docs/archive/` según `implementation.archiveMode` antes del merge. Ni preguntarlo, ni archivarlo directo, ni saltarlo por política bloquea nada; lo único que bloquea es que el `git mv` falle una vez decidido archivar (destino ya ocupado) — ver [references/archive.md](references/archive.md).
 - **Working tree limpio otra vez, ya pasadas las puertas:** las puertas pueden dejar cambios sin commitear (correcciones aplicadas por `quality-check`, o por `work-implement` en su modo corrección) **y sus propios artefactos versionados**: `docs/audits/quality-check.md`, `docs/audits/code-review.md` y el `coverage.md` del trabajo, que se escriben siempre; más el **renombrado del archivado**, si el usuario lo confirmó. (`.sdd-devkit/test-run.json` no aparece: está en el `.gitignore` por ser una caché local.) Antes del merge, re-comprobar `git status --porcelain` e invocar de nuevo `git-commit` si hay salida — el **código** que se integra debe ser exactamente el que verificaron las puertas, con sus artefactos. El renombrado del archivado es la única salvedad: mueve documentación bajo `docs/specs/`, no toca código ni fuentes de prueba, así que no invalida los veredictos de `quality-check` ni de `code-review`. Sí desplaza el `SPEC_FINGERPRINT` de `trace-validate` (se calcula sobre la carpeta del artefacto, cuyas rutas cambian): su `coverage.md` se regenerará una vez en la siguiente validación, sin más consecuencia.
@@ -149,9 +165,9 @@ Camino feliz cuando todas las verificaciones pasan.
 
 1. **Detectar rama actual** con `git branch --show-current`, identificar el **tipo** por el identificador (`US-`/`WI-`) y validar el patrón de rama de ese tipo. Si no encaja, parar y preguntar.
 2. **Verificar working tree limpio** con `git status --porcelain`. Si hay salida, **invocar automáticamente el flujo del skill `git-commit`** sobre los cambios pendientes (sin preguntar al usuario si conviene invocarlo) y esperar a que termine; con el working tree limpio, continuar al siguiente paso. Si `git-commit` no logra dejarlo limpio (incluido el caso de quedar parcialmente limpio, o de no estar disponible), aplicar el criterio de [Validación antes de mergear](#validación-antes-de-mergear) — reintentar sobre el remanente o parar e informar el motivo, según corresponda.
-3. **Localizar la carpeta/documento del trabajo** según el tipo (ver [Tipos de trabajo](#tipos-de-trabajo)). Si no está en la ruta activa, buscarla bajo `docs/archive/` antes de rendirse: si aparece ahí, el trabajo **ya estaba archivado** — continuar el flujo leyendo su `progress.md` desde esa ruta y saltar luego el paso 8. Si no está en ninguna de las dos, o hay varias coincidentes, parar.
+3. **Localizar la carpeta/documento del trabajo** según el tipo (ver [Tipos de trabajo](#tipos-de-trabajo)). Si no está en la ruta activa, buscarla bajo `docs/archive/` antes de rendirse: si aparece ahí, el trabajo **ya estaba archivado** — continuar el flujo leyendo su `progress.md` desde esa ruta y saltar luego el archivado del paso 11 (el `Done` del trabajo sí se marca, sobre la carpeta archivada). Si no está en ninguna de las dos, o hay varias coincidentes, parar.
 4. **Leer `progress.md`** (en la carpeta del trabajo) y validar que **todas las unidades del trabajo de la rama** tienen estado `Done`. Si alguna no lo está, parar mostrando la lista completa de unidades no `Done` con su estado actual.
-5. **Resolver la rama base** — antes de las puertas, porque `code-review` la necesita para acotar su diff. Resolverla primero contra `integrationBranches` de [`../../reference/git.md`](../../reference/git.md): si la lista está declarada, la base es una de esas ramas y **no se adivina**. Comprobar su `commitPolicy` antes de seguir:
+5. **Resolver la rama base** — antes de las puertas, porque `code-review` la necesita para acotar su diff. Resolverla primero contra `integrationBranches` de [`${PLUGIN_ROOT}/reference/git.md`](../../reference/git.md): si la lista está declarada, la base es una de esas ramas y **no se adivina**. Comprobar su `commitPolicy` antes de seguir:
 
    - **`merge`** → continuar con el flujo normal.
    - **`pull_request`** → **parar aquí**. Esa rama no admite merge local: informarlo y ofrecer dos salidas — crear el PR con **`pr-create`**, o terminar. No mergear «avisando».
@@ -159,7 +175,7 @@ Camino feliz cuando todas las verificaciones pasan.
      - `git reflog show <branch>` → buscar la entrada inicial con `Created from <ref>` o `branch: Created from <ref>`.
      - Fallback: `git config --get branch.<branch>.merge` y derivar la rama base local correspondiente.
      - Si ninguno concluye o hay ambigüedad: preguntar al usuario sin proponer un default.
-6. **Resolver y ejecutar las puertas.** Antes de la primera, aplicar [`../../reference/verification.md`](../../reference/verification.md): las puertas con `enabled: false` no se ejecutan ni se ofrecen. Anotar cada omisión con su motivo para el paso 12. Luego, **en este orden y solo las activas**:
+6. **Resolver y ejecutar las puertas.** Antes de la primera, aplicar [`${PLUGIN_ROOT}/reference/verification.md`](../../reference/verification.md): las puertas con `enabled: false` no se ejecutan ni se ofrecen. Anotar cada omisión con su motivo para el paso 12. Luego, **en este orden y solo las activas**:
 
     **6.1 `quality-check`** (modificador `default`) sobre la rama actual. Si el veredicto es `REJECTED` o `INCOMPLETE`, parar y reportar el informe al usuario — no continuar con el merge hasta obtener veredicto `APPROVED` en una nueva ejecución.
 
@@ -167,23 +183,20 @@ Camino feliz cuando todas las verificaciones pasan.
 
     **6.3 `trace-validate`** sobre el trabajo de la rama (después de `quality-check`, para reutilizar su `test-run.json`; si `quality-check` quedó omitida, `trace-validate` invocará él mismo el modo `tests-only` al no encontrar corrida fresca). Si el veredicto es `REJECTED`, parar y reportar los criterios faltantes/fallidos — no mergear hasta obtener `APPROVED` (o `APPROVED_WITH_NOTES`, mostrando las observaciones al usuario).
 
-   Con todas las puertas activas en veredicto que deja pasar, resolver `verification.handoff`: con `ask` (comportamiento por defecto), preguntar al usuario si se continúa con el cierre (archivado y merge, pasos 7 en adelante); con `always`, continuar directo sin preguntar.
-7. **Calcular delta** con `git rev-list --count <base>..HEAD`. Es una **puerta, no solo un dato para el reporte**: si el resultado es `0`, la rama ya está integrada (típicamente porque el PR se mergeó en la plataforma) — parar y avisar, **sin tocar nada**. Seguir adelante produciría un commit que no es un merge y que solo borra archivos, con un mensaje que miente. **Va antes del archivado a propósito:** archivar primero dejaría un commit nuevo en una rama que solo había que dejar en paz.
-8. **Resolver el archivado del artefacto del trabajo.** Con las puertas ejecutadas en `APPROVED` —las omitidas por política no lo impiden— y el `progress.md` en `Done`, el trabajo está cerrado y su carpeta **puede** moverse a `docs/archive/` en la rama, para que el archivado se integre en el mismo merge que el código. Solo aplica a `US-XXX` y `WI-XXX` **en su rama funcional**; una rama `test/` —sea sobre un `FT-XXX`, un `US-XXX` o un `WI-XXX`— no archiva nada, porque su paso 4 solo verificó las unidades `TC-XXX` de esa ejecución, no el trabajo completo. Si la carpeta ya está bajo `docs/archive/` (paso 3), el trabajo ya estaba archivado: informarlo y saltar este paso. Si el archivado no aplica (rama `test/`, o carpeta ya bajo `docs/archive/`), **no se resuelve `archiveMode` ni se pregunta nada**: se salta el paso directamente.
+   Con todas las puertas activas en veredicto que deja pasar, resolver `verification.handoff`: con `ask` (comportamiento por defecto), preguntar al usuario si se continúa con el merge y el cierre (pasos 7 en adelante); con `always`, continuar directo sin preguntar.
+7. **Calcular delta** con `git rev-list --count <base>..HEAD`. Es una **puerta, no solo un dato para el reporte**: si el resultado es `0`, la rama ya está integrada (típicamente porque el PR se mergeó en la plataforma) — parar y avisar, **sin tocar nada**. Seguir adelante produciría un commit que no es un merge y que solo borra archivos, con un mensaje que miente. **Va antes de cualquier commit a propósito:** seguir adelante dejaría un commit nuevo en una rama que solo había que dejar en paz.
+8. **Re-comprobar el working tree tras las puertas.** Las puertas dejan cambios sin commitear de dos clases: **correcciones** (aplicadas por `quality-check` o por `work-implement` en su modo corrección) y **sus propios artefactos** —`docs/audits/quality-check.md`, `docs/audits/code-review.md` y el `coverage.md` del trabajo, que se escriben siempre—. Todo se commitea: la rama debe conservar su evidencia (el paso 10 es quien decide qué **no** pasa a la base). Volver a ejecutar `git status --porcelain` y, si hay salida, **invocar de nuevo `git-commit`** con el mismo criterio del paso 2. **El merge solo procede con el árbol limpio:** el **código** que se integra es exactamente el que verificaron las puertas. **Aquí no se archiva ni se marca nada como `Done`**: eso va después del merge (paso 11), porque hasta que el código no está integrado y el usuario puede probarlo en la rama base, el trabajo no está cerrado.
+9. **Cambiar a la rama base** con `git checkout <base>`. Si falla, parar y reportar.
+10. **Ejecutar el merge en tres tiempos**, para que los informes de las puertas no lleguen a la rama base (ver [Los informes de las puertas no se integran](#los-informes-de-las-puertas-no-se-integran)):
 
-   Si aplica, resolver `implementation.archiveMode` (ver [references/archive.md](references/archive.md#política-implementationarchivemode)): con `ask` (por defecto), mostrar la carpeta origen → destino y las investigaciones sueltas que se irían con ella, y pedir confirmación con la herramienta de preguntas estructuradas — la respuesta es binaria (todo lo mostrado, o nada), y **preguntar primero, mover después, nunca al revés**; con `always`, ejecutar el `git mv` directo, sin preguntar, y mostrar igual el bloque origen → destino en el reporte; con `never`, no archivar ni preguntar. En los tres casos, si no se archiva —negativa del usuario, imposibilidad de preguntar en sesión desatendida, o `archiveMode: never`— **no bloquea el merge**: se anota el motivo en el reporte del paso 12 y el flujo continúa en el paso 9. Confirmado o forzado por `always`, el `git mv` queda stageado y lo recoge el paso 9; no commitear aquí. Procedimiento completo (destinos, investigaciones `RS-XXX` sueltas que quedan huérfanas, reparación de enlaces, guards) en [references/archive.md](references/archive.md).
-9. **Re-comprobar el working tree tras las puertas.** Las puertas dejan cambios sin commitear de dos clases: **correcciones** (aplicadas por `quality-check` o por `work-implement` en su modo corrección) y **sus propios artefactos** —`docs/audits/quality-check.md`, `docs/audits/code-review.md` y el `coverage.md` del trabajo, que se escriben siempre—; a eso se suma el **archivado stageado** del paso 8, si el usuario lo confirmó. Todo se commitea: la rama debe conservar su evidencia (el paso 11 es quien decide qué **no** pasa a la base). Volver a ejecutar `git status --porcelain` y, si hay salida, **invocar de nuevo `git-commit`** con el mismo criterio del paso 2. **El merge solo procede con el árbol limpio:** el **código** que se integra es exactamente el que verificaron las puertas — el archivado del paso 8 es la única salvedad, y es deliberada: mueve documentación bajo `docs/specs/`, no toca código ni fuentes de prueba, así que ningún veredicto queda invalidado por él.
-10. **Cambiar a la rama base** con `git checkout <base>`. Si falla, parar y reportar.
-11. **Ejecutar el merge en tres tiempos**, para que los informes de las puertas no lleguen a la rama base (ver [Los informes de las puertas no se integran](#los-informes-de-las-puertas-no-se-integran)):
-
-    `bash
+    ```bash
     git merge --no-ff --no-commit <feature-branch>
     test -f "$(git rev-parse --git-dir)/MERGE_HEAD" || { echo "no hay merge en curso"; exit 1; }
     git rm -q -f --ignore-unmatch ':(top,glob)**/docs/audits/quality-check.md' ':(top,glob)**/docs/audits/code-review.md'
     test -z "$(git ls-files --cached -- ':(top,glob)**/docs/audits/quality-check.md' ':(top,glob)**/docs/audits/code-review.md')" \
       || { echo "los informes siguen en el índice"; exit 1; }
     git commit -m "Merge <ID>: <nombre-corto>"
-    `
+    ```
 
     `<ID>` es el identificador del trabajo (`US-XXX` o `WI-XXX`) y `<nombre-corto>` su nombre/slug sin el prefijo de rama.
 
@@ -193,7 +206,16 @@ Camino feliz cuando todas las verificaciones pasan.
     - **`:(top,glob)**/…` en las rutas** hace dos cosas, y las dos hacen falta. `:(top)` las ancla a la raíz del repositorio: `git rm` interpreta las rutas **relativas al cwd**, así que sin ese ancla, lanzado desde `packages/api/`, no casarían, `--ignore-unmatch` devolvería `0` sin borrar nada, y los informes se integrarían en la base **en silencio** mientras el paso 12 reporta lo contrario. Y el **`glob` con `**/` inicial** las hace casar a cualquier profundidad, que es lo que exige el monorepo por el otro lado: `quality-check` audita **el módulo elegido**, no el repo entero, y escribe su informe en el `docs/audits/` de ese módulo (`packages/api/docs/audits/quality-check.md`). Con `:(top)docs/audits/…` a secas —anclado pero literal— solo casaría el `docs/` de la raíz, y el informe del módulo se colaría en la base con el mismo silencio. Es la misma razón por la que el `FINGERPRINT` de `quality-check` excluye `**/docs/**` y no `docs/`. `**/` casa también cero directorios, así que el caso de repo simple sigue cubierto. El `git ls-files --cached` posterior es el cinturón: verifica el resultado en vez de confiar en el código de salida. **Tiene que ser `ls-files`, no `git diff --cached`:** el diff lista también los **borrados** stageados, así que cuando la base ya trackeaba el informe —y el `git rm` funcionó— la ruta aparecería igual y el guard cortaría un merge correcto. `ls-files --cached` responde la pregunta que importa: ¿queda algo de esos dos archivos en el índice?
 
     `--ignore-unmatch` está para el caso legítimo de que un informe no se haya commiteado en la rama, no para tapar rutas mal resueltas. **Borrar exactamente esos dos archivos, ni uno más:** las copias de `save-report` y los `arch-audit-*.md` se quedan. Si surge conflicto, ir al flujo de conflictos.
-12. **Reportar resultado** al usuario: rama origen (con su prefijo), rama destino, número de commits integrados, hash del commit de merge, estado del HEAD, **el estado de cada una de las tres puertas** —veredicto si corrió, u «omitida» con su motivo si no— y nota explícita de que **no** se hizo push ni se borró la rama del trabajo. Si el paso 8 movió algo, incluir su **bloque de archivado** (origen → destino y qué pasó con las investigaciones sueltas; formato en [references/archive.md](references/archive.md)). Si no archivó —el usuario lo declinó, no había con quién confirmar, rama `test/`, o el trabajo ya estaba archivado—, decirlo en una línea **con el motivo**, en vez de omitirlo en silencio. Mencionar también que los informes de las puertas quedaron en la rama del trabajo y no se integraron.
+11. **Cerrar el trabajo en la rama base — después del merge, nunca antes.** Con el merge hecho, el código ya está integrado y el usuario puede probarlo donde de verdad importa; solo entonces el trabajo pasa a estar cerrado, y las dos operaciones de cierre se hacen **sobre la rama base**, en un único commit propio, separado del merge:
+
+    **11.1 Marcar el trabajo como `Done`.** En el `progress.md` del trabajo, poner el **estado del trabajo** (el encabezado `**Estado:**` y su marca `<!-- work:id=… · status=Done -->`) en `Done` y actualizar `Ultima actualizacion`. Es el estado del **trabajo**, no de sus unidades: las unidades ya estaban `Done` desde la implementación (paso 4 lo exige); el trabajo entero solo lo está cuando su código vive en la rama base. Solo aplica a `US-XXX` y `WI-XXX` en su rama funcional; una rama `test/` no cierra el trabajo (su paso 4 solo verificó las unidades `TC-XXX` de esa ejecución).
+
+    **11.2 Resolver el archivado del artefacto.** Mismas condiciones de aplicabilidad que el `Done`: `US-XXX`/`WI-XXX` en rama funcional, y carpeta todavía en la ruta activa (si el paso 3 la encontró ya bajo `docs/archive/`, informarlo y saltar). Si no aplica, **no se resuelve `archiveMode` ni se pregunta nada**. Si aplica, resolver `implementation.archiveMode` (ver [references/archive.md](references/archive.md#política-implementationarchivemode)): con `ask` (por defecto), mostrar la carpeta origen → destino y las investigaciones sueltas que se irían con ella, y pedir confirmación con la herramienta de preguntas estructuradas — respuesta binaria, **preguntar primero, mover después**; con `always`, `git mv` directo, mostrando igual el bloque origen → destino en el reporte; con `never`, no archivar ni preguntar. Si no se archiva —negativa del usuario, sesión desatendida, o `never`— se anota el motivo para el paso 12 y se sigue: **el merge ya está hecho y no depende de esto.** Procedimiento completo (destinos, investigaciones `RS-XXX` huérfanas, reparación de enlaces, guards) en [references/archive.md](references/archive.md).
+
+    **11.3 Commitear el cierre en la rama base.** Un solo commit con el `progress.md` en `Done` y, si lo hubo, el `git mv` del archivado: `chore(<ID>): cerrar trabajo` (+ « y archivar» si se movió). Invocar `git-commit` sobre esos cambios; la rama base es `commitPolicy: merge` (paso 5), así que no hay confirmación extra de rama protegida. **Si la base fuera `pull_request`, el flujo ni siquiera habría llegado aquí.** Nunca meter este cierre dentro del commit de merge del paso 10: el merge integra exactamente el código verificado, y el cierre es un cambio de estado posterior que debe poder leerse —y revertirse— por separado.
+
+    > **Por qué después del merge.** Archivar y marcar `Done` en la rama del trabajo, antes de integrar, obligaba a decidir el cierre a ciegas: si el merge fallaba, o el usuario detectaba un problema al probar la integración, el artefacto ya estaba archivado y el trabajo «cerrado» sin estarlo. Con el cierre en la base y después del merge, el orden refleja la realidad: se integra, se prueba, se cierra. **`pr-create` mantiene su comportamiento:** ahí el archivado va en la rama antes del PR, porque el merge lo hace la plataforma y el skill no vuelve a tener el control después.
+12. **Reportar resultado** al usuario: rama origen (con su prefijo), rama destino, número de commits integrados, hash del commit de merge, **hash del commit de cierre** (paso 11) con el `progress.md` en `Done`, estado del HEAD, **el estado de cada una de las tres puertas** —veredicto si corrió, u «omitida» con su motivo si no— y nota explícita de que **no** se hizo push ni se borró la rama del trabajo. Si el paso 11 movió algo, incluir su **bloque de archivado** (origen → destino y qué pasó con las investigaciones sueltas; formato en [references/archive.md](references/archive.md)). Si no archivó —el usuario lo declinó, no había con quién confirmar, rama `test/`, o el trabajo ya estaba archivado—, decirlo en una línea **con el motivo**, en vez de omitirlo en silencio. Mencionar también que los informes de las puertas quedaron en la rama del trabajo y no se integraron.
 
 ---
 
@@ -204,7 +226,7 @@ Camino feliz cuando todas las verificaciones pasan.
 - **En `develop` serían mentira.** Nadie corrió las puertas sobre `develop`; ese archivo diría «`APPROVED`» sobre una rama que ni siquiera es la suya. Y con cada integración lo pisaría la última feature en entrar.
 - **Viven en una ruta fija**, así que toda rama escribe el mismo archivo: dejarlos integrarse convierte cada merge en un conflicto seguro sobre un artefacto generado.
 
-Por eso el paso 11 parte el merge: `--no-commit` deja el resultado en el índice, se retiran los dos informes y el commit de merge se cierra ya sin ellos. La rama del trabajo **conserva los suyos intactos** — no se reescribe su historia, solo se decide qué entra en la base.
+Por eso el paso 10 parte el merge: `--no-commit` deja el resultado en el índice, se retiran los dos informes y el commit de merge se cierra ya sin ellos. La rama del trabajo **conserva los suyos intactos** — no se reescribe su historia, solo se decide qué entra en la base.
 
 **Qué NO se toca:**
 
@@ -213,7 +235,7 @@ Por eso el paso 11 parte el merge: `--no-commit` deja el resultado en el índice
 | `docs/audits/arch-audit-*.md` | Auditorías de arquitectura del **repositorio**, no de una rama. Su sitio es la rama base. |
 | `docs/audits/quality-check-<timestamp>.md` · `code-review-<timestamp>.md` | Copias de `save-report`: el usuario las pidió **para conservar histórico**. Llevan marca de tiempo, así que no colisionan ni pisan nada. |
 | `coverage.md` del trabajo | Vive junto a su artefacto en `docs/specs/`, es del **trabajo** y no de la rama, y se integra con él. |
-| La carpeta del trabajo movida a `docs/archive/` (si el usuario confirmó) | El archivado del paso 8 **sí** debe llegar a la base: es el estado final del artefacto, no una foto de la rama. Se integra como un *rename*, junto con el `coverage.md` que lleva dentro. |
+| La carpeta del trabajo movida a `docs/archive/` y el `progress.md` en `Done` | No viajan en el merge: se hacen **en la rama base, después del merge** (paso 11), en un commit de cierre propio. El `coverage.md` que la carpeta lleva dentro se mueve con ella. |
 | `.sdd-devkit/test-run.json` | Ni aparece: está en el `.gitignore`. |
 
 > **Esta limpieza solo cubre los merges que hace este skill.** Un merge desde la UI de GitHub/GitLab —el camino de `pr-create`— sí propaga los informes: ahí la limpieza hay que hacerla en la rama base después de integrar. Ver [`pr-create`](../pr-create/SKILL.md).
@@ -231,17 +253,18 @@ Cargar bajo demanda; el contenido íntegro vive en estos archivos:
 | Necesitas… | Archivo |
 |------------|---------|
 | Flujo de manejo de conflictos, flujo de rama base ambigua, checklist detallado antes de mergear | [references/flows.md](references/flows.md) |
-| Archivado del artefacto (paso 8): cuándo aplica y cuándo no, destinos, `git mv` y guards, investigaciones `RS-XXX` sueltas huérfanas, reparación de enlaces, formato del reporte, anti-patrones | [references/archive.md](references/archive.md) |
+| Archivado del artefacto (paso 11, tras el merge): cuándo aplica y cuándo no, destinos, `git mv` y guards, investigaciones `RS-XXX` sueltas huérfanas, reparación de enlaces, formato del reporte, anti-patrones | [references/archive.md](references/archive.md) |
 | Ejemplos por tipo (US/WI: camino feliz, unidad pendiente, base ambigua, working tree sucio, conflicto, prefijo inválido), anti-patrones, y notas (handoffs del ciclo, `progress.md`, estados, detección de rama base, sin push intencional, mensaje al usuario) | [references/examples.md](references/examples.md) |
 
 ### Referencias compartidas del plugin
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`../../reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
-- [`../../reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
-- [`../../reference/verification.md`](../../reference/verification.md): **Política de verificación** — qué puertas corren antes del merge (`enabled`) y si el cierre continúa con archivado y merge sin preguntar (`handoff`). *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/implementation.md`](../../reference/implementation.md): **Política de implementación** — de aquí sale `archiveMode`. *Antes de resolver el archivado (paso 8).*
-- [`../../reference/git.md`](../../reference/git.md): **Política de commit y push** — de aquí sale `integrationBranches` y su `commitPolicy`. *Al resolver la rama base.*
+- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
+- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/reference/verification.md`](../../reference/verification.md): **Política de verificación** — qué puertas corren antes del merge (`enabled`) y si el cierre continúa con archivado y merge sin preguntar (`handoff`). *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/implementation.md`](../../reference/implementation.md): **Política de implementación** — de aquí sale `archiveMode`. *Antes de resolver el archivado (paso 11).*
+- [`${PLUGIN_ROOT}/reference/git.md`](../../reference/git.md): **Política de commit y push** — de aquí sale `integrationBranches` y su `commitPolicy`. *Al resolver la rama base.*
+- [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 

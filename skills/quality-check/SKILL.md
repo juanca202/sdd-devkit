@@ -15,6 +15,8 @@ Ejecuta la **batería de checks automatizados** que el stack exige (tipado, lint
 >
 > **Proceso iterativo:** toda corrección reinicia la corrida completa hasta un veredicto estable.
 >
+> **Sin cambios en el código no se repiten las pruebas.** Si `.sdd-devkit/test-run.json` está fresco (mismo `FINGERPRINT` canónico), las suites y las validaciones de arquitectura se toman de ahí en **cualquier modo**, y solo se ejecutan los checks que la caché no cubre (tipado, linter, build, sonar). Solo `no-cache` o una petición explícita del usuario fuerzan la re-ejecución. Ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate).
+>
 > **Entrada mínima:** la raíz de un repositorio reconocible (ver [`references/stacks.md`](references/stacks.md)). Si no se detecta stack, parar y avisar. **No se exige ningún artefacto del plugin**: el repo puede no tener `docs/specs/`, ni `US-XXX`, ni convención de ramas — la corrida y el veredicto son idénticos. Ver [Artefactos externos al plugin](#artefactos-externos-al-plugin).
 
 ---
@@ -47,16 +49,17 @@ Carga cada archivo **solo cuando lo necesites** (rutas relativas a la raíz del 
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`../../reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`../../reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
-- [`../../reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
-- [`../../reference/verification.md`](../../reference/verification.md): **Política de corrección** — si se pregunta antes de corregir un fallo o se corrige directo. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
+- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/reference/verification.md`](../../reference/verification.md): **Política de corrección** — si se pregunta antes de corregir un fallo o se corrige directo. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 
 ---
 
 ## Cómo preguntar al usuario
 
-Mecanismo, ritmo y fallback compartidos: [`../../reference/asking.md`](../../reference/asking.md).
+Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md).
 
 Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar*, *validar* o *sugerir* algo al usuario, asume ese mecanismo; no se repite allí.
 
@@ -66,7 +69,7 @@ Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar
 
 ## Política de corrección
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/verification.md`](../../reference/verification.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/verification.md`](../../reference/verification.md).
 
 Las reglas de `verification.md` son obligatorias y determinan, vía `verification.qualityCheck.confirmFix`, si se pide confirmación antes de corregir un fallo (`always`, comportamiento por defecto) o si se corrige directamente sin preguntar (`never`). Ver [Corrección de fallos](#corrección-de-fallos).
 
@@ -74,9 +77,21 @@ No continúes hasta haber leído y aplicado `verification.md`.
 
 ---
 
+## Límite de intentos y escalamiento
+
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md).
+
+Las reglas de `escalation.md` son obligatorias y determinan, vía `escalation.maxAttempts` y `escalation.onLimit`, cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve —un check en `FAIL` o una prueba en rojo que sigue fallando tras aplicar la corrección— y qué se hace al agotarlos: detener el trabajo sobre ese problema, presentar el **parte de bloqueo** y preguntar al usuario cómo seguir (`ask`), o marcarlo como `BLOCKED` en el informe y continuar con el alcance que no dependa de él (`report`).
+
+El contador es **por problema**, no global, y **el límite es un techo, no una cuota**: si no hay una hipótesis nueva que justifique el siguiente intento, se escala ya. Nunca se «resuelve» un bloqueo desactivando o saltando una prueba, relajando una aserción ni bajando un umbral.
+
+No continúes hasta haber leído y aplicado `escalation.md`.
+
+---
+
 ## Vocabulario de veredictos y estados
 
-Antes de redactar cualquier informe, DEBES leer [`../../reference/verdicts.md`](../../reference/verdicts.md).
+Antes de redactar cualquier informe, DEBES leer [`${PLUGIN_ROOT}/reference/verdicts.md`](../../reference/verdicts.md).
 
 Las reglas de `verdicts.md` son obligatorias: el valor canónico y el símbolo son estables, y la **etiqueta que lee la persona se redacta siempre en el idioma resuelto** por `language.md`. Ninguna etiqueta de este skill se fija en un idioma concreto.
 
@@ -121,7 +136,7 @@ Precedencia: `REJECTED` > `INCOMPLETE` > `APPROVED`.
 | `PENDING` | `⏸️` | Correspondía y no llegó a ejecutarse porque el **fail-fast** del tipado cortó la corrida. Ni `SKIPPED` (no hay problema de tooling) ni `N/A` (sí correspondía); no altera el veredicto, que ya lo fijó el `FAIL` del tipado. |
 | `N/A` | `—` | El repo nunca pidió ese check. No cuenta para el veredicto. |
 
-> **Los valores canónicos no se traducen; las etiquetas del informe sí se redactan en el idioma resuelto.** `PASS`/`FAIL`/`SKIPPED`/`PENDING`/`N/A`, `BLOCKING`/`CONDITIONAL`/`INFORMATIVE` y `APPROVED`/`REJECTED`/`INCOMPLETE` son el vocabulario canónico de este documento, de `stacks.md` y —los cuatro primeros— del `result` de `test-run.json`. El informe lleva **símbolo + etiqueta en el idioma resuelto**, con la leyenda que los ata al inicio; ver [`../../reference/verdicts.md`](../../reference/verdicts.md) y [`references/execution.md` → Formato del informe](references/execution.md#formato-del-informe). Ojo con el solape de símbolos: `✅` como **estado de un check** es `PASS`, mientras que `✅` en la línea `Veredicto:` es `APPROVED`, del informe entero.
+> **Los valores canónicos no se traducen; las etiquetas del informe sí se redactan en el idioma resuelto.** `PASS`/`FAIL`/`SKIPPED`/`PENDING`/`N/A`, `BLOCKING`/`CONDITIONAL`/`INFORMATIVE` y `APPROVED`/`REJECTED`/`INCOMPLETE` son el vocabulario canónico de este documento, de `stacks.md` y —los cuatro primeros— del `result` de `test-run.json`. El informe lleva **símbolo + etiqueta en el idioma resuelto**, con la leyenda que los ata al inicio; ver [`${PLUGIN_ROOT}/reference/verdicts.md`](../../reference/verdicts.md) y [`references/execution.md` → Formato del informe](references/execution.md#formato-del-informe). Ojo con el solape de símbolos: `✅` como **estado de un check** es `PASS`, mientras que `✅` en la línea `Veredicto:` es `APPROVED`, del informe entero.
 
 > **Este veredicto cubre solo el plano automatizado.** No lo mezcles con el de `code-review` ni con el de `trace-validate`: cada skill emite el suyo y el orquestador (`work-integrate`, `pr-create`) exige **las tres** puertas en aprobado antes de integrar o crear el PR. (Única salvedad: en un **PR de promoción** —`develop → master`—, `pr-create` solo exige esta puerta, porque cada trabajo ya pasó las tres al integrarse; ver [`pr-create`](../pr-create/SKILL.md#puertas-en-un-pr-de-promoción).)
 >
@@ -137,18 +152,19 @@ Checks canónicos en **orden de ejecución**. La categoría real depende del sta
 |---|-------|----------------|----------|
 | 1 | Tipado | Bloqueante o Condicional según stack | **Fail-fast**: si aplica y falla, no se ejecuta nada más. |
 | 2 | Linter | Bloqueante o Condicional según stack | Bloquea solo si hay severidad `error`. `warning` = informativo (salvo `include-linter-warnings`). |
-| 3 | Pruebas unitarias — **suite fija** | Bloqueante | FAIL si exit ≠ 0 o algún test falla. |
-| 4 | Cobertura — **suite fija** | Bloqueante **si el proyecto tiene tooling de cobertura**; `N/A` si no lo tiene en absoluto | PASS si exit 0 **y** (sin umbrales configurados **o** umbrales cumplidos). FAIL si exit ≠ 0 **o** umbral configurado incumplido. |
-| 5 | **Suites configuradas** (integración, contrato, rendimiento, mutación, accesibilidad…) | La que fije el estándar de testing (ver [Suites de prueba](#suites-de-prueba-fijas-y-configuradas)) | Una por cada clase de prueba que **declare el estándar de testing** del repo, en su orden de declaración. Sin estándar, o sin más requisitos que los de las fijas, **no hay ninguna**: no inventar suites. |
-| 6 | Compilación | Bloqueante (Condicional en Python sin empaquetado) | FAIL si exit ≠ 0. En stacks compilados (Java, Go, Rust, .NET) cubre la compilación. Prerrequisito habitual de e2e. |
-| 7 | E2E | Condicional (Bloqueante si el estándar de testing la exige) | Se ejecuta sobre el artefacto ya compilado. **No es fija:** sin config e2e queda en `N/A` y **se omite del informe**, salvo que el estándar la declare (entonces es `SKIPPED` y sí se lista). |
-| 8 | Análisis estático (Sonar) | Informativo | Nunca bloquea. |
+| 3 | **Validaciones de arquitectura** — el runner determinista del repo (`scripts/arch/verify.<ext>`, lo crea `arch-manage`) | Condicional: Bloqueante **si el repo tiene runner**; `N/A` si no lo tiene | FAIL si exit ≠ 0 (violación de un criterio `bloqueante`). Los criterios `warning` que el runner reporta sin romper el exit son informativos. **No se inventa el comando:** sin `scripts/arch/verify.*` ni checks equivalentes, `N/A` y **fila omitida**. |
+| 4 | Pruebas unitarias — **suite fija** | Bloqueante | FAIL si exit ≠ 0 o algún test falla. |
+| 5 | Cobertura — **suite fija** | Bloqueante **si el proyecto tiene tooling de cobertura**; `N/A` si no lo tiene en absoluto | PASS si exit 0 **y** (sin umbrales configurados **o** umbrales cumplidos). FAIL si exit ≠ 0 **o** umbral configurado incumplido. |
+| 6 | **Suites configuradas** (integración, contrato, rendimiento, mutación, accesibilidad…) | La que fije el estándar de testing (ver [Suites de prueba](#suites-de-prueba-fijas-y-configuradas)) | Una por cada clase de prueba que **declare el estándar de testing** del repo, en su orden de declaración. Sin estándar, o sin más requisitos que los de las fijas, **no hay ninguna**: no inventar suites. |
+| 7 | Compilación | Bloqueante (Condicional en Python sin empaquetado) | FAIL si exit ≠ 0. En stacks compilados (Java, Go, Rust, .NET) cubre la compilación. Prerrequisito habitual de e2e. |
+| 8 | E2E | Condicional (Bloqueante si el estándar de testing la exige) | Se ejecuta sobre el artefacto ya compilado. **No es fija:** sin config e2e queda en `N/A` y **se omite del informe**, salvo que el estándar la declare (entonces es `SKIPPED` y sí se lista). |
+| 9 | Análisis estático (Sonar) | Informativo | Nunca bloquea. |
 
-El orden sigue la pirámide de tests (*rápido → lento*, *dependencias antes que consumidores*): estático (tipado/linter) → unit+coverage → suites configuradas → build → e2e → sonar. Una suite configurada que **requiera el artefacto compilado** (rendimiento, carga, accesibilidad sobre la app desplegada) se ejecuta después de build, junto a e2e. El fail-fast solo aplica al tipado, para evitar ruido en cascada. Justificación detallada en [`references/execution.md`](references/execution.md#paso-2--ejecutar-los-checks).
+El orden sigue la pirámide de tests (*rápido → lento*, *dependencias antes que consumidores*): estático (tipado/linter/arquitectura) → unit+coverage → suites configuradas → build → e2e → sonar. Las validaciones de arquitectura son **análisis estático determinista** —no tocan la red ni levantan servicios—, por eso van con el resto del estático y no con las suites de prueba. Una suite configurada que **requiera el artefacto compilado** (rendimiento, carga, accesibilidad sobre la app desplegada) se ejecuta después de build, junto a e2e. El fail-fast solo aplica al tipado, para evitar ruido en cascada. Justificación detallada en [`references/execution.md`](references/execution.md#paso-2--ejecutar-los-checks).
 
 > **Cobertura sin tooling — no es un callejón sin salida.** Si el repo **no tiene ninguna herramienta ni configuración** de cobertura, el check es `N/A` (el proyecto nunca lo pidió), no `SKIPPED`: aplica la mnemónica de [SKIPPED vs N/A](#skipped-vs-na-definición-tajante) y el veredicto no queda condenado a `INCOMPLETE` de forma permanente. En ese caso, **señalarlo en Próximas acciones** como recomendación (configurar cobertura), sin bloquear. En cuanto exista config o herramienta, el check vuelve a ser Bloqueante y su ausencia de ejecución sí es `SKIPPED`.
 
-> **Los checks de prueba alimentan la caché de pruebas** —las dos fijas (`unit`, `coverage`) más `e2e` y las suites configuradas, cuando existen— que consume `trace-validate` — ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate). Tipado, linter, build y sonar no producen suites.
+> **Los checks deterministas alimentan la caché de `test-run.json`** —las dos fijas (`unit`, `coverage`), más `e2e` y las suites configuradas cuando existen, más `architecture` cuando el repo tiene runner— ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate). Sus consumidores son `trace-validate` (las suites de prueba; **ignora `architecture`**, que no es cobertura funcional) y `arch-audit` (solo `architecture`). Tipado, linter, build y sonar no producen entradas.
 
 ---
 
@@ -166,7 +182,7 @@ El **conjunto de pruebas** de una corrida tiene dos partes, y solo la primera es
 > corrida cubre un submódulo o un módulo de monorepo, el estándar que manda es su
 > `docs/standards/testing.md`, y solo si ese no existe se cae al del repo principal. Es coherente con
 > `arch-manage`, que escribe los estándares en la raíz del código que gobiernan (ver
-> [`../../reference/artifacts.md`](../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions)).
+> [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions)).
 > Todas las menciones a `docs/standards/testing.md` de este skill se leen contra esa raíz.
 
 **Reglas:**
@@ -174,7 +190,7 @@ El **conjunto de pruebas** de una corrida tiene dos partes, y solo la primera es
 - **Lo que no aplica no se lista.** La tabla del informe incluye **solo los checks que se ejecutaron**, más `unit` y `coverage` siempre. Cualquier otro check en `N/A` —sin stack/config detectable, o excluido por un modificador del usuario— **se omite del informe**: no lleva fila, y no se añade nota al pie ni sección que enumere lo omitido. Esto vale para `e2e` igual que para tipado, linter, build o sonar.
 - **El estándar es la única fuente de las suites configuradas** (salvo `e2e`, que sale del catálogo de checks). Si el repo no tiene estándar de testing, o su estándar no declara más clases de prueba que las fijas, la corrida son **solo `unit`, `coverage` y —si hay config— `e2e`**. No se añade ninguna otra suite por haberla detectado en el repo.
 - **Solo cuentan los requisitos vigentes.** Un requisito con `**Estado:** Deprecated` o `Superseded` no se ejecuta ni se lista: dejó de ser exigible.
-- **La categoría sale del enunciado normativo** del requisito (RFC 2119, ver [`../../reference/language.md`](../../reference/language.md)): **DEBE / MUST → Bloqueante**; **DEBERÍA / PUEDE (SHOULD / MAY) → Condicional**. Si el enunciado no es claro, tratarla como **Condicional** y anotarlo en el detalle del check.
+- **La categoría sale del enunciado normativo** del requisito (RFC 2119, ver [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md)): **DEBE / MUST → Bloqueante**; **DEBERÍA / PUEDE (SHOULD / MAY) → Condicional**. Si el enunciado no es claro, tratarla como **Condicional** y anotarlo en el detalle del check.
 - **El estándar puede endurecer un check, nunca ablandarlo.** Si declara e2e con **DEBE**, e2e pasa de Condicional a Bloqueante (y, al estar declarado, un e2e que no se puede ejecutar es `SKIPPED`, no `N/A`, así que **sí lleva fila**). Lo que el stack exige como Bloqueante (unit, coverage) sigue siéndolo aunque el estándar calle o suavice.
 - **Suite declarada que no se puede ejecutar → `SKIPPED`** (`INCOMPLETE`), no `N/A`: el estándar es precisamente la declaración de que ese check debe correr — es la mnemónica de [SKIPPED vs N/A](#skipped-vs-na-definición-tajante) aplicada al pie de la letra.
 - **Suite presente en el repo pero no declarada en el estándar:** **no se ejecuta y no bloquea**. Anotarla en **Próximas acciones** como recomendación de declararla en el estándar (vía `arch-manage`), igual que se hace con la cobertura sin tooling.
@@ -208,10 +224,12 @@ Las **claves** de los modificadores son siempre en inglés (estándar). Si el us
 | `include-eslint-warnings` | Alias de `include-linter-warnings` para Node. |
 | `no-tests` | Omitir **todos los checks de pruebas**: las dos fijas (unit, coverage), e2e y todas las suites configuradas (→ `N/A`, no `SKIPPED`: lo pidió el usuario). Solo `unit` y `coverage` conservan su fila en el informe, con estado `N/A`; el resto se omite. |
 | `no-unit-tests` / `no-e2e` / `no-coverage` / `no-typecheck` | Omitir solo ese check (→ `N/A`). El modificador del usuario **gana siempre**: `no-e2e` deja e2e en `N/A` —y por tanto **sin fila**— aunque el estándar de testing la declare con DEBE; nunca se convierte en `SKIPPED`. `unit` y `coverage` conservan su fila con estado `N/A`, por ser fijas. |
+| `no-arch` | Omitir las **validaciones de arquitectura** (→ `N/A`). No confundir con `no-tests`: el runner de arquitectura no es una suite de prueba y `no-tests` **no** lo omite. |
 | `no-<suite>` | Omitir una **suite configurada** por su `ID` de requisito en el estándar (p. ej. `no-integration`, `no-contract`) → `N/A`. |
 | `only <check>` | Ejecutar ÚNICAMENTE ese check (p. ej. `only build`); el resto → `N/A`. |
+| `no-cache` | **Ignorar `test-run.json`** aunque esté fresco: re-ejecutar todas las suites y las validaciones de arquitectura, y sobrescribir la caché. Es la escotilla para lo que la clave no ve —dependencias reinstaladas, un servicio externo, un sitio de documentación que compila `.md`—. Sin él, una caché fresca **siempre** se reutiliza, en cualquier modo. |
 | `save-report` | **Además** del informe vigente `docs/audits/quality-check.md` (que siempre se escribe), guardar una copia con marca de tiempo en `docs/audits/quality-check-<YYYYMMDD-HHMMSS>.md` para conservar histórico. |
-| `tests-only` | Ejecutar **solo los checks de ejecución de pruebas** (las dos fijas —unit, coverage— más e2e y las suites configuradas, cuando existen; build solo si es prerrequisito de alguna de ellas); omitir tipado/linter/sonar. Pensado como **objetivo de delegación de `trace-validate`**: honra la caché de corrida de pruebas — si existe un `test-run.json` **fresco** (fingerprint coincide, ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate)) **reutiliza** ese resultado sin re-ejecutar; si no, ejecuta y escribe/actualiza la caché. **Modo no interactivo:** devuelve los resultados por suite y la ruta de `test-run.json` **sin** entrar al ciclo de corrección, **sin** emitir veredicto y **sin** escribir `quality-check.md` — su único artefacto es `test-run.json`. Si hay suites en FAIL, se reportan como tales; corregirlas es decisión del flujo que invocó, no de esta corrida. |
+| `tests-only` | Ejecutar **solo los checks deterministas que alimentan `test-run.json`** (las dos fijas —unit, coverage— más e2e y las suites configuradas, cuando existen, más las **validaciones de arquitectura** si el repo tiene runner; build solo si es prerrequisito de alguna de ellas); omitir tipado/linter/sonar. Las validaciones de arquitectura entran aquí **para que la caché escrita cubra siempre el conjunto vigente**: una corrida que las dejara fuera produciría una caché parcial, que no se escribe. Pensado como **objetivo de delegación de `trace-validate`**: honra la caché de corrida de pruebas — si existe un `test-run.json` **fresco** (fingerprint coincide, ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate)) **reutiliza** ese resultado sin re-ejecutar; si no, ejecuta y escribe/actualiza la caché. **Modo no interactivo:** devuelve los resultados por suite y la ruta de `test-run.json` **sin** entrar al ciclo de corrección, **sin** emitir veredicto y **sin** escribir `quality-check.md` — su único artefacto es `test-run.json`. Si hay suites en FAIL, se reportan como tales; corregirlas es decisión del flujo que invocó, no de esta corrida. |
 
 > Todo check omitido **por modificador del usuario** es `N/A`, nunca `SKIPPED`: una omisión solicitada no convierte el veredicto en `INCOMPLETE`.
 
@@ -277,7 +295,7 @@ Solo si el usuario autorizó corregir. Depende de si hay un **artefacto de traba
 
 > **Buscar también en `docs/archive/`.** Al cerrar un trabajo, `work-integrate` y `pr-create` pueden mover su carpeta a `docs/archive/user-stories/` o `docs/archive/work-items/`. Si no está en la ruta activa, mirar ahí antes de concluir que «no hay artefacto» y dejar de delegar en `work-implement` — y **nunca** crear la carpeta en la ruta activa por no haberla encontrado. Este skill **solo lee** la carpeta (para resolver el artefacto y decidir si delega); no escribe nada dentro. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 >
-> **Cuándo se da.** En el flujo normal el archivado ocurre **después** de esta puerta (`work-integrate` paso 10, `pr-create` Paso 5), así que aquí el artefacto suele estar todavía en la ruta activa. Se lo encuentra archivado al **repetir** el cierre tras una corrección, o al correr `quality-check` sobre trabajo ya integrado — dos situaciones normales, no excepcionales.
+> **Cuándo se da.** En el flujo normal el archivado ocurre **después** de esta puerta (`work-integrate` paso 11, ya en la rama base tras el merge; `pr-create` Paso 5), así que aquí el artefacto suele estar todavía en la ruta activa. Se lo encuentra archivado al **repetir** el cierre tras una corrección, o al correr `quality-check` sobre trabajo ya integrado — dos situaciones normales, no excepcionales.
 >
 > **Una rama `test/` NO es una rama suelta.** Nace en `work-implement` (`references/test-cases.md`, Paso 1) siempre asociada a un artefacto padre y con su `progress.md`, y `work-integrate` la trata como trabajo integrable de pleno derecho. Se resuelve con el mismo mecanismo que `feature/` o `fix/`. Ahí el fallo típico es **una prueba en rojo**, y el skill que sabe escribir esa prueba es `work-implement` (tipos `TC-XXX` / `FT-XXX`) — delegar es especialmente importante en este caso, no la excepción.
 
@@ -289,7 +307,7 @@ Si no se resuelve un artefacto del plugin, **comprobar antes si hay uno externo*
 
 > **En ramas `test/`, no presuponer que el fallo está en la prueba.** Una prueba en rojo ahí puede significar que la prueba está mal **o** que hay una discrepancia real entre el `TC-XXX` y el comportamiento del código. Esa decisión no la toma este skill: se delega en `work-implement`, que aplica su criterio para los tipos `TC-XXX` / `FT-XXX` (parar, presentar la evidencia y decidir con el usuario si se corrige producción, si se corrige la prueba, o si vuelve a `test-define`). **Nunca relajar una aserción para forzar el verde.**
 
-**Tras la delegación**, este skill retoma el control: **verifica que el arreglo funciona** re-ejecutando el check o la prueba que fallaba y, solo si pasa, **recalcula el fingerprint** y **reinicia la corrida completa** (Paso 2). Si el arreglo no resuelve el fallo, seguir iterando antes de reiniciar.
+**Tras la delegación**, este skill retoma el control: **verifica que el arreglo funciona** re-ejecutando el check o la prueba que fallaba y, solo si pasa, **recalcula el fingerprint** y **reinicia la corrida completa** (Paso 2). Si el arreglo no resuelve el fallo, seguir iterando antes de reiniciar — **dentro del límite de `escalation.maxAttempts`** sobre ese mismo fallo (ver [Límite de intentos y escalamiento](#límite-de-intentos-y-escalamiento)). Agotado el límite, no se hace un intento más: se escala con el parte de bloqueo.
 
 **Si `work-implement` devuelve «corrección no aplicada»**, la iteración **se detiene ahí**. Ese resultado significa que el arreglo excedía su alcance acotado, que hay una discrepancia de especificación, o que el fallo es preexistente — y viene con el motivo y el skill al que se escaló (`work-plan` / `test-define`). En ese caso: **no reintentar la delegación sobre ese mismo fallo** ni corregirlo aquí como sustituto. Construir el informe (Paso 4) recogiendo el motivo y el escalado en **Próximas acciones**, emitir **`REJECTED`** y terminar. El cierre queda bloqueado hasta que el escalado se resuelva — que es el resultado correcto, no un flujo incompleto.
 
@@ -314,20 +332,22 @@ Cuando el trabajo está descrito por un artefacto externo y el usuario autoriza 
 
 ## Caché de corrida de pruebas (compartida con trace-validate)
 
-Cuando este skill **ejecuta los checks de pruebas** (las fijas —unit, coverage— más e2e y las suites
-configuradas en el estándar de testing), persiste el resultado en `.sdd-devkit/test-run.json` —ruta
+Cuando este skill **ejecuta los checks deterministas** (las fijas —unit, coverage— más e2e y las suites
+configuradas en el estándar de testing, más las **validaciones de arquitectura** cuando el repo tiene
+runner), persiste el resultado en `.sdd-devkit/test-run.json` —ruta
 **fija**, en la raíz del repositorio, no versionado (se sobrescribe en cada corrida)— para que
-`trace-validate` **no vuelva a correr las pruebas**: si el código no cambió desde esta corrida, reutiliza
-estos resultados; si cambió, delega de nuevo en este skill. Este skill es una **compuerta de cierre**
+`trace-validate` **no vuelva a correr las pruebas** y `arch-audit` **no vuelva a correr el runner de
+arquitectura**: si el código no cambió desde esta corrida, reutilizan estos resultados; si cambió, se
+re-ejecuta. Cada consumidor lee **solo sus entradas** —`trace-validate` las suites de prueba,
+`arch-audit` la entrada `architecture`—, con **las mismas reglas de frescura** para todas: no hay una
+clave ni un contrato aparte para las validaciones de arquitectura. Este skill es una **compuerta de cierre**
 (corre al integrar o antes del PR, sobre la rama consolidada) y el único productor autorizado del
 archivo; las pruebas acotadas que `work-implement` corre durante el desarrollo no lo generan ni lo
 consumen.
 
 La clave de frescura es el **`FINGERPRINT` canónico** —compartido, con la misma receta, entre las tres
 puertas del cierre (`test-run.json` aquí, `coverage.md` en `trace-validate`, `docs/audits/code-review.md`
-en `code-review`)—: un hash del commit + working tree + cambios sin commitear, excluyendo toda carpeta
-oculta, cualquier `docs/` y los `coverage.md` sueltos, para que escribir un artefacto que produce la
-propia tubería no desplace la clave.
+en `code-review`)—: un hash del commit + working tree + cambios sin commitear, excluyendo toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`, para que ni escribir un artefacto de la propia tubería ni editar documentación desplace la clave. **La clave se mueve solo cuando cambia algo que puede alterar el resultado de una prueba o de una compilación.**
 
 Detalle completo (receta exacta del fingerprint y por qué cada exclusión existe, esquema `test-run.json`
 con la semántica de cada campo, y cuándo se escribe/reutiliza la caché) en
@@ -361,9 +381,13 @@ El orden recomendado en el cierre es `quality-check` → `code-review` → `trac
 
 Es un proceso **posterior a la implementación**: no forma parte del desarrollo de tareas. Sin invocación explícita, no corresponde usarlo. (Que `work-implement` reciba una delegación de corrección **desde** este skill no invierte la relación: sigue siendo el cierre quien decide cuándo se ejecuta.)
 
+### Rutas de las referencias compartidas
+
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+
 ### Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`../../reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 

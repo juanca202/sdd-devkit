@@ -22,7 +22,7 @@ uno pasado por argumento.
 > estándar vive en un submódulo, sus checks y su runner viven en el `scripts/arch/` de **ese** submódulo, se
 > versionan con él y se ejecutan desde su raíz. El lenguaje del runner es el del stack de esa raíz, que puede
 > diferir del stack del repo principal. Nunca mezclar en un mismo runner checks de estándares de raíces
-> distintas. Ver [`../../../reference/artifacts.md`](../../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
+> distintas. Ver [`${PLUGIN_ROOT}/reference/artifacts.md`](../../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
 
 ## Propuesta de criterios y selección del usuario
 

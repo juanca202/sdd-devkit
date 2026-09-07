@@ -39,7 +39,7 @@ Ritmo de confirmación y control de flujo durante `work-implement`. Detalle en [
 |-------|---------|-----------------|
 | `confirmByUnit` | `always` · `never` | Si se pide confirmación del usuario por cada unidad de trabajo implementada. |
 | `uncommittedChanges` | `commit` · `stash` · `ask` | Qué hacer con cambios sin commitear al iniciar o reanudar una sesión de implementación. |
-| `workTree` | `ask` · `always` · `never` | Si el trabajo se aísla en un git worktree temporal. |
+| `workTree` | `ask` · `always` · `never` | Si el trabajo se aísla en un git worktree temporal. Con worktrees, **el árbol principal no se toca**: la rama del artefacto se crea y se usa desde su propio worktree, y la rama en la que estás al empezar es la misma al terminar (ver [`work-implement/references/worktrees.md`](skills/work-implement/references/worktrees.md)). |
 | `workTreePath` | ruta (ej. `../worktrees`) | Dónde crear esos worktrees temporales. |
 | `maxParallel` | entero, `-1` = sin límite | Máximo de tareas ejecutándose en paralelo. |
 | `archiveMode` | `ask` · `always` · `never` | Al cerrar un trabajo, si `work-integrate`/`pr-create` mueven su carpeta a `archivePath`: preguntando (mostrando origen/destino), siempre o nunca. |
@@ -60,6 +60,17 @@ Puertas de cierre que ejecuta `work-integrate` antes del merge. Detalle en [refe
 | `handoff` | `always` · `ask` | Dentro de `work-integrate`, tras un veredicto de cierre que deja pasar (puertas activas en `APPROVED`/`APPROVED_WITH_NOTES`): continuar con archivado y merge sin preguntar, o pedir confirmación. |
 
 Una puerta con `enabled: false` no bloquea el merge, pero tampoco cuenta como aprobada.
+
+## `escalation`
+
+Límite de intentos ante un problema que no se resuelve, y qué hacer al agotarlo. Corta el bucle de reintentos en los skills que **implementan código o verifican pruebas** (`work-implement`, `quality-check`, `code-review`, `trace-validate`, `work-integrate`, `arch-audit`) y en los agentes especialistas. Detalle en [reference/escalation.md](reference/escalation.md).
+
+| Campo | Valores | Para qué sirve |
+|-------|---------|-----------------|
+| `maxAttempts` | entero, `-1` = sin límite | Intentos consecutivos —diagnóstico → cambio → reverificación— sobre el **mismo** problema antes de escalar. El contador es **por problema** (identificado por su firma: test + assert, regla + archivo), no global, y se reinicia cuando el problema se resuelve o el error pasa a ser genuinamente distinto. |
+| `onLimit` | `ask` · `report` | Al agotarlos: presentar el parte de bloqueo y **preguntar** al usuario cómo seguir, sin avanzar hasta su respuesta (`ask`); o registrar el problema como `BLOCKED` en el informe, seguir con lo que no dependa de él y terminar informando lo bloqueado, sin preguntar (`report`, pensado para ejecuciones desatendidas). |
+
+Bloque **opcional**: si falta en `settings.json` se aplican los valores por defecto (`maxAttempts: 3`, `onLimit: ask`), así que una configuración anterior a esta opción sigue siendo válida. El límite es un techo, no una cuota: si al planificar un intento no hay una hipótesis nueva que lo justifique, se escala ya. Un bloqueo abierto nunca cierra en `APPROVED`, y nunca se "resuelve" desactivando el test, saltándolo o relajando el assert.
 
 ## `git`
 

@@ -16,6 +16,16 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** las descripciones de tests y los comentarios dentro de archivos de test van en **inglés** (convención del repositorio), salvo que el estándar de testing o los archivos vecinos indiquen otro idioma. La salida y los mensajes de error de las herramientas no se traducen.
 
+## Límite de intentos y escalamiento
+
+Antes de ejecutar este agente, DEBES leer [`../reference/escalation.md`](../reference/escalation.md).
+
+Las reglas de `escalation.md` son obligatorias y determinan cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve (una prueba en rojo, un build que no compila, un check que sigue fallando) antes de escalar.
+
+**Delta de la delegación:** como agente invocado por un skill, **no preguntas al usuario por tu cuenta**. Al agotar `escalation.maxAttempts` sobre un problema, detienes el trabajo sobre él y **devuelves el parte de bloqueo al skill que te invocó** —qué falla con su firma y error literal, qué intentaste en cada intento, qué descartaste, dónde te atascas y qué quedó aplicado en el árbol—; quien escala al usuario es ese skill. Nunca «resuelvas» un bloqueo desactivando o saltando una prueba, relajando una aserción ni bajando un umbral.
+
+No continúes hasta haber leído y aplicado `escalation.md`.
+
 ## Contexto de ejecución
 
 Este agente **no comparte el hilo de la conversación principal**. Cuando un agente padre o el usuario te deleguen trabajo, deben invocarte con la **herramienta Task**, que levanta un **hilo separado e independiente** de la sesión de chat actual. En ese hilo:

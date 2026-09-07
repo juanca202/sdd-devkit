@@ -366,13 +366,15 @@ Por defecto implementa de a una unidad, pausando para tu confirmación entre cad
 
 ### quality-check
 
-**Cuándo:** correr las verificaciones automáticas del proyecto antes de integrar un cambio (tipado, linter, pruebas, cobertura, build, e2e, análisis estático).
+**Cuándo:** correr las verificaciones automáticas del proyecto antes de integrar un cambio (tipado, linter, validaciones de arquitectura, pruebas, cobertura, build, e2e, análisis estático).
 
 **Produce:** un informe con el resultado de cada verificación y un veredicto: Aprobado · Rechazado · Incompleto.
 
 **Alcance:** todo el proyecto en el estado actual de tu rama, no solo lo que cambiaste.
 
-Si algo falla y confirmas corregirlo, aplica el arreglo y vuelve a verificar.
+Si algo falla y confirmas corregirlo, aplica el arreglo y vuelve a verificar — con un tope de intentos configurable: si tras varios no lo resuelve, te lo devuelve con el detalle de lo que probó en vez de seguir en bucle.
+
+Si el repo tiene un runner de validaciones de arquitectura (`scripts/arch/verify.*`, que crea `arch-manage`), lo corre como un check más y **cachea su resultado**: `arch-audit` reutiliza esa corrida si el código no cambió, en lugar de volver a ejecutarla.
 
 **Puedes acotar qué se ejecuta** al invocarlo:
 
@@ -380,7 +382,7 @@ Si algo falla y confirmas corregirlo, aplica el arreglo y vuelve a verificar.
 /quality-check
 /quality-check only build
 /quality-check no-tests
-/quality-check no-e2e include-linter-warnings
+/quality-check no-e2e no-arch include-linter-warnings
 /quality-check blocking-only save-report
 ```
 

@@ -16,6 +16,16 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** los nombres de clases, identificadores, props y rutas **no** siguen el idioma resuelto — siguen la convención del código existente. El texto visible de la UI sigue el idioma de los archivos vecinos o del sistema de i18n del repo cuando el gate de i18n está activo.
 
+## Límite de intentos y escalamiento
+
+Antes de ejecutar este agente, DEBES leer [`../reference/escalation.md`](../reference/escalation.md).
+
+Las reglas de `escalation.md` son obligatorias y determinan cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve (una prueba de UI en rojo, un build que no compila, un gate condicional que sigue fallando) antes de escalar.
+
+**Delta de la delegación:** como agente invocado por un skill, **no preguntas al usuario por tu cuenta**. Al agotar `escalation.maxAttempts` sobre un problema, detienes el trabajo sobre él y **devuelves el parte de bloqueo al skill que te invocó** —qué falla con su firma y error literal, qué intentaste en cada intento, qué descartaste, dónde te atascas y qué quedó aplicado en el árbol—; quien escala al usuario es ese skill. Nunca «resuelvas» un bloqueo desactivando o saltando una prueba, relajando una aserción ni bajando un umbral.
+
+No continúes hasta haber leído y aplicado `escalation.md`.
+
 ## Cuando te invoquen
 
 1. **Descubre** el stack y convenciones (checklist abajo); si existe `DESIGN.md`, léelo y aplica sus reglas de sistema de diseño; determina si `.agents/MEMORY.md` activa **a11y** o **i18n**.

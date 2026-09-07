@@ -242,6 +242,30 @@
         }
       }
     },
+    "escalation": {
+      "type": "object",
+      "description": "Limite de intentos consecutivos sobre un mismo problema irresoluble (una prueba que no pasa, una regla de arquitectura violada, un build que no compila) y que hacer al agotarlo. Existe para cortar el bucle de reintentos en los skills que implementan codigo o verifican pruebas. Lo resuelve reference/escalation.md. Bloque opcional: si falta, se aplican los valores por defecto del catalogo (maxAttempts 3, onLimit ask), de modo que un settings.json anterior a esta opcion sigue siendo valido.",
+      "required": [
+        "maxAttempts",
+        "onLimit"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "maxAttempts": {
+          "type": "integer",
+          "minimum": -1,
+          "description": "Numero maximo de intentos consecutivos (diagnostico -> cambio -> reverificacion) sobre un mismo problema antes de escalar al usuario. El contador es por problema, identificado por su firma, no global. Usa -1 para sin limite."
+        },
+        "onLimit": {
+          "type": "string",
+          "description": "Que hacer al agotar maxAttempts: presentar el parte de bloqueo y preguntar al usuario como seguir, sin avanzar hasta su respuesta (ask), o registrar el problema como BLOCKED en el informe, continuar con el alcance que no dependa de el y terminar informando lo bloqueado, sin preguntar (report).",
+          "enum": [
+            "ask",
+            "report"
+          ]
+        }
+      }
+    },
     "git": {
       "type": "object",
       "description": "Política de confirmación de commits y de push del skill git-commit.",

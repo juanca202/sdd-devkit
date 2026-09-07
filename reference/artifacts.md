@@ -55,7 +55,7 @@ específico (una salida propia, una excepción de ruta).
 | Informe de calidad | `docs/audits/quality-check.md` (+ histórico `docs/audits/quality-check-<YYYYMMDD-HHMMSS>.md`) | `quality-check` |
 | Informe de code review | `docs/audits/code-review.md` (+ histórico `docs/audits/code-review-<YYYYMMDD-HHMMSS>.md`) | `code-review` |
 | Informe de auditoría de arquitectura | `<raíz-arq>/docs/audits/arch-audit-YYYY-MM-DD.md` (con sufijo `-HHMM` si ya hay uno de ese día) | `arch-audit` |
-| Caché de corrida de pruebas | `.sdd-devkit/test-run.json` (**ubicación fija**, no por unidad) | `quality-check` |
+| Caché de corrida de checks deterministas (pruebas + validaciones de arquitectura) | `.sdd-devkit/test-run.json` (**ubicación fija**, no por unidad) | `quality-check` (productor único; la consumen `trace-validate` y `arch-audit`) |
 | Estado de iteración para el seguimiento de especificaciones | `.sdd-devkit/current-iteration.json` (**ubicación fija**, vive mientras dura la unidad o corrección en curso) | `work-implement` |
 
 ## Raíz de arquitectura (ADR, estándares y fitness functions)

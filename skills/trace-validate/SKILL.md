@@ -94,6 +94,18 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 ---
 
+## Límite de intentos y escalamiento
+
+Antes de ejecutar este skill, DEBES leer [`../../reference/escalation.md`](../../reference/escalation.md).
+
+Las reglas de `escalation.md` son obligatorias y determinan, vía `escalation.maxAttempts` y `escalation.onLimit`, cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve —una corrida de pruebas que no se logra completar o un criterio que no se logra evidenciar— y qué se hace al agotarlos: detener el trabajo sobre ese problema, presentar el **parte de bloqueo** y preguntar al usuario cómo seguir (`ask`), o marcarlo como `BLOCKED` en el informe y continuar con el alcance que no dependa de él (`report`).
+
+El contador es **por problema**, no global, y **el límite es un techo, no una cuota**: si no hay una hipótesis nueva que justifique el siguiente intento, se escala ya. Nunca se «resuelve» un bloqueo desactivando o saltando una prueba, relajando una aserción ni bajando un umbral.
+
+No continúes hasta haber leído y aplicado `escalation.md`.
+
+---
+
 ## Información requerida antes de generar el reporte
 
 No inventar nada. Si un dato no es explícito, obtenerlo del repo o preguntar al usuario.
@@ -262,7 +274,7 @@ cambió.
 
 | Clave | Qué cubre | Cómo se calcula |
 |-------|-----------|-----------------|
-| `FINGERPRINT` | **El código y los tests.** El fingerprint canónico de la tubería, idéntico al de `quality-check` y `code-review`: excluye toda carpeta oculta, cualquier `docs/` y los `coverage.md` sueltos, para que escribir un artefacto generado no invalide la caché. Receta exacta en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate). | Sobre todo el árbol, menos las exclusiones |
+| `FINGERPRINT` | **El código y los tests.** El fingerprint canónico de la tubería, idéntico al de `quality-check` y `code-review`: excluye toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`, para que ni escribir un artefacto generado ni editar documentación invalide la caché: **solo se mueve cuando cambia el código**. Receta exacta en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate). | Sobre todo el árbol, menos las exclusiones |
 | `SPEC_FINGERPRINT` | **Los criterios y los casos de prueba** del artefacto que se valida: su `README.md` y su carpeta `test-cases/`. Viven bajo `docs/specs/`, que el `FINGERPRINT` excluye — sin esta segunda clave, reescribir un criterio no invalidaría nada. | Sobre la **carpeta del artefacto**, excluyendo su propio `coverage.md` |
 
 `bash
@@ -286,9 +298,10 @@ donde `$ARTEFACTO` es la carpeta del trabajo (`docs/specs/user-stories/US-042-�
 > **Un solo cálculo por corrida, con una excepción.** Ambos hashes se computan una vez, en el Paso 0. El
 > `FINGERPRINT` sirve para las **dos** comprobaciones de frescura —la del `coverage.md` (Paso 0) y la del
 > `test-run.json` (Paso 4, delegación)—; el `SPEC_FINGERPRINT` solo para la primera. Los dos se regraban en el
-> Paso 7. **Si hubo delegación en `tests-only`, recalcular el `FINGERPRINT` antes de grabar:** esa corrida no
-> toca código, pero sí puede normalizar el `.gitignore` la primera vez que `quality-check` corre en el repo, y
-> eso mueve la clave. El `SPEC_FINGERPRINT` no se ve afectado.
+> Paso 7. La delegación en `tests-only` no toca código (y el `.gitignore` que puede normalizar está excluido de
+> la receta), así que el `FINGERPRINT` calculado en el Paso 0 sigue siendo válido al grabar: **no hace falta
+> recalcularlo**. Si aun así el valor guardado por `quality-check` en `test-run.json` no coincide con el del
+> Paso 0, algo cambió el código en medio: tratar la caché como obsoleta, no como fresca.
 
 **Comportamiento (Paso 0 del flujo):**
 
@@ -332,8 +345,8 @@ una **corrida completa** de la rama, este artefacto vive en una **ubicación fij
 
 1. **Reusar el fingerprint canónico** ya calculado en el Paso 0 (mismo valor; no recalcular).
 2. **Si existe `test-run.json`, su `schema` es `test-run/v1`, su `generatedBy` es `"quality-check"`, su `git.fingerprint` coincide y su
-   `suites[]` cubre el conjunto de suites vigente** (las dos fijas, más e2e si el repo la ejecuta y las que
-   declare el estándar de testing) → caché **fresca**: no hubo cambios desde la corrida de `quality-check`. **Reutilizar**
+   `suites[]` cubre el conjunto vigente** (las dos fijas, más e2e si el repo la ejecuta, las que
+   declare el estándar de testing y la entrada `architecture` si el repo tiene runner de arquitectura) → caché **fresca**: no hubo cambios desde la corrida de `quality-check`. **Reutilizar**
    los resultados por suite sin ejecutar nada. Si `generatedBy` trae cualquier otro valor,
    **descartar la caché** y delegar: `quality-check` es el único productor autorizado. **Si el estándar de
    testing cambió** desde la corrida (suites de más o de menos), la caché es obsoleta **aunque el fingerprint
@@ -356,7 +369,11 @@ entrada para ella —y **no** hay que buscar una clave fija llamada `integration
 `Integration` se resuelve contra la suite donde el repo la tenga (típicamente `unit`) o queda
 `NOT_RUN`. **No inferir una suite ausente ni inventar su resultado.** La suite **`coverage` no se mapea a ningún
 criterio**: es cobertura de líneas/ramas, una métrica del repo que juzga `quality-check`, no cobertura
-funcional; si viene en `FAIL`, mencionarlo en «Observaciones y pendientes» y nada más. Mapeo al reporte: `PASS`→`PASS`,
+funcional; si viene en `FAIL`, mencionarlo en «Observaciones y pendientes» y nada más. **La entrada
+`architecture` tampoco se mapea**: es la corrida del runner de validaciones de arquitectura del repo,
+cacheada en el mismo archivo para `arch-audit`. **No es una clase de prueba**, no cubre ningún criterio de
+aceptación y **no se lista en la matriz**; si viene en `FAIL`, como mucho una línea en «Observaciones y
+pendientes». Su presencia o ausencia **nunca** degrada una fila a `NOT_RUN`. Mapeo al reporte: `PASS`→`PASS`,
 `FAIL`→`FAIL`, `SKIPPED`→`NOT_RUN`, `N/A` (el repo no tiene esa suite)→`NOT_RUN`, dejando en
 «Observaciones y pendientes» que esa clase de prueba no existe en el repo. Un criterio cuya prueba asociada dio `FAIL` **y
 se pudo aislar que fue la suya** se reporta `UNCOVERED` con el fallo en Observaciones; si la suite falló
@@ -473,4 +490,5 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 - [`../../reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 - [`../../reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
 - [`../../reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`../../reference/escalation.md`](../../reference/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 

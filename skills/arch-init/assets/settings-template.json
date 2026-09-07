@@ -32,6 +32,10 @@
     },
     "handoff": "ask"
   },
+  "escalation": {
+    "maxAttempts": 3,
+    "onLimit": "ask"
+  },
   "git": {
     "commitConfirmation": "always",
     "push": "never",

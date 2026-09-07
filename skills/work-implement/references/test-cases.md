@@ -95,9 +95,11 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
 ### Paso 1 - Preparar repositorio y rama
 
 1. Verificar working tree limpio; si no, parar y avisar.
-2. Resolver nombre de rama: `test/[ID del artefacto padre]-[slug]`. `git checkout` si existe; si no, `git checkout -b` desde la rama base acordada (no asumir `main`/`develop`).
+2. Resolver nombre de rama: `test/[ID del artefacto padre]-[slug]`. **Sin worktrees**, `git checkout` si existe; si no, `git checkout -b` desde la rama base acordada (no asumir `main`/`develop`). **Con worktrees**, ver la nota de abajo.
 3. Leer o crear `progress.md` en la carpeta del artefacto padre (desde `assets/progress-template.md`). Al crearlo, anadir **una entrada por unidad**: una sola entrada `FT-XXX` si la entrada es un feature, o una entrada por cada `TC-XXX` del alcance si la entrada son test cases sueltos.
 4. **Descubrir el stack de pruebas** del repositorio antes de escribir nada: runner y scripts de test del manifest, configs, convenciones de los tests vecinos y reglas de testing en `.agents/MEMORY.md`. No inventar infraestructura que el repo no tenga.
+
+> **Con worktrees (`workTree: always`, `ask` afirmativo o modo paralelo), este paso NO hace `git checkout` en el arbol principal.** Se cumple creando el worktree del artefacto (`git worktree add <workTreePath>/<artefacto> [-b <rama>] <rama-base>`) y el resto del flujo corre dentro de el. **El punto 1 (working tree limpio) sigue siendo sobre el arbol principal y va antes:** con cambios sin commitear se aplica `uncommittedChanges` (`commit` / `stash` / `ask`) igual que sin worktrees, y solo despues se crea el worktree. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
 
 ### Paso 2 - Presentar alcance
 

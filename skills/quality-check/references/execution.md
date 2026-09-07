@@ -20,32 +20,46 @@ Detalla **cómo** ejecutar las verificaciones automatizadas paso a paso y cómo 
 
 1. Identificar el ecosistema y cargar lo relativo a ese stack desde [`stacks.md`](stacks.md) (categoría por check, comando, parseo). Si no se detecta stack o el monorepo es ambiguo, parar y preguntar.
 2. **Resolver el conjunto de pruebas de la corrida:** las dos **fijas** (unit, coverage) más **e2e si el repo tiene config** y las **configuradas** en el estándar de testing — leer `docs/standards/testing.md` o, si el estándar usa la forma con carpeta, `docs/standards/testing/README.md`; tomar un bloque `## <Requisito>` por clase de prueba, con su `ID`, su `**Estado:**` (solo `Active` cuenta) y su enunciado RFC 2119 para fijar la categoría (DEBE → Bloqueante; DEBERÍA/PUEDE → Condicional). **Si no existe estándar de testing, la corrida son solo las dos fijas más e2e si hay config** — no es error ni se avisa. Detalle en [`SKILL.md` → Suites de prueba](../SKILL.md#suites-de-prueba-fijas-y-configuradas).
-3. Resolver el comando concreto de cada check (scripts del manifiesto + *fallback* canónico); para una suite configurada, usar como pista lo que su requisito diga sobre herramienta y ubicación, y **preguntar** si no se resuelve con certeza.
-4. Capturar metadata: stack detectado, rama (`git rev-parse --abbrev-ref HEAD`), commit corto (`git rev-parse --short HEAD`) y working tree. **`workingTreeClean` se evalúa con los mismos pathspecs del fingerprint** (`git status --porcelain -uall -- "${EXC[@]}"` vacío), no con un `git status` pelado: si no, el árbol saldría «sucio» por los propios artefactos de la tubería —el informe que esta corrida está a punto de escribir— y `trace-validate` publicaría un caveat falso en cada reporte.
-5. **Normalizar el `.gitignore`** (ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas)): comprobar con `git check-ignore -q .sdd-devkit/test-run.json` si la caché ya está ignorada y, solo si no lo está, añadir la línea `.sdd-devkit/test-run.json` (creando el archivo si no existe). **Va aquí, antes del paso 6, y no en la escritura de la caché:** el `.gitignore` es un archivo oculto de la **raíz**, que la receta **no** excluye, así que tocarlo desplaza la clave. Hacerlo después significaría persistir un `test-run.json` cuyo fingerprint ya no corresponde al árbol — y la caché no volvería a darse por fresca **nunca**.
-6. Calcular el **fingerprint canónico del estado del código** (recipe exacto en [Fingerprint canónico](#fingerprint-canónico); es el mismo que usan `code-review` y `trace-validate`). Clave de frescura de la caché de pruebas (ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas)).
+3. **Resolver si hay validaciones de arquitectura:** `ls scripts/arch/verify.* scripts/arch/checks/* 2>/dev/null` (lo crea `arch-manage`). Si hay runner, el check de arquitectura entra en la corrida y en el conjunto vigente de `test-run.json`; si no hay nada, es `N/A` y su fila se omite. **No inventar un comando** ni promover a runner un script que no lo sea.
+4. Resolver el comando concreto de cada check (scripts del manifiesto + *fallback* canónico); para una suite configurada, usar como pista lo que su requisito diga sobre herramienta y ubicación, y **preguntar** si no se resuelve con certeza.
+5. Capturar metadata: stack detectado, rama (`git rev-parse --abbrev-ref HEAD`), commit corto (`git rev-parse --short HEAD`) y working tree. **`workingTreeClean` se evalúa con los mismos pathspecs del fingerprint** (`git status --porcelain -uall -- "${EXC[@]}"` vacío), no con un `git status` pelado: si no, el árbol saldría «sucio» por los propios artefactos de la tubería —el informe que esta corrida está a punto de escribir— y `trace-validate` publicaría un caveat falso en cada reporte.
+6. **Normalizar el `.gitignore`** (ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas)): comprobar con `git check-ignore -q .sdd-devkit/test-run.json` si la caché ya está ignorada y, solo si no lo está, añadir la línea `.sdd-devkit/test-run.json` (creando el archivo si no existe). El `.gitignore` está **excluido** de la receta del fingerprint precisamente para que esta edición no desplace la clave; aun así se hace aquí, antes del paso 7, para que cualquier otro efecto lateral quede antes de calcularla.
+7. Calcular el **fingerprint canónico del estado del código** (recipe exacto en [Fingerprint canónico](#fingerprint-canónico); es el mismo que usan `code-review` y `trace-validate`). Clave de frescura de la caché de pruebas (ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas)).
 
 ### Paso 2 — Ejecutar los checks
 
-**Con `tests-only`** (objetivo de delegación de `trace-validate`): ejecutar únicamente los checks de
-**pruebas** (las dos fijas —unit, coverage— más e2e y las suites configuradas en el estándar de testing, cuando existan;
-build solo si es prerrequisito de alguna de ellas), omitiendo
+**Con `tests-only`** (objetivo de delegación de `trace-validate`): ejecutar únicamente los checks
+**deterministas que alimentan la caché** (las dos fijas —unit, coverage— más e2e y las suites configuradas en el estándar de testing, cuando existan,
+más las **validaciones de arquitectura** si el repo tiene runner; build solo si es prerrequisito de alguna de ellas), omitiendo
 tipado, linter y sonar. Antes de ejecutar, comprobar la **caché**: si existe `.sdd-devkit/test-run.json`
 con `git.fingerprint` == `FINGERPRINT` (Paso 1), **reutilizar** esos resultados sin
 re-ejecutar y saltar a la salida. Si no hay caché o está obsoleta, ejecutar las suites, **escribir/
 actualizar `test-run.json`** (ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas)) y devolver
 los resultados por suite. **`tests-only` es no interactivo:** no hace ninguna de las preguntas del Paso 3 —ni la de corregir un FAIL ni la de resolver el tooling ante un SKIPPED—, no emite veredicto y no escribe `quality-check.md`; su único artefacto es `test-run.json`. Las suites en FAIL se devuelven como tales.
 
+**En cualquier otro modo, la caché también manda.** Antes de ejecutar, comprobar `.sdd-devkit/test-run.json`
+con las mismas reglas de frescura (ver [Cómo se reutiliza](#cuándo-se-escribe-y-se-reutiliza)). Si es
+**fresca**, los checks que la alimentan —unit, coverage, e2e, las suites configuradas y las validaciones de
+arquitectura— **no se ejecutan**: se toma su `result` y su `summary` de la caché, la fila del informe lleva
+`caché` en la columna Duración y el encabezado registra la procedencia («pruebas tomadas de la corrida del
+{{timestamp}}»). Solo se ejecutan los checks que la caché no cubre (tipado, linter, build, sonar). **El
+código no cambió, así que el resultado de las pruebas no puede haber cambiado; volver a correrlas es tiempo
+perdido, no evidencia nueva.** Se salta la caché únicamente con el modificador `no-cache` (o cuando el
+usuario pida en el turno «vuelve a correr las pruebas»). Un `FAIL` servido desde caché es tan válido como
+uno recién ejecutado: entra igual al ciclo de corrección, y la corrección moverá la clave y forzará la
+re-ejecución real.
+
 En otro caso, ejecutar **secuencialmente** (no en paralelo) los checks Bloqueantes y Condicionales-con-config-presente, midiendo la duración:
 
 1. **tipado** — solo si Bloqueante (TS) o Condicional con config. Si **FAIL** → **fail-fast**: marcar el resto `⏸️` (en el informe, **Pendiente**) y pasar a la evaluación. **No** marcarlos `N/A` (sí correspondían) ni `SKIPPED` (no hay problema de tooling).
 2. **linter** — parsear `error` vs `warning` según la herramienta.
-3. **unit tests** — comando del stack; *fallback* canónico.
-4. **coverage** — PASS/FAIL según la regla del catálogo de checks (`SKILL.md`). Sin ninguna herramienta ni config de cobertura en el repo → `N/A` con nota en Próximas acciones, no `SKIPPED`.
-5. **suites configuradas** — una por cada requisito vigente del estándar de testing (integración, contrato, mutación…), en el **orden en que el estándar las declara**. Si el estándar no declara ninguna, este punto no existe: **no inventar una suite** ni partir la unitaria para simular una. Una suite configurada que necesite el artefacto compilado (rendimiento, carga, accesibilidad sobre la app desplegada) se ejecuta **después de build**, junto a e2e.
-6. **build** — en Java/Go/Rust/.NET cubre la compilación.
-7. **e2e** — solo si hay script/tarea/perfil e2e o config Playwright/Cypress. **No es fija:** sin config queda en `N/A` y **la fila se omite** del informe, salvo que el estándar de testing la declare (entonces es `SKIPPED` y sí se lista).
-8. **sonar** — si falta `sonar-project.properties` → `N/A`. Si hay config y red falla → FAIL informativo.
+3. **validaciones de arquitectura** — solo si el Paso 1 encontró runner. Ejecutar el runner completo del repo (`node scripts/arch/verify.mjs` o el equivalente del stack), **sin acotar por estándar**: la caché es de la corrida entera. FAIL si exit ≠ 0. Capturar el comando y un `summary` corto con el número de criterios evaluados y de violaciones. Sin runner → `N/A` y **fila omitida**.
+4. **unit tests** — comando del stack; *fallback* canónico.
+5. **coverage** — PASS/FAIL según la regla del catálogo de checks (`SKILL.md`). Sin ninguna herramienta ni config de cobertura en el repo → `N/A` con nota en Próximas acciones, no `SKIPPED`.
+6. **suites configuradas** — una por cada requisito vigente del estándar de testing (integración, contrato, mutación…), en el **orden en que el estándar las declara**. Si el estándar no declara ninguna, este punto no existe: **no inventar una suite** ni partir la unitaria para simular una. Una suite configurada que necesite el artefacto compilado (rendimiento, carga, accesibilidad sobre la app desplegada) se ejecuta **después de build**, junto a e2e.
+7. **build** — en Java/Go/Rust/.NET cubre la compilación.
+8. **e2e** — solo si hay script/tarea/perfil e2e o config Playwright/Cypress. **No es fija:** sin config queda en `N/A` y **la fila se omite** del informe, salvo que el estándar de testing la declare (entonces es `SKIPPED` y sí se lista).
+9. **sonar** — si falta `sonar-project.properties` → `N/A`. Si hay config y red falla → FAIL informativo.
 
 > **Las dos fijas (unit, coverage) siempre se listan** en el informe y en `test-run.json`, aunque su resultado sea `N/A`. **Todo lo demás —e2e incluido— se omite del informe cuando queda en `N/A`**: la tabla lista solo lo que se ejecutó, sin nota al pie de lo omitido. Las configuradas existen solo si el estándar de testing las declara. Ver [`SKILL.md` → Suites de prueba](../SKILL.md#suites-de-prueba-fijas-y-configuradas).
 
@@ -53,7 +67,7 @@ En otro caso, ejecutar **secuencialmente** (no en paralelo) los checks Bloqueant
 
 **Por qué este orden** — pirámide de tests, criterio *rápido → lento*, *dependencias antes que consumidores*:
 
-1. **Estático** (tipado, linter): barato; el fail-fast del tipado evita ruido en cascada.
+1. **Estático** (tipado, linter, arquitectura): barato y determinista; el fail-fast del tipado evita ruido en cascada. El runner de arquitectura es análisis estático sobre el árbol —no levanta servicios ni toca la red—, así que va aquí y no entre las suites de prueba.
 2. **Unit + coverage**: mismo estrato; coverage justo después de unit.
 3. **Suites configuradas** (integración, contrato…): por encima de unit, por debajo de e2e; solo las que declare el estándar de testing, y las que dependen del artefacto compilado, después de build.
 4. **Build**: artefacto de integración; en Java/Go/Rust/.NET valida también la compilación.
@@ -147,9 +161,16 @@ Reglas al rellenar:
 
 ## Caché de corrida de pruebas
 
-Artefacto reutilizable que evita que `trace-validate` vuelva a ejecutar las pruebas. Esta sección es la
-**definición canónica y única** —los consumidores (`trace-validate`, `code-review`) la referencian, no la
-copian—; `SKILL.md` solo la resume.
+Artefacto reutilizable que evita repetir los **checks deterministas** de la corrida: que `trace-validate`
+vuelva a ejecutar las pruebas, y que `arch-audit` vuelva a correr el runner de validaciones de
+arquitectura. Esta sección es la **definición canónica y única** —los consumidores (`trace-validate`,
+`arch-audit`, `code-review`) la referencian, no la copian—; `SKILL.md` solo la resume.
+
+> **Las validaciones de arquitectura se cachean con las mismas reglas que las demás.** Son una entrada
+> más de `suites[]` (`type: "architecture"`), con la misma clave de frescura (el `FINGERPRINT` canónico),
+> el mismo productor único y las mismas condiciones de escritura. **No tienen contrato aparte**: lo que se
+> cachea es la corrida del **script de arquitectura** del repo, no los criterios `CR-XXX` ni el juicio de
+> `arch-audit` sobre ellos.
 
 > **Contexto de ejecución.** Este skill es una **compuerta de cierre**: corre al integrar (`work-integrate`)
 > o antes del PR (`pr-create`), sobre la rama **consolidada**, no por tarea ni durante la implementación.
@@ -167,13 +188,20 @@ Clave de frescura compartida entre las **tres puertas del cierre**, cada una sob
 [`code-review`](../../code-review/SKILL.md#reutilización-del-informe-idempotencia). (`code-review` le
 añade además el commit de la rama base, porque su unidad es un diff con dos lados; el `FINGERPRINT` en sí
 es idéntico en las tres.) Hash reproducible del commit + working tree + cambios sin commitear **del
-código y de la configuración visible**, excluyendo tres cosas para que escribirlas no desplace la clave:
-**toda carpeta oculta** (empieza por `.`, en la raíz o anidada), **todo `docs/`** y los
-**`coverage.md`** que vivan fuera de `docs/`:
+código y de la configuración visible** — es decir, de **todo aquello que puede cambiar el resultado de una
+prueba o de una compilación, y de nada más**. Quedan fuera, para que escribirlos o editarlos **no desplace
+la clave**: **toda carpeta oculta** (empieza por `.`, en la raíz o anidada), **todo `docs/`**, **toda la
+documentación en texto** viva donde viva (`*.md`, `*.markdown`, `*.rst`, `*.adoc`, `LICENSE*`,
+`CHANGELOG*`, `AUTHORS*`, `NOTICE*`, `CODEOWNERS`) y el **`.gitignore`**:
 
 ```bash
 ROOT=$( git rev-parse --show-toplevel )
-EXC=( ':(top,exclude,glob)**/.*/**' ':(top,exclude,glob)**/docs/**' ':(top,exclude,glob)**/coverage.md' )
+EXC=( ':(top,exclude,glob)**/.*/**'      ':(top,exclude,glob)**/docs/**' \
+      ':(top,exclude,glob)**/*.md'        ':(top,exclude,glob)**/*.markdown' \
+      ':(top,exclude,glob)**/*.rst'       ':(top,exclude,glob)**/*.adoc' \
+      ':(top,exclude,glob)**/LICENSE*'    ':(top,exclude,glob)**/CHANGELOG*' \
+      ':(top,exclude,glob)**/AUTHORS*'    ':(top,exclude,glob)**/NOTICE*' \
+      ':(top,exclude,glob)**/CODEOWNERS'  ':(top,exclude,glob)**/.gitignore' )
 FINGERPRINT=$( { git -C "$ROOT" ls-files -s              -- "${EXC[@]}"; \
                  git -C "$ROOT" status --porcelain -uall -- "${EXC[@]}"; \
                  git -C "$ROOT" diff                     -- "${EXC[@]}"; \
@@ -197,16 +225,27 @@ difiere, hubo cambios y es **obsoleta** (re-ejecutar).
 > es `git.fingerprint`. No usar alias (`FP`, `HASH`) en ningún skill: el mismo valor debe ser reconocible
 > a simple vista cuando un skill delega en otro.
 >
-> **La exclusión es por directorio, no por nombre de archivo.** Los tres pathspecs, uno a uno:
+> **El criterio de exclusión es uno solo: ¿puede este archivo cambiar el resultado de una prueba o de una
+> compilación?** Si no, se excluye; si sí —o si hay duda—, se queda dentro. Los pathspecs, grupo a grupo:
 >
 > | Pathspec | Qué saca de la clave |
 > |----------|----------------------|
-> | `':(top,exclude,glob)**/.*/**'` | El contenido de **cualquier carpeta oculta**, en la raíz o anidada: `.sdd-devkit/` (donde vive `test-run.json`), y de paso `.git/`, `.github/`, `.venv/`, `.cache/`, `.idea/`… El `**/` inicial cubre los dos niveles con un solo patrón. **Los archivos ocultos de la raíz (`.gitignore`, `.eslintrc.json`, `.env`) NO se excluyen**: son configuración que sí puede cambiar el resultado de un check. |
+> | `':(top,exclude,glob)**/.*/**'` | El contenido de **cualquier carpeta oculta**, en la raíz o anidada: `.sdd-devkit/` (donde vive `test-run.json`), y de paso `.git/`, `.github/`, `.venv/`, `.cache/`, `.idea/`… El `**/` inicial cubre los dos niveles con un solo patrón. **Los archivos ocultos de la raíz (`.eslintrc.json`, `.env`, `.npmrc`, `.babelrc`) NO se excluyen**: son configuración que sí puede cambiar el resultado de un check. |
 > | `':(top,exclude,glob)**/docs/**'` | **Cualquier `docs/`, en la raíz o dentro de un módulo**: el informe vigente (`quality-check.md`, `code-review.md`), las copias con marca de tiempo de `save-report`, los informes de `arch-audit`, los `coverage.md` que viven junto a su artefacto y el resto de documentación. El `**/` inicial es lo que cubre el caso monorepo: `:(top,exclude)docs` a secas excluiría **solo** el `docs/` de la raíz, y en una corrida lanzada desde `packages/api/` el informe se escribe en `packages/api/docs/audits/` — que seguiría dentro de la clave y la desplazaría en cada corrida. |
-> | `':(top,exclude,glob)**/coverage.md'` | Los `coverage.md` de artefactos que viven **fuera** de `docs/` — `trace-validate` acepta artefactos externos al plugin y escribe el reporte junto a ellos. Sin este patrón, ese caso quedaría dentro de la clave. |
+> | `**/*.md` · `**/*.markdown` · `**/*.rst` · `**/*.adoc` | **Toda la documentación en texto, viva donde viva**: el `README.md` de la raíz, un `NOTES.md` dentro de `src/`, un `coverage.md` de un artefacto externo al plugin escrito fuera de `docs/`. Un `.md` no compila ni se ejecuta; editarlo no puede cambiar el resultado de una prueba. **`*.mdx` NO se excluye**: MDX es código (importa componentes y se compila). Tampoco `*.txt`: `requirements.txt` y `CMakeLists.txt` son manifiestos. |
+> | `**/LICENSE*` · `**/CHANGELOG*` · `**/AUTHORS*` · `**/NOTICE*` · `**/CODEOWNERS` | Los archivos de acompañamiento sin extensión o con extensión libre, que ningún build lee. |
+> | `**/.gitignore` | Solo afecta a qué versiona git, no a qué se compila ni se prueba. Y es el archivo que este mismo skill edita al normalizar la caché: dentro de la clave, la primera corrida en un repo la desplazaba a sí misma. |
 >
-> Así ningún artefacto que produce la propia tubería puede desplazar la clave de frescura: correr
-> `arch-audit` no invalida un `coverage.md`, ni escribir un informe invalida el `test-run.json`.
+> Así ningún artefacto que produce la propia tubería puede desplazar la clave de frescura —correr
+> `arch-audit` no invalida un `coverage.md`, ni escribir un informe invalida el `test-run.json`—, y
+> **tampoco lo hace la edición de documentación**: retocar el `README.md`, el `CHANGELOG.md` o un criterio
+> de aceptación mantiene fresca la corrida de pruebas, que es lo que se espera de una clave que solo debe
+> moverse cuando cambia el código.
+>
+> **Caso límite asumido: sitios de documentación.** En un repo cuyo build *compila* los `.md` (Docusaurus,
+> VitePress, MkDocs), editar un `.md` sí puede romper el build y la clave no lo verá. Es una decisión
+> deliberada —la regla general vale más que ese caso— y tiene salida: el modificador `no-cache` de este
+> skill fuerza la re-ejecución.
 >
 > **Nada de `HEAD` — y es deliberado.** La receta **no** referencia `HEAD` en ningún punto, porque `HEAD` no
 > admite pathspec: cualquier commit lo mueve, incluidos los que solo tocan rutas excluidas. Con `git rev-parse HEAD`
@@ -251,6 +290,7 @@ la copian:
   "git": { "branch": "feature/US-004-checkout", "commit": "abc1234", "workingTreeClean": true,
            "fingerprint": "<hash>" },
   "suites": [
+    { "type": "architecture","command": "node scripts/arch/verify.mjs", "result": "PASS", "summary": "9 criterios, 0 violaciones" },
     { "type": "unit",        "command": "npm test",            "result": "PASS", "summary": "48 passed" },
     { "type": "coverage",    "command": "npm run coverage",    "result": "PASS", "summary": "line 82%" },
     { "type": "e2e",         "command": "npx playwright test", "result": "FAIL", "summary": "2 failed" },
@@ -269,16 +309,19 @@ Semántica de los campos:
 - **`invokedFrom`** — trabajo desde el que se invocó la corrida (`US-XXX-slug`, `WI-XXX-slug`) o `null` si no aplica. Es **informativo**: la corrida es de la **rama consolidada**, que puede incluir varios trabajos, así que **no** debe usarse para filtrar resultados ni para decidir si la caché aplica a otro trabajo.
 - **`testingStandard`** — ruta del estándar de testing del que salieron las suites configuradas, o `null` si el repo no tiene ninguno (en cuyo caso `suites[]` trae las dos fijas más `e2e` si el repo tiene config). Informativo: permite al consumidor distinguir «este repo no declara integración» de «no se leyó el estándar».
 - **`git.fingerprint`** — única clave de frescura. Debe corresponder al estado del código **realmente probado** (recalcular tras cualquier corrección).
+- **`suites[].type` = `architecture`** — la corrida del **runner de validaciones de arquitectura** del repo (`scripts/arch/verify.<ext>`). Slug canónico, como `unit`/`coverage`/`e2e`, pero **no garantizado**: se emite solo si el repo tiene runner. **No lleva `standard`**: la corrida es del runner completo, no de un estándar concreto, y el reparto por `CR-XXX` lo hace `arch-audit` leyendo la salida, no esta caché. Es la **única entrada de `suites[]` que no es una clase de prueba**: `trace-validate` la ignora (no es cobertura funcional) y su consumidor es `arch-audit`.
 - **`suites[].type`** — para las **fijas**, `unit` o `coverage` (slugs canónicos de este skill): **siempre se emiten las dos**, y la que el repo no tiene va con `result: "N/A"`. `e2e` usa también un slug canónico pero **no está garantizada**: se emite solo si el repo tiene config e2e o el estándar la declara. Para las **configuradas**, el `ID` **tal cual lo declara el requisito** en el estándar de testing (`integration-testing`, `contract-testing`, `performance-testing`…): se emite **una entrada por requisito vigente**, y ninguna si el estándar no declara más. **No** emitir una entrada por una suite que el estándar no declara.
 - **`suites[].standard`** — solo en las configuradas: referencia global al requisito del estándar, `<slug-del-estándar>/<ID-del-requisito>` (p. ej. `testing/integration-testing`). Ausente en las fijas y en un `e2e` que salga del catálogo de checks y no del estándar.
 - **`suites[].result`** — `PASS` · `FAIL` · `SKIPPED` (correspondía pero no se pudo ejecutar) · `N/A` (no aplica al repo).
 
-> **Solo `unit` y `coverage` están garantizadas.** Para **toda** otra suite —`e2e` incluida— la regla de consumo es la misma: buscarla en `suites[]` y, si no está, tratarla como una clase de prueba que este repo no ejecuta. Nunca asumir su presencia ni deducir un fallo de su ausencia.
+> **Solo `unit` y `coverage` están garantizadas.** Para **toda** otra entrada —`e2e` y `architecture` incluidas— la regla de consumo es la misma: buscarla en `suites[]` y, si no está, tratarla como algo que este repo no ejecuta. Nunca asumir su presencia ni deducir un fallo de su ausencia.
+
+> **Cada consumidor lee solo lo suyo.** `trace-validate` mapea las suites de prueba a la matriz de cobertura y **descarta `architecture`** —igual que ya descarta `coverage`—; `arch-audit` lee **solo** `architecture` y no mira las suites de prueba. Ninguno reescribe el archivo: el productor único sigue siendo `quality-check`.
 
 ### Cuándo se escribe y se reutiliza
 
-**Cuándo se escribe.** Al final de toda corrida que ejecutó el **conjunto de pruebas completo** —las dos fijas
-más e2e y todas las configuradas que apliquen— (Paso 5), sea o no spec-driven el repo. En corridas parciales, no — ver «Cuándo NO se escribe» más abajo. Ruta **fija**: `.sdd-devkit/test-run.json` en la **raíz del repositorio**, no por
+**Cuándo se escribe.** Al final de toda corrida que ejecutó el **conjunto determinista completo** —las dos fijas,
+más e2e y todas las configuradas que apliquen, más `architecture` si el repo tiene runner— (Paso 5), sea o no spec-driven el repo. En corridas parciales, no — ver «Cuándo NO se escribe» más abajo. Ruta **fija**: `.sdd-devkit/test-run.json` en la **raíz del repositorio**, no por
 unidad y fuera de `docs/` (es un artefacto de máquina, no documentación). Se **sobrescribe** en cada
 corrida (es el estado vigente de la rama) y **no se versiona**.
 
@@ -289,7 +332,7 @@ edición de configuración que este skill hace por iniciativa propia y no se rep
 encontraría el patrón exacto y añadiría una línea redundante que no cambia nada.
 
 **Cuándo NO se escribe la caché.** Solo se escribe si la corrida ejecutó el **conjunto de pruebas completo**.
-En una corrida **parcial** —`no-tests`, `no-unit-tests`/`no-e2e`/`no-coverage`, un `no-<suite>` configurada, un
+En una corrida **parcial** —`no-tests`, `no-unit-tests`/`no-e2e`/`no-coverage`/`no-arch`, un `no-<suite>` configurada, un
 `only <check>`, o cualquier corrida cortada por el **fail-fast** del tipado— **no** escribir ni sobrescribir
 `test-run.json`: dejar intacta la que hubiera. El motivo es que el consumidor no puede distinguir un `N/A`
 «el repo no tiene esa suite» de un `N/A` «el usuario la omitió», y `trace-validate` traduce el primero
@@ -301,25 +344,28 @@ los dos caminos normales; ninguno es una incidencia. Solo si el usuario pide exp
 directorio, devolver los resultados en la respuesta y advertir que no habrá reutilización entre corridas.
 
 **Qué se guarda.** El `FINGERPRINT` vigente en `git.fingerprint`, la ruta del estándar de testing en
-`testingStandard` (o `null`), y las entradas de suite con su `command`, `result`
+`testingStandard` (o `null`), y las entradas con su `command`, `result`
 (`PASS`/`FAIL`/`SKIPPED`/`N/A`) y un `summary` corto — el esquema completo y la semántica de cada campo están
-en [Esquema `test-run.json`](#esquema-test-runjson). Mapeo check → suite: `unit tests` → `unit`, `coverage` → `coverage`, `e2e` → `e2e`, y cada
+en [Esquema `test-run.json`](#esquema-test-runjson). Mapeo check → entrada: `unit tests` → `unit`, `coverage` → `coverage`, `e2e` → `e2e`,
+`validaciones de arquitectura` → `architecture`, y cada
 suite configurada → el `ID` de su requisito en el estándar (p. ej. `integration-testing`), con su referencia
 global en `standard` (p. ej. `testing/integration-testing`). Las **dos fijas se emiten siempre**, con `result: "N/A"` si el repo no las
-tiene, para que el consumidor no tenga que distinguir «ausente» de «no aplica». **`e2e` y las configuradas se emiten
-solo si existen** —config e2e en el repo, o la suite declarada en el estándar—: no inventar suites que nadie declara.
+tiene, para que el consumidor no tenga que distinguir «ausente» de «no aplica». **`e2e`, `architecture` y las configuradas se emiten
+solo si existen** —config e2e en el repo, runner en `scripts/arch/`, o la suite declarada en el estándar—: no inventar entradas que nadie declara.
 
-**Cómo se reutiliza (`tests-only`).** Recalcular el `FINGERPRINT` (Paso 1) y compararlo con
+**Cómo se reutiliza (en todos los modos, salvo `no-cache`).** Recalcular el `FINGERPRINT` (Paso 1) y compararlo con
 `git.fingerprint` del `test-run.json` existente:
 - **Su `schema` no es `test-run/v1`** → caché **inservible**, sin más comprobaciones: ejecutar y sobrescribir. Un `suites[]` de otro esquema no se puede comparar con el conjunto vigente.
 - **Coincide** y su `suites[]` cubre exactamente el **conjunto vigente** (dos fijas + e2e si aplica +
-  configuradas del estándar) → caché **fresca**: devolver esos resultados sin ejecutar nada. Es el camino que hace que,
-  si no hubo cambios desde la última corrida de pruebas, no se repita el trabajo.
-- **Diferente, no existe, o su `suites[]` no cubre el conjunto vigente** (el estándar cambió) → caché
+  configuradas del estándar + `architecture` si el repo tiene runner) → caché **fresca**: devolver esos resultados sin ejecutar nada (en `tests-only`) o
+  tomarlos como resultado de esos checks y ejecutar solo el resto (en los demás modos). Es el camino que hace que,
+  si no hubo cambios desde la última corrida de pruebas, no se repita el trabajo — **ni en `trace-validate`, ni en
+  `arch-audit`, ni en una segunda invocación de este mismo skill**.
+- **Diferente, no existe, o su `suites[]` no cubre el conjunto vigente** (el estándar cambió, o apareció/desapareció el runner de arquitectura) → caché
   **obsoleta/ausente**: ejecutar las suites, sobrescribir `test-run.json` y devolver los nuevos resultados.
 
 **Validez.** El fingerprint canónico (ver [Fingerprint canónico](#fingerprint-canónico)) cubre código, tests y manifiestos, y excluye
-las carpetas ocultas, `docs/` y los `coverage.md` sueltos; no detecta la edición de **contenido** de un
+toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`; no detecta la edición de **contenido** de un
 archivo que permanezca sin trackear, ni cambios de entorno (dependencias instaladas, red, servicios) — si el
 resultado pudiera depender de eso, tratar la caché como no concluyente. Si el árbol
 estaba sucio, `workingTreeClean: false` queda registrado como señal para el consumidor.
@@ -353,6 +399,11 @@ estaba sucio, `workingTreeClean: false` queda registrado como señal para el con
 | Requisito del estándar con `**Estado:** Deprecated` o `Superseded` | No ejecutar ni listar: dejó de ser exigible. |
 | Suite **presente en el repo pero no declarada** en el estándar (p. ej. script `test:it` sin requisito) | No ejecutarla y no bloquear. Anotarla en Próximas acciones como recomendación de declararla en el estándar (`arch-manage`). |
 | Suite de integración no distinguible de la unitaria, con el estándar declarándola | `SKIPPED` → `INCOMPLETE`. No contar la suite unitaria como integración ni inventar un comando. |
+| Repo **sin runner de arquitectura** (`scripts/arch/verify.*` y `scripts/arch/checks/*` no existen) | `N/A`: **omitir la fila** y no emitir entrada `architecture` en `suites[]`. No afecta al veredicto. Opcionalmente, recomendar en Próximas acciones crear las fitness functions vía `arch-manage`. |
+| Runner de arquitectura presente pero **no ejecutable** (falta runtime o dependencia, comando roto) | `SKIPPED` → `INCOMPLETE`. Que el repo declare el runner es la declaración de que ese check debe correr. No sustituirlo por una inspección manual del código. |
+| Runner de arquitectura con **exit ≠ 0** | `FAIL` (`❌`). El detalle va con las violaciones que imprimió el runner; el reparto por `CR-XXX` y el juicio de arquitectura son de `arch-audit`, no de este skill. |
+| Runner de arquitectura que imprime **warnings** sin romper el exit | `PASS` con la nota en el detalle del check. Los criterios de enfoque `warning` no bloquean el veredicto — igual que en `arch-audit`. |
+| Varios runners o comando de arquitectura ambiguo | Preguntar al usuario cuál correr; no adivinar ni encadenar varios. En modo `tests-only`, no preguntar: `SKIPPED` con el motivo. |
 | Coverage bajo umbral configurado | `FAIL` (`❌`). |
 | Coverage sin umbrales configurados y exit 0 | `PASS` (`✅`). |
 | E2E **Condicional** con config presente pero tool ausente/rota | `SKIPPED` → `INCOMPLETE`. |
@@ -364,6 +415,8 @@ estaba sucio, `workingTreeClean: false` queda registrado como señal para el con
 | Working tree sucio | No bloquear; nota en encabezado. |
 | FAIL en algún check | Mostrar reporte y **preguntar** si corregir. Nunca corregir sin autorización. Con autorización, delegar en `work-implement` si hay un artefacto en curso (`US-XXX`, `WI-XXX`, `FT-XXX`/`TC-XXX` en rama `test/`, o un artefacto externo al plugin); si no hay ninguno, corregir aquí. Tras corregir, **re-ejecutar el check que fallaba**; si pasa, **recalcular el fingerprint** y **re-ejecutar toda la corrida**. |
 | Autorización de corrección pero el artefacto de trabajo es ambiguo (varios candidatos) | Preguntar cuál antes de delegar; no delegar sobre un artefacto adivinado. |
+| Caché fresca en modo `default` (u otro distinto de `tests-only`) | **No ejecutar** unit, coverage, e2e, suites configuradas ni arquitectura: tomar sus resultados de la caché y marcar la procedencia en el informe. Ejecutar solo tipado, linter, build y sonar. Solo `no-cache` (o una petición explícita del usuario en el turno) fuerza la re-ejecución. |
+| Caché fresca cuyo `suites[]` trae un `FAIL` | Servirlo tal cual: el código no cambió, el fallo sigue ahí. Entra al ciclo de corrección como cualquier `FAIL`; al corregir, la clave se mueve y la siguiente corrida es real. **No** re-ejecutar «por si acaso». |
 | FAIL o SKIPPED durante una corrida `tests-only` | **No preguntar nada** — el modo es no interactivo: devolver los resultados por suite (con su `result`) y la ruta de `test-run.json`. Corregir o resolver el tooling es decisión del flujo que invocó. |
 | Stack no detectable, monorepo ambiguo o runner ausente **en modo `tests-only`** | **Tampoco preguntar**, pese a lo que dicen las filas de arriba: el modo es no interactivo de principio a fin. Devolver «no ejecutable» con el motivo concreto y sin `test-run.json`. Es el retorno que `trace-validate` espera para reportar sus filas como `NOT_RUN`; una pregunta ahí colgaría una delegación que nadie está mirando. |
 | Usuario no quiere corregir los FAIL, o pide solo el informe | Cerrar en `REJECTED` con el detalle de lo pendiente en Próximas acciones; no maquillar el veredicto ni volver a insistir con la corrección. |
@@ -373,7 +426,7 @@ estaba sucio, `workingTreeClean: false` queda registrado como señal para el con
 | `work-implement` devuelve **«corrección no aplicada»** (fuera de alcance → `work-plan`; discrepancia `TC-XXX`↔código → `test-define`; fallo preexistente) | **Detener el ciclo.** No reintentar la delegación sobre ese fallo ni corregirlo aquí. Recoger el motivo y el skill escalado en **Próximas acciones**, emitir `REJECTED` y terminar. Ver [Corrección de fallos](../SKILL.md#corrección-de-fallos). |
 | Usuario pide "corrige tú" sin más contexto | Confirmar el alcance exacto a corregir antes de tocar nada; resolver quién corrige según [Corrección de fallos](../SKILL.md#corrección-de-fallos); aplicar solo lo mínimo; luego re-ejecutar. |
 | Varias correcciones autorizadas a la vez | Aplicarlas juntas y reiniciar **una sola vez** para no encadenar pasadas innecesarias. |
-| Bucle de correcciones que no converge | Tras 3 reinicios sin llegar a `✅`, resumir lo pendiente y preguntar al usuario cómo proceder. |
+| Bucle de correcciones que no converge | Aplicar el **límite de intentos** de [`../../../reference/escalation.md`](../../../reference/escalation.md): agotado `escalation.maxAttempts` (3 por defecto) sobre el mismo fallo, no hacer un intento más — presentar el **parte de bloqueo** y escalar según `escalation.onLimit`. Ver [Límite de intentos y escalamiento](../SKILL.md#límite-de-intentos-y-escalamiento). |
 | El usuario pide además opinión sobre el diseño del código | Fuera de alcance: sugerir invocar `code-review`. No improvisar una revisión cualitativa aquí. |
 
 ---

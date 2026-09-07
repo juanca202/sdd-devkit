@@ -14,7 +14,12 @@ Antes de trabajar, evitar regenerar si nada cambió (ver [Reutilización del rep
 2. **Calcular las dos claves. Siempre**, exista o no reporte previo: el Paso 7 las necesita para grabar la marca de pie, también en la primera validación.
    `bash
    ROOT=$( git rev-parse --show-toplevel )
-   EXC=( ':(top,exclude,glob)**/.*/**' ':(top,exclude,glob)**/docs/**' ':(top,exclude,glob)**/coverage.md' )
+   EXC=( ':(top,exclude,glob)**/.*/**'      ':(top,exclude,glob)**/docs/**' \
+         ':(top,exclude,glob)**/*.md'        ':(top,exclude,glob)**/*.markdown' \
+         ':(top,exclude,glob)**/*.rst'       ':(top,exclude,glob)**/*.adoc' \
+         ':(top,exclude,glob)**/LICENSE*'    ':(top,exclude,glob)**/CHANGELOG*' \
+         ':(top,exclude,glob)**/AUTHORS*'    ':(top,exclude,glob)**/NOTICE*' \
+         ':(top,exclude,glob)**/CODEOWNERS'  ':(top,exclude,glob)**/.gitignore' )
    FINGERPRINT=$( { git -C "$ROOT" ls-files -s              -- "${EXC[@]}"; \
                     git -C "$ROOT" status --porcelain -uall -- "${EXC[@]}"; \
                     git -C "$ROOT" diff                     -- "${EXC[@]}"; \
@@ -25,7 +30,7 @@ Antes de trabajar, evitar regenerar si nada cambió (ver [Reutilización del rep
                          git -C "$ROOT" diff                     -- "$ARTEFACTO" "$NO_REPORT"; \
                        } | git hash-object --stdin )
    `
-   El primero cubre **código y tests** (excluye toda carpeta oculta, cualquier `docs/` y los `coverage.md`; es el mismo de `quality-check` y `code-review`). El segundo cubre **los criterios y los `TC-XXX`** de este artefacto, que el primero deja fuera por vivir bajo `docs/specs/`.
+   El primero cubre **código y tests** (excluye toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`; es **copia literal** de la receta canónica de [`quality-check`](../../quality-check/references/execution.md#fingerprint-canónico), que es la única fuente de verdad — si cambia allí, cambia aquí). El segundo cubre **los criterios y los `TC-XXX`** de este artefacto, que el primero deja fuera por vivir bajo `docs/specs/`.
 
    > **`$NO_REPORT` es lo que hace que la idempotencia funcione.** El `coverage.md` vive **dentro** de `$ARTEFACTO`, así que sin excluirlo el Paso 7 desplazaría el `SPEC_FINGERPRINT` **al escribir el propio reporte**: el hash grabado en la marca de pie sería el de *antes* de escribir, nunca coincidiría en la corrida siguiente, y el Paso 0 regeneraría siempre. La clave cubre las **entradas** del reporte (criterios y `TC-XXX`), no su salida — el mismo motivo por el que el `FINGERPRINT` lo excluye.
    >
@@ -35,7 +40,7 @@ Antes de trabajar, evitar regenerar si nada cambió (ver [Reutilización del rep
    - **Coinciden los dos hashes**, el reporte **no** registra ejecución fallida, y el usuario **no** pasó `revalidate` → **no regenerar**: devolver el veredicto y el resumen del reporte existente, indicando que no hubo cambios desde `{{generated}}`. No reescribir el archivo ni delegar en `quality-check`. Fin.
    - **Difiere alguno**, falta la marca o el campo `spec=`, el reporte trae filas en `NOT_RUN` por una delegación que no se pudo hacer, o el usuario pide `revalidate` → continuar el flujo completo (Pasos 1-7).
 
-> Computar ambos hashes **una sola vez**: el `FINGERPRINT` se reutiliza en el Paso 4 (delegación) y los dos en el Paso 7 (guardado). La delegación en modo `tests-only` no abre ciclo de corrección, pero **sí** puede normalizar el `.gitignore` la primera vez que corre en un repo (ver `quality-check`, Paso 1), y eso mueve el `FINGERPRINT`. Por eso: **si se delegó, recalcularlo antes de guardar**; el `SPEC_FINGERPRINT` no se ve afectado.
+> Computar ambos hashes **una sola vez**: el `FINGERPRINT` se reutiliza en el Paso 4 (delegación) y los dos en el Paso 7 (guardado). La delegación en modo `tests-only` no abre ciclo de corrección ni toca código, y el `.gitignore` que puede normalizar está excluido de la receta: el `FINGERPRINT` del Paso 0 **sigue válido** al grabar. Si el `git.fingerprint` que devuelve `quality-check` no coincide con él, el código cambió en medio de la corrida: tratar esa caché como obsoleta.
 
 ### Paso 1 — Localizar y leer el trabajo
 
@@ -79,6 +84,8 @@ Antes de trabajar, evitar regenerar si nada cambió (ver [Reutilización del rep
 
    Si el repo ubica una de estas pruebas en otra suite, mandar **dónde está realmente**, no la tabla: registrar la suite efectiva en Observaciones. No dejar un criterio en `PARTIAL` solo porque su tipo no tenga una suite homónima.
 
+   > **`architecture` no se mapea a ninguna fila:** no es una clase de prueba (ver el Paso 4).
+   >
    > **Solo `unit` y `coverage` están garantizadas en `test-run.json`.** El resto de suites —**e2e incluida**, más integración, contrato, rendimiento…— existen únicamente si el repo tiene su config (e2e) o si el **estándar de testing** las declara (ver [`quality-check` → Suites de prueba](../../quality-check/SKILL.md#suites-de-prueba-fijas-y-configuradas)). Si la entrada que esperabas no está, es que el repo no declara esa clase de prueba: resolver contra la suite donde viva realmente, o dejar `NOT_RUN` con la nota en Observaciones. **Nunca** inventar la entrada ausente.
 
 5. Para cada artefacto, registrar su **ruta** y a qué criterio apunta (por vínculo declarado en el TC o, en su defecto, por nombre del test, describe/it o comentarios).
@@ -104,8 +111,8 @@ ejecución) y los mapea a los criterios.
 1. **Reusar el `FINGERPRINT` canónico** ya calculado en el Paso 0.
 2. **Buscar la caché** en la ubicación fija `.sdd-devkit/test-run.json` (no por unidad; es la corrida completa de la rama):
    - **Existe, su `schema` es `test-run/v1`, `git.fingerprint` coincide y su `suites[]` cubre el conjunto
-     vigente** —las dos fijas, más e2e si el repo la ejecuta y las suites que declare el estándar de
-     testing— → caché **fresca** (sin cambios desde la corrida de `quality-check`): **reutilizar** sus
+     vigente** —las dos fijas, más e2e si el repo la ejecuta, las suites que declare el estándar de
+     testing y la entrada `architecture` si el repo tiene runner de arquitectura— → caché **fresca** (sin cambios desde la corrida de `quality-check`): **reutilizar** sus
      `suites[]` sin ejecutar. Registrar la procedencia en la prosa del Resumen.
    - **No existe, el fingerprint difiere, o el `suites[]` no cubre el conjunto vigente** (el estándar de
      testing cambió: vive en `docs/`, que el fingerprint excluye) → **delegar en `quality-check` modo `tests-only`**, que ejecuta
@@ -242,6 +249,9 @@ Reglas:
   `tests-only` disparada ahora) y el `result` **por suite** tomado de `test-run.json`, sin volver a ejecutar.
   `test-run.json` **no trae un agregado global**: no inventarlo. La suite `coverage` sí viene en `suites[]`
   (es fija) pero **no se lista en la línea «Pruebas»**; si dio `FAIL`, va a «Observaciones y pendientes».
+  La entrada **`architecture` no es una clase de prueba** —es la corrida del runner de validaciones de
+  arquitectura, cacheada para `arch-audit`—: **ignorarla** por completo aquí (ni línea «Pruebas», ni fila
+  de la matriz); como mucho, una observación si vino en `FAIL`.
   Listar solo las suites que la caché traiga: las fijas siempre, las configuradas si el estándar de testing
   del repo las declara. Si no hubo corrida, la línea dice «no ejecutable» y el motivo.
 - `result` por suite → `Resultado` **de la fila** (no del criterio; el `Estado` del criterio se deriva después de todas sus filas): `PASS`→`PASS`, `FAIL`→`FAIL`, `SKIPPED`→`NOT_RUN`, `N/A` (el repo no tiene esa suite)→`NOT_RUN`, con la constancia en «Observaciones y pendientes». **Excepción:** cuando varios criterios comparten suite y esta da `FAIL`, no basta con propagar `Fallo` a todos — ver «Granularidad suite vs. criterio» en el Paso 4 más arriba; si no se puede aislar el test que falló, la fila queda en `Fallo` con la Observación «no aislable» y el **`Estado` del criterio** es `PARTIAL`, no `UNCOVERED`.

@@ -50,6 +50,18 @@ No continúes hasta haber leído y aplicado `verification.md`.
 
 ---
 
+## Límite de intentos y escalamiento
+
+Antes de ejecutar este skill, DEBES leer [`../../reference/escalation.md`](../../reference/escalation.md).
+
+Las reglas de `escalation.md` son obligatorias y determinan, vía `escalation.maxAttempts` y `escalation.onLimit`, cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve —una puerta de cierre que sigue en rojo tras corregir, o una validación previa que no se logra dejar en verde— y qué se hace al agotarlos: detener el trabajo sobre ese problema, presentar el **parte de bloqueo** y preguntar al usuario cómo seguir (`ask`), o marcarlo como `BLOCKED` en el informe y continuar con el alcance que no dependa de él (`report`).
+
+El contador es **por problema**, no global, y **el límite es un techo, no una cuota**: si no hay una hipótesis nueva que justifique el siguiente intento, se escala ya. Nunca se «resuelve» un bloqueo desactivando o saltando una prueba, relajando una aserción ni bajando un umbral.
+
+No continúes hasta haber leído y aplicado `escalation.md`.
+
+---
+
 ## Tipos de trabajo
 
 El tipo se determina por el **identificador presente en el nombre de rama**. Cada tipo fija de dónde se deriva la carpeta, dónde vive el `progress.md` y qué se considera una **unidad** a cerrar.
@@ -244,4 +256,5 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 - [`../../reference/verification.md`](../../reference/verification.md): **Política de verificación** — qué puertas corren antes del merge (`enabled`) y si el cierre continúa con archivado y merge sin preguntar (`handoff`). *Lectura obligatoria antes de ejecutar el skill.*
 - [`../../reference/implementation.md`](../../reference/implementation.md): **Política de implementación** — de aquí sale `archiveMode`. *Antes de resolver el archivado (paso 8).*
 - [`../../reference/git.md`](../../reference/git.md): **Política de commit y push** — de aquí sale `integrationBranches` y su `commitPolicy`. *Al resolver la rama base.*
+- [`../../reference/escalation.md`](../../reference/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 

@@ -27,11 +27,16 @@ Este paso hace **tres** cosas, en este orden. Las dos primeras se ejecutan **sie
 - Con `working-tree`, no hay base: el alcance son los cambios sin commitear.
 - Sin modificador, inferirla (rama de integración configurada del repo, `origin/HEAD`, o la base del PR si existe) y **confirmarla con el usuario si es ambigua**.
 
-**0.2 — Calcular la clave** (`BASE` es la rama ya resuelta; en `working-tree` no hay `BASE_COMMIT`):
+**0.2 — Calcular la clave** (`BASE` es la rama ya resuelta; en `working-tree` no hay `BASE_COMMIT`). El bloque `EXC`/`FINGERPRINT` es **copia literal** de la receta canónica de [`quality-check`](../../quality-check/references/execution.md#fingerprint-canónico), la única fuente de verdad — si cambia allí, cambia aquí:
 
 ```bash
 ROOT=$( git rev-parse --show-toplevel )
-EXC=( ':(top,exclude,glob)**/.*/**' ':(top,exclude,glob)**/docs/**' ':(top,exclude,glob)**/coverage.md' )
+EXC=( ':(top,exclude,glob)**/.*/**'      ':(top,exclude,glob)**/docs/**' \
+      ':(top,exclude,glob)**/*.md'        ':(top,exclude,glob)**/*.markdown' \
+      ':(top,exclude,glob)**/*.rst'       ':(top,exclude,glob)**/*.adoc' \
+      ':(top,exclude,glob)**/LICENSE*'    ':(top,exclude,glob)**/CHANGELOG*' \
+      ':(top,exclude,glob)**/AUTHORS*'    ':(top,exclude,glob)**/NOTICE*' \
+      ':(top,exclude,glob)**/CODEOWNERS'  ':(top,exclude,glob)**/.gitignore' )
 FINGERPRINT=$( { git -C "$ROOT" ls-files -s              -- "${EXC[@]}"; \
                  git -C "$ROOT" status --porcelain -uall -- "${EXC[@]}"; \
                  git -C "$ROOT" diff                     -- "${EXC[@]}"; \

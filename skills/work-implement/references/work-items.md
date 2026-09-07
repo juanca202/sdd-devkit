@@ -44,12 +44,14 @@ Un WI de tipo **`bug-fix`** o **`security-update`** se implementa **directamente
 
   | Politica de la rama actual | Que hacer |
   |----------------------------|-----------|
-  | `direct` | **Trabajar aqui, sin preguntar nada.** El repo ya declaro esta rama como valida para comitear directo. |
+  | `merge` | **Trabajar aqui, sin preguntar nada.** El repo ya declaro esta rama como valida para comitear directo. |
   | `pull_request` | **No comitear aqui.** Ofrecer exactamente dos opciones: *cambiar a una rama `merge` de la lista* (checkout y continuar) o *terminar aqui*. Si el usuario elige terminar, cerrar sin tocar codigo y decir por que. |
   | No esta en la lista | Resolver contra la lista: una sola rama `merge` -> usar esa (checkout previo); varias -> preguntar entre ellas; ninguna declarada -> preguntar al usuario cual es, sin proponer `main` ni `develop` por cuenta propia. |
 
+  > **Con worktrees, los «checkout» de esta tabla no se hacen en el arbol principal.** La unidad se implementa en un worktree `wt/WI-XXX` derivado de la rama de integracion resuelta, y al terminar: si el arbol principal **esta en esa rama y limpio**, se integra ahi con `git merge --ff-only wt/WI-XXX` (la rama recibe sus commits sin que el arbol cambie de rama); si esta en otra rama o sucio, **no se toca**: se deja `wt/WI-XXX`, se informa y se cierra con handoff a `work-integrate`, que es quien integra. Es la unica variante en la que un `bug-fix` hace handoff. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
+
 - **El commit no avisa dos veces.** En una rama `merge`, `git-commit` **no** pide la confirmacion extra de rama protegida: el repo ya la autorizo al declararla asi. Solo la pide cuando la rama de integracion no esta declarada en `integrationBranches`.
-- **El cierre no hace handoff:** ver [Paso 4](#paso-4---cierre). No hay rama que mergear, asi que no se invoca `work-integrate` ni `pr-create`.
+- **El cierre no hace handoff:** ver [Paso 4](#paso-4---cierre). No hay rama que mergear, asi que no se invoca `work-integrate` ni `pr-create`. **Salvo** el caso con worktrees en que el arbol principal no esta en la rama de integracion (o esta sucio): ahi queda `wt/WI-XXX` sin integrar y el handoff a `work-integrate` es obligatorio — nunca se resuelve con un checkout en el arbol del usuario.
 - **Sigue rigiendo todo lo demas:** `Ready` con criterios de aceptacion, ciclo TDD, lint/build, `progress.md`, checkboxes y la pausa de confirmacion antes de comitear.
 
 > Si el repo tiene activada la integracion con un gestor de proyectos (`projectManagement.enabled` en `.sdd-devkit/settings.json`), el numero del WI es el ID del work item en ese sistema (`WI-1847`); si no, es un secuencial local (`WI-001`). Respetar el numero tal cual aparece en el archivo.
@@ -95,9 +97,11 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
 1. Verificar working tree limpio; si no, parar y avisar.
 2. Resolver la rama segun el `Tipo` del WI:
-   - **`bug-fix` / `security-update`:** no crear rama. Resolver la rama de integracion con `reference/git.md` y hacer checkout de ella si no se esta ya ahi (ver [Excepcion](#excepcion-bug-fix-y-security-update-no-crean-rama)).
-   - **Resto de tipos:** hacer checkout de la rama del WI (crear desde la rama base acordada si no existe).
+   - **`bug-fix` / `security-update`:** no crear rama. Resolver la rama de integracion con `reference/git.md`; **sin worktrees**, hacer checkout de ella si no se esta ya ahi; **con worktrees**, no tocar el arbol principal: la unidad va en `wt/WI-XXX` derivada de esa rama (ver [Excepcion](#excepcion-bug-fix-y-security-update-no-crean-rama)).
+   - **Resto de tipos:** situarse en la rama del WI — **sin worktrees**, `git checkout` (crear desde la rama base acordada si no existe); **con worktrees**, ver la nota de abajo.
 3. Leer o crear `progress.md` dentro de la carpeta del WI (`docs/specs/work-items/WI-XXX-[kebab-case]/progress.md`) desde `assets/progress-template.md`. El `progress.md` es específico de este WI — contiene únicamente las entradas del plan de implementación del `README.md`.
+
+> **Con worktrees (`workTree: always`, `ask` afirmativo o modo paralelo), este paso NO hace `git checkout` en el arbol principal.** Se cumple creando el worktree del artefacto (`git worktree add <workTreePath>/<artefacto> [-b <rama>] <rama-base>`) y el resto del flujo corre dentro de el. **El punto 1 (working tree limpio) sigue siendo sobre el arbol principal y va antes:** con cambios sin commitear se aplica `uncommittedChanges` (`commit` / `stash` / `ask`) igual que sin worktrees, y solo despues se crea el worktree. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
 
 ### Paso 2 - Presentar alcance
 

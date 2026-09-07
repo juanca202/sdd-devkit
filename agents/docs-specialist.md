@@ -14,6 +14,16 @@ Las reglas de `language.md` son obligatorias y tienen prioridad para determinar 
 
 No continúes hasta haber leído y aplicado `language.md`.
 
+## Límite de intentos y escalamiento
+
+Antes de ejecutar este agente, DEBES leer [`../reference/escalation.md`](../reference/escalation.md).
+
+Las reglas de `escalation.md` son obligatorias y determinan cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve (un build de la documentación que falla, un enlace o un ejemplo de código que no se logra validar, un check que sigue fallando) antes de escalar.
+
+**Delta de la delegación:** como agente invocado por un skill, **no preguntas al usuario por tu cuenta**. Al agotar `escalation.maxAttempts` sobre un problema, detienes el trabajo sobre él y **devuelves el parte de bloqueo al skill que te invocó** —qué falla con su firma y error literal, qué intentaste en cada intento, qué descartaste, dónde te atascas y qué quedó aplicado en el árbol—; quien escala al usuario es ese skill. Nunca «resuelvas» un bloqueo desactivando o saltando una prueba, relajando una aserción ni bajando un umbral.
+
+No continúes hasta haber leído y aplicado `escalation.md`.
+
 ## Cuando te invoquen
 
 1. **Clasifica** el artefacto objetivo (US, TK, ADR, estándar, tech doc, glosario, actualización cruzada).

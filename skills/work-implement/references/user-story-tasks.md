@@ -27,7 +27,7 @@ Flujo para **ejecutar en codigo** las tareas tecnicas `TK-XXX` de una historia d
 | **US padre** | Indicada por el usuario o inferida de la ruta | Preguntar a que `US-XXX` pertenece; no implementar hasta tenerla |
 | **Alcance** | Del mensaje: toda la US, una lista de TK, o un TK concreto | Preguntar si hay ambiguedad |
 | **Repositorio** | Campo `Repositorio` de cada TK (nombre del repositorio git al que afecta) | Leer del archivo; para `Ready` es obligatorio |
-| **Rama de la US** | `feature/US-XXX-[nombre-corto]` | Crear con `git checkout -b ...` desde la rama base acordada |
+| **Rama de la US** | `feature/US-XXX-[nombre-corto]` | Crear desde la rama base acordada: `git checkout -b ...` sin worktrees, o `git worktree add … -b …` con worktrees (sin tocar el arbol principal) |
 | **Usuario asignado** | Campo `Asignado a` del TK; si no: `git config user.name` | Aplicar como filtro salvo instruccion explicita |
 
 > Si el usuario indica una lista concreta de TK, un implementador distinto o pide implementar sin filtro, esa instruccion explicita prevalece sobre los filtros automaticos.
@@ -60,8 +60,10 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
 1. Verificar working tree limpio; si no, parar y avisar.
 2. Resolver nombre de rama: `feature/US-XXX-[nombre-corto]`.
-3. `git checkout feature/US-XXX-[nombre-corto]` si existe; si no, `git checkout -b feature/US-XXX-[nombre-corto]` desde la rama base acordada (no asumir `main`/`develop`).
+3. Situarse en la rama: **sin worktrees**, `git checkout feature/US-XXX-[nombre-corto]` si existe; si no, `git checkout -b feature/US-XXX-[nombre-corto]` desde la rama base acordada (no asumir `main`/`develop`). **Con worktrees**, ver la nota de abajo.
 4. Leer o crear `progress.md` (desde `assets/progress-template.md`). Al crearlo, anadir **una entrada por cada TK del alcance** con `Estado: Pending` salvo las ya `Done`.
+
+> **Con worktrees (`workTree: always`, `ask` afirmativo o modo paralelo), este paso NO hace `git checkout` en el arbol principal.** Se cumple creando el worktree del artefacto (`git worktree add <workTreePath>/<artefacto> [-b <rama>] <rama-base>`) y el resto del flujo corre dentro de el. **El punto 1 (working tree limpio) sigue siendo sobre el arbol principal y va antes:** con cambios sin commitear se aplica `uncommittedChanges` (`commit` / `stash` / `ask`) igual que sin worktrees, y solo despues se crea el worktree. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
 
 ### Paso 2 - Filtrar y presentar cola
 

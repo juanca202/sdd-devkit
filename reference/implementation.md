@@ -46,7 +46,7 @@ if (impl) {
   }
 
   if (tree === 'always') {
-    console.log('- workTree = always -> cada unidad se implementa en su propio git worktree. No preguntar.');
+    console.log('- workTree = always -> cada unidad se implementa en su propio git worktree. No preguntar. Primero se resuelve uncommittedChanges sobre el arbol principal (si hay cambios sin commitear) y, a partir de ahi, **el arbol principal no se toca**: ni checkout/switch a la rama del artefacto, ni merges en el. La rama del artefacto se crea y se usa desde su propio worktree; la rama del arbol principal es la misma al empezar y al terminar.');
   } else if (tree === 'never') {
     console.log('- workTree = never -> trabajar siempre en el arbol principal. No crear worktrees ni ofrecerlos.');
   } else {
@@ -72,7 +72,7 @@ if (impl) {
   console.log('No hay .sdd-devkit/settings.json con bloque \\'implementation\\'. Aplicar los valores por defecto del catalogo:');
   console.log('- **confirmByUnit = always**: una unidad por confirmacion; esperar confirmacion explicita entre unidades.');
   console.log('- **uncommittedChanges = ask**: parar e informar si hay cambios sin commitear al iniciar o reanudar.');
-  console.log('- **workTree = ask**: preguntar una sola vez, al inicio, si usar worktrees.');
+  console.log('- **workTree = ask**: preguntar una sola vez, al inicio, si usar worktrees (con respuesta afirmativa: primero uncommittedChanges sobre el arbol principal, y despues ya no se toca — ni checkout ni merges en el).');
   console.log('- **workTreePath** sin definir: worktrees en una ruta temporal fuera del arbol principal.');
   console.log('- **maxParallel = 3**: hasta 3 subagentes concurrentes.');
   console.log('- **archiveMode = ask**: preguntar antes de archivar.');

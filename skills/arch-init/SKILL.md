@@ -31,7 +31,7 @@ Inicializa, en un proyecto **en cualquier punto de partida**, las primeras instr
 
 ## Cómo preguntar al usuario
 
-Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md).
+Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md).
 
 Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar*, *validar* o *sugerir* algo al usuario, asume ese mecanismo; no se repite allí.
 
@@ -43,11 +43,11 @@ Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar
 
 ## Rutas de las referencias compartidas
 
-`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `references/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/references/<archivo>.md`. Para resolverla, ejecutar `PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"; [ -n "$PLUGIN_ROOT" ] && PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd)"; echo "PLUGIN_ROOT=$PLUGIN_ROOT"` — siempre imprime un valor: si trae ruta, usarla; si imprime vacío, usar la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../references/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `references/` en el proyecto**: un `<proyecto>/references/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
 
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -73,7 +73,7 @@ Los archivos del harness que **ya existan** en el proyecto se revisan en el Paso
 
 > **Raíz de los índices de arquitectura.** Los dos índices (`docs/adr/README.md`, `docs/standards/README.md`)
 > son artefactos de **arquitectura**: pertenecen a la raíz del repositorio cuyo código documentan (ver
-> [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions)).
+> [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions)).
 > La raíz principal los recibe (`AGENTS.md` los referencia) **salvo que esté clasificada "Solo specs"**
 > (Paso 1.2) — un repositorio sin código de aplicación nunca los recibe, sin excepción y sin preguntarlo; el
 > repositorio de especificaciones en multi-repo es siempre "Solo specs", así que nunca tiene los suyos
@@ -215,7 +215,7 @@ submódulo. Los índices de arquitectura (punto 5) siguen su propia lógica por 
    `references/multi-repo.md § 6`.
 6. **`.sdd-devkit/settings.json`** — copiar `assets/settings-template.json`, reemplazando `<código>` en `language` por el idioma resuelto en [Resolución de idioma](#resolución-de-idioma) (ISO 639-1). El resto de claves son la **configuración mínima obligatoria** del schema y se escriben con los valores de la plantilla; no preguntarlas aquí ni ofrecer configurarlas — el usuario las ajusta editando el archivo. **Multi-repo:** solo en el repositorio de especificaciones; nunca crear este archivo dentro de un submódulo.
 
-> **Este archivo es JSON validado por schema, no markdown.** Debe cumplir [`schemas/settings.schema.json`](../../schemas/settings.schema.json): las **7** claves de primer nivel (`language`, `trackingEnabled`, `specification`, `implementation`, `verification`, `git`, `projectManagement`) son **obligatorias** — la lista viva es la de `required` en el schema, no esta enumeración. `$schema` es opcional (ruta al schema para el editor; ningún skill la resuelve). Fuera de esa, el schema **no admite propiedades adicionales** y `language` solo acepta los códigos de su `enum`. Cuando `projectManagement` queda en `"enabled": false`, el schema **no exige** el resto de sus claves: dejarlas fuera. `specification` es distinto: `basePath`, `archivePath` y `testCases` son obligatorios siempre. `trackingEnabled` vive en la **raíz** del archivo; `trackingUrl` (raíz) y `specification.artifactRoot` solo son obligatorios cuando `trackingEnabled` es `true` y se omiten con `false`. `testCases` es un **objeto** que exige `mode` (`ask`/`always`/`never`) y `askDetails` (booleano), ambos obligatorios.
+> **Este archivo es JSON validado por schema, no markdown.** Debe cumplir [`schemas/settings.schema.json`](../../schemas/settings.schema.json): las **6** claves de primer nivel (`language`, `specification`, `implementation`, `verification`, `git`, `projectManagement`) son **obligatorias** — la lista viva es la de `required` en el schema, no esta enumeración. `$schema` es opcional (ruta al schema para el editor; ningún skill la resuelve). Fuera de esa, el schema **no admite propiedades adicionales** y `language` solo acepta los códigos de su `enum`. Cuando `projectManagement` queda en `"enabled": false`, el schema **no exige** el resto de sus claves: dejarlas fuera. `specification` es distinto: `basePath`, `archivePath` y `testCases` son obligatorios siempre. `testCases` es un **objeto** que exige `mode` (`ask`/`always`/`never`) y `askDetails` (booleano), ambos obligatorios.
 
 7. **`.gitignore`** — asegurar que incluye `.sdd-devkit/.env`. Ahí vive `SDD_DEVKIT_ACCESS_TOKEN` (hooks y CLI); no se versiona. Si `.gitignore` no existe, crearlo con esa línea; si existe y no la tiene, añadirla. **No** crear el archivo `.env`. **Multi-repo:** solo en el repositorio de especificaciones — el `.env` que ignora tampoco existe en un submódulo.
 8. **`README.md` (raíz)** — asegurar que incluya, cerca del inicio del archivo, una descripción de **qué hace el proyecto** en **máximo 1-2 párrafos**. Es el séptimo archivo del harness, pero no sigue la migración por plantilla completa del punto 3.1 — ver [3.4](#34-readmemd-raíz--descripción-del-proyecto). **Multi-repo:** en cada submódulo se aplica la misma regla, pero describiendo **ese repositorio en particular** en vez de la solución completa; ver `references/multi-repo.md § 4.4`.
@@ -364,9 +364,9 @@ No confirmar el cierre antes de que `AGENTS.md` tenga el stack ya escrito.
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
-- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
+- [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 
 ---
 

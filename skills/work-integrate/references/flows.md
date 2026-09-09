@@ -60,7 +60,7 @@ Cuando reflog y config no concluyen, o existen varios candidatos plausibles.
 - [ ] `progress.md` existe en la ubicación del tipo
 - [ ] **Todas** las unidades del trabajo de la rama en estado `Done` (leídas del `progress.md` en la carpeta del trabajo)
 - [ ] Rama base resuelta contra `integrationBranches`; si su `commitPolicy` es `pull_request`, el flujo paró y se ofreció `pr-create`
-- [ ] Puertas resueltas según [`${PLUGIN_ROOT}/reference/verification.md`](../../../reference/verification.md), con las que tienen `enabled: false` omitidas sin ejecutar ni ofrecer
+- [ ] Puertas resueltas según [`${PLUGIN_ROOT}/references/verification.md`](../../../references/verification.md), con las que tienen `enabled: false` omitidas sin ejecutar ni ofrecer
 - [ ] **`quality-check`** — ejecutado con veredicto `APPROVED`, **o** omitido con su motivo registrado
 - [ ] **`code-review`** — ejecutado con veredicto `APPROVED`, **o** omitido con su motivo registrado
 - [ ] **`trace-validate`** — ejecutado (después de `quality-check`) con veredicto `APPROVED` (o `APPROVED_WITH_NOTES`), **o** omitido con su motivo registrado

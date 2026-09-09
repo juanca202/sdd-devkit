@@ -46,7 +46,7 @@ if (max === -1) {
 if (onLimit === 'report') {
   console.log('- onLimit = report -> al agotar los intentos: NO preguntar. Marcar el problema con el estado BLOCKED en el informe o artefacto correspondiente, con el parte de bloqueo completo, continuar con el resto del alcance que no dependa de el, y terminar el skill informando lo que quedo bloqueado. Ver la seccion \"Efecto en el veredicto\": ningun informe con un bloqueo abierto puede cerrar en APPROVED.');
 } else {
-  console.log('- onLimit = ask -> al agotar los intentos: DETENER el trabajo sobre ese problema, presentar el parte de bloqueo y preguntar al usuario con la herramienta de preguntas estructuradas (ver reference/asking.md) como seguir. No seguir intentando ni avanzar a otra unidad antes de la respuesta.');
+  console.log('- onLimit = ask -> al agotar los intentos: DETENER el trabajo sobre ese problema, presentar el parte de bloqueo y preguntar al usuario con la herramienta de preguntas estructuradas (ver references/asking.md) como seguir. No seguir intentando ni avanzar a otra unidad antes de la respuesta.');
 }
 "
 ```

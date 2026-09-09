@@ -148,7 +148,7 @@ Un WI completo puede alcanzar `Estado: Ready` si cumple todas las condiciones de
    - **Observaciones**: solo si hay pendientes reales. Si no hay nada, **omitir la sección**. Con pendientes reales: `Estado: Draft`.
 3. **Documentación técnica y glosario**: si el WI requiere crear o actualizar especificaciones en `technical-docs/`, **delegar a `/design-define` vía subagente** (nunca editarlas desde este skill) y enlazar las referencias devueltas; glossary sí puede actualizarse aquí con entradas breves (no sustituye ADR ni technical-doc).
 4. **Verificar el checklist** antes de asignar `Estado: Ready`.
-5. **Handoff:** con el WI en `Ready`, aplicar antes `specification.testCases.mode` sobre el propio WI (ver [`${PLUGIN_ROOT}/reference/planning.md`](../../../reference/planning.md)); después, si el usuario quiere implementar, **invocar `/work-implement`** (no implementar directamente desde este skill). Si quedó en `Draft`, listar qué falta para completarlo.
+5. **Handoff:** con el WI en `Ready`, aplicar antes `specification.testCases.mode` sobre el propio WI (ver [`${PLUGIN_ROOT}/references/planning.md`](../../../references/planning.md)); después, si el usuario quiere implementar, **invocar `/work-implement`** (no implementar directamente desde este skill). Si quedó en `Draft`, listar qué falta para completarlo.
 
 ---
 
@@ -176,7 +176,7 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 4. **Confirmar con el usuario** mediante la herramienta de preguntas estructuradas. Opciones: [Confirmar] / [Cancelar] — **sin** una opción de "ajustar alcance": el ajuste llega por respuesta libre, que ya explica qué cambiar. Si el usuario pide un ajuste, revisar y repetir pasos 3–4. **No continuar sin confirmación explícita.**
 5. **Crear cada WI** confirmado siguiendo el *Flujo: Crear stub* (o *WI completo* si el alcance ya está claro para alguno). Si **más de uno** se redacta como WI completo, reunir el contexto técnico que falte para el conjunto en tandas de **hasta 3 preguntas**, agrupadas por WI para que quede claro a cuál pertenece cada una, en vez de preguntar WI por WI; encadenar tantas tandas como haga falta mientras sigan quedando lagunas relevantes. Lo que siga sin acordar tras agotar la batería —el usuario respondió todo lo que iba a responder, o prefiere dejar el resto pendiente— va a **Observaciones** de ese WI, que queda en `Estado: Draft`. Asignar `Estado: Ready` **solo** a los WI que cumplan todas las condiciones del [checklist](#checklist-antes-de-redactar); es normal que el lote quede mixto.
 6. **Reportar al usuario** la lista de WI creados con su objetivo breve, separando los que quedaron `Ready` de los `Draft` con su residual.
-7. **Casos de prueba:** para cada WI que quede en `Ready`, aplicar [`${PLUGIN_ROOT}/reference/planning.md`](../../../reference/planning.md) sobre el propio `WI` como artefacto padre, saltándolo si ya tiene `test-cases/` con algún `TC-XXX`.
+7. **Casos de prueba:** para cada WI que quede en `Ready`, aplicar [`${PLUGIN_ROOT}/references/planning.md`](../../../references/planning.md) sobre el propio `WI` como artefacto padre, saltándolo si ya tiene `test-cases/` con algún `TC-XXX`.
 8. **Handoff:** los WI en `Draft` deben completarse a `Ready` (modo A) antes de **`work-implement`**.
 
 **Reglas invariantes:**

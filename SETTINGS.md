@@ -8,16 +8,7 @@ Referencia completa de cada opción de `.sdd-devkit/settings.json`: para qué si
 
 | Campo | Valores | Para qué sirve |
 |-------|---------|-----------------|
-| `language` | `es` · `en` · `fr` · `de` · `it` | Idioma en el que cada skill redacta artefactos y mensajes al usuario. Sin este valor, el skill lo infiere del contexto o pregunta — ver [reference/language.md](reference/language.md). |
-
-## `trackingEnabled` y `trackingUrl`
-
-Seguimiento de especificaciones: envío de eventos a un endpoint externo. Viven en la **raíz** de `settings.json`.
-
-| Campo | Valores | Para qué sirve |
-|-------|---------|-----------------|
-| `trackingEnabled` | `true` · `false` | Activa o desactiva el envío de eventos de seguimiento de especificaciones. |
-| `trackingUrl` | URL | Endpoint de eventos. Obligatorio cuando `trackingEnabled: true`, junto con `specification.artifactRoot`. |
+| `language` | `es` · `en` · `fr` · `de` · `it` | Idioma en el que cada skill redacta artefactos y mensajes al usuario. Sin este valor, el skill lo infiere del contexto o pregunta — ver [references/language.md](references/language.md). |
 
 ## `specification`
 
@@ -26,14 +17,14 @@ Rutas de las especificaciones y política de casos de prueba al planificar.
 | Campo | Valores | Para qué sirve |
 |-------|---------|-----------------|
 | `basePath` | ruta relativa (ej. `docs/specs/`) | Dónde viven las especificaciones (`US-XXX`, `WI-XXX`, `TK-XXX`, `TC-XXX`, `RS-XXX`...). |
-| `archivePath` | ruta relativa (ej. `docs/archive/`) | Dónde se archiva el trabajo cerrado. Ver el contrato de archivado en [reference/artifacts.md](reference/artifacts.md). |
-| `artifactRoot` | código (ej. `US-001`) | Artefacto raíz que el CLI de tracking consulta por defecto cuando la invocación no trae `--requirement <code>`. Obligatorio cuando `trackingEnabled: true` (raíz). |
-| `testCases.mode` | `ask` · `always` · `never` | Si `work-define`/`work-plan` ofrecen `test-define` al dejar una historia o sus tareas en `Ready`: preguntando, invocándolo directo o sin ofrecerlo. Detalle en [reference/planning.md](reference/planning.md). |
+| `archivePath` | ruta relativa (ej. `docs/archive/`) | Dónde se archiva el trabajo cerrado. Ver el contrato de archivado en [references/artifacts.md](references/artifacts.md). |
+| `artifactRoot` | código (ej. `US-001`) | Artefacto raíz que el CLI de tracking consulta por defecto cuando la invocación no trae `--requirement <code>`. |
+| `testCases.mode` | `ask` · `always` · `never` | Si `work-define`/`work-plan` ofrecen `test-define` al dejar una historia o sus tareas en `Ready`: preguntando, invocándolo directo o sin ofrecerlo. Detalle en [references/planning.md](references/planning.md). |
 | `testCases.askDetails` | `true` · `false` | Si `test-define` entrevista al usuario (entorno, roles, datos, escenarios de error) antes de generar los `TC-XXX`, o aplica valores por defecto documentados y anota los supuestos. No cambia el alcance: siempre cubre todos los criterios de aceptación. |
 
 ## `implementation`
 
-Ritmo de confirmación y control de flujo durante `work-implement`. Detalle en [reference/implementation.md](reference/implementation.md).
+Ritmo de confirmación y control de flujo durante `work-implement`. Detalle en [references/implementation.md](references/implementation.md).
 
 | Campo | Valores | Para qué sirve |
 |-------|---------|-----------------|
@@ -47,7 +38,7 @@ Ritmo de confirmación y control de flujo durante `work-implement`. Detalle en [
 
 ## `verification`
 
-Puertas de cierre que ejecuta `work-integrate` antes del merge. Detalle en [reference/verification.md](reference/verification.md).
+Puertas de cierre que ejecuta `work-integrate` antes del merge. Detalle en [references/verification.md](references/verification.md).
 
 | Campo | Valores | Para qué sirve |
 |-------|---------|-----------------|
@@ -63,7 +54,7 @@ Una puerta con `enabled: false` no bloquea el merge, pero tampoco cuenta como ap
 
 ## `escalation`
 
-Límite de intentos ante un problema que no se resuelve, y qué hacer al agotarlo. Corta el bucle de reintentos en los skills que **implementan código o verifican pruebas** (`work-implement`, `quality-check`, `code-review`, `trace-validate`, `work-integrate`, `arch-audit`) y en los agentes especialistas. Detalle en [reference/escalation.md](reference/escalation.md).
+Límite de intentos ante un problema que no se resuelve, y qué hacer al agotarlo. Corta el bucle de reintentos en los skills que **implementan código o verifican pruebas** (`work-implement`, `quality-check`, `code-review`, `trace-validate`, `work-integrate`, `arch-audit`) y en los agentes especialistas. Detalle en [references/escalation.md](references/escalation.md).
 
 | Campo | Valores | Para qué sirve |
 |-------|---------|-----------------|
@@ -74,7 +65,7 @@ Bloque **opcional**: si falta en `settings.json` se aplican los valores por defe
 
 ## `git`
 
-Comportamiento del skill `git-commit`. Detalle en [reference/git.md](reference/git.md).
+Comportamiento del skill `git-commit`. Detalle en [references/git.md](references/git.md).
 
 | Campo | Valores | Para qué sirve |
 |-------|---------|-----------------|
@@ -86,7 +77,7 @@ Las gates de seguridad de `git-commit` (detección de secretos, archivos sensibl
 
 ## `projectManagement`
 
-Integración opcional con un sistema de tickets externo, usada por `work-plan`, `test-define` y `work-research`. Detalle en [reference/project-management.md](reference/project-management.md).
+Integración opcional con un sistema de tickets externo, usada por `work-plan`, `test-define` y `work-research`. Detalle en [references/project-management.md](references/project-management.md).
 
 | Campo | Valores | Para qué sirve |
 |-------|---------|-----------------|
@@ -98,4 +89,4 @@ Integración opcional con un sistema de tickets externo, usada por `work-plan`, 
 
 ---
 
-Cuando el seguimiento de specs está activo (`trackingEnabled: true`), el token `SDD_DEVKIT_ACCESS_TOKEN` vive en `.sdd-devkit/.env` (no versionado, `arch-init` lo deja en `.gitignore`) — no en `settings.json`.
+Cuando el seguimiento de specs está activo, el token `SDD_DEVKIT_ACCESS_TOKEN` vive en `.sdd-devkit/.env` (no versionado, `arch-init` lo deja en `.gitignore`) — no en `settings.json`.

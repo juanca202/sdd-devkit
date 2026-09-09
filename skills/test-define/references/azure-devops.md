@@ -1,7 +1,7 @@
 # Integración con Azure DevOps — `test-define`
 
-> **Base común obligatoria:** [`${PLUGIN_ROOT}/reference/project-managers/azure-devops.md`](../../../reference/project-managers/azure-devops.md)
-> — activación y datos de conexión resueltos en [`${PLUGIN_ROOT}/reference/project-management.md`](../../../reference/project-management.md), verificación del MCP
+> **Base común obligatoria:** [`${PLUGIN_ROOT}/references/project-managers/azure-devops.md`](../../../references/project-managers/azure-devops.md)
+> — activación y datos de conexión resueltos en [`${PLUGIN_ROOT}/references/project-management.md`](../../../references/project-management.md), verificación del MCP
 > y su degradación, construcción de la URL, campo `Work Item (ADO)`, uso del `id` de ADO como número
 > local, límite de 255 caracteres del título, contrato de reconstrucción íntegra y anti-patrones
 > comunes. **Leerla antes que este archivo.**

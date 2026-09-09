@@ -8,11 +8,20 @@ Eliminar este bloque y sustituir todos los {{…}} al publicar el documento fina
 <!--
 Esta marca se CONSERVA al publicar. Sus claves y sus valores van en inglés SIEMPRE, aunque el resto del
 documento esté en otro idioma: es el ancla que otros skills parsean, no contenido. La etiqueta visible
-de arriba sí se redacta en el idioma resuelto. Ver ../../reference/verdicts.md.
+de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
 -->
 **Estado:** {{Draft | Ready}}
 **Fecha de creación:** {{YYYY-MM-DD}}
 **Última actualización:** {{YYYY-MM-DD}}
+<!--
+Indicadores derivados de las tablas de la sección Validación — nunca se valoran aparte:
+🟢 = filas en Cumple · 🟡 = filas en Parcial · 🔴 = filas en No cumple; el total tras la barra es el
+número de criterios evaluados (INVEST: 6; DoR: 6, o menos si alguna fila queda en No aplica — esas
+filas no cuentan ni en los colores ni en el total). Todo color con recuento 0 se omite del indicador
+(p. ej. «🟢 6 / 6» o «🟢 4 · 🟡 2 / 6»). Recalcular ambas líneas en cada edición que toque las tablas.
+-->
+**INVEST:** {{🟢 N · 🟡 N · 🔴 N / total — omitir los colores a 0}}
+**DoR:** {{🟢 N · 🟡 N · 🔴 N / total — omitir los colores a 0}}
 **Work Item ({{Sistema}}):** {{enlace markdown al work item del sistema de seguimiento externo — solo si se creó manualmente para esta historia; {{Sistema}} es el nombre corto del sistema (p. ej. "ADO"); omitir línea si no aplica. A diferencia de TK-XXX/WI-XXX/TC-XXX (que sí se sincronizan automáticamente cuando hay un tracker externo vinculado), ningún skill de esta suite crea o pobla este campo por su cuenta para la US — si alguien lo puebla manualmente, regla de fidelidad recomendada: la sección Criterios de aceptación va en el campo dedicado del sistema si lo expone (p. ej. Acceptance Criteria en ADO); el resto del documento (Descripción, Contexto, Fuera de alcance, Reglas de negocio, Referencias, Complejidad, Repositorios, Validación, Observaciones) va en la descripción del work item, serializado por secciones, para que la US pueda reconstruirse completa desde el work item si este .md se pierde — ninguna sección debería omitirse}}
 
 ## Descripción

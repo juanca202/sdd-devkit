@@ -8,7 +8,7 @@ Eliminar este bloque y sustituir todos los {{…}} al publicar el documento fina
 <!--
 Esta marca se CONSERVA al publicar. Sus claves y sus valores van en inglés SIEMPRE, aunque el resto del
 documento esté en otro idioma: es el ancla que otros skills parsean, no contenido. La etiqueta visible
-de arriba sí se redacta en el idioma resuelto. Ver ../../reference/verdicts.md.
+de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
 -->
 **Estado:** {{Draft | Ready}}
 **Historia:** {{enlace markdown al README.md de la historia US-XXX}}

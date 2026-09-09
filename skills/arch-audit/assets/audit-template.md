@@ -223,5 +223,5 @@ refleja también en "Veredicto" de la cabecera, junto a la fecha/hora que lo con
 Esta marca se CONSERVA al publicar. Sus claves y su valor van en inglés SIEMPRE, aunque el resto del
 informe esté en otro idioma; es el identificador estable del veredicto, no contenido.
 En una revalidación, actualizar su `verdict` al veredicto resultante y su `generated` a la fecha de esa
-entrada de `## Revalidaciones`. Ver ../../reference/verdicts.md.
+entrada de `## Revalidaciones`. Ver ../../references/verdicts.md.
 -->

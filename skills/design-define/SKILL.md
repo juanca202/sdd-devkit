@@ -38,18 +38,18 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 
 ---
 
 ## Rutas de las referencias compartidas
 
-`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `references/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/references/<archivo>.md`. Para resolverla, ejecutar `PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"; [ -n "$PLUGIN_ROOT" ] && PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd)"; echo "PLUGIN_ROOT=$PLUGIN_ROOT"` — siempre imprime un valor: si trae ruta, usarla; si imprime vacío, usar la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../references/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `references/` en el proyecto**: un `<proyecto>/references/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
 
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -61,7 +61,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 ## Ubicación de archivos
 
-Layout completo del harness e identificadores: [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md).
+Layout completo del harness e identificadores: [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md).
 
 Lo propio de este skill:
 
@@ -94,7 +94,7 @@ En modo delegado, el grilling de preguntas se dirige igualmente al usuario (el s
 
 ## Cómo preguntar al usuario (grilling)
 
-Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md).
+Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md).
 
 Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar*, *validar* o *sugerir* algo al usuario, asume ese mecanismo; no se repite allí.
 

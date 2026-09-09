@@ -31,11 +31,11 @@ aprobados — nadie más los vuelve a crear después.
 
 ## Rutas de las referencias compartidas
 
-`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `references/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/references/<archivo>.md`. Para resolverla, ejecutar `PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"; [ -n "$PLUGIN_ROOT" ] && PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd)"; echo "PLUGIN_ROOT=$PLUGIN_ROOT"` — siempre imprime un valor: si trae ruta, usarla; si imprime vacío, usar la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../references/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `references/` en el proyecto**: un `<proyecto>/references/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
 
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -47,7 +47,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 Antes de inspeccionar, determinar el alcance:
 
-1. **Resolver la raíz de arquitectura (`<raíz-arq>`)** — el repositorio cuyo código se va a descubrir y donde vivirán los artefactos resultantes. Listar los repositorios anidados (`git submodule status` / `.gitmodules`, más directorios con `.git` propio): si no hay ninguno, es la raíz del repo actual y no se pregunta; si los hay, **preguntar al usuario** qué raíz descubrir (principal o submódulo `X`). Se resuelve **una vez para todo el lote** y todo lo demás —inspección, lectura de artefactos existentes y creación— es relativo a ella. Regla completa: [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
+1. **Resolver la raíz de arquitectura (`<raíz-arq>`)** — el repositorio cuyo código se va a descubrir y donde vivirán los artefactos resultantes. Listar los repositorios anidados (`git submodule status` / `.gitmodules`, más directorios con `.git` propio): si no hay ninguno, es la raíz del repo actual y no se pregunta; si los hay, **preguntar al usuario** qué raíz descubrir (principal o submódulo `X`). Se resuelve **una vez para todo el lote** y todo lo demás —inspección, lectura de artefactos existentes y creación— es relativo a ella. Regla completa: [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
 2. **Leer `AGENTS.md`** (si existe, sección `# Stack tecnológico`) y **`.agents/MEMORY.md`** (si existe, contexto operativo) del **repo principal** para entender lo ya conocido — el harness es uno solo; el stack vive en `AGENTS.md` y no se duplica en `MEMORY.md`. Si la raíz elegida es un submódulo, su stack puede diferir del que describe `AGENTS.md`: prevalece lo que se observe en la Fase 2.
 3. **Leer `docs/adr/` y `docs/standards/` de `<raíz-arq>`** para listar los artefactos ya existentes — nunca proponer un candidato que duplique un ADR o estándar existente **de esa raíz** (en cualquier estado). Los de otra raíz son series independientes y no cuentan como duplicado.
 4. Si el usuario no indicó ruta y no hay repositorios anidados, asumir raíz del repositorio actual.
@@ -203,5 +203,5 @@ presentación están en `references/`; **leerlos solo cuando la fase correspondi
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 

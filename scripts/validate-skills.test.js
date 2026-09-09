@@ -296,10 +296,10 @@ test('slugifyHeading: anclas duplicadas reciben sufijo -1, -2', () => {
 // --- extractLinks ---------------------------------------------------------
 
 test('extractLinks: separa ruta y ancla', () => {
-  const content = 'Ver [texto](../../reference/verification.md#política-implementationarchivemode) y algo mas.';
+  const content = 'Ver [texto](../../references/verification.md#política-implementationarchivemode) y algo mas.';
   const links = extractLinks(content);
   assert.equal(links.length, 1);
-  assert.equal(links[0].targetPath, '../../reference/verification.md');
+  assert.equal(links[0].targetPath, '../../references/verification.md');
   assert.equal(links[0].anchor, 'política-implementationarchivemode');
 });
 
@@ -327,8 +327,8 @@ function makeFixture() {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), 'validate-skills-'));
   const skillDir = path.join(root, 'skills', 'demo-skill');
   fs.mkdirSync(skillDir, { recursive: true });
-  fs.mkdirSync(path.join(root, 'reference'), { recursive: true });
-  fs.writeFileSync(path.join(root, 'reference', 'implementation.md'), '# Resolucion\n\n## Handoff\n\ntexto\n');
+  fs.mkdirSync(path.join(root, 'references'), { recursive: true });
+  fs.writeFileSync(path.join(root, 'references', 'implementation.md'), '# Resolucion\n\n## Handoff\n\ntexto\n');
   return root;
 }
 
@@ -342,7 +342,7 @@ test('checkLinksAndAnchors: sin hallazgos cuando ruta y ancla existen', () => {
     'license: MIT',
     '---',
     '',
-    'Ver [handoff](../../reference/implementation.md#handoff).',
+    'Ver [handoff](../../references/implementation.md#handoff).',
     '',
   ].join('\n');
   fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMd);
@@ -353,7 +353,7 @@ test('checkLinksAndAnchors: sin hallazgos cuando ruta y ancla existen', () => {
 test('checkLinksAndAnchors: ERROR si la ruta no existe', () => {
   const root = makeFixture();
   const skillDir = path.join(root, 'skills', 'demo-skill');
-  const skillMd = '[roto](../../reference/no-existe.md)\n';
+  const skillMd = '[roto](../../references/no-existe.md)\n';
   fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMd);
   const findings = checkLinksAndAnchors(skillDir, root);
   assert.equal(findings.length, 1);
@@ -364,7 +364,7 @@ test('checkLinksAndAnchors: ERROR si la ruta no existe', () => {
 test('checkLinksAndAnchors: ERROR si el ancla no existe en el destino', () => {
   const root = makeFixture();
   const skillDir = path.join(root, 'skills', 'demo-skill');
-  const skillMd = 'Ver [seccion](../../reference/implementation.md#no-existe).\n';
+  const skillMd = 'Ver [seccion](../../references/implementation.md#no-existe).\n';
   fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMd);
   const findings = checkLinksAndAnchors(skillDir, root);
   assert.equal(findings.length, 1);
@@ -379,7 +379,7 @@ test('checkLinksAndAnchors: revisa tambien references/*.md', () => {
   fs.mkdirSync(path.join(skillDir, 'references'));
   fs.writeFileSync(
     path.join(skillDir, 'references', 'flow.md'),
-    '[roto](../../../reference/no-existe.md)\n',
+    '[roto](../../../references/no-existe.md)\n',
   );
   const findings = checkLinksAndAnchors(skillDir, root);
   assert.equal(findings.length, 1);

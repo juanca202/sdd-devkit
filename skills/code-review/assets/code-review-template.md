@@ -6,7 +6,7 @@ severidad y estado de dimensión se redactan en el IDIOMA RESUELTO (ver «Resolu
 SKILL.md). Esta plantilla los muestra en español solo porque el repositorio del plugin está en
 español: son un ejemplo de redacción, no un texto fijo. Lo que NO cambia nunca: la estructura, el
 orden, los símbolos y los valores canónicos (APPROVED/REJECTED/INCOMPLETE, CLEAN/NOT_ASSESSED,
-CRITICAL/MAJOR/MINOR/SUGGESTION). Ver ../../reference/verdicts.md.
+CRITICAL/MAJOR/MINOR/SUGGESTION). Ver ../../references/verdicts.md.
 Excepción: la marca de pie del final (code-review:fingerprint) SÍ se conserva en el documento
 publicado — es la clave de frescura que lee el Paso 0 de la próxima revisión.
 -->

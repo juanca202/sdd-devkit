@@ -9,7 +9,7 @@ Plantilla canónica del reporte de trazabilidad (trace-validate).
   veredicto se redactan en el IDIOMA RESUELTO (ver «Resolución de idioma» en SKILL.md). Esta plantilla
   los muestra en español solo porque el repositorio del plugin está en español: son un ejemplo de
   redacción, no un texto fijo. Lo que NO cambia nunca: la estructura, el orden, los símbolos y los
-  valores canónicos. Ver ../../reference/verdicts.md.
+  valores canónicos. Ver ../../references/verdicts.md.
 - Valores canónicos permitidos (en la celda va SÍMBOLO + ETIQUETA en el idioma resuelto):
   · Estado: `COVERED` (✅) | `PARTIAL` (⚠️) | `UNCOVERED` (❌)
   · Tipo: Manual | Unit | Integration | API Test | Visual Test | E2E | — (sin TC ni artefacto)

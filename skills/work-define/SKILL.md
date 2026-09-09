@@ -30,19 +30,19 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
-- [`${PLUGIN_ROOT}/reference/planning.md`](../../reference/planning.md): **Política de planificación** — si se pregunta, se invoca automáticamente o nunca se sugiere `test-define` al dejar la US en Ready. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md): **Política de planificación** — si se pregunta, se invoca automáticamente o nunca se sugiere `test-define` al dejar la US en Ready. *Lectura obligatoria antes de ejecutar el skill.*
 
 ---
 
 ## Rutas de las referencias compartidas
 
-`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `references/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/references/<archivo>.md`. Para resolverla, ejecutar `PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"; [ -n "$PLUGIN_ROOT" ] && PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd)"; echo "PLUGIN_ROOT=$PLUGIN_ROOT"` — siempre imprime un valor: si trae ruta, usarla; si imprime vacío, usar la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../references/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `references/` en el proyecto**: un `<proyecto>/references/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
 
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -52,7 +52,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 ## Política de planificación
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/planning.md`](../../reference/planning.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md).
 
 Las reglas de `planning.md` son obligatorias y determinan, vía `specification.testCases.mode`, si al dejar la US en `Ready` se pregunta si definir los casos de prueba (`ask`, comportamiento por defecto), se invoca `/test-define` automáticamente sin preguntar (`always`), o nunca se sugiere ni se invoca (`never`). La otra clave del objeto, `askDetails`, **no la consume este skill**: la lee `test-define`. Ver [Flujo (resumen)](#flujo-resumen).
 
@@ -62,7 +62,7 @@ No continúes hasta haber leído y aplicado `planning.md`.
 
 ## Ubicación de archivos
 
-Layout completo del harness, identificadores y contrato de archivado: [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md).
+Layout completo del harness, identificadores y contrato de archivado: [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md).
 
 Lo propio de este skill:
 
@@ -77,7 +77,7 @@ Lo propio de este skill:
 
 ### Convenciones del nombre de carpeta
 
-> Reglas comunes de slug e identificadores: [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md). Lo específico de las US:
+> Reglas comunes de slug e identificadores: [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md). Lo específico de las US:
 
 - Formato: `US-XXX-[nombre-corto]` con `US-XXX` en mayúsculas y número de 3 dígitos.
 - Nombre corto: minúsculas, kebab-case, sin artículos ni palabras vacías.
@@ -113,8 +113,8 @@ El procedimiento completo —cómo preguntar al usuario, validación antes de cr
 
 - **Descomponer un `SRS-XXX` (entrada alternativa):** solo cuando el usuario pide explícitamente descomponer un SRS de `/requirement-refine` — leer su `README.md` completo, agrupar `FR-XXX`/`NFR-XXX` en historias candidatas (por pantalla/actor, no 1:1 obligatorio), heredar de él criterios de verificación, repositorios y wireframes en vez de repreguntarlos, y al terminar actualizar la tabla **Historias de usuario derivadas** del SRS. Ver [`references/flow.md`](references/flow.md#flujo-descomponer-un-srs-xxx-en-historias).
 - **Varias historias en una misma invocación:** si el agrupamiento de un SRS o la migración investigada produjeron varias US, o el usuario pide crear de una vez varias historias relacionadas, primero detectar dependencias entre ellas y ordenarlas — la infraestructura y las que no dependen de ninguna otra de la tanda van primero — y confirmar ese orden con el usuario antes de fijar IDs; con una sola historia, saltar directo a Crear. Ver [`references/flow.md`](references/flow.md#flujo-proponer-varias-historias-en-una-misma-invocación).
-- **Crear:** fijar ID y carpeta `US-XXX-[nombre-corto]/` → redactar el `README.md` con la plantilla (Descripción RFC 2119, Referencias, Criterios `AC-XXX` con categoría y enunciado RFC 2119, Repositorios, Complejidad Fibonacci, INVEST, DoR, Observaciones) → si el requerimiento define modelos, APIs o flujos, **delegar la documentación técnica a `/design-define` mediante subagente** y agregar las referencias devueltas a la sección Referencias → glosario si aplica → cierre.
-- **Actualizar:** identificar y leer el `README.md` → aplicar cambios conservando **siempre** los ids `AC-XXX` existentes (son inmutables: los nuevos toman el siguiente libre) → revalidar → confirmar. Ante conflicto `TK-XXX` ↔ US, **la US prevalece**.
+- **Crear:** fijar ID y carpeta `US-XXX-[nombre-corto]/` → redactar el `README.md` con la plantilla (Descripción RFC 2119, Referencias, Criterios `AC-XXX` con categoría y enunciado RFC 2119, Repositorios, Complejidad Fibonacci, INVEST, DoR con sus indicadores 🟢/🟡/🔴 en la cabecera, Observaciones) → si el requerimiento define modelos, APIs o flujos, **delegar la documentación técnica a `/design-define` mediante subagente** y agregar las referencias devueltas a la sección Referencias → glosario si aplica → cierre.
+- **Actualizar:** identificar y leer el `README.md` → aplicar cambios conservando **siempre** los ids `AC-XXX` existentes (son inmutables: los nuevos toman el siguiente libre) → revalidar (checklists e indicadores de cabecera) → confirmar. Ante conflicto `TK-XXX` ↔ US, **la US prevalece**.
 - **Cierre:** si queda **Draft**, cerrar lagunas con preguntas estructuradas (una por laguna, máx. tres por bloque); si queda **Ready**, resolver la definición de casos de prueba según `specification.testCases.mode` (`ask` pregunta, `always` invoca `/test-define` directo, `never` no la ofrece — ver [Política de planificación](#política-de-planificación)) y sugerir crear las `TK-XXX` con `/work-plan` (nunca crear TCs ni tareas directamente desde este skill). Si algún repositorio de la sección Repositorios no tiene el harness (`AGENTS.md`/`CLAUDE.md`/`.sdd-devkit/settings.json`), agregar `/arch-init` como opción adicional en la misma pregunta.
 
 Las modalidades **RFC 2119**, las **categorías de AC-XXX** (funcionales e ISO 25010) y las rúbricas **INVEST** y **DoR** detalladas están en [`references/quality-criteria.md`](references/quality-criteria.md).

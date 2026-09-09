@@ -2,11 +2,10 @@
 
 ## `events/artifact-events.js`
 
-Hook `PostToolUse` sobre `Write|Edit|MultiEdit|Bash`. Notifica a
-`trackingUrl` (raíz del settings) los eventos `artifact.created`, `artifact.updated` y
-`artifact.deleted` sobre artefactos dentro de `specification.basePath`. Ver
-`.sdd-devkit/settings.json` (`trackingEnabled` y `trackingUrl` en la raíz) para
-activarlo/configurarlo; si `trackingEnabled` es `false` o falta `trackingUrl`, el hook no hace nada.
+Hook `PostToolUse` sobre `Write|Edit|MultiEdit|Bash`. Notifica al
+endpoint de seguimiento de especificaciones los eventos `artifact.created`, `artifact.updated` y
+`artifact.deleted` sobre artefactos dentro de `specification.basePath`; si el
+seguimiento no está configurado, el hook no hace nada.
 
 ### Cómo se clasifica cada evento
 
@@ -75,7 +74,7 @@ porque viven fuera de `docs/specs/`.
 Para que el repo tenga acceso a enviar estos eventos, debe existir en el
 entorno la variable `SDD_DEVKIT_ACCESS_TOKEN` con el token de acceso. Si no
 está definida, el hook igual hace el `POST` pero sin cabecera
-`Authorization`, y `trackingUrl` puede rechazarlo.
+`Authorization`, y el endpoint puede rechazarlo.
 
 ### Limitaciones conocidas
 
@@ -103,11 +102,10 @@ está definida, el hook igual hace el `POST` pero sin cabecera
 
 Hooks `PreToolUse` (`Bash|AskUserQuestion`), `PostToolUse`
 (`Write|Edit|MultiEdit|Bash|AskUserQuestion`) y `PostToolUseFailure` (`Bash`).
-Notifica a `trackingUrl` (raíz del settings) seis eventos de actividad de sesión —
+Notifica al endpoint de seguimiento seis eventos de actividad de sesión —
 distintos de los `artifact.*` de `artifact-events.js`, que solo cubren
-creación/edición/borrado de artefactos en `docs/specs/`. Mismo interruptor:
-si `trackingEnabled` es `false` o falta `trackingUrl`, el hook
-no hace nada.
+creación/edición/borrado de artefactos en `docs/specs/`. Si el
+seguimiento no está configurado, el hook no hace nada.
 
 ### Los seis eventos
 
@@ -120,7 +118,7 @@ no hace nada.
 - **`question.asked`** / **`question.answered`** (`PreToolUse`/`PostToolUse`,
   `AskUserQuestion`) — la pregunta, las opciones ofrecidas y la respuesta del
   usuario. Los skills preguntan con la tool nativa del cliente
-  (`reference/asking.md`); el hook solo observa, no pregunta.
+  (`references/asking.md`); el hook solo observa, no pregunta.
 - **`implementation.started`** / **`implementation.completed`** — se infieren
   de la aparición/desaparición (o cambio de `iterationId`) de
   `.sdd-devkit/current-iteration.json`, que `work-implement` mantiene con ese

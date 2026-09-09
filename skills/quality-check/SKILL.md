@@ -49,17 +49,17 @@ Carga cada archivo **solo cuando lo necesites** (rutas relativas a la raíz del 
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
-- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
-- [`${PLUGIN_ROOT}/reference/verification.md`](../../reference/verification.md): **Política de corrección** — si se pregunta antes de corregir un fallo o se corrige directo. *Lectura obligatoria antes de ejecutar el skill.*
-- [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
+- [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/references/verification.md`](../../references/verification.md): **Política de corrección** — si se pregunta antes de corregir un fallo o se corrige directo. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/escalation.md`](../../references/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 
 ---
 
 ## Cómo preguntar al usuario
 
-Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/reference/asking.md`](../../reference/asking.md).
+Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md).
 
 Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar*, *validar* o *sugerir* algo al usuario, asume ese mecanismo; no se repite allí.
 
@@ -69,7 +69,7 @@ Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar
 
 ## Política de corrección
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/verification.md`](../../reference/verification.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/verification.md`](../../references/verification.md).
 
 Las reglas de `verification.md` son obligatorias y determinan, vía `verification.qualityCheck.confirmFix`, si se pide confirmación antes de corregir un fallo (`always`, comportamiento por defecto) o si se corrige directamente sin preguntar (`never`). Ver [Corrección de fallos](#corrección-de-fallos).
 
@@ -79,7 +79,7 @@ No continúes hasta haber leído y aplicado `verification.md`.
 
 ## Límite de intentos y escalamiento
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/escalation.md`](../../references/escalation.md).
 
 Las reglas de `escalation.md` son obligatorias y determinan, vía `escalation.maxAttempts` y `escalation.onLimit`, cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve —un check en `FAIL` o una prueba en rojo que sigue fallando tras aplicar la corrección— y qué se hace al agotarlos: detener el trabajo sobre ese problema, presentar el **parte de bloqueo** y preguntar al usuario cómo seguir (`ask`), o marcarlo como `BLOCKED` en el informe y continuar con el alcance que no dependa de él (`report`).
 
@@ -91,7 +91,7 @@ No continúes hasta haber leído y aplicado `escalation.md`.
 
 ## Vocabulario de veredictos y estados
 
-Antes de redactar cualquier informe, DEBES leer [`${PLUGIN_ROOT}/reference/verdicts.md`](../../reference/verdicts.md).
+Antes de redactar cualquier informe, DEBES leer [`${PLUGIN_ROOT}/references/verdicts.md`](../../references/verdicts.md).
 
 Las reglas de `verdicts.md` son obligatorias: el valor canónico y el símbolo son estables, y la **etiqueta que lee la persona se redacta siempre en el idioma resuelto** por `language.md`. Ninguna etiqueta de este skill se fija en un idioma concreto.
 
@@ -136,7 +136,7 @@ Precedencia: `REJECTED` > `INCOMPLETE` > `APPROVED`.
 | `PENDING` | `⏸️` | Correspondía y no llegó a ejecutarse porque el **fail-fast** del tipado cortó la corrida. Ni `SKIPPED` (no hay problema de tooling) ni `N/A` (sí correspondía); no altera el veredicto, que ya lo fijó el `FAIL` del tipado. |
 | `N/A` | `—` | El repo nunca pidió ese check. No cuenta para el veredicto. |
 
-> **Los valores canónicos no se traducen; las etiquetas del informe sí se redactan en el idioma resuelto.** `PASS`/`FAIL`/`SKIPPED`/`PENDING`/`N/A`, `BLOCKING`/`CONDITIONAL`/`INFORMATIVE` y `APPROVED`/`REJECTED`/`INCOMPLETE` son el vocabulario canónico de este documento, de `stacks.md` y —los cuatro primeros— del `result` de `test-run.json`. El informe lleva **símbolo + etiqueta en el idioma resuelto**, con la leyenda que los ata al inicio; ver [`${PLUGIN_ROOT}/reference/verdicts.md`](../../reference/verdicts.md) y [`references/execution.md` → Formato del informe](references/execution.md#formato-del-informe). Ojo con el solape de símbolos: `✅` como **estado de un check** es `PASS`, mientras que `✅` en la línea `Veredicto:` es `APPROVED`, del informe entero.
+> **Los valores canónicos no se traducen; las etiquetas del informe sí se redactan en el idioma resuelto.** `PASS`/`FAIL`/`SKIPPED`/`PENDING`/`N/A`, `BLOCKING`/`CONDITIONAL`/`INFORMATIVE` y `APPROVED`/`REJECTED`/`INCOMPLETE` son el vocabulario canónico de este documento, de `stacks.md` y —los cuatro primeros— del `result` de `test-run.json`. El informe lleva **símbolo + etiqueta en el idioma resuelto**, con la leyenda que los ata al inicio; ver [`${PLUGIN_ROOT}/references/verdicts.md`](../../references/verdicts.md) y [`references/execution.md` → Formato del informe](references/execution.md#formato-del-informe). Ojo con el solape de símbolos: `✅` como **estado de un check** es `PASS`, mientras que `✅` en la línea `Veredicto:` es `APPROVED`, del informe entero.
 
 > **Este veredicto cubre solo el plano automatizado.** No lo mezcles con el de `code-review` ni con el de `trace-validate`: cada skill emite el suyo y el orquestador (`work-integrate`, `pr-create`) exige **las tres** puertas en aprobado antes de integrar o crear el PR. (Única salvedad: en un **PR de promoción** —`develop → master`—, `pr-create` solo exige esta puerta, porque cada trabajo ya pasó las tres al integrarse; ver [`pr-create`](../pr-create/SKILL.md#puertas-en-un-pr-de-promoción).)
 >
@@ -182,7 +182,7 @@ El **conjunto de pruebas** de una corrida tiene dos partes, y solo la primera es
 > corrida cubre un submódulo o un módulo de monorepo, el estándar que manda es su
 > `docs/standards/testing.md`, y solo si ese no existe se cae al del repo principal. Es coherente con
 > `arch-manage`, que escribe los estándares en la raíz del código que gobiernan (ver
-> [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions)).
+> [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions)).
 > Todas las menciones a `docs/standards/testing.md` de este skill se leen contra esa raíz.
 
 **Reglas:**
@@ -190,7 +190,7 @@ El **conjunto de pruebas** de una corrida tiene dos partes, y solo la primera es
 - **Lo que no aplica no se lista.** La tabla del informe incluye **solo los checks que se ejecutaron**, más `unit` y `coverage` siempre. Cualquier otro check en `N/A` —sin stack/config detectable, o excluido por un modificador del usuario— **se omite del informe**: no lleva fila, y no se añade nota al pie ni sección que enumere lo omitido. Esto vale para `e2e` igual que para tipado, linter, build o sonar.
 - **El estándar es la única fuente de las suites configuradas** (salvo `e2e`, que sale del catálogo de checks). Si el repo no tiene estándar de testing, o su estándar no declara más clases de prueba que las fijas, la corrida son **solo `unit`, `coverage` y —si hay config— `e2e`**. No se añade ninguna otra suite por haberla detectado en el repo.
 - **Solo cuentan los requisitos vigentes.** Un requisito con `**Estado:** Deprecated` o `Superseded` no se ejecuta ni se lista: dejó de ser exigible.
-- **La categoría sale del enunciado normativo** del requisito (RFC 2119, ver [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md)): **DEBE / MUST → Bloqueante**; **DEBERÍA / PUEDE (SHOULD / MAY) → Condicional**. Si el enunciado no es claro, tratarla como **Condicional** y anotarlo en el detalle del check.
+- **La categoría sale del enunciado normativo** del requisito (RFC 2119, ver [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md)): **DEBE / MUST → Bloqueante**; **DEBERÍA / PUEDE (SHOULD / MAY) → Condicional**. Si el enunciado no es claro, tratarla como **Condicional** y anotarlo en el detalle del check.
 - **El estándar puede endurecer un check, nunca ablandarlo.** Si declara e2e con **DEBE**, e2e pasa de Condicional a Bloqueante (y, al estar declarado, un e2e que no se puede ejecutar es `SKIPPED`, no `N/A`, así que **sí lleva fila**). Lo que el stack exige como Bloqueante (unit, coverage) sigue siéndolo aunque el estándar calle o suavice.
 - **Suite declarada que no se puede ejecutar → `SKIPPED`** (`INCOMPLETE`), no `N/A`: el estándar es precisamente la declaración de que ese check debe correr — es la mnemónica de [SKIPPED vs N/A](#skipped-vs-na-definición-tajante) aplicada al pie de la letra.
 - **Suite presente en el repo pero no declarada en el estándar:** **no se ejecuta y no bloquea**. Anotarla en **Próximas acciones** como recomendación de declararla en el estándar (vía `arch-manage`), igual que se hace con la cobertura sin tooling.
@@ -383,11 +383,11 @@ Es un proceso **posterior a la implementación**: no forma parte del desarrollo 
 
 ### Rutas de las referencias compartidas
 
-`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `references/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/references/<archivo>.md`. Para resolverla, ejecutar `PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"; [ -n "$PLUGIN_ROOT" ] && PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd)"; echo "PLUGIN_ROOT=$PLUGIN_ROOT"` — siempre imprime un valor: si trae ruta, usarla; si imprime vacío, usar la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../references/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `references/` en el proyecto**: un `<proyecto>/references/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
 
 ### Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 

@@ -1,6 +1,5 @@
 {
   "language": "<código>",
-  "trackingEnabled": false,
   "specification": {
     "basePath": "docs/specs/",
     "archivePath": "docs/archive/",

@@ -6,15 +6,14 @@ Las marcas `<!-- work:… -->` y `<!-- unit:… -->` SE CONSERVAN al publicar: s
 `work-integrate` y `pr-create` parsean para comprobar que cada unidad esta en `Done`. Sus claves y sus
 valores van en ingles SIEMPRE, aunque el resto del documento este en otro idioma; las etiquetas
 visibles (`**Estado:**`, `**Archivos:**`…) si se redactan en el idioma resuelto.
-Ver ../../reference/verdicts.md.
+Ver ../../references/verdicts.md.
 -->
-
 # Progreso
 
 ## {{identificador del trabajo}}
-**Estado:** {{Pending | In Progress | Done}}
 
 <!-- work:id={{US-XXX|WI-XXX|FT-XXX}} · status={{Pending|In Progress|Done}} -->
+**Estado:** {{Pending | In Progress | Done}}
 **Tipo:** {{historia de usuario | tarea de mantenimiento | casos de prueba | feature}}
 **Fecha de creación:** {{YYYY-MM-DD HH:mm}}
 **Ultima actualizacion:** {{YYYY-MM-DD HH:mm}}
@@ -29,18 +28,16 @@ Ubicacion y alcance por tipo (cada trabajo tiene su propio `progress.md` dentro 
 
 Transversal: si el trabajo ya se archivo, su carpeta vive bajo `docs/archive/` y su `progress.md` con ella. Ahi **solo se lee**: nunca se crea ni se edita, y nunca se recrea la carpeta en la ruta activa. Ver `skills/work-integrate/references/archive.md`.
 -->
-
 ## Unidades
 
 <!--
 La "unidad" depende del tipo: TK para historias de usuario, el WI completo para tareas de mantenimiento, el FT completo para un feature, y cada TC para casos de prueba sueltos.
 `Cobertura de test cases` es opcional: incluirla solo si el artefacto tiene carpeta `test-cases/`; omitirla si no hay test cases. En los tipos `TC-XXX` / `FT-XXX` es obligatoria.
 -->
-
 ### {{TK-XXX | WI-XXX | TC-XXX | FT-XXX}}: {{titulo corto}}
-**Estado:** {{Pending | In Progress | Done}}
 
 <!-- unit:id={{TK-XXX|WI-XXX|TC-XXX|FT-XXX}} · status={{Pending|In Progress|Done}} -->
+**Estado:** {{Pending | In Progress | Done}}
 **Iniciado:** {{YYYY-MM-DD HH:mm}}
 **Finalizado:** {{YYYY-MM-DD HH:mm}}
 **Implementador:** {{inferido de git config user.name}} / {{agente que implementa: Claude | Cursor | Codex | …}} / {{modelo, si el agente lo expone}} / {{id de sesion, si el agente lo expone}}
@@ -64,6 +61,7 @@ La "unidad" depende del tipo: TK para historias de usuario, el WI completo para 
 []
 
 ### {{TK-XXX | WI-XXX | TC-XXX | FT-XXX}}: {{titulo corto}}
+
 **Estado:** {{Pending | In Progress | Done}}
 **Iniciado:** {{YYYY-MM-DD HH:mm}}
 **Finalizado:** {{YYYY-MM-DD HH:mm}}

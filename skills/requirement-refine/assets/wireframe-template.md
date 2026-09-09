@@ -9,14 +9,12 @@ final — no un diseño visual definitivo ni una guía de estilo. Color de marca
 medidas pixel-perfect no son responsabilidad de este skill; eso lo define diseño visual/design-define
 más adelante.
 -->
-
 # Wireframe: {{nombre de la pantalla}}
-
-**SRS:** [{{SRS-XXX: título}}](../../README.md)
-**Estado de revisión:** {{Pendiente | Revisado con cambios | Aprobado}}
 
 <!-- wireframe:review-status={{pending|revised|approved}} -->
 <!-- Marca oculta; claves y valores en inglés siempre, igual criterio que srs:status. -->
+**SRS:** [{{SRS-XXX: título}}](../../README.md)
+**Estado de revisión:** {{Pendiente | Revisado con cambios | Aprobado}}
 
 ## Objetivo de la pantalla
 
@@ -49,7 +47,6 @@ Una pantalla compleja se divide en varios SVG (p. ej. estado vacío / estado con
 solo diagrama saturado — usar la sección Estados de la pantalla para eso, un archivo `.svg` adicional
 por estado relevante (p. ej. `[pantalla-slug]-vacio.svg`).
 -->
-
 ![Wireframe de {{nombre de la pantalla}}](./{{pantalla-slug}}.svg)
 
 ## Componentes clave
@@ -60,13 +57,11 @@ por estado relevante (p. ej. `[pantalla-slug]-vacio.svg`).
 ## Estados de la pantalla
 
 <!-- Sección opcional. Incluir solo si la pantalla tiene estados relevantes más allá del principal (vacío, error, carga, sin permisos). Cada estado con diferencias visuales significativas tiene su propio SVG (ver la nota de la sección Estructura); enlazarlo aquí. Eliminar la sección si no aplica. -->
-
 - {{estado}}: {{qué cambia respecto a la estructura principal}} — {{enlace al SVG del estado, si difiere visualmente de la estructura principal}}
 
 ## Historial de revisión
 
 <!-- Se completa en cada vuelta de revisión con el usuario. Cada fila registra una observación y dónde quedó resuelta. -->
-
 | Fecha | Observación del usuario | Resuelto en |
 | ----- | ------------------------- | ------------ |
 | {{YYYY-MM-DD}} | {{cambio pedido, textual}} | {{«SVG actualizado» y/o `FR-XXX` actualizado/creado}} |

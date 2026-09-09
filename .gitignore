@@ -3,3 +3,6 @@ skills/*/evals/workspace/
 skills/.DS_Store
 
 .sdd-devkit/
+
+# git worktrees (work-implement)
+.worktrees/

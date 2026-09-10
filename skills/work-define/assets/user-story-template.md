@@ -3,6 +3,7 @@ Sustituir cada {{…}} a mano (no es un motor). Al publicar: borrar este bloque 
 `us:status` (abajo) se CONSERVA: claves/valores en inglés SIEMPRE; Estado en el idioma resuelto. Ver ../../references/verdicts.md.
 Repositorios: nombres git separados por coma. work-plan agrupa las TK por este campo.
 INVEST / DoR: derivados de las tablas de Validación, nunca aparte. 🟢 Cumple · 🟡 Parcial · 🔴 No cumple. `/ total` = filas evaluadas (INVEST: 6; DoR: 6 menos No aplica, que no cuentan). Omitir colores a 0. Recalcular al tocar las tablas.
+Requerimiento: solo si la US nació descomponiendo un `SRS-XXX` de requirement-refine — enlace a su README.md; es la trazabilidad inversa de su tabla «Historias de usuario derivadas». Omitir la línea si no proviene de un SRS.
 Work Item: omitir la línea si no hay. {{Sistema}} = nombre corto (p. ej. ADO). Ningún skill crea ni pobla este campo para una US (sí para TK/WI/TC con tracker vinculado). Si se pone a mano: Criterios de aceptación → campo dedicado del sistema si lo expone; el resto del documento (cabecera incluida Repositorios, y todas las secciones) → descripción del work item, por secciones, para reconstruir la US si se pierde el .md. No omitir secciones.
 -->
 # US-XXX: {{título corto de la historia de usuario}}
@@ -14,6 +15,7 @@ Work Item: omitir la línea si no hay. {{Sistema}} = nombre corto (p. ej. ADO). 
 **Repositorios:** {{frontend-web, api-catalogo}}
 **INVEST:** {{🟢 N · 🟡 N · 🔴 N / total}}
 **DoR:** {{🟢 N · 🟡 N · 🔴 N / total}}
+**Requerimiento:** {{[SRS-XXX: Título](../../requirements/SRS-XXX-[nombre-corto]/README.md)}}
 **Work Item ({{Sistema}}):** {{enlace markdown}}
 
 ## Descripción

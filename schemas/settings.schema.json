@@ -374,6 +374,19 @@
           ]
         }
       }
+    },
+    "agentRuntime": {
+      "type": "object",
+      "description": "Runtime del agente que observa este repositorio. Opcional: si falta, el agente no declara runtime. Si está presente, `type` es obligatorio. Puede incluir campos adicionales propios del runtime (p. ej. identificadores de un agente gestionado).",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Identificador del runtime (p. ej. claude-managed-agent)."
+        }
+      }
     }
   }
 }

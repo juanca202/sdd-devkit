@@ -87,6 +87,16 @@ Integración opcional con un sistema de tickets externo, usada por `work-plan`, 
 | `workspace` | texto | Organización o subdominio en el servicio externo. Obligatorio cuando `enabled: true`. |
 | `project` | texto | Clave del proyecto (Jira) o nombre del proyecto (Azure DevOps). Obligatorio cuando `enabled: true`. |
 
+## `agentRuntime`
+
+Runtime del agente (`sdd-env-bridge`) que observa este repositorio. `sdd-env-bridge` expone este archivo vía `get_settings` (`<path>/.sdd-devkit/settings.json` por defecto). Bloque **opcional**: si falta, el agente no declara runtime.
+
+| Campo | Valores | Para qué sirve |
+|-------|---------|-----------------|
+| `type` | texto | Identificador del runtime (p. ej. `claude-managed-agent`). **Obligatorio** si `agentRuntime` está definido. |
+
+Puede incluir campos adicionales propios del runtime (p. ej. identificadores de un agente gestionado). Ningún skill del catálogo lo resuelve.
+
 ---
 
 Cuando el seguimiento de specs está activo, el token `SDD_DEVKIT_ACCESS_TOKEN` vive en `.sdd-devkit/.env` (no versionado, `arch-init` lo deja en `.gitignore`) — no en `settings.json`.

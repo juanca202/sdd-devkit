@@ -4,7 +4,6 @@
   "type": "object",
   "required": [
     "language",
-    "trackingEnabled",
     "specification",
     "implementation",
     "verification",
@@ -19,7 +18,7 @@
     },
     "language": {
       "type": "string",
-      "description": "Idioma de preferencia para las respuestas e interacciones de la IA. Sin valor resuelto, el catálogo no asume ninguno: lo infiere del contexto o pregunta (ver reference/language.md).",
+      "description": "Idioma de preferencia para las respuestas e interacciones de la IA. Sin valor resuelto, el catálogo no asume ninguno: lo infiere del contexto o pregunta (ver references/language.md).",
       "enum": [
         "es",
         "en",
@@ -27,15 +26,6 @@
         "de",
         "it"
       ]
-    },
-    "trackingEnabled": {
-      "type": "boolean",
-      "description": "Activa o desactiva el envío de eventos de seguimiento de especificaciones."
-    },
-    "trackingUrl": {
-      "type": "string",
-      "format": "uri",
-      "description": "URL del endpoint de eventos (ej: https://events.sdd.io)."
     },
     "specification": {
       "type": "object",
@@ -57,7 +47,7 @@
         },
         "artifactRoot": {
           "type": "string",
-          "description": "Code del artefacto raíz (ej: US-001) que el CLI de tracking consulta por defecto contra trackingUrl cuando la invocación no aporta el override --requirement <code>."
+          "description": "Code del artefacto raíz (ej: US-001) que el CLI de tracking consulta por defecto cuando la invocación no aporta el override --requirement <code>."
         },
         "testCases": {
           "type": "object",
@@ -244,7 +234,7 @@
     },
     "escalation": {
       "type": "object",
-      "description": "Limite de intentos consecutivos sobre un mismo problema irresoluble (una prueba que no pasa, una regla de arquitectura violada, un build que no compila) y que hacer al agotarlo. Existe para cortar el bucle de reintentos en los skills que implementan codigo o verifican pruebas. Lo resuelve reference/escalation.md. Bloque opcional: si falta, se aplican los valores por defecto del catalogo (maxAttempts 3, onLimit ask), de modo que un settings.json anterior a esta opcion sigue siendo valido.",
+      "description": "Limite de intentos consecutivos sobre un mismo problema irresoluble (una prueba que no pasa, una regla de arquitectura violada, un build que no compila) y que hacer al agotarlo. Existe para cortar el bucle de reintentos en los skills que implementan codigo o verifican pruebas. Lo resuelve references/escalation.md. Bloque opcional: si falta, se aplican los valores por defecto del catalogo (maxAttempts 3, onLimit ask), de modo que un settings.json anterior a esta opcion sigue siendo valido.",
       "required": [
         "maxAttempts",
         "onLimit"
@@ -384,38 +374,19 @@
           ]
         }
       }
-    }
-  },
-  "dependencies": {
-    "trackingEnabled": {
-      "oneOf": [
-        {
-          "properties": {
-            "trackingEnabled": {
-              "enum": [
-                false
-              ]
-            }
-          }
-        },
-        {
-          "properties": {
-            "trackingEnabled": {
-              "enum": [
-                true
-              ]
-            },
-            "specification": {
-              "required": [
-                "artifactRoot"
-              ]
-            }
-          },
-          "required": [
-            "trackingUrl"
-          ]
+    },
+    "agentRuntime": {
+      "type": "object",
+      "description": "Runtime del agente que observa este repositorio. Opcional: si falta, el agente no declara runtime. Si está presente, `type` es obligatorio. Puede incluir campos adicionales propios del runtime (p. ej. identificadores de un agente gestionado).",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "description": "Identificador del runtime (p. ej. claude-managed-agent)."
         }
-      ]
+      }
     }
   }
 }

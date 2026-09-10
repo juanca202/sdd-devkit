@@ -2,13 +2,13 @@
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 -->
-
 # WI-XXX: {{título corto del work item}}
+
 <!-- wi:status={{Draft|Ready}} -->
 <!--
 Esta marca se CONSERVA al publicar. Sus claves y sus valores van en inglés SIEMPRE, aunque el resto del
 documento esté en otro idioma: es el ancla que otros skills parsean, no contenido. La etiqueta visible
-de arriba sí se redacta en el idioma resuelto. Ver ../../reference/verdicts.md.
+de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
 -->
 **Estado:** {{Draft | Ready}}
 **Tipo:** {{bug-fix | refactor | dependency-update | optimization | security-update | test-improvement | documentation-update | operational-change}}
@@ -36,13 +36,11 @@ Tipos de work item:
 ## Contexto
 
 <!-- Sección opcional. Incluir solo si la descripción no es suficiente para entender el alcance o las restricciones del dominio. Eliminar esta sección si no aplica. -->
-
 {{información adicional sobre el dominio, restricciones del negocio, decisiones previas o cualquier contexto necesario para entender el work item}}
 
 ## Fuera de alcance
 
 <!-- Sección opcional. Incluir solo si ayuda a delimitar el work item declarando explícitamente qué NO se debe incluir (funcionalidad, casos o entregables que podrían asumirse pero quedan fuera). Eliminar esta sección si no aplica. -->
-
 - {{funcionalidad, caso o entregable que queda fuera del alcance de este work item; opcionalmente indicar dónde se aborda o por qué se excluye}}
 
 ## Reglas de negocio
@@ -52,14 +50,12 @@ Sección opcional. Incluir solo si el dominio impone restricciones, obligaciones
 Cada regla de negocio lleva id secuencial BR-01, BR-02, … y un enunciado con palabra clave RFC 2119 en MAYÚSCULAS en el idioma de preferencia.
 Cuando existan, cada BR-XX debe estar verificada por al menos un AC-XXX en la sección Criterios de aceptación.
 -->
-
 - **BR-01:** {{enunciado con palabra clave RFC 2119 en MAYÚSCULAS; p. ej. «El sistema DEBE…» / «The system MUST NOT…»}} → verificado por {{AC-XXX}}
 - **BR-02:** {{…}} → verificado por {{AC-XXX}}
 
 ## Dependencias
 
 <!-- Inventario de lo que el work item usa o necesita dentro del alcance del work item: componentes de UI, servicios o APIs internas, modelos / entidades / DTOs, librerías de terceros. No incluir ADRs ni referencias de diseño — eso va en Referencias. -->
-
 - {{nombre o identificador del componente, servicio, modelo, librería}} — {{descripción breve del uso}}
 
 ## Referencias
@@ -69,7 +65,6 @@ Incluir únicamente enlaces a recursos ya almacenados; nunca pegar archivos, im�
 Recursos válidos: mockups, wireframes, flujos, modelos, diagramas, especificaciones técnicas, ADRs.
 Rutas permitidas: assets/ (recursos propios de este work item) o docs/specs/technical-docs/ o docs/adr/.
 -->
-
 - **Arquitectura:** {{enlace a ADR en `docs/adr/` si el work item depende de decisiones ya registradas; no inventar ADRs nuevos}}
 - **Documentación técnica:** {{enlace a `docs/specs/technical-docs/[capability].md#<id>` si aplica. El ancla es el id del elemento en minúsculas (`#md-01`, `#api-04`), tal como lo devuelve `design-define`; no el título convertido a slug}}
 - **Diseño:** {{enlace a Figma, wireframe o imagen de alta fidelidad; obligatorio si el work item toca UI}}
@@ -77,7 +72,6 @@ Rutas permitidas: assets/ (recursos propios de este work item) o docs/specs/tech
 ## Migración (origen → destino)
 
 <!-- Sección opcional. Incluir solo si este WI ejecuta una migración entre proyectos derivada de una investigación (`research/RS-XXX-{slug}/`). Eliminar esta sección si no aplica. -->
-
 **Investigación:** {{enlace a la investigación, típ. `../../research/RS-XXX-{slug}/README.md`}}
 **Proyecto origen:** {{nombre / stack principal del origen}}
 **Proyecto destino:** {{nombre / stack principal del destino}}
@@ -95,14 +89,12 @@ Lista plana con id secuencial AC-001, AC-002, … Cada criterio indica su catego
 Categorías funcionales: Reglas de negocio · Casos de uso · Flujos de proceso · Procesamiento de datos · Integraciones · Interacción de usuario · Salidas del sistema
 Categorías no funcionales (ISO/IEC 25010): Idoneidad funcional · Eficiencia de rendimiento · Compatibilidad · Usabilidad · Fiabilidad · Seguridad · Mantenibilidad · Portabilidad
 -->
-
 - **AC-001 ({{categoría}}):** {{enunciado con palabra clave RFC 2119 en MAYÚSCULAS; p. ej. «El sistema DEBE…» / «The system MUST NOT…»}}
 - **AC-002 ({{categoría}}):** {{…}}
 
 ## Archivos afectados
 
 <!-- Árbol con las rutas de los archivos que se crearán, modificarán o eliminarán. Usar símbolos: + creado · ~ modificado · - eliminado. Frente a cada archivo, una descripción muy corta y acotada de qué se hace en él. -->
-
 ```text
 {{repositorio}}/
 └── src/
@@ -119,7 +111,6 @@ Cada tarea lleva id secuencial IT-01, IT-02, … único en el ámbito del docume
 Estados del checkbox durante la implementación: `[ ]` pendiente · `[~]` en progreso (solo una a la vez) · `[x]` completada.
 Formato: `IT-XX` + una **descripción corta** de una línea (qué se implementa) — es lo único que se muestra en la herramienta de to-dos. El detalle amplía el **qué** (precisiones, referencias a recursos o código, notas) — nunca el cómo — y va en las líneas indentadas debajo; no se muestra en los to-dos.
 -->
-
 - [ ] **IT-01** — {{descripción corta en una línea: qué se implementa}}
   {{detalle opcional que amplía el qué se implementa, no el cómo: precisiones, referencias a recursos o código, notas; no se muestra en to-dos}}
 - [ ] **IT-02** — {{descripción corta en una línea}}
@@ -127,6 +118,7 @@ Formato: `IT-XX` + una **descripción corta** de una línea (qué se implementa)
 
 ## Observaciones
 
-{{usar solo si hay ítems reales: prerrequisitos no cumplidos, información pendiente, bloqueos, decisiones por tomar. Si no hay pendientes, omitir esta sección o dejar una línea: Sin pendientes documentados}}
-
+<!--
+Usar solo si hay ítems reales: prerrequisitos no cumplidos, información pendiente, bloqueos, decisiones por tomar. Si no hay pendientes, omitir esta sección o dejar una línea: Sin pendientes documentados.
+-->
 - {{pendiente o prerrequisito concreto}}

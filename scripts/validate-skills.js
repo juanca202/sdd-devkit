@@ -154,33 +154,33 @@ function checkLicense(fields) {
 }
 
 /**
- * Un SKILL.md que cita `../../reference/` debe declarar como se resuelve esa
+ * Un SKILL.md que cita `../../references/` debe declarar como se resuelve esa
  * ruta (seccion "Rutas de las referencias compartidas"): sin ella, un agente
- * que corre con el cwd en el proyecto busca `<proyecto>/reference/x.md`.
+ * que corre con el cwd en el proyecto busca `<proyecto>/references/x.md`.
  */
 function checkSharedReferenceResolution(content) {
-  if (!/(\.\.\/)+reference\//.test(content)) return [];
+  if (!/(\.\.\/)+references\//.test(content)) return [];
   if (/Rutas de las referencias compartidas/.test(content)) return [];
   return [{
     severity: 'ERROR',
-    message: 'cita `reference/` del plugin pero no declara la seccion "Rutas de las referencias compartidas" (${PLUGIN_ROOT}, no la raiz del proyecto)',
+    message: 'cita `references/` del plugin pero no declara la seccion "Rutas de las referencias compartidas" (${PLUGIN_ROOT}, no la raiz del proyecto)',
   }];
 }
 
 /**
- * El TEXTO de un enlace a `reference/` del plugin debe ser `${PLUGIN_ROOT}/reference/<archivo>`;
- * el destino relativo (`../../reference/...`) queda solo para navegar el repo. Un texto
+ * El TEXTO de un enlace a `references/` del plugin debe ser `${PLUGIN_ROOT}/references/<archivo>`;
+ * el destino relativo (`../../references/...`) queda solo para navegar el repo. Un texto
  * relativo es lo que el agente intenta leer desde el cwd del proyecto — y no existe.
  * Se aplica a SKILL.md y a todos los .md bajo references/.
  */
 function checkPluginRootPlaceholder(content) {
   const findings = [];
-  const re = /\[`((?:\.\.\/)+reference\/[^`]+)`\]\(/g;
+  const re = /\[`((?:\.\.\/)+references\/[^`]+)`\]\(/g;
   let m;
   while ((m = re.exec(content)) !== null) {
     findings.push({
       severity: 'ERROR',
-      message: `enlace con texto relativo \`${m[1]}\`: el texto debe ser \`\${PLUGIN_ROOT}/reference/<archivo>\` (la ruta relativa va solo en el destino)`,
+      message: `enlace con texto relativo \`${m[1]}\`: el texto debe ser \`\${PLUGIN_ROOT}/references/<archivo>\` (la ruta relativa va solo en el destino)`,
     });
   }
   return findings;

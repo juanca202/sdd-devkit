@@ -73,7 +73,7 @@ nunca dentro del commit de merge.
 ## Política (`implementation.archiveMode`)
 
 Cumplidas las condiciones de arriba y descartados los casos de [Qué no se archiva](#qué-no-se-archiva),
-lo que sigue depende de `implementation.archiveMode` (ver [`${PLUGIN_ROOT}/reference/implementation.md`](../../../reference/implementation.md)):
+lo que sigue depende de `implementation.archiveMode` (ver [`${PLUGIN_ROOT}/references/implementation.md`](../../../references/implementation.md)):
 
 | `archiveMode` | Qué hace el skill |
 |----------------|--------------------|
@@ -156,7 +156,7 @@ coste de no pararse ahí es bajo comparado con obligar a archivar.
 ## Destinos
 
 `docs/archive/` es el valor por defecto de `specification.archivePath`
-(`.sdd-devkit/settings.json`) — ver [`${PLUGIN_ROOT}/reference/artifacts.md`](../../../reference/artifacts.md).
+(`.sdd-devkit/settings.json`) — ver [`${PLUGIN_ROOT}/references/artifacts.md`](../../../references/artifacts.md).
 **Resolverlo primero**: si el repo declaró un valor distinto, sustituirlo por ese valor en la
 columna Destino y en el resto de esta sección.
 

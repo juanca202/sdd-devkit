@@ -128,7 +128,7 @@ La estructura canónica del informe está en la plantilla [`../assets/quality-ch
 
 La plantilla incluye: encabezado con metadata (donde vive el **Veredicto**, con su justificación de una línea; no hay sección propia), **Resumen**, **Verificaciones** (tabla + detalle de fallidos) y **Próximas acciones**.
 
-**Tres formas por estado, no dos.** Contrato completo en [`${PLUGIN_ROOT}/reference/verdicts.md`](../../../reference/verdicts.md):
+**Tres formas por estado, no dos.** Contrato completo en [`${PLUGIN_ROOT}/references/verdicts.md`](../../../references/verdicts.md):
 el **valor canónico** (`PASS`, `BLOCKING`, `APPROVED`…) es el vocabulario de este documento, de
 `stacks.md`, de la tabla de veredicto del `SKILL.md` y del `result` de `test-run.json`; el **símbolo** es
 estable y es lo que leen las otras puertas; la **etiqueta** —la palabra que ve la persona— se redacta al
@@ -426,7 +426,7 @@ estaba sucio, `workingTreeClean: false` queda registrado como señal para el con
 | `work-implement` devuelve **«corrección no aplicada»** (fuera de alcance → `work-plan`; discrepancia `TC-XXX`↔código → `test-define`; fallo preexistente) | **Detener el ciclo.** No reintentar la delegación sobre ese fallo ni corregirlo aquí. Recoger el motivo y el skill escalado en **Próximas acciones**, emitir `REJECTED` y terminar. Ver [Corrección de fallos](../SKILL.md#corrección-de-fallos). |
 | Usuario pide "corrige tú" sin más contexto | Confirmar el alcance exacto a corregir antes de tocar nada; resolver quién corrige según [Corrección de fallos](../SKILL.md#corrección-de-fallos); aplicar solo lo mínimo; luego re-ejecutar. |
 | Varias correcciones autorizadas a la vez | Aplicarlas juntas y reiniciar **una sola vez** para no encadenar pasadas innecesarias. |
-| Bucle de correcciones que no converge | Aplicar el **límite de intentos** de [`${PLUGIN_ROOT}/reference/escalation.md`](../../../reference/escalation.md): agotado `escalation.maxAttempts` (3 por defecto) sobre el mismo fallo, no hacer un intento más — presentar el **parte de bloqueo** y escalar según `escalation.onLimit`. Ver [Límite de intentos y escalamiento](../SKILL.md#límite-de-intentos-y-escalamiento). |
+| Bucle de correcciones que no converge | Aplicar el **límite de intentos** de [`${PLUGIN_ROOT}/references/escalation.md`](../../../references/escalation.md): agotado `escalation.maxAttempts` (3 por defecto) sobre el mismo fallo, no hacer un intento más — presentar el **parte de bloqueo** y escalar según `escalation.onLimit`. Ver [Límite de intentos y escalamiento](../SKILL.md#límite-de-intentos-y-escalamiento). |
 | El usuario pide además opinión sobre el diseño del código | Fuera de alcance: sugerir invocar `code-review`. No improvisar una revisión cualitativa aquí. |
 
 ---

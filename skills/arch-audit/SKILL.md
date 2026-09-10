@@ -114,11 +114,11 @@ cualquier informe y respetar su estructura.
 
 ---
 
-> **Rutas de las referencias compartidas.** `${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `reference/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/reference/<archivo>.md`. Resolverla así, **en este orden**: (1) en Claude Code, `${PLUGIN_ROOT}` **es** `${CLAUDE_PLUGIN_ROOT}` — comprobar con `echo "$CLAUDE_PLUGIN_ROOT"` y usar ese valor; (2) en cualquier otro cliente, o si la variable está vacía, la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../reference/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `reference/` en el proyecto**: un `<proyecto>/reference/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+> **Rutas de las referencias compartidas.** `${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `references/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/references/<archivo>.md`. Para resolverla, ejecutar `PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"; [ -n "$PLUGIN_ROOT" ] && PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd)"; echo "PLUGIN_ROOT=$PLUGIN_ROOT"` — siempre imprime un valor: si trae ruta, usarla; si imprime vacío, usar la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../references/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `references/` en el proyecto**: un `<proyecto>/references/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
 
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -128,13 +128,13 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 ## Límite de intentos y escalamiento
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md). Sus reglas son obligatorias y determinan, vía `escalation.maxAttempts` y `escalation.onLimit`, cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve —una violación que no se logra corregir o una fitness function que no se logra ejecutar— y qué se hace al agotarlos: presentar el **parte de bloqueo** y preguntar cómo seguir (`ask`), o marcarlo como `BLOCKED` en el informe y continuar con el resto (`report`). El contador es **por problema**, no global, y es un techo, no una cuota: sin hipótesis nueva que justifique el siguiente intento, se escala ya. Nunca se «resuelve» un bloqueo relajando o saltando la norma que se audita. No continúes hasta haber leído y aplicado `escalation.md`.
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/escalation.md`](../../references/escalation.md). Sus reglas son obligatorias y determinan, vía `escalation.maxAttempts` y `escalation.onLimit`, cuántos intentos consecutivos se hacen sobre **el mismo** problema que no se resuelve —una violación que no se logra corregir o una fitness function que no se logra ejecutar— y qué se hace al agotarlos: presentar el **parte de bloqueo** y preguntar cómo seguir (`ask`), o marcarlo como `BLOCKED` en el informe y continuar con el resto (`report`). El contador es **por problema**, no global, y es un techo, no una cuota: sin hipótesis nueva que justifique el siguiente intento, se escala ya. Nunca se «resuelve» un bloqueo relajando o saltando la norma que se audita. No continúes hasta haber leído y aplicado `escalation.md`.
 
 ---
 
 ## Vocabulario de veredictos y estados
 
-Antes de redactar cualquier informe, DEBES leer [`${PLUGIN_ROOT}/reference/verdicts.md`](../../reference/verdicts.md).
+Antes de redactar cualquier informe, DEBES leer [`${PLUGIN_ROOT}/references/verdicts.md`](../../references/verdicts.md).
 
 Las reglas de `verdicts.md` son obligatorias: el valor canónico y el símbolo son estables, y la **etiqueta que lee la persona se redacta siempre en el idioma resuelto** por `language.md`. Ninguna etiqueta de este skill se fija en un idioma concreto.
 
@@ -154,7 +154,7 @@ repositorios anidados (`git submodule status` / `.gitmodules`, más directorios 
 **Se audita una raíz por corrida:** se leen los estándares de esa raíz, se ejecuta **su** runner
 (`<raíz-arq>/scripts/arch/verify.<ext>`, desde esa raíz) y el informe se escribe en **su** `docs/audits/`.
 Auditar otra raíz es otra corrida, con su propio informe y su propia serie de informes previos. Regla
-completa: [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
+completa: [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
 
 **Todas las rutas de este documento (`docs/standards/`, `docs/adr/`, `docs/audits/`, `scripts/arch/`) son
 relativas a `<raíz-arq>`.** Dos excepciones: `AGENTS.md`, que es del harness y se lee de la raíz principal;
@@ -480,9 +480,9 @@ hallazgo vive en `assets/`. **Leerlos solo cuando la fase correspondiente lo pid
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
-- [`${PLUGIN_ROOT}/reference/artifacts.md`](../../reference/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
-- [`${PLUGIN_ROOT}/reference/escalation.md`](../../reference/escalation.md): **Límite de intentos** — cuántos intentos sobre un mismo problema irresoluble antes de escalar, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/references/escalation.md`](../../references/escalation.md): **Límite de intentos** — cuántos intentos sobre un mismo problema irresoluble antes de escalar, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 
 ---
 

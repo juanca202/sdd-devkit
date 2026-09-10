@@ -1,4 +1,4 @@
-# `reference/` — recursos compartidos del plugin
+# `references/` — recursos compartidos del plugin
 
 Contenido **transversal a varios skills** de SDD Devkit. Vive aquí, y no duplicado en cada
 `SKILL.md`, para que exista una sola fuente de verdad por regla.
@@ -7,27 +7,27 @@ Los skills y los agentes lo referencian con **dos rutas en cada enlace**: el tex
 agente resuelve, y el destino la ruta que navega en GitHub o en un editor:
 
 ```markdown
-[`${PLUGIN_ROOT}/reference/<archivo>.md`](../../reference/<archivo>.md)   # desde skills/<nombre>/SKILL.md
-[`${PLUGIN_ROOT}/reference/<archivo>.md`](../../../reference/<archivo>.md) # desde skills/<nombre>/references/*.md
-[`${PLUGIN_ROOT}/reference/<archivo>.md`](../reference/<archivo>.md)      # desde agents/<nombre>.md
+[`${PLUGIN_ROOT}/references/<archivo>.md`](../../references/<archivo>.md)   # desde skills/<nombre>/SKILL.md
+[`${PLUGIN_ROOT}/references/<archivo>.md`](../../../references/<archivo>.md) # desde skills/<nombre>/references/*.md
+[`${PLUGIN_ROOT}/references/<archivo>.md`](../references/<archivo>.md)      # desde agents/<nombre>.md
 ```
 
 **`${PLUGIN_ROOT}` es la raíz del plugin instalado** —la carpeta que contiene `skills/`, `agents/` y
-`reference/`— y es un **placeholder del catálogo, no una variable de ningún cliente**: el agente lo
+`references/`— y es un **placeholder del catálogo, no una variable de ningún cliente**: el agente lo
 sustituye siguiendo la regla que cada `SKILL.md` y cada agente llevan en su sección **Rutas de las
-referencias compartidas** (antes de «Resolución de idioma»): en Claude Code, `${PLUGIN_ROOT}` es
-`${CLAUDE_PLUGIN_ROOT}` (se comprueba con `echo "$CLAUDE_PLUGIN_ROOT"`); en cualquier otro cliente, o si la
-variable viene vacía, la carpeta desde la que se cargó el archivo (dos niveles arriba de
-`skills/<nombre>/SKILL.md`, uno arriba de `agents/<nombre>.md`). Por qué un placeholder y no la
+referencias compartidas** (antes de «Resolución de idioma»): ejecutar
+`PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"; [ -n "$PLUGIN_ROOT" ] && PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd)"; echo "PLUGIN_ROOT=$PLUGIN_ROOT"`
+— siempre imprime un valor: si trae ruta, usarla; si imprime vacío, la carpeta desde la que se cargó
+el archivo (dos niveles arriba de `skills/<nombre>/SKILL.md`, uno arriba de `agents/<nombre>.md`). Por qué un placeholder y no la
 variable de Claude a secas: el catálogo se instala también en clientes que no la definen, y un nombre
 propio evita que otro cliente lo interprete como suyo.
 
 **El destino relativo del enlace existe solo para navegar el repositorio.** Un skill corre con el
-directorio de trabajo en el **proyecto del usuario**; resolver `../../reference/language.md` desde ahí
-busca `<proyecto>/reference/language.md` (o sube por encima del proyecto) y no lo encuentra. Es el
-error que el placeholder existe para eliminar: un `reference/` que «no existe» en el proyecto no es
+directorio de trabajo en el **proyecto del usuario**; resolver `../../references/language.md` desde ahí
+busca `<proyecto>/references/language.md` (o sube por encima del proyecto) y no lo encuentra. Es el
+error que el placeholder existe para eliminar: un `references/` que «no existe» en el proyecto no es
 un archivo que falte, es una ruta mal resuelta, y la lectura obligatoria sigue siéndolo.
-Lo que sí exige el plugin instalado es que la carpeta `reference/` viaje junto a `skills/` y
+Lo que sí exige el plugin instalado es que la carpeta `references/` viaje junto a `skills/` y
 `agents/`: un skill copiado suelto pierde sus referencias.
 
 ## Catálogo
@@ -56,7 +56,7 @@ existir ninguna otra regla de idioma en el resto del archivo ni en sus `referenc
 ```markdown
 ## Resolución de idioma
 
-Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/reference/language.md`](../../reference/language.md).
+Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
 
@@ -65,10 +65,10 @@ No continúes hasta haber leído y aplicado `language.md`.
 **Excepción deliberada:** <solo si existe; describir aquí y en ningún otro lugar>.
 ```
 
-En un archivo de `agents/`, el destino del enlace es `../reference/language.md` y el texto dice
+En un archivo de `agents/`, el destino del enlace es `../references/language.md` y el texto dice
 «este agente» en vez de «este skill».
 
-El texto del enlace lleva siempre `${PLUGIN_ROOT}/reference/<archivo>.md` (lo que el agente resuelve) y el
+El texto del enlace lleva siempre `${PLUGIN_ROOT}/references/<archivo>.md` (lo que el agente resuelve) y el
 destino la ruta relativa (lo que navega el lector): las dos nombran el mismo archivo.
 
 ## Bloques ` ```! `: ejecutar, no interpretar

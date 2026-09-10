@@ -40,7 +40,7 @@ No asumir la rama base ni la de integracion; acordarla con el usuario.
 Un WI de tipo **`bug-fix`** o **`security-update`** se implementa **directamente sobre la rama de integracion**. **No se crea ni se cambia a una rama `fix/`.**
 
 - **Es el comportamiento por defecto y no se pregunta.** Basta con leer `Tipo` del WI: si es uno de esos dos, no hay eleccion de rama que ofrecer al usuario.
-- **La rama de integracion la declara el repo, no el usuario.** Antes de tocar codigo, resolverla con [`${PLUGIN_ROOT}/reference/git.md`](../../../reference/git.md) — lectura obligatoria — y actuar segun lo que devuelva para la **rama actual**:
+- **La rama de integracion la declara el repo, no el usuario.** Antes de tocar codigo, resolverla con [`${PLUGIN_ROOT}/references/git.md`](../../../references/git.md) — lectura obligatoria — y actuar segun lo que devuelva para la **rama actual**:
 
   | Politica de la rama actual | Que hacer |
   |----------------------------|-----------|
@@ -66,7 +66,7 @@ Un WI de tipo **`bug-fix`** o **`security-update`** se implementa **directamente
 | **Alcance** | Un WI concreto o una lista de `WI-` hermanos | Preguntar si hay ambiguedad |
 | **Tipo** | Campo `Tipo` del WI — uno de los ocho canonicos: `bug-fix`, `refactor`, `dependency-update`, `optimization`, `security-update`, `test-improvement`, `documentation-update`, `operational-change` | Leer del archivo; condiciona la rama (ver la tabla de prefijos) y el cierre |
 | **Repositorio** | Campo `Repositorio` del WI (nombre del repositorio git al que afecta) | Leer del archivo; para `Ready` es obligatorio |
-| **Rama** | Derivada del WI segun convencion del equipo. **`bug-fix` y `security-update` no tienen rama propia:** se trabaja en la rama de integracion | Crear desde la rama base acordada; para `bug-fix`/`security-update`, resolverla con `reference/git.md` (`integrationBranches`), no preguntando |
+| **Rama** | Derivada del WI segun convencion del equipo. **`bug-fix` y `security-update` no tienen rama propia:** se trabaja en la rama de integracion | Crear desde la rama base acordada; para `bug-fix`/`security-update`, resolverla con `references/git.md` (`integrationBranches`), no preguntando |
 
 ---
 
@@ -97,7 +97,7 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
 1. Verificar working tree limpio; si no, parar y avisar.
 2. Resolver la rama segun el `Tipo` del WI:
-   - **`bug-fix` / `security-update`:** no crear rama. Resolver la rama de integracion con `reference/git.md`; **sin worktrees**, hacer checkout de ella si no se esta ya ahi; **con worktrees**, no tocar el arbol principal: la unidad va en `wt/WI-XXX` derivada de esa rama (ver [Excepcion](#excepcion-bug-fix-y-security-update-no-crean-rama)).
+   - **`bug-fix` / `security-update`:** no crear rama. Resolver la rama de integracion con `references/git.md`; **sin worktrees**, hacer checkout de ella si no se esta ya ahi; **con worktrees**, no tocar el arbol principal: la unidad va en `wt/WI-XXX` derivada de esa rama (ver [Excepcion](#excepcion-bug-fix-y-security-update-no-crean-rama)).
    - **Resto de tipos:** situarse en la rama del WI — **sin worktrees**, `git checkout` (crear desde la rama base acordada si no existe); **con worktrees**, ver la nota de abajo.
 3. Leer o crear `progress.md` dentro de la carpeta del WI (`docs/specs/work-items/WI-XXX-[kebab-case]/progress.md`) desde `assets/progress-template.md`. El `progress.md` es específico de este WI — contiene únicamente las entradas del plan de implementación del `README.md`.
 
@@ -178,7 +178,7 @@ Por cada WI aprobado:
 
 **Ejemplo 2c - WI de tipo `bug-fix`**
 - *Entrada:* "Implementa el WI-011, corregir el calculo de impuestos en el carrito" (`Tipo: bug-fix`).
-- *Comportamiento:* no se crea rama `fix/`; `reference/git.md` resuelve que la rama actual es `direct`, asi que se trabaja ahi **sin preguntar**. Mismo ciclo TDD, lint/build, `progress.md` a `Done` y pausa de confirmacion; al confirmar, `/git-commit` (sin confirmacion extra de rama protegida: la rama esta declarada `direct`). El cierre **no** ofrece integrar ni crear PR: se reporta el WI cerrado y los SHA.
+- *Comportamiento:* no se crea rama `fix/`; `references/git.md` resuelve que la rama actual es `direct`, asi que se trabaja ahi **sin preguntar**. Mismo ciclo TDD, lint/build, `progress.md` a `Done` y pausa de confirmacion; al confirmar, `/git-commit` (sin confirmacion extra de rama protegida: la rama esta declarada `direct`). El cierre **no** ofrece integrar ni crear PR: se reporta el WI cerrado y los SHA.
 
 **Ejemplo 3 - WI en Draft**
 - *Entrada:* "Ejecuta WI-007" y esta en Draft (stub sin criterios).

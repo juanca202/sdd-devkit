@@ -84,7 +84,7 @@ Tabla con los seis criterios de la plantilla. Para cada uno: `Cumple` / `No cump
 | ---------------------------------- | --------- |
 | Dependencias listas                | Prerrequisitos y dependencias con otras US o sistemas resueltos o confirmados. |
 | Inputs/outputs claros              | Entradas y salidas funcionales bien definidas. |
-| Repositorios definidos             | Repositorio(s) git al/los que afecta la historia identificados. |
+| Repositorios definidos             | Campo **Repositorios:** de la cabecera poblado con el/los repositorio(s) git afectados, separados por coma. |
 | Sin decisiones técnicas pendientes | No quedan decisiones técnicas abiertas que condicionen el alcance. |
 | Referencias de UI                  | Para US de UI: enlaces de diseño presentes (`No aplica` si no hay UI propia). |
 | Sin aclaraciones pendientes        | Observaciones vacías o «Ninguna»; nada pendiente con usuario/producto. |

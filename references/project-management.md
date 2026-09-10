@@ -37,11 +37,11 @@ if (!pm || pm.enabled !== true) {
 
   if (providerRef) {
     console.log('');
-    console.log('**Ahora DEBES leer la referencia del proveedor: ' + providerRef + '** (relativa a reference/), y seguir unicamente sus pasos.');
+    console.log('**Ahora DEBES leer la referencia del proveedor: ' + providerRef + '** (relativa a references/), y seguir unicamente sus pasos.');
     console.log('Estos cuatro valores son la unica fuente de conexion: no preguntarlos al usuario ni inferirlos del MCP.');
   } else {
     console.log('');
-    console.log('**No hay referencia para ese provider en reference/project-managers/.** Informar al usuario y continuar con ID secuencial local; no improvisar la integracion.');
+    console.log('**No hay referencia para ese provider en references/project-managers/.** Informar al usuario y continuar con ID secuencial local; no improvisar la integracion.');
   }
 }
 "

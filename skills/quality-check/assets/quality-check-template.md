@@ -8,7 +8,7 @@ Esta plantilla los muestra en español solo porque el repositorio del plugin est
 ejemplo de redacción, no un texto fijo. Lo que NO cambia nunca: la estructura, el orden de las
 secciones, los símbolos, y los valores canónicos (PASS/FAIL/SKIPPED/PENDING/N/A,
 BLOCKING/CONDITIONAL/INFORMATIVE, APPROVED/REJECTED/INCOMPLETE) allí donde el documento los pida.
-Ver ../../reference/verdicts.md.
+Ver ../../references/verdicts.md.
 -->
 
 # Verificaciones automatizadas — {{US-XXX-nombre-corto | WI-XXX-nombre | FT-XXX-slug | nombre del artefacto}}
@@ -91,5 +91,5 @@ Categoría.
 <!--
 Esta marca es lo ÚNICO del informe con formato fijo: se CONSERVA al publicar y es lo que leen
 `work-integrate` y `pr-create` para decidir si la puerta deja pasar. Sus claves y su valor van en
-inglés SIEMPRE, aunque el resto del informe esté en otro idioma. Ver ../../reference/verdicts.md.
+inglés SIEMPRE, aunque el resto del informe esté en otro idioma. Ver ../../references/verdicts.md.
 -->

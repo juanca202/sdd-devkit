@@ -105,7 +105,7 @@ uno por uno:
 | 2 (conseguir el stack) | Si 1.2 dio "sin código" | **Por cada submódulo** que 1.2 haya clasificado "sin código" (nunca si dio "Solo specs") — si son varios a la vez, agrupar sus preguntas del 2.1 en una sola tanda (una sub-pregunta por submódulo), no una tanda por submódulo. Si al identificar el repositorio en el § 2.3 el usuario ya describió su rol (p. ej. "este va a ser el backend de pedidos"), usar esa descripción para no repreguntar el 2.1 desde cero — solo completar lo que falte |
 | 3 (placeholders del harness) | Sobre el directorio de invocación | `AGENTS.md`, `CLAUDE.md` y `README.md` se crean **en el repo de especificaciones y en cada submódulo** (§ 4); `.agents/MEMORY.md`, `.sdd-devkit/settings.json` y `.gitignore` solo en el repo de especificaciones; `docs/adr/README.md` + `docs/standards/README.md` siguen su propia lógica por raíz de arquitectura, **nunca** en el repo de especificaciones ni en un submódulo "Solo specs" (§ 6) |
 | 4.1 / 4.2 (candidatos y compuerta de calidad) | Una vez, sobre la raíz principal | **Una vez por cada submódulo que no sea "Solo specs"**, cada uno como su propia raíz de arquitectura — ver § 5. Nunca sobre el repo de especificaciones ni sobre un submódulo "Solo specs" |
-| 5.1 (documentar decisiones) | Una corrida de `arch-manage` | **Una corrida por submódulo** — cada uno con su propia serie `ADR-XXX`, igual que cualquier otra raíz de arquitectura (`../../reference/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions`) |
+| 5.1 (documentar decisiones) | Una corrida de `arch-manage` | **Una corrida por submódulo** — cada uno con su propia serie `ADR-XXX`, igual que cualquier otra raíz de arquitectura (`../../references/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions`) |
 | 5.2 (stack en `AGENTS.md`) | Un stack, en el único `AGENTS.md` | Cada submódulo escribe su propio stack en su propio `AGENTS.md`; el `AGENTS.md` del repo de especificaciones resume con una tabla que enlaza a cada uno — ver § 7 |
 
 No preguntar la situación ni el stack "para el proyecto" en general cuando es multi-repo: siempre es "para
@@ -138,14 +138,34 @@ Copiar `assets/agents-submodule-template.md` (no el de la raíz principal — la
 contexto** difiere porque este repositorio no tiene su propio `.agents/MEMORY.md` ni, salvo que haya
 recibido índices propios, su propio `docs/adr/`):
 
-- `@../.agents/MEMORY.md` — siempre apunta al repo de especificaciones; un submódulo nunca tiene su propio
-  `MEMORY.md`.
+Esas rutas `../` **no son válidas en los dos modos de apertura**. Al copiar la plantilla se escriben para
+el caso anidado (submódulo un nivel bajo el repo de especificaciones, que es lo que produce `git submodule
+add`). El comentario de cabecera de la plantilla indica al agente cómo resolver si el workspace es otro.
+No existe un único `@`-include que apunte al padre y también funcione en un clone directo: `.agents/` y el
+`README.md` de la solución viven solo en el repo de especificaciones.
+
+| Cómo está abierto el repo | Qué hacer con las rutas |
+| ------------------------- | ----------------------- |
+| **Anidado** — este directorio es submódulo y existe `../.agents/MEMORY.md` (o `../.sdd-devkit/settings.json`) | Las rutas `../` aplican. `@../.agents/MEMORY.md` y `@../README.md` apuntan al padre. |
+| **Clone directo** — esta raíz es el worktree git (`git rev-parse --show-toplevel` = este directorio) y **no** existe `../.agents/MEMORY.md` | Omitir `@../.agents/MEMORY.md` y `@../README.md`; no fallar ni inventar un `MEMORY.md` local. Siguen `@README.md` y, si este repo recibió raíz de arquitectura, `@docs/adr/README.md` / `@docs/standards/README.md` locales. Si **no** recibió raíz propia, omitir también esas dos líneas: los índices están en el padre, ausente de este workspace. |
+| **Anidado a más de un nivel** (p. ej. `specs/apps/backend/`) | `../` se queda corto. Subir hasta encontrar `.sdd-devkit/settings.json` o `.agents/MEMORY.md` y escribir esa profundidad (`../../.agents/MEMORY.md`, etc.). |
+
+Al **escribir** el archivo en el Paso 3, dejar las rutas `../` del caso anidado a un nivel — es el layout
+que crea `git submodule add <url> <nombre>` en la raíz del repo de especificaciones. No generar una
+segunda copia de `AGENTS.md` para clone directo: el mismo archivo se commitea y el agente adapta en
+lectura según la tabla.
+
+- `@../.agents/MEMORY.md` — apunta al repo de especificaciones **solo si está anidado**; un submódulo nunca
+  tiene su propio `MEMORY.md`.
 - `docs/adr/README.md` / `docs/standards/README.md` — ruta **local** (`docs/adr/README.md`) si este
   submódulo recibió sus propios índices en el Paso 3, puntos 4-5; ruta al **padre**
-  (`../docs/adr/README.md` / `../docs/standards/README.md`) si no los recibió.
-- `README.md` — siempre local (§ 4.3).
-- `@../README.md` — enlace de vuelta a la descripción de la solución completa, en el repo de
-  especificaciones.
+  (`../docs/adr/README.md` / `../docs/standards/README.md`) si no los recibió (y está anidado).
+- `@README.md` — siempre local (§ 4.3); aplica en anidado y en clone directo. En **repo único** es la
+  única línea de README (`assets/agents-template.md`); no hay padre.
+- `@../README.md` — **solo multi-repo**, y solo en el `AGENTS.md` de un submódulo: descripción de la
+  solución completa en el repo de especificaciones. No se escribe en el `AGENTS.md` de un repo único ni
+  en el del repo de especificaciones (ahí el `@README.md` local ya es esa descripción). En clone directo,
+  omitirla igual que MEMORY.
 
 La sección `# Stack tecnológico` de un `AGENTS.md` de submódulo es la **única fuente del stack de ese
 repositorio** — mismo formato de un repo único (no la tabla-resumen que usa la raíz principal), y se

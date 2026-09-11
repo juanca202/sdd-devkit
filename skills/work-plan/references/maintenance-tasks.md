@@ -42,7 +42,7 @@ No existe aquí el modo «stubs desde una historia»: no hay US que descomponer.
 | Work item | `docs/specs/work-items/WI-XXX-[kebab-case]/README.md` |
 | Progreso | `docs/specs/work-items/WI-XXX-[kebab-case]/progress.md` |
 | ADR | `docs/adr/` |
-| Documentación técnica | `docs/specs/technical-docs/[capability].md` (propiedad de `design-define`; aquí solo se referencia) |
+| Documentación técnica | `docs/specs/technical-docs/[capability]/` — `README.md`, `models/`, `diagrams/` (propiedad de `design-define`; aquí solo se referencia) |
 | Glosario | `docs/specs/glossary.md` |
 | WI ya archivado (fallback) | `docs/archive/work-items/WI-XXX-[kebab-case]/`, con la misma estructura interna |
 
@@ -142,7 +142,7 @@ Un WI completo puede alcanzar `Estado: Ready` si cumple todas las condiciones de
    - **Reglas de negocio** (opcional — incluir solo si el dominio impone restricciones, obligaciones o prohibiciones explícitas; omitir si no aplica): cada regla lleva id secuencial `BR-01`, `BR-02`, … con enunciado RFC 2119 en MAYÚSCULAS. **Cada `BR-XX` declarada debe quedar verificada por al menos un `AC-XXX`** de la sección Criterios de aceptación (anotar `→ verificado por AC-XXX` junto a la regla); si al redactar los criterios alguna `BR-XX` queda sin ningún `AC-XXX` que la verifique, es una laguna — cerrarla con una pregunta o registrarla en Observaciones, nunca dejarla sin verificar.
    - **Criterios de aceptación**: cómo se verifica que quedó hecho; lista verificable. Tono imperativo; sin «podría», «quizá».
    - **Dependencias**: solo piezas *dentro del alcance del work item*. ADRs, technical-docs y referencias de diseño van en **Referencias**.
-   - **Referencias**: ADRs existentes, technical-docs (con ancla al elemento concreto, p. ej. `technical-docs/facturacion.md#api-01`), diseño. El ancla es **siempre `#<id en minúsculas>`** (`#md-01`, `#api-04`, `#fl-02`, `#dg-01`), nunca derivada del título del elemento: `design-define` la emite explícitamente y la devuelve ya formada, así que se **copia tal cual** — no se recompone a partir del nombre. Un `#api-01-crear-factura` apunta a nada. No crear ADRs; si falta una decisión, sugerirlo en Observaciones. Si el WI depende de un modelo, API o flujo **sin especificación** en `technical-docs/`, registrarlo en Observaciones; si el usuario pide detallarlo, **delegar a `/design-define` vía subagente** y agregar aquí la referencia devuelta.
+   - **Referencias**: ADRs existentes, technical-docs (con la referencia al elemento concreto: para APIs y flujos, el README de la capability con ancla, p. ej. `technical-docs/facturacion/README.md#api-01`; para modelos y diagramas, el archivo del elemento, p. ej. `technical-docs/facturacion/models/md-01.md`), diseño. La referencia la emite `design-define` ya formada y se **copia tal cual** — el ancla es **siempre `#<id en minúsculas>`** (`#api-04`, `#fl-02`) y el archivo se nombra por el id, nunca derivados del título del elemento. Un `#api-01-crear-factura` o un `models/factura.md` apuntan a nada. No crear ADRs; si falta una decisión, sugerirlo en Observaciones. Si el WI depende de un modelo, API o flujo **sin especificación** en `technical-docs/`, registrarlo en Observaciones; si el usuario pide detallarlo, **delegar a `/design-define` vía subagente** y agregar aquí la referencia devuelta.
    - **Plan de implementación**: pasos concretos acordados o derivados de fuentes citadas en Referencias. Si no se conocen aún, **no inventar** — indicar en Observaciones qué falta.
    - **Migración** (opcional): si el WI proviene de una investigación de migración (`research/RS-XXX-{slug}/` de `work-research`), rellenar el bloque **Migración (origen → destino)** de la plantilla enlazando esa investigación (contexto progresivo: `discovery.md` y `validation.md` no se duplican) y mapear los `AC-XXX` a los casos Golden Master (`GM-XXX`). Omitir la sección si no es una migración.
    - **Observaciones**: solo si hay pendientes reales. Si no hay nada, **omitir la sección**. Con pendientes reales: `Estado: Draft`.
@@ -210,7 +210,7 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - [ ] **Dependencias** listadas dentro del alcance del work item
 - [ ] **Plan de implementación** con pasos concretos
 - [ ] **Observaciones** sin pendientes abiertos — sección omitida o con *Sin pendientes documentados*
-- [ ] Referencias a ADRs y technical-docs con rutas relativas válidas, y las de technical-docs con ancla `#<id>` (`#md-01`, `#api-04`) tal como las devolvió `design-define` — nunca un slug del título
+- [ ] Referencias a ADRs y technical-docs con rutas relativas válidas, y las de technical-docs tal como las devolvió `design-define` — `README.md#<id>` (`#api-04`, `#fl-02`) para APIs/flujos, `models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas — nunca un slug del título
 
 **Formato:**
 - [ ] Plantilla `assets/work-item-template.md` leída

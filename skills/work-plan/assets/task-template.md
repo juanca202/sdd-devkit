@@ -33,7 +33,7 @@ Recursos válidos: mockups, wireframes, flujos, modelos, diagramas, especificaci
 Rutas permitidas: assets/ (recursos propios de esta tarea) o docs/specs/technical-docs/ o docs/adr/.
 -->
 - **Arquitectura:** {{enlace a ADR en `docs/adr/` cuando la tarea dependa de decisiones ya registradas; no inventar ADRs nuevos}}
-- **Documentación técnica:** {{enlace a `docs/specs/technical-docs/[capability].md#<id>` si aplica — DTOs, ER, flujos, endpoints. El ancla es el id del elemento en minúsculas (`#md-01`, `#api-04`), tal como lo devuelve `design-define`; no el título convertido a slug}}
+- **Documentación técnica:** {{enlace si aplica — DTOs, ER, flujos, endpoints — tal como lo devuelve `design-define`: `docs/specs/technical-docs/[capability]/README.md#<id>` para APIs/flujos (ancla = id en minúsculas, `#api-04`, `#fl-02`) o `docs/specs/technical-docs/[capability]/models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas; nunca el título convertido a slug}}
 - **Diseño:** {{enlace a Figma, wireframe o imagen de alta fidelidad; obligatorio si la tarea es de UI}}
 
 ## Migración (origen → destino)

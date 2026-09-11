@@ -1,6 +1,6 @@
 # Ejemplos y anti-patrones
 
-Referencia del skill `trace-validate`. Casos de uso y errores a evitar.
+Referencia del skill `coverage-verify`. Casos de uso y errores a evitar.
 
 ---
 

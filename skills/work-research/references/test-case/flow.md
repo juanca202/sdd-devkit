@@ -143,14 +143,14 @@ secundarios):
 
 | Veredicto | Cuándo | Handoff |
 |-----------|--------|---------|
-| **TC correcto · implementación correcta** | El TC verifica el requisito y el código lo cumple | Ninguno. Si el TC no tiene prueba automatizada, `trace-validate` para confirmar la cobertura |
+| **TC correcto · implementación correcta** | El TC verifica el requisito y el código lo cumple | Ninguno. Si el TC no tiene prueba automatizada, `coverage-verify` para confirmar la cobertura |
 | **TC correcto · implementación incorrecta** | El TC está bien planteado y el código no lo satisface | Flujo **Analizar issue** de este mismo skill: hay un defecto que diagnosticar y corregir con el ciclo 🔴→🟢 |
 | **TC incorrecto** | El escenario no corresponde al requisito, o el resultado esperado está mal definido (preguntas 1-2) | `test-define` para corregirlo |
 | **TC incompleto** | Cubre el requisito solo en parte; faltan casos (pregunta 3) | `test-define` para ampliarlo o añadir TCs hermanos |
 | **TC acoplado a la implementación** | Verifica detalles internos en lugar de comportamiento (pregunta 4) | `test-define` para reformularlo; si el arreglo es de la prueba automatizada, `work-plan` (WI `test-improvement`) |
 | **Falso negativo** | El TC pasa pese a existir un defecto (pregunta 5) | **Dos** handoffs: flujo **Analizar issue** para el defecto, y `test-define` (o WI `test-improvement`) para el test que no lo detecta |
 | **Requisito ambiguo o mal definido** | La discrepancia nace del `AC-XXX`, no del test ni del código | Flujo **Analizar decisiones pendientes** o `work-define`; no es un bug |
-| **Sin cobertura automatizada** | El TC está bien pero nadie lo ejecuta | `trace-validate` para dimensionar el hueco y, después, escribir la prueba |
+| **Sin cobertura automatizada** | El TC está bien pero nadie lo ejecuta | `coverage-verify` para dimensionar el hueco y, después, escribir la prueba |
 
 El `README.md` del RS resume el veredicto en su **Conclusión y recomendación**; el
 `analysis.md` guarda el detalle (respuestas a las cinco preguntas, comparación

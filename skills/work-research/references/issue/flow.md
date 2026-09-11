@@ -279,9 +279,9 @@ Añadir además:
 > usuario quiere documentar casos de prueba formales del escenario más allá del fix —
 > es una decisión suya, no un paso del flujo.
 >
-> **Cuándo usar `trace-validate` en vez de un WI `test-improvement`:** si el
+> **Cuándo usar `coverage-verify` en vez de un WI `test-improvement`:** si el
 > diagnóstico revela que el falso negativo (caso 3) o el hueco de cobertura afecta a
-> **un artefacto con `AC-XXX`/`TC-XXX` documentados**, `trace-validate` es la vía —
+> **un artefacto con `AC-XXX`/`TC-XXX` documentados**, `coverage-verify` es la vía —
 > comprueba sistemáticamente qué criterios carecen de prueba real. Si el hueco está en
 > código sin artefacto documentado, va como WI de tipo `test-improvement`.
 

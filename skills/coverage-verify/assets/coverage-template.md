@@ -1,5 +1,5 @@
 <!--
-Plantilla canónica del reporte de trazabilidad (trace-validate).
+Plantilla canónica del reporte de trazabilidad (coverage-verify).
 - Rellenar solo con datos verificables del repo y del trabajo. No inventar cobertura ni resultados.
 - Dos tablas complementarias:
   (1) «Cobertura por criterio»: una fila por criterio de aceptación — vista de veredicto.
@@ -94,4 +94,4 @@ Marca de frescura: NO eliminar al publicar. `fingerprint` es el canónico de la 
 coincidan LOS DOS para reutilizar el reporte.
 -->
 
-<!-- trace-validate:verdict={{APPROVED|APPROVED_WITH_NOTES|REJECTED}} · fingerprint={{hash}} · spec={{hash}} · generated={{YYYY-MM-DD}} -->
+<!-- coverage-verify:verdict={{APPROVED|APPROVED_WITH_NOTES|REJECTED}} · fingerprint={{hash}} · spec={{hash}} · generated={{YYYY-MM-DD}} -->

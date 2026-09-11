@@ -169,7 +169,7 @@ Antes de generar ningún TC, resolver las dudas que puedan afectar la calidad de
 
 > **El alcance no se pregunta: son siempre TODOS los criterios de aceptación del artefacto.** Es el
 > comportamiento por defecto y no admite una pregunta de confirmación — un criterio sin TC es un hueco de
-> cobertura que `trace-validate` reportará después, así que cubrirlos todos es lo que el usuario espera al
+> cobertura que `coverage-verify` reportará después, así que cubrirlos todos es lo que el usuario espera al
 > pedir casos de prueba. **Solo** se genera un subconjunto si el usuario lo **pide explícitamente** («solo
 > AC-002», «únicamente los criterios de pago»); en ese caso se respeta su selección y se anota en el índice
 > qué criterios quedaron sin TC. No ofrecer «¿todos o un subconjunto?»: la respuesta ya está decidida.
@@ -234,7 +234,7 @@ Usar `assets/test-case-template.md` para todos los campos. Reglas de llenado:
 - **Perspectiva:** registrar la perspectiva de cobertura del caso (`Happy Path`, `Error` o `Límite`), coherente con el sufijo del slug del archivo. No confundir con el o los tipos de prueba del campo Tipo de prueba (Unit/Integration/E2E…).
 - **Título descriptivo:** redactarlo en formato Given–When–Then (GWT), **respetando el idioma del artefacto origen**: en español usar `Dado {{contexto/precondición}}, Cuando {{acción/evento}}, Entonces {{resultado esperado}}`; en inglés usar `Given {{context/precondition}}, When {{action/event}}, Then {{expected result}}`. Debe describir el escenario concreto que valida el TC, coherente con las precondiciones, los pasos y el resultado esperado final.
 - **Criterio de aceptación:** referenciar el identificador del criterio **exactamente como aparece en el artefacto origen** (`AC-012`, `1.3`, `R-3`…). **No normalizar ni reescribir** el identificador a otro formato: el vínculo de trazabilidad debe ser buscable literalmente en el artefacto. Este campo no puede estar vacío ni ser genérico.
-- **Tipo de prueba:** declarar la **intención de diseño** del caso, no su estado de ejecución. Como los TC se escriben **antes de implementar**, el valor es `Manual` (no se automatiza, requiere ejecución humana por diseño) **o** uno o varios tipos de entre `Unit`, `Integration`, `API Test`, `Visual Test`, `E2E`, separados por coma y ordenados de menor a mayor nivel (p. ej. `Unit, E2E`) — ver la tabla siguiente para inferirlos. `Manual` no se combina con tipos. Este campo es la fuente que consume `trace-validate` para distinguir "manual por diseño" de "pendiente de automatizar"; no dejarlo vacío. Ante la duda entre `Manual` y automatizable, o sobre qué tipo(s) asignar, preguntar al usuario.
+- **Tipo de prueba:** declarar la **intención de diseño** del caso, no su estado de ejecución. Como los TC se escriben **antes de implementar**, el valor es `Manual` (no se automatiza, requiere ejecución humana por diseño) **o** uno o varios tipos de entre `Unit`, `Integration`, `API Test`, `Visual Test`, `E2E`, separados por coma y ordenados de menor a mayor nivel (p. ej. `Unit, E2E`) — ver la tabla siguiente para inferirlos. `Manual` no se combina con tipos. Este campo es la fuente que consume `coverage-verify` para distinguir "manual por diseño" de "pendiente de automatizar"; no dejarlo vacío. Ante la duda entre `Manual` y automatizable, o sobre qué tipo(s) asignar, preguntar al usuario.
   - Para determinar el o los tipos de prueba (cuando el valor no es `Manual`), recorrer esta tabla de arriba hacia abajo **evaluando cada fila de forma independiente** — a diferencia de una tabla de decisión que se detiene en la primera coincidencia, aquí se **acumulan todos los tipos cuya pregunta aplique**: un mismo TC puede necesitar más de un tipo (p. ej. una API que conviene cubrir tanto a nivel de unidad como end-to-end).
 
     | Pregunta | ¿Aplica? → agrega |
@@ -271,7 +271,7 @@ Usar `assets/test-case-template.md` para todos los campos. Reglas de llenado:
    Reglas del índice:
    - **TC:** ID enlazado por ruta relativa a su archivo `TC-XXX-{slug}.md`.
    - **Perspectiva**, **Tipo de prueba**, **Estado** y **Prioridad:** copiar el valor tal como quedó en el encabezado del TC (Tipo de prueba se copia tal cual, con todos los tipos separados por coma si son varios).
-   - **La columna `Estado` no es opcional:** `work-implement` construye su matriz de alcance desde este índice y filtra por ella (`Ready` se automatiza, `Draft` vuelve a `test-define`, `Obsolete` se descarta), y `trace-validate` la usa para decidir si un TC cuenta como cobertura plena. Sin esa columna, el consumidor tendría que abrir los TCs uno a uno.
+   - **La columna `Estado` no es opcional:** `work-implement` construye su matriz de alcance desde este índice y filtra por ella (`Ready` se automatiza, `Draft` vuelve a `test-define`, `Obsolete` se descarta), y `coverage-verify` la usa para decidir si un TC cuenta como cobertura plena. Sin esa columna, el consumidor tendría que abrir los TCs uno a uno.
    - **Criterio de aceptación:** mostrar **solo el identificador** tal como aparece en el artefacto (`AC-001`, `1.1`, …), sin el título. (En el encabezado del TC sí va identificador **+ título corto**; el índice se queda en el identificador para que la columna sea legible y comparable.)
    - Regenerar el índice completo en cada corrida para reflejar el estado actual de la carpeta; redactarlo en el idioma del artefacto origen.
 4. Mostrar al usuario un resumen:
@@ -279,9 +279,9 @@ Usar `assets/test-case-template.md` para todos los campos. Reglas de llenado:
    - TCs generados: ID · título · perspectiva.
    - TCs omitidos con justificación.
 5. **Aceptación del resultado — depende de `specification.testCases.mode`** (ver [Política de definición de casos de prueba](#política-de-definición-de-casos-de-prueba)):
-   - **`mode: always`** → no preguntar: dar el resultado por aceptado y cerrar directamente. Sugerir como siguiente paso `work-implement` (tipo `TC-XXX`/`FT-XXX`) para automatizar los TCs en `Ready`, y `trace-validate` para el veredicto de cobertura.
+   - **`mode: always`** → no preguntar: dar el resultado por aceptado y cerrar directamente. Sugerir como siguiente paso `work-implement` (tipo `TC-XXX`/`FT-XXX`) para automatizar los TCs en `Ready`, y `coverage-verify` para el veredicto de cobertura.
    - **`mode: ask` / `mode: never`** (o sin `settings.json`) → preguntar si el usuario acepta el resultado:
-     - **Acepta** → cerrar; el skill termina. Sugerir como siguiente paso `work-implement` (tipo `TC-XXX`/`FT-XXX`) para automatizar los TCs en `Ready`, y `trace-validate` para el veredicto de cobertura.
+     - **Acepta** → cerrar; el skill termina. Sugerir como siguiente paso `work-implement` (tipo `TC-XXX`/`FT-XXX`) para automatizar los TCs en `Ready`, y `coverage-verify` para el veredicto de cobertura.
      - **Ajuste puntual** (campo incorrecto, dato de prueba erróneo) → aplicar la corrección y volver a este paso para confirmar.
      - **Cambio estructural** (nuevos criterios, redefinición del alcance) → reiniciar desde el Paso 1.
 
@@ -324,12 +324,12 @@ El flujo de los Pasos 1–5 **crea** casos de prueba. Pero tres skills devuelven
    | Situación | `Estado` resultante |
    |-----------|---------------------|
    | El TC se corrige y queda listo para automatizar | `Ready` |
-   | El TC necesita una decisión de producto que aún no está tomada | `Draft` — cuenta como cobertura **Parcial** en `trace-validate` |
+   | El TC necesita una decisión de producto que aún no está tomada | `Draft` — cuenta como cobertura **Parcial** en `coverage-verify` |
    | El comportamiento que validaba ya no existe, o el criterio se eliminó | `Obsolete` — deja de contar como cobertura, pero **el archivo se conserva**: su fila sigue en la matriz de trazabilidad por auditoría |
 
-   Es el **único** punto del plugin que emite `Draft` u `Obsolete` en un TC. Todo lo demás (el filtro de alcance de `work-implement`, la derivación de estados de `trace-validate`) los **consume**.
+   Es el **único** punto del plugin que emite `Draft` u `Obsolete` en un TC. Todo lo demás (el filtro de alcance de `work-implement`, la derivación de estados de `coverage-verify`) los **consume**.
 5. **Si el cambio añade o quita TCs de un criterio**, regenerar el índice `test-cases/README.md` (Paso 4.3) y resincronizar la línea `Casos de prueba:` del artefacto origen (Paso 5). Un TC que pasa a `Obsolete` se retira de esa línea aunque su archivo permanezca.
-6. **Reportar** qué TCs cambiaron, con qué estado quedaron, y recordar que la validación de cobertura la emite `trace-validate` — que además detectará el cambio, porque su `SPEC_FINGERPRINT` cubre la carpeta del artefacto.
+6. **Reportar** qué TCs cambiaron, con qué estado quedaron, y recordar que la validación de cobertura la emite `coverage-verify` — que además detectará el cambio, porque su `SPEC_FINGERPRINT` cubre la carpeta del artefacto.
 
 > **Qué no hace este flujo:** no escribe ni ajusta el código de la prueba automatizada (eso es `work-implement`), ni decide si el que estaba mal era el TC o el código de producción — esa decisión viene tomada por quien delega.
 
@@ -343,7 +343,7 @@ Posición: **definición de pruebas** — después de que el artefacto tenga cri
 |--|--|
 | **Entrada** | Un artefacto con criterios de aceptación **identificados**: `US-XXX` o `WI-XXX` en `Ready` (de `work-define` / `work-plan`), un `FT-XXX` (del flujo «Analizar legado» de `work-research`), o cualquier documento externo con criterios codificados. |
 | **Salida** | `test-cases/` junto al artefacto, con un `TC-XXX-{slug}.md` por caso, su índice `test-cases/README.md`, y la línea `Casos de prueba:` bajo cada criterio del artefacto origen. |
-| **Siguiente paso** | **`work-implement`** en su tipo `TC-XXX` / `FT-XXX`, que automatiza los TCs en `Ready` bajo el subagente `quality-specialist`. Después, **`trace-validate`** para el veredicto de cobertura. |
+| **Siguiente paso** | **`work-implement`** en su tipo `TC-XXX` / `FT-XXX`, que automatiza los TCs en `Ready` bajo el subagente `quality-specialist`. Después, **`coverage-verify`** para el veredicto de cobertura. |
 | **Vuelta desde `work-implement`** | Al automatizar se descubre que el TC está mal especificado → [Flujo: actualizar TCs existentes](#flujo-actualizar-tcs-existentes). |
 | **Vuelta desde `work-research`** | El análisis de un caso de prueba concluye que falla la especificación y no el código → mismo flujo de actualización. |
 | **Escalada** | El artefacto no tiene criterios, o los tiene sin identificador → devolver a `work-define` (US), `work-plan` (WI) o al flujo «Analizar legado» de `work-research` (FT). No inventar criterios aquí. |

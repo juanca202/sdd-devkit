@@ -201,7 +201,7 @@
         },
         "requirementCoverage": {
           "type": "object",
-          "description": "Puerta trace-validate.",
+          "description": "Puerta coverage-verify.",
           "required": [
             "enabled",
             "confirmFix"
@@ -210,11 +210,11 @@
           "properties": {
             "enabled": {
               "type": "boolean",
-              "description": "Si se ejecuta la puerta trace-validate antes del merge."
+              "description": "Si se ejecuta la puerta coverage-verify antes del merge."
             },
             "confirmFix": {
               "type": "string",
-              "description": "Reservado por consistencia con las otras dos puertas. trace-validate no aplica correcciones por sí mismo (solo reporta y delega la ejecución de pruebas en quality-check), así que este valor no tiene efecto hoy.",
+              "description": "Reservado por consistencia con las otras dos puertas. coverage-verify no aplica correcciones por sí mismo (solo reporta y delega la ejecución de pruebas en quality-check), así que este valor no tiene efecto hoy.",
               "enum": [
                 "always",
                 "never"

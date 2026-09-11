@@ -37,7 +37,7 @@ Crear Features (FT-XXX)        ← docs/specs/features/FT-XXX-{slug}/README.md
 Definir Casos de Prueba          ← handoff a test-define (dentro de la misma carpeta del FT)
     │
     ▼
-Validar cobertura                ← handoff a trace-validate (¿el código existente tiene pruebas?)
+Validar cobertura                ← handoff a coverage-verify (¿el código existente tiene pruebas?)
 ```
 
 El `FT-XXX` documenta código **ya implementado**: no se construye funcionalidad a
@@ -53,12 +53,12 @@ los `AC-XXX` del feature.
 > `docs/specs/features/FT-XXX-{slug}/` con su `README.md`.
 > **No escribe código de pruebas ni de aplicación.** El último paso —definir casos de
 > prueba— se ejecuta haciendo *handoff* a `test-define`; y con los TC definidos se
-> puede correr `trace-validate` para verificar si el código existente ya está cubierto
+> puede correr `coverage-verify` para verificar si el código existente ya está cubierto
 > por pruebas.
 
 > **De un `FT-XXX` no sale funcionalidad, salen pruebas.** Es la **especificación de
 > código ya implementado**: documenta lo que el sistema hace hoy, no algo por
-> construir. Su uso downstream es doble: `trace-validate` para comprobar si sus
+> construir. Su uso downstream es doble: `coverage-verify` para comprobar si sus
 > `AC-XXX`/`TC-XXX` tienen implementación de pruebas en el repo, y `work-implement`
 > (tipo **feature**) para **automatizar esos `TC-XXX`**. Lo que nunca sale de un
 > `FT-XXX` es código funcional nuevo: si aparece una discrepancia real entre el
@@ -375,12 +375,12 @@ Por cada `FT-XXX` en **`Estado: Ready`**, invoca `test-define`:
 > (FT-XXX)"): lee los `AC-XXX` del `README.md` del feature y guarda los TCs bajo su
 > carpeta `test-cases/`.
 
-## Paso 4 — Validar cobertura (*handoff* a `trace-validate`)
+## Paso 4 — Validar cobertura (*handoff* a `coverage-verify`)
 
-Con los `TC-XXX` definidos, invoca `trace-validate` sobre el `FT-XXX` para verificar
+Con los `TC-XXX` definidos, invoca `coverage-verify` sobre el `FT-XXX` para verificar
 si el código existente está cubierto por pruebas:
 
-1. `trace-validate` lee los `AC-XXX` del `README.md` del feature y sus `TC-XXX`, y los
+1. `coverage-verify` lee los `AC-XXX` del `README.md` del feature y sus `TC-XXX`, y los
    cruza contra los artefactos de prueba del repo (unit/integración/e2e).
 2. Emite un veredicto de cobertura por criterio. Un criterio **No cubierto** significa
    que ese comportamiento ya implementado **no tiene pruebas** que lo respalden —un
@@ -404,7 +404,7 @@ Al terminar, indica al usuario:
   prueba en cada `test-cases/`, recordando que son **inferidos desde código**
   (procedencia marcada) y viven en su propio subárbol, separados de las historias y
   work items.
-- El resultado de `trace-validate` sobre cada feature: qué comportamiento del código ya
+- El resultado de `coverage-verify` sobre cada feature: qué comportamiento del código ya
   está cubierto por pruebas y qué huecos quedan. El próximo paso sugerido es **escribir
   las pruebas faltantes** sobre el código existente (no código funcional), con
   `work-implement` en su tipo **feature** (`FT-XXX`).
@@ -419,7 +419,7 @@ Al terminar, indica al usuario:
 |-------------|-----------------|-------------|
 | El `discovery.md` en `Ready` | Este mismo flujo (Paso 2) | Crear un `FT-XXX` por cada feature con veredicto **Aceptado** |
 | Cada `FT-XXX` en `Ready` | `test-define` | Generar sus `TC-XXX` dentro de `docs/specs/features/FT-XXX-{slug}/test-cases/` |
-| Los `TC-XXX` definidos | `trace-validate` | Verificar si el código existente está cubierto por esas pruebas y revelar los huecos |
+| Los `TC-XXX` definidos | `coverage-verify` | Verificar si el código existente está cubierto por esas pruebas y revelar los huecos |
 | Los huecos de cobertura | `work-implement` (tipo **feature**) | Automatizar en código los `TC-XXX` asociados a los `AC-XXX` del `FT-XXX` |
 | Un comportamiento que resulta ser un **bug** | Flujo **Analizar issue** de este mismo skill | No congelarlo como `AC-XXX`: abrir su diagnóstico y su corrección |
 

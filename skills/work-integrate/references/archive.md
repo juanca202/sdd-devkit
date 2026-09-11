@@ -18,8 +18,8 @@ especificación se mueve a `docs/archive/`. **Dónde y cuándo depende del skill
 
 1. El `progress.md` del trabajo tiene **todas** sus unidades en `Done`.
 2. **Todas** las puertas de calidad que aplican al flujo quedaron en `APPROVED`:
-   `quality-check`, `code-review` y `trace-validate` (`APPROVED_WITH_NOTES` de
-   `trace-validate` cuenta como aprobado), más la **Definition of Done** en `pr-create`
+   `quality-check`, `code-review` y `coverage-verify` (`APPROVED_WITH_NOTES` de
+   `coverage-verify` cuenta como aprobado), más la **Definition of Done** en `pr-create`
    cuando existe `docs/policies/definition-of-done.md`.
 3. El tipo de trabajo es **`US-XXX` o `WI-XXX`** (ver [Qué no se archiva](#qué-no-se-archiva)).
 4. **No queda ninguna comprobación previa que pueda abortar el flujo sin integrar.** En
@@ -34,7 +34,7 @@ Si alguna falla, **no se archiva**.
 - En `pr-create` el `progress.md` **no** se valida en el pre-flight, así que se lee en el propio paso de archivado. Si no está completo en `Done`, se **omite el archivado y se avisa** — el PR se crea igual: las puertas pasaron y no es ese el momento de bloquearlo.
 
 **Orden.** El archivado ocurre siempre **después** de la última puerta. No al revés:
-`trace-validate` escribe el `coverage.md` dentro de la carpeta del trabajo, así que mover
+`coverage-verify` escribe el `coverage.md` dentro de la carpeta del trabajo, así que mover
 antes lo dejaría escribiendo en una ruta que ya no existe, o generando una carpeta huérfana
 en el origen. En `pr-create`, además, va **antes** del commit final que deja el árbol limpio
 (viaja en la rama). En `work-integrate` va **después del merge, en la rama base**, y su
@@ -48,7 +48,7 @@ nunca dentro del commit de merge.
 | Caso | Motivo |
 |------|--------|
 | Ramas `test/` sobre un `FT-XXX` | El feature sigue vivo: la automatización de sus `TC-XXX` cierra una ejecución, no el artefacto. |
-| Ramas `test/` sobre un `US-XXX`/`WI-XXX` | El trabajo funcional puede seguir abierto: el flujo solo verificó las unidades `TC-XXX` de esa ejecución, no el `progress.md` completo. Que el skill resuelva un `US-XXX` para `trace-validate` **no** habilita el archivado. |
+| Ramas `test/` sobre un `US-XXX`/`WI-XXX` | El trabajo funcional puede seguir abierto: el flujo solo verificó las unidades `TC-XXX` de esa ejecución, no el `progress.md` completo. Que el skill resuelva un `US-XXX` para `coverage-verify` **no** habilita el archivado. |
 | PR de **promoción** (`pr-create`) | No trae trabajo nuevo: cada `US`/`WI` que viaja en él ya se archivó al integrarse. |
 | Un trabajo cuya carpeta ya está bajo `docs/archive/` | Ya archivado. Se detecta, se informa y se continúa sin tocar nada — no es un error. |
 | **Artefactos de un framework de terceros** (Speckit, OpenSpec, AgentOS…) | No son de SDD Devkit. Ver la regla de abajo. |
@@ -322,13 +322,13 @@ No hay más; cualquier otra escritura dentro de `docs/archive/` es un defecto.
 
 | Quién | Qué puede escribir | Por qué |
 |-------|--------------------|---------|
-| **`trace-validate`** | Su `coverage.md`, dentro de la carpeta del artefacto | Es un **derivado** del artefacto, no trabajo nuevo, y revalidar la cobertura de un trabajo ya integrado tiene que seguir siendo posible. Se guarda junto a lo que traza o deja de tener sentido. |
+| **`coverage-verify`** | Su `coverage.md`, dentro de la carpeta del artefacto | Es un **derivado** del artefacto, no trabajo nuevo, y revalidar la cobertura de un trabajo ya integrado tiene que seguir siendo posible. Se guarda junto a lo que traza o deja de tener sentido. |
 | **`work-implement` en [modo corrección](../../work-implement/SKILL.md#modo-correccion-delegado-desde-quality-check)** | **Nada dentro de la carpeta.** Continúa el flujo en vez de parar, pero la nota de retrabajo va al informe de `quality-check` | La corrección delegada llega **en la fase de cierre**, con el archivado ya commiteado: encontrarse el artefacto archivado es lo normal, no un error. Parar ahí bloquearía el cierre que la corrección venía a desbloquear. |
 
 La segunda no es en rigor una excepción a *escribir* —sigue sin escribir— sino a **parar**.
 Se enuncia aquí porque es donde se busca.
 
-> **Ojo con el efecto sobre `trace-validate`.** Su `SPEC_FINGERPRINT` se calcula sobre la
+> **Ojo con el efecto sobre `coverage-verify`.** Su `SPEC_FINGERPRINT` se calcula sobre la
 > carpeta del artefacto, y el `git mv` del archivado **cambia las rutas** que entran en ese
 > hash. El `coverage.md` previo queda marcado como no fresco y se regenera **una vez**
 > tras archivar; a partir de ahí la clave vuelve a ser estable en la nueva ruta. Es un coste
@@ -365,7 +365,7 @@ en `001`** y crear una carpeta fantasma. Las dos reglas van juntas justamente po
 
 ## Anti-patrones
 
-- Archivar **antes** de que pasen las puertas, o antes de que `trace-validate` escriba su
+- Archivar **antes** de que pasen las puertas, o antes de que `coverage-verify` escriba su
   `coverage.md` dentro de la carpeta.
 - **Archivar sin preguntar con `archiveMode: ask`**, o dar la confirmación por supuesta porque
   las puertas pasaron.

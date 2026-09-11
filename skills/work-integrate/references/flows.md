@@ -63,7 +63,7 @@ Cuando reflog y config no concluyen, o existen varios candidatos plausibles.
 - [ ] Puertas resueltas según [`${PLUGIN_ROOT}/references/verification.md`](../../../references/verification.md), con las que tienen `enabled: false` omitidas sin ejecutar ni ofrecer
 - [ ] **`quality-check`** — ejecutado con veredicto `APPROVED`, **o** omitido con su motivo registrado
 - [ ] **`code-review`** — ejecutado con veredicto `APPROVED`, **o** omitido con su motivo registrado
-- [ ] **`trace-validate`** — ejecutado (después de `quality-check`) con veredicto `APPROVED` (o `APPROVED_WITH_NOTES`), **o** omitido con su motivo registrado
+- [ ] **`coverage-verify`** — ejecutado (después de `quality-check`) con veredicto `APPROVED` (o `APPROVED_WITH_NOTES`), **o** omitido con su motivo registrado
 - [ ] Ninguna puerta omitida se ha listado como aprobada; todas las omisiones van al reporte del cierre
 - [ ] Sin commits sin commitear ni stash sin aplicar relevante al alcance
 

@@ -1,7 +1,7 @@
 ---
 name: quality-check
 description: >-
-  Ejecutar las verificaciones automatizadas del stack —tipado, linter, unit tests, cobertura, build, e2e, análisis estático (Sonar) y las suites que declare el estándar de testing— y emitir un veredicto con informe y próximas acciones. Produce la caché test-run.json que consume trace-validate. No exige artefactos de este plugin: corre sobre cualquier repositorio y delega las correcciones en work-implement. Activar cuando el usuario pida correr las pruebas o las verificaciones: "ejecuta los checks", "corre los tests", "quality check", "valida antes del PR/merge", "¿está verde el repo?", o cuando lo invoque otro skill (work-integrate, pr-create, trace-validate). Proceso de cierre, no proactivo durante el desarrollo. Por defecto pide confirmación antes de corregir un fallo; `.sdd-devkit/settings.json` (`verification.qualityCheck.confirmFix: "never"`) permite corregir directo sin preguntar. La revisión cualitativa de diseño es de code-review.
+  Ejecutar las verificaciones automatizadas del stack —tipado, linter, unit tests, cobertura, build, e2e, análisis estático (Sonar) y las suites que declare el estándar de testing— y emitir un veredicto con informe y próximas acciones. Produce la caché test-run.json que consume coverage-verify. No exige artefactos de este plugin: corre sobre cualquier repositorio y delega las correcciones en work-implement. Activar cuando el usuario pida correr las pruebas o las verificaciones: "ejecuta los checks", "corre los tests", "quality check", "valida antes del PR/merge", "¿está verde el repo?", o cuando lo invoque otro skill (work-integrate, pr-create, coverage-verify). Proceso de cierre, no proactivo durante el desarrollo. Por defecto pide confirmación antes de corregir un fallo; `.sdd-devkit/settings.json` (`verification.qualityCheck.confirmFix: "never"`) permite corregir directo sin preguntar. La revisión cualitativa de diseño es de code-review.
 license: MIT
 ---
 
@@ -9,13 +9,13 @@ license: MIT
 
 Ejecuta la **batería de checks automatizados** que el stack exige (tipado, linter, unit tests, cobertura, build, e2e, sonar) más las **suites de prueba que declare el estándar de testing** del repo (integración, contrato, rendimiento…), adaptada al **stack detectado**, y emite un **veredicto** con su informe. Las únicas pruebas fijas son **unit y cobertura** —las dos únicas que se listan siempre, aunque salgan `N/A`—; el resto del conjunto sale de la config del propio repo (e2e) o del estándar de testing, y **lo que no aplica no se lista** — ver [Suites de prueba](#suites-de-prueba-fijas-y-configuradas).
 
-> **Alcance: solo el plano automatizado.** Este skill responde a «¿el código corre y cumple las reglas?». La pregunta «¿resuelve el problema correcto y está bien diseñado?» es del skill **[`code-review`](../code-review/SKILL.md)** (revisión cualitativa). Y «¿cada criterio de aceptación está probado?» es de **`trace-validate`**. Son **tres skills independientes**, cada uno con su veredicto e informe; quien los encadena es el orquestador de cierre (`work-integrate`, `pr-create`). Ver [Relación con otros skills](#relación-con-otros-skills).
+> **Alcance: solo el plano automatizado.** Este skill responde a «¿el código corre y cumple las reglas?». La pregunta «¿resuelve el problema correcto y está bien diseñado?» es del skill **[`code-review`](../code-review/SKILL.md)** (revisión cualitativa). Y «¿cada criterio de aceptación está probado?» es de **`coverage-verify`**. Son **tres skills independientes**, cada uno con su veredicto e informe; quien los encadena es el orquestador de cierre (`work-integrate`, `pr-create`). Ver [Relación con otros skills](#relación-con-otros-skills).
 >
-> **Audita, no arregla (por defecto).** Aplica correcciones **solo si el usuario lo autoriza explícitamente** —o si `.sdd-devkit/settings.json` tiene `verification.qualityCheck.confirmFix: "never"` (ver [Política de corrección](#política-de-corrección))— y, tras corregir, **vuelve a ejecutar**. Fuera de un ciclo de implementación, **entregar solo el informe es un resultado válido y frecuente** con la política por defecto (`always`): se pregunta antes de tocar código (ver [Corrección de fallos](#corrección-de-fallos)). No edita configuración, no instala dependencias ni hace commit/push/merge sin instrucción explícita. (**Única excepción:** dejar su propia caché ignorada en el `.gitignore` —añadiendo esa línea, y creando el archivo si no existiera—, ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate).)
+> **Audita, no arregla (por defecto).** Aplica correcciones **solo si el usuario lo autoriza explícitamente** —o si `.sdd-devkit/settings.json` tiene `verification.qualityCheck.confirmFix: "never"` (ver [Política de corrección](#política-de-corrección))— y, tras corregir, **vuelve a ejecutar**. Fuera de un ciclo de implementación, **entregar solo el informe es un resultado válido y frecuente** con la política por defecto (`always`): se pregunta antes de tocar código (ver [Corrección de fallos](#corrección-de-fallos)). No edita configuración, no instala dependencias ni hace commit/push/merge sin instrucción explícita. (**Única excepción:** dejar su propia caché ignorada en el `.gitignore` —añadiendo esa línea, y creando el archivo si no existiera—, ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-coverage-verify).)
 >
 > **Proceso iterativo:** toda corrección reinicia la corrida completa hasta un veredicto estable.
 >
-> **Sin cambios en el código no se repiten las pruebas.** Si `.sdd-devkit/test-run.json` está fresco (mismo `FINGERPRINT` canónico), las suites y las validaciones de arquitectura se toman de ahí en **cualquier modo**, y solo se ejecutan los checks que la caché no cubre (tipado, linter, build, sonar). Solo `no-cache` o una petición explícita del usuario fuerzan la re-ejecución. Ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate).
+> **Sin cambios en el código no se repiten las pruebas.** Si `.sdd-devkit/test-run.json` está fresco (mismo `FINGERPRINT` canónico), las suites y las validaciones de arquitectura se toman de ahí en **cualquier modo**, y solo se ejecutan los checks que la caché no cubre (tipado, linter, build, sonar). Solo `no-cache` o una petición explícita del usuario fuerzan la re-ejecución. Ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-coverage-verify).
 >
 > **Entrada mínima:** la raíz de un repositorio reconocible (ver [`references/stacks.md`](references/stacks.md)). Si no se detecta stack, parar y avisar. **No se exige ningún artefacto del plugin**: el repo puede no tener `docs/specs/`, ni `US-XXX`, ni convención de ramas — la corrida y el veredicto son idénticos. Ver [Artefactos externos al plugin](#artefactos-externos-al-plugin).
 
@@ -30,7 +30,7 @@ Consecuencias prácticas:
 - **Un FAIL puede no venir del trabajo en curso.** Un test que ya estaba roto antes de esta rama saldrá igual. **No atribuirlo automáticamente al cambio reciente.** Si la rama base es resoluble sin esfuerzo, se puede contrastar el archivo del fallo con `git diff --name-only <base>` (rango que incluye lo sin commitear) y anotar en el detalle del check que el fallo **parece preexistente**; si no lo es, no especular. En cualquier caso, la decisión de corregirlo aquí o sacarlo a un `WI-XXX` aparte es del usuario.
 - **No acotar la corrida a los archivos que cambiaron.** Filtrar los tests por archivos tocados falsearía el resultado y anularía el valor de la puerta. Los modificadores (`only <check>`, `no-tests`…) acotan **qué checks se ejecutan**, nunca sobre qué parte del código; no existe forma de acotar el universo de archivos, y es deliberado.
 - **Excepción monorepo:** si el repo tiene varios módulos, «todo el repositorio» significa **todo el módulo elegido** — la selección del módulo la resuelve el Paso 1 (ver [`references/stacks.md`](references/stacks.md#detección-de-ecosistema)), preguntando si hay ambigüedad. No se auditan todos los módulos salvo petición explícita.
-- **El informe vive en `docs/audits/`, no en la carpeta de una US/WI**, porque la corrida es de la rama consolidada y puede abarcar varios trabajos. (En modo `tests-only` no hay informe: el único artefacto es `test-run.json`.) Ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate).
+- **El informe vive en `docs/audits/`, no en la carpeta de una US/WI**, porque la corrida es de la rama consolidada y puede abarcar varios trabajos. (En modo `tests-only` no hay informe: el único artefacto es `test-run.json`.) Ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-coverage-verify).
 
 ---
 
@@ -138,9 +138,9 @@ Precedencia: `REJECTED` > `INCOMPLETE` > `APPROVED`.
 
 > **Los valores canónicos no se traducen; las etiquetas del informe sí se redactan en el idioma resuelto.** `PASS`/`FAIL`/`SKIPPED`/`PENDING`/`N/A`, `BLOCKING`/`CONDITIONAL`/`INFORMATIVE` y `APPROVED`/`REJECTED`/`INCOMPLETE` son el vocabulario canónico de este documento, de `stacks.md` y —los cuatro primeros— del `result` de `test-run.json`. El informe lleva **símbolo + etiqueta en el idioma resuelto**, con la leyenda que los ata al inicio; ver [`${PLUGIN_ROOT}/references/verdicts.md`](../../references/verdicts.md) y [`references/execution.md` → Formato del informe](references/execution.md#formato-del-informe). Ojo con el solape de símbolos: `✅` como **estado de un check** es `PASS`, mientras que `✅` en la línea `Veredicto:` es `APPROVED`, del informe entero.
 
-> **Este veredicto cubre solo el plano automatizado.** No lo mezcles con el de `code-review` ni con el de `trace-validate`: cada skill emite el suyo y el orquestador (`work-integrate`, `pr-create`) exige **las tres** puertas en aprobado antes de integrar o crear el PR. (Única salvedad: en un **PR de promoción** —`develop → master`—, `pr-create` solo exige esta puerta, porque cada trabajo ya pasó las tres al integrarse; ver [`pr-create`](../pr-create/SKILL.md#puertas-en-un-pr-de-promoción).)
+> **Este veredicto cubre solo el plano automatizado.** No lo mezcles con el de `code-review` ni con el de `coverage-verify`: cada skill emite el suyo y el orquestador (`work-integrate`, `pr-create`) exige **las tres** puertas en aprobado antes de integrar o crear el PR. (Única salvedad: en un **PR de promoción** —`develop → master`—, `pr-create` solo exige esta puerta, porque cada trabajo ya pasó las tres al integrarse; ver [`pr-create`](../pr-create/SKILL.md#puertas-en-un-pr-de-promoción).)
 >
-> **Ojo con el símbolo `⚠️` en el cierre:** aquí (y en `code-review`) `⚠️` es `INCOMPLETE` y **bloquea**; en `trace-validate` y `arch-audit` es `APPROVED_WITH_NOTES` y **no bloquea** (se muestran las observaciones y se continúa). Mismo símbolo, efecto de compuerta opuesto — no asumir equivalencia al leer los tres informes juntos.
+> **Ojo con el símbolo `⚠️` en el cierre:** aquí (y en `code-review`) `⚠️` es `INCOMPLETE` y **bloquea**; en `coverage-verify` y `arch-audit` es `APPROVED_WITH_NOTES` y **no bloquea** (se muestran las observaciones y se continúa). Mismo símbolo, efecto de compuerta opuesto — no asumir equivalencia al leer los tres informes juntos.
 
 ---
 
@@ -164,7 +164,7 @@ El orden sigue la pirámide de tests (*rápido → lento*, *dependencias antes q
 
 > **Cobertura sin tooling — no es un callejón sin salida.** Si el repo **no tiene ninguna herramienta ni configuración** de cobertura, el check es `N/A` (el proyecto nunca lo pidió), no `SKIPPED`: aplica la mnemónica de [SKIPPED vs N/A](#skipped-vs-na-definición-tajante) y el veredicto no queda condenado a `INCOMPLETE` de forma permanente. En ese caso, **señalarlo en Próximas acciones** como recomendación (configurar cobertura), sin bloquear. En cuanto exista config o herramienta, el check vuelve a ser Bloqueante y su ausencia de ejecución sí es `SKIPPED`.
 
-> **Los checks deterministas alimentan la caché de `test-run.json`** —las dos fijas (`unit`, `coverage`), más `e2e` y las suites configuradas cuando existen, más `architecture` cuando el repo tiene runner— ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate). Sus consumidores son `trace-validate` (las suites de prueba; **ignora `architecture`**, que no es cobertura funcional) y `arch-audit` (solo `architecture`). Tipado, linter, build y sonar no producen entradas.
+> **Los checks deterministas alimentan la caché de `test-run.json`** —las dos fijas (`unit`, `coverage`), más `e2e` y las suites configuradas cuando existen, más `architecture` cuando el repo tiene runner— ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-coverage-verify). Sus consumidores son `coverage-verify` (las suites de prueba; **ignora `architecture`**, que no es cobertura funcional) y `arch-audit` (solo `architecture`). Tipado, linter, build y sonar no producen entradas.
 
 ---
 
@@ -229,7 +229,7 @@ Las **claves** de los modificadores son siempre en inglés (estándar). Si el us
 | `only <check>` | Ejecutar ÚNICAMENTE ese check (p. ej. `only build`); el resto → `N/A`. |
 | `no-cache` | **Ignorar `test-run.json`** aunque esté fresco: re-ejecutar todas las suites y las validaciones de arquitectura, y sobrescribir la caché. Es la escotilla para lo que la clave no ve —dependencias reinstaladas, un servicio externo, un sitio de documentación que compila `.md`—. Sin él, una caché fresca **siempre** se reutiliza, en cualquier modo. |
 | `save-report` | **Además** del informe vigente `docs/audits/quality-check.md` (que siempre se escribe), guardar una copia con marca de tiempo en `docs/audits/quality-check-<YYYYMMDD-HHMMSS>.md` para conservar histórico. |
-| `tests-only` | Ejecutar **solo los checks deterministas que alimentan `test-run.json`** (las dos fijas —unit, coverage— más e2e y las suites configuradas, cuando existen, más las **validaciones de arquitectura** si el repo tiene runner; build solo si es prerrequisito de alguna de ellas); omitir tipado/linter/sonar. Las validaciones de arquitectura entran aquí **para que la caché escrita cubra siempre el conjunto vigente**: una corrida que las dejara fuera produciría una caché parcial, que no se escribe. Pensado como **objetivo de delegación de `trace-validate`**: honra la caché de corrida de pruebas — si existe un `test-run.json` **fresco** (fingerprint coincide, ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate)) **reutiliza** ese resultado sin re-ejecutar; si no, ejecuta y escribe/actualiza la caché. **Modo no interactivo:** devuelve los resultados por suite y la ruta de `test-run.json` **sin** entrar al ciclo de corrección, **sin** emitir veredicto y **sin** escribir `quality-check.md` — su único artefacto es `test-run.json`. Si hay suites en FAIL, se reportan como tales; corregirlas es decisión del flujo que invocó, no de esta corrida. |
+| `tests-only` | Ejecutar **solo los checks deterministas que alimentan `test-run.json`** (las dos fijas —unit, coverage— más e2e y las suites configuradas, cuando existen, más las **validaciones de arquitectura** si el repo tiene runner; build solo si es prerrequisito de alguna de ellas); omitir tipado/linter/sonar. Las validaciones de arquitectura entran aquí **para que la caché escrita cubra siempre el conjunto vigente**: una corrida que las dejara fuera produciría una caché parcial, que no se escribe. Pensado como **objetivo de delegación de `coverage-verify`**: honra la caché de corrida de pruebas — si existe un `test-run.json` **fresco** (fingerprint coincide, ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-coverage-verify)) **reutiliza** ese resultado sin re-ejecutar; si no, ejecuta y escribe/actualiza la caché. **Modo no interactivo:** devuelve los resultados por suite y la ruta de `test-run.json` **sin** entrar al ciclo de corrección, **sin** emitir veredicto y **sin** escribir `quality-check.md` — su único artefacto es `test-run.json`. Si hay suites en FAIL, se reportan como tales; corregirlas es decisión del flujo que invocó, no de esta corrida. |
 
 > Todo check omitido **por modificador del usuario** es `N/A`, nunca `SKIPPED`: una omisión solicitada no convierte el veredicto en `INCOMPLETE`.
 
@@ -317,7 +317,7 @@ Si no se resuelve un artefacto del plugin, **comprobar antes si hay uno externo*
 
 **Este skill no exige que el trabajo esté especificado con los artefactos del plugin.** Su entrada mínima es la raíz de un repositorio reconocible: la batería de checks corre igual sobre un repo sin `docs/specs/`, sin `US-XXX`, sin `progress.md` y sin convención de ramas. La ausencia de artefacto **no degrada el veredicto ni el informe** — solo cambia a quién se atribuye una corrección.
 
-Es el mismo contrato que ya aplican [`test-define`](../test-define/SKILL.md) y [`trace-validate`](../trace-validate/SKILL.md): el artefacto puede ser una US/WI/FT del repo **o cualquier otro documento de especificación**, sea cual sea su origen, herramienta o formato — un ticket de un tracker (`PROJ-1234`), un spec suelto en el repo, un documento externo cuya ruta indique el usuario.
+Es el mismo contrato que ya aplican [`test-define`](../test-define/SKILL.md) y [`coverage-verify`](../coverage-verify/SKILL.md): el artefacto puede ser una US/WI/FT del repo **o cualquier otro documento de especificación**, sea cual sea su origen, herramienta o formato — un ticket de un tracker (`PROJ-1234`), un spec suelto en el repo, un documento externo cuya ruta indique el usuario.
 
 Cuando el trabajo está descrito por un artefacto externo y el usuario autoriza corregir:
 
@@ -330,15 +330,15 @@ Cuando el trabajo está descrito por un artefacto externo y el usuario autoriza 
 
 ---
 
-## Caché de corrida de pruebas (compartida con trace-validate)
+## Caché de corrida de pruebas (compartida con coverage-verify)
 
 Cuando este skill **ejecuta los checks deterministas** (las fijas —unit, coverage— más e2e y las suites
 configuradas en el estándar de testing, más las **validaciones de arquitectura** cuando el repo tiene
 runner), persiste el resultado en `.sdd-devkit/test-run.json` —ruta
 **fija**, en la raíz del repositorio, no versionado (se sobrescribe en cada corrida)— para que
-`trace-validate` **no vuelva a correr las pruebas** y `arch-audit` **no vuelva a correr el runner de
+`coverage-verify` **no vuelva a correr las pruebas** y `arch-audit` **no vuelva a correr el runner de
 arquitectura**: si el código no cambió desde esta corrida, reutilizan estos resultados; si cambió, se
-re-ejecuta. Cada consumidor lee **solo sus entradas** —`trace-validate` las suites de prueba,
+re-ejecuta. Cada consumidor lee **solo sus entradas** —`coverage-verify` las suites de prueba,
 `arch-audit` la entrada `architecture`—, con **las mismas reglas de frescura** para todas: no hay una
 clave ni un contrato aparte para las validaciones de arquitectura. Este skill es una **compuerta de cierre**
 (corre al integrar o antes del PR, sobre la rama consolidada) y el único productor autorizado del
@@ -346,7 +346,7 @@ archivo; las pruebas acotadas que `work-implement` corre durante el desarrollo n
 consumen.
 
 La clave de frescura es el **`FINGERPRINT` canónico** —compartido, con la misma receta, entre las tres
-puertas del cierre (`test-run.json` aquí, `coverage.md` en `trace-validate`, `docs/audits/code-review.md`
+puertas del cierre (`test-run.json` aquí, `coverage.md` en `coverage-verify`, `docs/audits/code-review.md`
 en `code-review`)—: un hash del commit + working tree + cambios sin commitear, excluyendo toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`, para que ni escribir un artefacto de la propia tubería ni editar documentación desplace la clave. **La clave se mueve solo cuando cambia algo que puede alterar el resultado de una prueba o de una compilación.**
 
 Detalle completo (receta exacta del fingerprint y por qué cada exclusión existe, esquema `test-run.json`
@@ -364,20 +364,20 @@ Usar este skill **solo cuando se le invoca explícitamente** (ni de forma proact
 
 - **El usuario lo pide explícitamente** — solicita correr las verificaciones o las pruebas, validar antes de PR/merge, o nombra este skill.
 - **Otro skill lo invoca explícitamente**, p. ej. `work-integrate` o `pr-create`, que exigen `APPROVED` **aquí y** en `code-review` antes de integrar o crear el PR. En un **PR de promoción**, `pr-create` invoca solo esta puerta: es la única que sigue teniendo algo que demostrar sobre la rama consolidada.
-- **`trace-validate` delega en este skill la ejecución de pruebas.** `trace-validate` no corre pruebas por sí mismo: reutiliza el `test-run.json` fresco de una corrida previa de este skill o, si no hay una fresca, invoca este skill en modo `tests-only` para producirlo. Este skill es la **única** autoridad que ejecuta la batería de pruebas del trabajo. Ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-trace-validate).
+- **`coverage-verify` delega en este skill la ejecución de pruebas.** `coverage-verify` no corre pruebas por sí mismo: reutiliza el `test-run.json` fresco de una corrida previa de este skill o, si no hay una fresca, invoca este skill en modo `tests-only` para producirlo. Este skill es la **única** autoridad que ejecuta la batería de pruebas del trabajo. Ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas-compartida-con-coverage-verify).
 - **`work-implement` recibe la delegación de las correcciones** cuando hay un artefacto de trabajo en curso (`US-XXX`, `WI-XXX`, `FT-XXX`/`TC-XXX` en rama `test/`, o un artefacto externo al plugin) y el usuario las autoriza. Ver [Corrección de fallos](#corrección-de-fallos).
 
-**Las tres puertas del cierre.** `quality-check`, `code-review` y `trace-validate` son **hermanos e independientes**: ninguno invoca a otro para decidir su veredicto (la única invocación entre ellos es instrumental: `trace-validate` pide una corrida de pruebas a este skill). Cada uno responde una pregunta distinta y emite su propio veredicto:
+**Las tres puertas del cierre.** `quality-check`, `code-review` y `coverage-verify` son **hermanos e independientes**: ninguno invoca a otro para decidir su veredicto (la única invocación entre ellos es instrumental: `coverage-verify` pide una corrida de pruebas a este skill). Cada uno responde una pregunta distinta y emite su propio veredicto:
 
 | Skill | Pregunta | Qué juzga |
 |-------|----------|-----------|
 | **`quality-check`** | ¿El código corre y cumple las reglas? | Resultado de las herramientas + cobertura **cuantitativa** (líneas/ramas contra umbral). |
 | **`code-review`** | ¿Resuelve el problema correcto y está bien diseñado? | Intención, arquitectura y diseño del diff — incluida la **calidad** de las pruebas escritas, no su ejecución. |
-| **`trace-validate`** | ¿Cada criterio de aceptación está probado? | Cobertura **funcional**: criterio ↔ caso de prueba ↔ artefacto. |
+| **`coverage-verify`** | ¿Cada criterio de aceptación está probado? | Cobertura **funcional**: criterio ↔ caso de prueba ↔ artefacto. |
 
-> **«Cobertura» significa dos cosas distintas en este cierre:** aquí es la métrica de líneas/ramas de un check; en `trace-validate` es el estado de un criterio de aceptación (`COVERED`/`PARTIAL`/`UNCOVERED`). Un repo puede tener 95 % de líneas y un criterio sin probar, o al revés. Ambas bloquean, pero por motivos distintos; no usar una para justificar la otra.
+> **«Cobertura» significa dos cosas distintas en este cierre:** aquí es la métrica de líneas/ramas de un check; en `coverage-verify` es el estado de un criterio de aceptación (`COVERED`/`PARTIAL`/`UNCOVERED`). Un repo puede tener 95 % de líneas y un criterio sin probar, o al revés. Ambas bloquean, pero por motivos distintos; no usar una para justificar la otra.
 
-El orden recomendado en el cierre es `quality-check` → `code-review` → `trace-validate`: los dos primeros porque revisar diseño sobre código que ni compila suele ser trabajo perdido; el tercero **después de este skill** para que reutilice el `test-run.json` sin re-ejecutar pruebas. Es una recomendación del orquestador, no una dependencia dura, y el usuario puede pedir solo uno de los tres.
+El orden recomendado en el cierre es `quality-check` → `code-review` → `coverage-verify`: los dos primeros porque revisar diseño sobre código que ni compila suele ser trabajo perdido; el tercero **después de este skill** para que reutilice el `test-run.json` sin re-ejecutar pruebas. Es una recomendación del orquestador, no una dependencia dura, y el usuario puede pedir solo uno de los tres.
 
 Es un proceso **posterior a la implementación**: no forma parte del desarrollo de tareas. Sin invocación explícita, no corresponde usarlo. (Que `work-implement` reciba una delegación de corrección **desde** este skill no invierte la relación: sigue siendo el cierre quien decide cuándo se ejecuta.)
 

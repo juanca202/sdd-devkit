@@ -36,7 +36,7 @@ El `TC-XXX` siempre vive en la carpeta `test-cases/` de un **artefacto padre**. 
 | Otros artefactos | Ruta |
 | ---------------- | ---- |
 | Indice de test cases | `[carpeta del padre]/test-cases/README.md` |
-| Reporte de trazabilidad | `[carpeta del padre]/coverage.md` (lo produce `trace-validate`, no este skill) |
+| Reporte de trazabilidad | `[carpeta del padre]/coverage.md` (lo produce `coverage-verify`, no este skill) |
 | Padre ya archivado (fallback) | `docs/archive/user-stories/US-XXX-…/` · `docs/archive/work-items/WI-XXX-…/`, con la misma estructura interna |
 | ADR | `docs/adr/` |
 | Glosario | `docs/specs/glossary.md` |
@@ -45,7 +45,7 @@ El `TC-XXX` siempre vive en la carpeta `test-cases/` de un **artefacto padre**. 
 >
 > **Excepcion — modo correccion.** En la correccion delegada desde `quality-check` (ver [modo correccion](../SKILL.md#modo-correccion-delegado-desde-quality-check)) un padre archivado es **esperable**, no un error: ahi se continua, pero sin escribir nada dentro de la carpeta archivada — la nota de retrabajo va en el informe de `quality-check`. Importa especialmente en este flujo, porque `quality-check` senala la rama `test/` como el caso donde delegar es **mas** importante, y ahi el padre archivado es lo habitual.
 >
-> Aparte de eso, el unico skill que escribe dentro de un artefacto archivado es `trace-validate`, y solo su `coverage.md`. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> Aparte de eso, el unico skill que escribe dentro de un artefacto archivado es `coverage-verify`, y solo su `coverage.md`. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 
 **Rama de trabajo:** `test/[ID del artefacto padre]-[slug]` — p. ej. `test/FT-003-carga-masiva`, `test/US-042-login`, `test/WI-018-migracion-logs`. **Una rama por artefacto padre**, aunque se automaticen varios TC de el. No asumir la rama base; acordarla con el usuario.
 
@@ -157,13 +157,13 @@ Por cada `TC-XXX` automatizable de la unidad, en el orden del indice:
 ### Paso 4 - Cierre
 
 1. Si la ultima unidad quedo sin commitear, **invocar `/git-commit` sobre sus cambios ahora**. Verificar que las pruebas **de los archivos afectados** pasen limpias (unitarias e integracion, acotadas al cambio) y, **una sola vez sobre el codigo consolidado, correr las pruebas e2e** escritas en esta ejecucion si el repo las soporta. **La bateria completa no se corre aqui:** la ejecuta `quality-check` al integrar (`work-integrate`) o crear el PR (`pr-create`).
-2. **Validar cobertura:** con las pruebas ya escritas, **ofrecer handoff a `/trace-validate`** sobre el artefacto padre para generar la matriz de trazabilidad `AC-XXX` => `TC-XXX` => artefacto de prueba y obtener el veredicto de cobertura. Es el cierre natural de este tipo de implementacion.
+2. **Validar cobertura:** con las pruebas ya escritas, **ofrecer handoff a `/coverage-verify`** sobre el artefacto padre para generar la matriz de trazabilidad `AC-XXX` => `TC-XXX` => artefacto de prueba y obtener el veredicto de cobertura. Es el cierre natural de este tipo de implementacion.
 3. **Handoff:** preguntar al usuario (herramienta estructurada) como continuar:
 
    > "Automatizacion completada. ¿Que quieres hacer ahora?"
    > Opciones: [Validar cobertura] / [Integrar el trabajo] / [Crear un PR] / [Terminar aqui]
 
-   - **Validar cobertura** => **invocar `/trace-validate`** sobre el artefacto padre.
+   - **Validar cobertura** => **invocar `/coverage-verify`** sobre el artefacto padre.
    - **Integrar el trabajo** => **invocar `/work-integrate`** (no hacer el merge a la rama base directamente).
    - **Crear un PR** => **invocar `/pr-create`** (no crear el PR directamente).
    - **Terminar aqui** => cerrar sin handoff; el trabajo queda commiteado en la rama.
@@ -198,7 +198,7 @@ WARNING No es posible continuar con la implementacion:
 
 **Por cada unidad:** padre `Ready` con `AC-XXX`; TC `Ready` y no `Manual`; prueba fiel al TC (precondiciones/datos => arrange, pasos => act, resultado esperado => assert) con el ID del TC en el nombre; nivel de prueba segun `Tipo de prueba` o desviacion registrada; pruebas **unitarias y de integracion** en verde (o hallazgo acordado con el usuario y documentado; las **e2e escritas se difieren al cierre** y no bloquean el `Done` de la unidad si quedan registradas); `quality-specialist` usado si el proyecto lo define; lint/typecheck/build en verde; `progress.md` a `Done` con `Cobertura de test cases`; especificacion (TC, indice, README del padre) **sin modificar**; **confirmacion explicita antes de la siguiente unidad**; `/git-commit` invocado recien al confirmar el avance.
 
-**Cierre:** pruebas de los archivos afectados en verde y e2e corridas una vez sobre el codigo consolidado; working tree limpio; handoff ofrecido a `trace-validate`, `pr-create` o `work-integrate`.
+**Cierre:** pruebas de los archivos afectados en verde y e2e corridas una vez sobre el codigo consolidado; working tree limpio; handoff ofrecido a `coverage-verify`, `pr-create` o `work-integrate`.
 
 ---
 
@@ -206,7 +206,7 @@ WARNING No es posible continuar con la implementacion:
 
 **Ejemplo 1 - Feature completo**
 - *Entrada:* "Implementa las pruebas del FT-003."
-- *Salida:* checkout a `test/FT-003-[slug]`; lee el README del feature y su `test-cases/README.md`; presenta la matriz AC => TC con automatizables y excluidos; tras confirmacion escribe las pruebas de todos los TC `Ready` no manuales bajo `quality-specialist`; lint/build/tests en verde; `progress.md` a `Done` con la cobertura anotada; ofrece `trace-validate`.
+- *Salida:* checkout a `test/FT-003-[slug]`; lee el README del feature y su `test-cases/README.md`; presenta la matriz AC => TC con automatizables y excluidos; tras confirmacion escribe las pruebas de todos los TC `Ready` no manuales bajo `quality-specialist`; lint/build/tests en verde; `progress.md` a `Done` con la cobertura anotada; ofrece `coverage-verify`.
 
 **Ejemplo 2 - TC sueltos**
 - *Entrada:* "Automatiza TC-004 y TC-007 de la US-042."
@@ -240,7 +240,7 @@ WARNING No es posible continuar con la implementacion:
 - Automatizar un TC con `Tipo de prueba: Manual`, o uno en `Draft`/`Obsolete`.
 - Relajar o vaciar una asercion para que una prueba en rojo pase.
 - Corregir el codigo de produccion por iniciativa propia cuando una prueba falla, sin presentar la evidencia y sin la decision explicita del usuario.
-- Escribir la prueba sin el ID del `TC-XXX` en su nombre o anotacion: rompe la trazabilidad que `trace-validate` necesita.
+- Escribir la prueba sin el ID del `TC-XXX` en su nombre o anotacion: rompe la trazabilidad que `coverage-verify` necesita.
 - Asertar sobre detalle de implementacion interna en vez de comportamiento observable.
 - Inventar runner, helpers, factories o infraestructura de prueba que el repositorio no tiene.
 - Interpretar el verde a la primera como error del proceso: el comportamiento **ya esta implementado**, ese es el resultado esperado.
@@ -252,12 +252,12 @@ WARNING No es posible continuar con la implementacion:
 
 ## Handoffs del ciclo
 
-Posicion: **implementacion de pruebas** - entre `test-define` y `trace-validate`.
+Posicion: **implementacion de pruebas** - entre `test-define` y `coverage-verify`.
 
 | | |
 |--|--|
 | **Entrada** | Artefacto padre (`FT-XXX`, `US-XXX` o `WI-XXX`) en `Estado: Ready` con `AC-XXX`, y su carpeta `test-cases/` poblada por `test-define` con TC en `Ready`. |
 | **Salida** | Pruebas automatizadas commiteadas y en verde; `progress.md` con cada unidad en `Done` y su `Cobertura de test cases`; working tree limpio. |
-| **Siguiente paso** | `trace-validate` sobre el artefacto padre (matriz de cobertura y veredicto) => `pr-create` (opcional) => `work-integrate`. Nota: `work-integrate` ejecutara las tres puertas de cierre (`quality-check`, `code-review` y `trace-validate`) y exigira veredicto `APPROVED` en las tres antes de integrar. |
+| **Siguiente paso** | `coverage-verify` sobre el artefacto padre (matriz de cobertura y veredicto) => `pr-create` (opcional) => `work-integrate`. Nota: `work-integrate` ejecutara las tres puertas de cierre (`quality-check`, `code-review` y `coverage-verify`) y exigira veredicto `APPROVED` en las tres antes de integrar. |
 | **Regreso a definicion** | TC ambiguo, erroneo o AC sin cobertura => volver a `test-define`. Si el hueco es del propio artefacto (criterio no testeable o mal definido), volver a quien lo registro: `work-define`/`work-plan` para US/WI, el flujo «Analizar legado» de `work-research` para un `FT-XXX`. |
 | **Bug detectado** | Discrepancia real entre TC y codigo que el usuario no quiere corregir en el momento => flujo «Analizar issue» de `work-research` y, desde ahi, un `WI-XXX` de tipo bug via `work-plan`. |

@@ -46,15 +46,15 @@ Puertas de cierre que ejecuta `work-integrate` antes del merge. Detalle en [refe
 | `qualityCheck.confirmFix` | `always` · `never` | Si `quality-check` pide confirmación antes de corregir un fallo, o corrige directo. |
 | `codeReview.enabled` | `true` · `false` | Si la puerta `code-review` corre antes del merge. |
 | `codeReview.confirmFix` | `always` · `never` | Si `code-review` pide confirmación antes de aplicar la corrección de un hallazgo bloqueante, o la aplica directo. |
-| `requirementCoverage.enabled` | `true` · `false` | Si la puerta `trace-validate` corre antes del merge. |
-| `requirementCoverage.confirmFix` | `always` · `never` | Reservado por consistencia con las otras puertas — `trace-validate` no corrige por sí mismo (solo reporta y delega la ejecución en `quality-check`), así que hoy no tiene efecto. |
+| `requirementCoverage.enabled` | `true` · `false` | Si la puerta `coverage-verify` corre antes del merge. |
+| `requirementCoverage.confirmFix` | `always` · `never` | Reservado por consistencia con las otras puertas — `coverage-verify` no corrige por sí mismo (solo reporta y delega la ejecución en `quality-check`), así que hoy no tiene efecto. |
 | `handoff` | `always` · `ask` | Dentro de `work-integrate`, tras un veredicto de cierre que deja pasar (puertas activas en `APPROVED`/`APPROVED_WITH_NOTES`): continuar con archivado y merge sin preguntar, o pedir confirmación. |
 
 Una puerta con `enabled: false` no bloquea el merge, pero tampoco cuenta como aprobada.
 
 ## `escalation`
 
-Límite de intentos ante un problema que no se resuelve, y qué hacer al agotarlo. Corta el bucle de reintentos en los skills que **implementan código o verifican pruebas** (`work-implement`, `quality-check`, `code-review`, `trace-validate`, `work-integrate`, `arch-audit`) y en los agentes especialistas. Detalle en [references/escalation.md](references/escalation.md).
+Límite de intentos ante un problema que no se resuelve, y qué hacer al agotarlo. Corta el bucle de reintentos en los skills que **implementan código o verifican pruebas** (`work-implement`, `quality-check`, `code-review`, `coverage-verify`, `work-integrate`, `arch-audit`) y en los agentes especialistas. Detalle en [references/escalation.md](references/escalation.md).
 
 | Campo | Valores | Para qué sirve |
 |-------|---------|-----------------|

@@ -22,7 +22,7 @@ de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md
 
 ## Dependencias
 
-<!-- Inventario de lo que la tarea usa o necesita dentro del alcance de la tarea: componentes de UI, servicios o APIs internas, modelos / entidades / DTOs, librerías de terceros. No incluir ADRs, technical-docs ni referencias de diseño — eso va en Referencias. -->
+<!-- Inventario de lo que la tarea usa o necesita dentro del alcance de la tarea: componentes de UI, servicios o APIs internas, modelos / entidades / DTOs, librerías de terceros. No incluir ADRs, documentación técnica ni referencias de diseño — eso va en Referencias. -->
 - {{nombre o identificador del componente, servicio, modelo, librería}} — {{descripción breve del uso en esta tarea}}
 
 ## Referencias
@@ -30,10 +30,10 @@ de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md
 <!--
 Incluir únicamente enlaces a recursos ya almacenados; nunca pegar archivos, imágenes ni descripciones directamente aquí.
 Recursos válidos: mockups, wireframes, flujos, modelos, diagramas, especificaciones técnicas, ADRs.
-Rutas permitidas: assets/ (recursos propios de esta tarea) o docs/specs/technical-docs/ o docs/adr/.
+Rutas permitidas: assets/ (recursos propios de esta tarea) o docs/architecture/ o docs/adr/.
 -->
 - **Arquitectura:** {{enlace a ADR en `docs/adr/` cuando la tarea dependa de decisiones ya registradas; no inventar ADRs nuevos}}
-- **Documentación técnica:** {{enlace si aplica — DTOs, ER, flujos, endpoints — tal como lo devuelve `design-define`: `docs/specs/technical-docs/[capability]/README.md#<id>` para APIs/flujos (ancla = id en minúsculas, `#api-04`, `#fl-02`) o `docs/specs/technical-docs/[capability]/models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas; nunca el título convertido a slug}}
+- **Documentación técnica:** {{enlace si aplica — DTOs, ER, flujos, endpoints — tal como lo devuelve `design-define`: `docs/architecture/[capability]/README.md#<id>` para APIs/flujos (ancla = id en minúsculas, `#api-04`, `#fl-02`) o `docs/architecture/[capability]/models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas; nunca el título convertido a slug}}
 - **Diseño:** {{enlace a Figma, wireframe o imagen de alta fidelidad; obligatorio si la tarea es de UI}}
 
 ## Migración (origen → destino)

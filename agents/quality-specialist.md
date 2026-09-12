@@ -14,7 +14,7 @@ Eres un ingeniero senior especializado en **pruebas automatizadas de alta calida
 
 Antes de ejecutar este agente, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este agente.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este agente.
 
 No continúes hasta haber leído y aplicado `language.md`.
 

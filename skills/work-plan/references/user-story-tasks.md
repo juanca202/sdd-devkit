@@ -44,8 +44,8 @@ En caso de duda entre A y B: preguntar al usuario antes de continuar. No combina
 |-----------|------|
 | Tarea | `docs/specs/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` |
 | ADR | `docs/adr/` |
-| Documentación técnica | `docs/specs/technical-docs/[capability]/` — `README.md`, `models/`, `diagrams/` (propiedad de `design-define`; aquí solo se referencia) |
-| Glosario | `docs/specs/glossary.md` |
+| Documentación técnica | `docs/architecture/[capability]/` — `README.md`, `models/`, `diagrams/` (propiedad de `design-define`; aquí solo se referencia) |
+| Glosario | `docs/glossary.md` |
 | US padre ya archivada (fallback) | `docs/archive/user-stories/US-XXX-[nombre-corto]/` |
 
 > **US padre archivada.** Si la carpeta de la US no está en `docs/specs/user-stories/`, buscarla bajo `docs/archive/user-stories/` antes de darla por inexistente. Si está ahí, la historia **ya se cerró e integró**: **parar y avisar** en vez de añadirle tareas — retomarla exige desarchivarla, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
@@ -77,7 +77,7 @@ Antes de crear o editar cualquier TK, tener clara esta información. **No invent
 | **AC-XXX de la US** (solo modo B) | Leer la sección **Criterios de aceptación** del `README.md` de la US padre (lista plana `AC-XXX`) | Si no hay `AC-XXX` explícitos: bloquear modo B y reportar — no crear ninguna TK |
 | **Profundidad** (solo modo B) | Elección del usuario en el paso 6 del flujo: `Crear los planes` (TK completas) o `Crear stubs` | No asumirla: presentar la propuesta y preguntar |
 | **Repositorio** | Nombre del repositorio git al que afecta la tarea; inferir del repo (git remote / carpeta) o indicado por el usuario | Stub: puede quedar `Por definir`. TK completa: obligatorio; sin él el estado no puede ser `Ready` |
-| **Contexto técnico** (solo TK completa) | ADRs existentes, technical-docs, descripción del usuario | Si falta decisión técnica relevante: sugerir ADR al usuario, no crearlo. Si un modelo, API o flujo mencionado no tiene especificación en `technical-docs/` y el usuario pide detallarlo: delegar a `/design-define` vía subagente y enlazar la referencia devuelta |
+| **Contexto técnico** (solo TK completa) | ADRs existentes, documentación técnica, descripción del usuario | Si falta decisión técnica relevante: sugerir ADR al usuario, no crearlo. Si un modelo, API o flujo mencionado no tiene especificación en `architecture/` y el usuario pide detallarlo: delegar a `/design-define` vía subagente y enlazar la referencia devuelta |
 | **Referencia de UI** (solo TK de interfaz) | Figma, wireframe o imagen de alta fidelidad aportados por el usuario | Obligatoria para `Ready`; sin ella el TK de UI no puede salir de `Draft` |
 | **Vinculación con el gestor de proyectos** | Ver sección «Resolución de la integración con el gestor de proyectos» de `SKILL.md` | Si la integración está activa, seguir el archivo de referencia del proveedor antes de crear archivos |
 
@@ -141,12 +141,12 @@ Una TK completa puede alcanzar `Estado: Ready` si cumple todas las condiciones d
 2. **Redactar el TK** siguiendo `assets/task-template.md`:
    - **Metadatos**: `Historia` con enlace `[US-XXX](./README.md)`; `Repositorio` con el nombre del repositorio git afectado; `Asignado a` indicado por el usuario, inferido con `git config user.name`, u omitido; `Work Item (<sistema>)` con el enlace al work item solo si se creó vía el tracker vinculado (etiqueta y formato en su archivo de referencia).
    - **Descripción**: qué lograr — objetivo claro, tono imperativo y verificable; sin «podría», «quizá», «tal vez».
-   - **Dependencias**: solo piezas *dentro del alcance de la tarea* — componentes, servicios, modelos, librerías. ADRs, technical-docs, contratos y referencias de diseño van en **Referencias**.
-   - **Referencias**: ADRs existentes, technical-docs (con la referencia al elemento concreto: para APIs y flujos, el README de la capability con ancla, p. ej. `technical-docs/facturacion/README.md#api-01`; para modelos y diagramas, el archivo del elemento, p. ej. `technical-docs/facturacion/models/md-01.md`), diseño. La referencia la emite `design-define` ya formada y se **copia tal cual** — el ancla es **siempre `#<id en minúsculas>`** (`#api-04`, `#fl-02`) y el archivo se nombra por el id, nunca derivados del título del elemento. Un `#api-01-crear-factura` o un `models/factura.md` apuntan a nada. No crear ADRs; si falta una decisión, sugerirlo al usuario en Observaciones. Si la tarea depende de un modelo, API o flujo **sin especificación** en `technical-docs/`, registrarlo en Observaciones; si el usuario pide detallarlo, **delegar a `/design-define` vía subagente** y agregar aquí la referencia devuelta.
+   - **Dependencias**: solo piezas *dentro del alcance de la tarea* — componentes, servicios, modelos, librerías. ADRs, documentación técnica, contratos y referencias de diseño van en **Referencias**.
+   - **Referencias**: ADRs existentes, documentación técnica (con la referencia al elemento concreto: para APIs y flujos, el README de la capability con ancla, p. ej. `architecture/facturacion/README.md#api-01`; para modelos y diagramas, el archivo del elemento, p. ej. `architecture/facturacion/models/md-01.md`), diseño. La referencia la emite `design-define` ya formada y se **copia tal cual** — el ancla es **siempre `#<id en minúsculas>`** (`#api-04`, `#fl-02`) y el archivo se nombra por el id, nunca derivados del título del elemento. Un `#api-01-crear-factura` o un `models/factura.md` apuntan a nada. No crear ADRs; si falta una decisión, sugerirlo al usuario en Observaciones. Si la tarea depende de un modelo, API o flujo **sin especificación** en `architecture/`, registrarlo en Observaciones; si el usuario pide detallarlo, **delegar a `/design-define` vía subagente** y agregar aquí la referencia devuelta.
    - **Plan de implementación**: pasos concretos acordados o derivados de fuentes citadas en Referencias. Si no se conocen aún, **no inventar** — indicar en Observaciones qué falta.
    - **Migración** (opcional): si la tarea proviene de una investigación de migración (`research/RS-XXX-{slug}/` de `work-research`), rellenar el bloque **Migración (origen → destino)** de la plantilla enlazando esa investigación (contexto progresivo: `discovery.md` y `validation.md` no se duplican). Los `AC-XXX` viven en la US y se validan con los casos Golden Master (`GM-XXX`). Omitir la sección si no es una migración.
    - **Observaciones**: solo si hay pendientes reales. Si no hay nada, **omitir la sección** (o una línea *Sin pendientes documentados* si el equipo lo exige). Con pendientes reales: `Estado: Draft`.
-3. **Documentación técnica y glosario**: si la TK requiere crear o actualizar especificaciones en `technical-docs/`, **delegar a `/design-define` vía subagente** (nunca editarlas desde este skill) y enlazar las referencias devueltas; glossary sí puede actualizarse aquí con entradas breves (no sustituye ADR ni technical-doc).
+3. **Documentación técnica y glosario**: si la TK requiere crear o actualizar especificaciones en `architecture/`, **delegar a `/design-define` vía subagente** (nunca editarlas desde este skill) y enlazar las referencias devueltas; glossary sí puede actualizarse aquí con entradas breves (no sustituye ADR ni technical-doc).
 4. **Verificar el checklist** antes de asignar `Estado: Ready`.
 5. **Handoff:** con todas las TK del alcance en `Ready`, aplicar antes `specification.testCases.mode` sobre la US padre (ver [`${PLUGIN_ROOT}/references/planning.md`](../../../references/planning.md)); después, si el usuario quiere implementar, **invocar `/work-implement`** (no implementar directamente desde este skill). Si otras siguen en `Draft`, listar cuáles completar antes.
 
@@ -198,7 +198,7 @@ Aplica cuando el input es **solo una referencia a una historia** (modo B). El pr
    - Reunir el contexto técnico que falte para el conjunto (ver [Información requerida antes de redactar](#información-requerida-antes-de-redactar)) en tandas de **hasta 3 preguntas**, agrupadas por tarea para que quede claro a cuál pertenece cada una; no ir tarea por tarea preguntando lo mismo. Encadenar tantas tandas como haga falta mientras sigan quedando lagunas relevantes.
    - **No inventar** Plan de implementación, Dependencias ni Referencias. Lo que siga sin acordar tras agotar la batería de preguntas —el usuario respondió todo lo que iba a responder, o indicó que prefiere dejar el resto pendiente— va a **Observaciones**, y esa TK queda en `Estado: Draft`.
    - Asignar `Estado: Ready` **solo** a las TK que cumplan todas las condiciones de `Estado: Ready` del [checklist](#checklist-antes-de-redactar). Es normal que el lote quede mixto (unas `Ready`, otras `Draft`).
-   - Si una TK requiere especificación técnica inexistente en `technical-docs/`, **delegar a `/design-define` vía subagente** y enlazar la referencia devuelta; nunca redactar la especificación aquí.
+   - Si una TK requiere especificación técnica inexistente en `architecture/`, **delegar a `/design-define` vía subagente** y enlazar la referencia devuelta; nunca redactar la especificación aquí.
 
    **7b. Crear stubs** — por cada tarea confirmada, seguir el *[Flujo: Crear stub](#flujo-crear-stub-anclaje-de-id)*: `Estado: Draft`, descripción breve del objetivo, Plan vacío, sin referenciar `AC-XXX` en el documento.
 
@@ -262,7 +262,7 @@ Aplica siempre que se planifiquen o secuencien **varias TK dentro de la misma US
 - [ ] **Dependencias** listadas dentro del alcance de la tarea
 - [ ] **Plan de implementación** con pasos concretos
 - [ ] **Observaciones** sin pendientes abiertos — sección omitida o con *Sin pendientes documentados*
-- [ ] Referencias a ADRs y technical-docs con rutas relativas válidas, y las de technical-docs tal como las devolvió `design-define` — `README.md#<id>` (`#api-04`, `#fl-02`) para APIs/flujos, `models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas — nunca un slug del título
+- [ ] Referencias a ADRs y documentación técnica con rutas relativas válidas, y las de `docs/architecture/` tal como las devolvió `design-define` — `README.md#<id>` (`#api-04`, `#fl-02`) para APIs/flujos, `models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas — nunca un slug del título
 
 **Formato:**
 - [ ] Plantilla `assets/task-template.md` leída
@@ -311,8 +311,8 @@ Aplica siempre que se planifiquen o secuencien **varias TK dentro de la misma US
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - Implementar features, migraciones o tests mientras se redacta el TK.
 - Crear ADRs sin pedido explícito del usuario; solo referenciar existentes o sugerir su creación.
-- Crear o editar documentos en `docs/specs/technical-docs/` directamente desde este skill; la especificación técnica se delega a `/design-define` vía subagente y aquí solo se enlaza la referencia devuelta.
-- Redactar en el TK la definición de un modelo, API o flujo (tablas de campos, contratos, diagramas) en lugar de referenciar su elemento en `technical-docs/`.
+- Crear o editar documentos en `docs/architecture/` directamente desde este skill; la especificación técnica se delega a `/design-define` vía subagente y aquí solo se enlaza la referencia devuelta.
+- Redactar en el TK la definición de un modelo, API o flujo (tablas de campos, contratos, diagramas) en lugar de referenciar su elemento en `architecture/`.
 - Publicar `Estado: Ready` en un stub sin criterios ni contexto técnico.
 - Publicar `Estado: Ready` con pendientes en Observaciones.
 - Publicar `Estado: Ready` sin el repositorio afectado en la cabecera del TK.

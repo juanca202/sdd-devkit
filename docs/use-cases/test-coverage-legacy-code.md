@@ -29,7 +29,7 @@ flowchart TD
 ```
 
 1. **Inicio**: un módulo, carpeta o repo con código ya implementado, sin requisitos escritos o con cobertura de pruebas inadecuada.
-2. **Descubrimiento** (`work-research`, flujo *Analizar legado*): reconstruye por ingeniería inversa el comportamiento del código — artefactos técnicos → casos de uso → capabilities → features → cohesión → reglas de negocio — y produce el `discovery.md`.
+2. **Descubrimiento** (`work-research`, flujo *Analizar legado*): reconstruye por ingeniería inversa el comportamiento del código — elementos técnicos → casos de uso → capabilities → features → cohesión → reglas de negocio — y produce el `discovery.md`.
 3. **Condición — ¿discovery en `Ready`?**
    - **No** (lagunas: evidencia `⚠️ Sin evidencia`, features sin veredicto Aceptado, posibles bugs sin decisión): el flujo no crea features todavía. Pasa a **análisis humano**, que resuelve las lagunas o decide si un comportamiento dudoso se preserva o se trata como bug. Con esa información, se reintenta el discovery.
    - **Sí**: se crean los **Features** (`FT-XXX`) aceptados, con sus `AC-XXX` redactando el comportamiento **real** del código (nunca el deseado).

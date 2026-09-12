@@ -63,10 +63,10 @@ Cuando existan, cada BR-XX debe estar verificada por al menos un AC-XXX en la se
 <!--
 Incluir únicamente enlaces a recursos ya almacenados; nunca pegar archivos, imágenes ni descripciones directamente aquí.
 Recursos válidos: mockups, wireframes, flujos, modelos, diagramas, especificaciones técnicas, ADRs.
-Rutas permitidas: assets/ (recursos propios de este work item) o docs/specs/technical-docs/ o docs/adr/.
+Rutas permitidas: assets/ (recursos propios de este work item) o docs/architecture/ o docs/adr/.
 -->
 - **Arquitectura:** {{enlace a ADR en `docs/adr/` si el work item depende de decisiones ya registradas; no inventar ADRs nuevos}}
-- **Documentación técnica:** {{enlace si aplica, tal como lo devuelve `design-define`: `docs/specs/technical-docs/[capability]/README.md#<id>` para APIs/flujos (ancla = id en minúsculas, `#api-04`, `#fl-02`) o `docs/specs/technical-docs/[capability]/models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas; nunca el título convertido a slug}}
+- **Documentación técnica:** {{enlace si aplica, tal como lo devuelve `design-define`: `docs/architecture/[capability]/README.md#<id>` para APIs/flujos (ancla = id en minúsculas, `#api-04`, `#fl-02`) o `docs/architecture/[capability]/models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas; nunca el título convertido a slug}}
 - **Diseño:** {{enlace a Figma, wireframe o imagen de alta fidelidad; obligatorio si el work item toca UI}}
 
 ## Migración (origen → destino)

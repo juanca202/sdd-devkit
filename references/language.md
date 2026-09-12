@@ -1,4 +1,4 @@
-# Resolución de idioma de artefactos y mensajes
+# Resolución de idioma de artefactos, documentos y mensajes
 
 > **Ejecutar este bloque con Bash — no leerlo como prosa ni reimplementar su lógica a mano.** Es un
 > script, no una explicación: correrlo y usar literalmente lo que imprime como el idioma ya resuelto.
@@ -22,7 +22,7 @@ if (fs.existsSync(settingsPath)) {
 }
 
 if (langCode) {
-  console.log('El idioma para redactar los artefactos y los mensajes al usuario es: ' + langNames.of(langCode) + ' (código ISO 639-1: ' + langCode + ')');
+  console.log('El idioma para redactar los artefactos, los documentos y los mensajes al usuario es: ' + langNames.of(langCode) + ' (código ISO 639-1: ' + langCode + ')');
 } else {
   console.log('1. La **preferencia de idioma del usuario** que conste en el contexto de la sesión.');
   console.log('2. Si no, usar el **idioma del mensaje del usuario** y **preguntar si desea persistirlo**.');

@@ -213,7 +213,7 @@ agrupamiento** (por qué comparten el mismo "para qué").
 
 Por cada grupo de objetivo (o por fusión justificada de varios objetivos afines),
 propón una **Capability**: capacidad del sistema al nivel de dominio (alineada con el
-concepto de capability de `design-define` / `docs/specs/technical-docs/`). Una
+concepto de capability de `design-define` / `docs/architecture/`). Una
 Capability es más amplia que un Feature: agrupa comportamientos que el negocio
 reconoce como una misma área (p. ej. "Facturación", "Autenticación").
 

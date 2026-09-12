@@ -127,7 +127,7 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
     - **Validación externa:** lanzar un **subagente sin el contexto de la sesión**, limitado a leer la carpeta del SRS, que evalúe si el documento basta para implementarse **sin volver a preguntar** y reporte faltantes, ambigüedades, mezclas de requisito con decisión de diseño e inconsistencias.
     - **Resolver:** convertir los hallazgos en tandas dirigidas al rol dueño de cada hueco (mismo mecanismo del paso 3), aplicar las respuestas y repetir la validación externa solo si los cambios fueron sustanciales. Lo que el usuario decida no resolver queda en **Observaciones** y mantiene el SRS en Draft.
 
-13. **Glosario** (si aplica): términos de dominio nuevos van a `docs/specs/glossary.md`, igual criterio que en `work-define`.
+13. **Glosario** (si aplica): términos de dominio nuevos van a `docs/glossary.md`, igual criterio que en `work-define`.
 
 14. **Cierre**
     - Si el SRS queda en **Draft**, resumir las lagunas agrupadas por sección (`FR-XXX`, `NFR-XXX`, Interfaces externas, Requisitos de datos, Cumplimiento normativo, Wireframes, Verificación y trazabilidad, Riesgos, Stack, Repositorios, Equipo de desarrollo) y ofrecer, en la siguiente interacción, cerrar cada una con preguntas estructuradas.

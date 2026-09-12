@@ -16,9 +16,8 @@ publicado — es la clave de frescura que lee el Paso 0 de la próxima revisión
 **Fecha:** {{YYYY-MM-DD HH:MM}}
 **Rama:** {{rama}}
 **Commit:** {{sha-corto}}
-**Alcance del diff:** {{rama vs base, incluidos los cambios sin commitear | solo cambios sin commitear (`working-tree`) | rutas de `scope`}} — {{N archivos, +X/−Y líneas}}
 **Modo:** {{default / blocking-only}}
-**Base del diff:** {{rama base}} @ {{sha-corto}}
+**Diff:** {{rama base}} @{{sha-corto}} — {{N archivos, +X/−Y líneas}}
 **Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED / `❌` REJECTED / `⚠️` INCOMPLETE}} — {{justificación en una línea}}
 
 ## Resumen

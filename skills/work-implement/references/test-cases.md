@@ -39,7 +39,7 @@ El `TC-XXX` siempre vive en la carpeta `test-cases/` de un **artefacto padre**. 
 | Reporte de trazabilidad | `[carpeta del padre]/coverage.md` (lo produce `coverage-verify`, no este skill) |
 | Padre ya archivado (fallback) | `docs/archive/user-stories/US-XXX-…/` · `docs/archive/work-items/WI-XXX-…/`, con la misma estructura interna |
 | ADR | `docs/adr/` |
-| Glosario | `docs/specs/glossary.md` |
+| Glosario | `docs/glossary.md` |
 
 > **Si la carpeta del padre no esta en la ruta activa, buscarla bajo `docs/archive/`** antes de darla por inexistente: `work-integrate` y `pr-create` pueden moverla ahi al cerrar el trabajo, si el usuario lo confirma. Un padre archivado significa que ese trabajo **ya se cerro**: parar y avisar en vez de escribir dentro, y **nunca** recrear la carpeta en la ruta activa — dejaria dos artefactos con el mismo identificador y la numeracion de los `TC-XXX` reiniciaria en `001`.
 >

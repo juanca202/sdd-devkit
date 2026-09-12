@@ -38,7 +38,7 @@ edición de borrado. Se infiere así:
 
 **`created`/`updated`:** solo artefactos con encabezado `# CODE-XXX: título`
 (US, TK, WI, FT, TC, RS). Archivos sin ese patrón (`progress.md`,
-`glossary.md`, `technical-docs/`, índices `README.md` de carpeta) se ignoran
+`coverage.md`, índices `README.md` de carpeta) se ignoran
 silenciosamente.
 
 **`deleted`:** al no poder leer el encabezado, se reconoce por convención de

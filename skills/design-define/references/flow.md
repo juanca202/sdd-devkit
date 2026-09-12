@@ -8,7 +8,7 @@ Procedimiento paso a paso para **crear** y **actualizar** la carpeta técnica de
 
 Antes de tocar archivos, verificar. Si algo falla, **no crear** — informar y resolver primero.
 
-- **Capability resuelta:** listar las carpetas existentes en `docs/specs/technical-docs/`. Si el elemento pedido encaja en una capability existente, el destino es **esa carpeta** (actualizar), aunque el usuario no la haya nombrado. Crear una capability nueva solo si ninguna existente cubre el dominio del elemento; ante la duda, preguntar mostrando las capabilities existentes como opciones.
+- **Capability resuelta:** listar las carpetas existentes en `docs/architecture/`. Si el elemento pedido encaja en una capability existente, el destino es **esa carpeta** (actualizar), aunque el usuario no la haya nombrado. Crear una capability nueva solo si ninguna existente cubre el dominio del elemento; ante la duda, preguntar mostrando las capabilities existentes como opciones.
 - **Duplicado de elemento:** si la capability ya define un elemento equivalente (en el README o en `models/`/`diagrams/`) (mismo modelo, misma operación, mismo flujo), no crear uno nuevo: proponer **actualizar** el existente conservando su id. Dos ids para la misma cosa rompen las referencias de los consumidores.
 - **Conflicto con la fuente:** si lo pedido contradice la US/TK/WI de origen o el código existente del repo, parar y reportarlo (al usuario en modo directo; en la respuesta final en modo delegado). La US prevalece sobre los documentos derivados; el documento técnico no se usa para «corregir» la historia por la puerta de atrás.
 
@@ -54,8 +54,8 @@ Priorizar: preguntar primero lo que **bloquea la implementación** (tipos, contr
 ## Flujo: Crear o actualizar
 
 1. **Resolver capability y destino**
-   - Listar `docs/specs/technical-docs/` y aplicar la validación anterior. Resultado: carpeta existente a actualizar, o nombre kebab-case de la carpeta nueva (validar el nombre con el usuario si hay ambigüedad).
-   - **Capability en formato de archivo único preexistente** (`docs/specs/technical-docs/[capability].md` suelto, sin carpeta): migrarla a la estructura de carpeta en esta misma pasada — mover el detalle a `[capability]/README.md`, extraer cada modelo y diagrama a su archivo en `models/`/`diagrams/` conservando ids, y avisar en el resumen final que las rutas de las referencias existentes cambiaron, listando el mapeo viejo → nuevo para que el usuario actualice los artefactos que las citan.
+   - Listar `docs/architecture/` y aplicar la validación anterior. Resultado: carpeta existente a actualizar, o nombre kebab-case de la carpeta nueva (validar el nombre con el usuario si hay ambigüedad).
+   - **Capability en formato preexistente** (un archivo suelto `docs/architecture/[capability].md` sin carpeta, o una capability bajo la ruta antigua `docs/specs/technical-docs/`): migrarla a la carpeta `docs/architecture/[capability]/` en esta misma pasada — mover el detalle a `[capability]/README.md`, extraer cada modelo y diagrama a su archivo en `models/`/`diagrams/` conservando ids, y avisar en el resumen final que las rutas de las referencias existentes cambiaron, listando el mapeo viejo → nuevo para que el usuario actualice los artefactos que las citan.
 2. **Leer lo existente**
    - Si la carpeta existe, leer su `README.md` completo y los archivos de `models/` y `diagrams/`: ids ya usados por tipo (los nuevos continúan la secuencia, estén donde estén), elementos equivalentes y Observaciones abiertas.
    - Revisar la US/TK/WI de origen (si la hay) y el código del repo cuando el elemento describa algo ya implementado — el código existente es fuente, no se contradice sin avisar.
@@ -63,16 +63,16 @@ Priorizar: preguntar primero lo que **bloquea la implementación** (tipos, contr
    - Contrastar el input con los estándares y lanzar la(s) tanda(s) de preguntas por las lagunas reales. Con las respuestas (o con las lagunas asumidas como pendientes), continuar.
    - **Sin canal de respuesta disponible** (modo directo en una sesión desatendida/programada, o modo delegado cuyo subagente no puede interactuar): no inventar ninguna respuesta — documentar cada laguna en Observaciones citando el elemento afectado y continuar con lo que sí está confirmado. Mismo criterio en ambos modos; solo cambia dónde queda visible (respuesta final del subagente en delegado, resumen al usuario en directo — ver [Modos de invocación](../SKILL.md#modos-de-invocación) en `SKILL.md`).
 4. **Redactar**
-   - Capability nueva: crear la carpeta y su `README.md` con `assets/capability-readme-template.md` como molde (Propósito, secciones de elementos que apliquen, Observaciones). `models/` y `diagrams/` se crean solo cuando hay un primer elemento que guardar. No copiar las plantillas como artefactos al repo; son moldes.
+   - Capability nueva: crear la carpeta y su `README.md` con `assets/capability-readme-template.md` como molde (Propósito, secciones de elementos que apliquen, Observaciones). `models/` y `diagrams/` se crean solo cuando hay un primer elemento que guardar. No copiar las plantillas al repo del producto; son moldes.
    - Cada elemento según su estándar en [`element-standards.md`](element-standards.md), con id siguiente de su secuencia. **APIs y flujos** van en el README como `### ID: Nombre` con **ancla explícita `<a id="<id-en-minúsculas>"></a>` en la línea anterior** — obligatoria: es el contrato de enlace con las US/TK/WI (ver [Por qué el ancla no se deriva del título](element-standards.md#por-qué-el-ancla-no-se-deriva-del-título)). **Cada modelo y cada diagrama** va en su propio archivo (`models/md-XX.md` con `assets/model-template.md`, `diagrams/dg-XX.md` con `assets/diagram-template.md`), nombrado por su id en minúsculas, **y con su fila en la tabla índice correspondiente del README** enlazando el archivo — crear el elemento y su fila de índice en la misma pasada, nunca uno sin el otro.
    - En actualizaciones: no renumerar ids existentes; los elementos obsoletos se marcan `(Obsoleto)`, no se borran mientras tengan consumidores.
    - **Al actualizar un README cuyos elementos no tienen ancla, añadir la que falte a los que se toquen** (los que se crean o modifican en esta pasada). No hace falta un barrido del documento completo, pero sí dejar anclado todo lo que se edite: un elemento modificado cuya referencia se devuelve al llamador tiene que ser enlazable. Si al hacerlo se detecta que otros elementos del README siguen sin ancla, mencionarlo en el resumen final para que el usuario decida si completarlos.
    - Lagunas no resueltas → Observaciones, citando el elemento afectado.
 5. **Cerrar la capability**
    - Actualizar en el `README.md` la fecha de «Última actualización» (y «Fecha de creación» si la capability es nueva), también cuando el cambio fue solo en `models/` o `diagrams/`.
-   - Glosario (`docs/specs/glossary.md`): entrada breve si aparecen términos de dominio nuevos.
+   - Glosario (`docs/glossary.md`): entrada breve si aparecen términos de dominio nuevos.
 6. **Enlazar y cerrar**
-   - **Modo delegado:** devolver al skill llamador la lista de referencias — para cada elemento: id, título y su referencia ya formada: para API/FL, la ruta del README con ancla **siempre `#<id en minúsculas>`** (p. ej. `docs/specs/technical-docs/facturacion/README.md#api-01`); para MD/DG, la ruta de su archivo (p. ej. `docs/specs/technical-docs/facturacion/models/md-03.md`) — más las lagunas que quedaron en Observaciones. El skill llamador decide cómo insertarlas en su artefacto. **Nunca devolver un ancla derivada del título** (`#api-01-crear-factura`) ni un nombre de archivo derivado del título (`models/factura.md`): el llamador los copiaría literalmente y el enlace apuntaría a nada.
+   - **Modo delegado:** devolver al skill llamador la lista de referencias — para cada elemento: id, título y su referencia ya formada: para API/FL, la ruta del README con ancla **siempre `#<id en minúsculas>`** (p. ej. `docs/architecture/facturacion/README.md#api-01`); para MD/DG, la ruta de su archivo (p. ej. `docs/architecture/facturacion/models/md-03.md`) — más las lagunas que quedaron en Observaciones. El skill llamador decide cómo insertarlas en su artefacto. **Nunca devolver un ancla derivada del título** (`#api-01-crear-factura`) ni un nombre de archivo derivado del título (`models/factura.md`): el llamador los copiaría literalmente y el enlace apuntaría a nada.
    - **Modo directo:** mostrar el resumen de elementos creados/actualizados y, si hay una US/TK/WI relacionada en contexto, **ofrecer** agregar las referencias a su sección Referencias (no editarla sin confirmación). Si quedaron Observaciones, ofrecer las preguntas que las cerrarían.
 
 ---
@@ -87,10 +87,10 @@ Cuando `work-define` o `work-plan` delegan mediante subagente:
 
 ```
 capability: facturacion
-carpeta: docs/specs/technical-docs/facturacion/
+carpeta: docs/architecture/facturacion/
 elementos:
-  - MD-03: Nota de crédito → docs/specs/technical-docs/facturacion/models/md-03.md
-  - API-04: Emitir nota de crédito → docs/specs/technical-docs/facturacion/README.md#api-04
+  - MD-03: Nota de crédito → docs/architecture/facturacion/models/md-03.md
+  - API-04: Emitir nota de crédito → docs/architecture/facturacion/README.md#api-04
 pendientes:
   - API-04: estructura de error estándar sin confirmar (Observaciones)
 ```
@@ -157,7 +157,7 @@ pendientes:
 - Poner valor de negocio, criterios de aceptación o planes de implementación en el documento técnico: eso pertenece a la US (`work-define`) o a la TK/WI (`work-plan`).
 - Crear o modificar ADRs desde este skill; si falta una decisión de arquitectura, sugerirla al usuario y registrar la dependencia en Observaciones.
 - En modo delegado, editar directamente la US/TK/WI del llamador en lugar de devolver las referencias.
-- Copiar las plantillas de `assets/` al repo del producto como artefactos en lugar de usarlas como moldes.
+- Copiar las plantillas de `assets/` al repo del producto en lugar de usarlas como moldes.
 - Definir un modelo o un diagrama dentro del README (o nombrar su archivo por el título) en vez de crearlo en `models/`/`diagrams/` con el id como nombre y enlazarlo desde el índice.
 - Lanzar preguntas como prosa libre existiendo herramienta de preguntas estructuradas, o descubrir lagunas turno a turno en vez de agruparlas en tandas.
 
@@ -170,7 +170,7 @@ Posición: **transversal** al pipeline `work-define` → `work-plan` → `work-i
 | | |
 |--|--|
 | **Entrada** | Pedido directo del usuario, o delegación vía subagente desde `work-define` (US que define modelos/APIs/flujos) o `work-plan` (TK/WI con definiciones técnicas sin especificación). |
-| **Salida** | Carpeta `docs/specs/technical-docs/[capability]/` creada o actualizada — `README.md` con APIs/flujos anclados por `#<id>`, `models/` y `diagrams/` con un archivo por elemento enlazado desde los índices —; lista de referencias ya formadas (README con ancla, o ruta de archivo) entregada al llamador o al usuario. |
+| **Salida** | Carpeta `docs/architecture/[capability]/` creada o actualizada — `README.md` con APIs/flujos anclados por `#<id>`, `models/` y `diagrams/` con un archivo por elemento enlazado desde los índices —; lista de referencias ya formadas (README con ancla, o ruta de archivo) entregada al llamador o al usuario. |
 | **Hacia work-define / work-plan** | El skill llamador inserta las referencias en la sección Referencias de su artefacto (US, TK o WI). Este skill nunca edita esos artefactos. |
 | **Hacia work-implement** | Las TK/WI en Ready referencian los elementos de esta capability como fuente de implementación; la fecha de última actualización del README permite detectar si la capability cambió después de redactada la TK/WI. |
 | **Conflicto con la US** | Si al especificar se descubre que la US es inconsistente o incompleta, reportarlo; la corrección de la US se hace con `work-define`, nunca desde aquí. |

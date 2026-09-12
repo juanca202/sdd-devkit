@@ -17,7 +17,6 @@ Ver ../../references/verdicts.md.
 **Rama:** {{rama}}
 **Commit:** {{sha-corto}}
 **Modo:** {{default | blocking-only | only nombre-del-check | no-tests | …}}  <!-- `tests-only` no produce este informe: su único artefacto es test-run.json -->
-**Estándar de testing:** {{docs/standards/testing.md — requisitos vigentes: integration-testing, contract-testing | sin estándar de testing (solo las fijas y, si hay config, e2e)}}
 **Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED | `❌` REJECTED | `⚠️` INCOMPLETE}}
 
 ## Resumen

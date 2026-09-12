@@ -36,7 +36,7 @@ de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md
 ### 1.3 Definiciones, acrónimos y abreviaturas
 
 <!-- Sección opcional. Términos ambiguos o específicos del dominio van al glosario compartido; enlazarlo aquí en vez de redefinir. Eliminar si no aplica. -->
-- **Glosario:** {{enlace a `docs/specs/glossary.md`, si existe}}
+- **Glosario:** {{enlace a `docs/glossary.md`, si existe}}
 - {{término o acrónimo}}: {{definición breve, solo si no está en el glosario}}
 
 ### 1.4 Referencias

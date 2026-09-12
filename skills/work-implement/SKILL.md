@@ -11,7 +11,7 @@ Guia general para **ejecutar en codigo** trabajo ya especificado, de **distintos
 
 > **Alcance (cualquier tipo):** consume especificaciones ya redactadas por los skills de planificacion (`work-define`, `work-plan`). **No reescribe ni reestructura** la especificacion - solo la implementa. Correcciones menores acordadas con el usuario son la unica excepcion.
 >
-> **Solo implementacion:** no modifica documentacion de producto (README de US, `TK-XXX`, `WI-XXX`, `TC-XXX`, `FT-XXX`, ADRs, technical-docs) - solo el `progress.md`. **Excepcion de checkboxes:** avanzar el estado de las subtareas del artefacto en ejecucion **a medida que se trabajan** —`[ ]` (pendiente) => `[~]` (en curso) => `[x]` (completada)— es la unica modificacion permitida en archivos de especificacion; no se toca ninguna otra seccion del artefacto. El archivo a editar depende del tipo: `TK-XXX.md` para tareas de historia de usuario, el `README.md` del WI para tareas de mantenimiento. **En los tipos de automatizacion de pruebas (`TC-XXX` / `FT-XXX`) no aplica**: los test cases no tienen subtareas y su especificacion no se toca en absoluto. Si se detecta un conflicto en la documentacion que pueda afectar el resultado, **parar inmediatamente y notificar al usuario** antes de continuar.
+> **Solo implementacion:** no modifica documentacion de producto (README de US, `TK-XXX`, `WI-XXX`, `TC-XXX`, `FT-XXX`, ADRs, documentación técnica de capability) - solo el `progress.md`. **Excepcion de checkboxes:** avanzar el estado de las subtareas del artefacto en ejecucion **a medida que se trabajan** —`[ ]` (pendiente) => `[~]` (en curso) => `[x]` (completada)— es la unica modificacion permitida en archivos de especificacion; no se toca ninguna otra seccion del artefacto. El archivo a editar depende del tipo: `TK-XXX.md` para tareas de historia de usuario, el `README.md` del WI para tareas de mantenimiento. **En los tipos de automatizacion de pruebas (`TC-XXX` / `FT-XXX`) no aplica**: los test cases no tienen subtareas y su especificacion no se toca en absoluto. Si se detecta un conflicto en la documentacion que pueda afectar el resultado, **parar inmediatamente y notificar al usuario** antes de continuar.
 >
 > **Ritmo - una unidad por confirmacion (`confirmByUnit: always`, valor por defecto):** implementar una unidad, actualizar `progress.md` **y la lista de tareas (to-dos) del agente**, ejecutar lint/build, y **esperar confirmacion explicita del usuario antes de arrancar la siguiente**. La **unidad** depende del tipo (ver tabla de seleccion). **El commit de la unidad terminada no se hace al completarla:** queda pendiente durante la pausa de confirmacion, dejando una ventana para que el usuario revise el resultado, aplique correcciones manuales o le indique ajustes al agente antes de que el cambio quede commiteado. El commit se hace **al confirmar el avance**, como primer paso antes de arrancar la siguiente unidad (o, si el usuario detiene el flujo ahi, en el cierre — ver Paso 4 de cada referencia).
 >
@@ -37,7 +37,7 @@ Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
 
@@ -455,7 +455,7 @@ Solo resultados y lo que el usuario debe saber o decidir. No incluir razonamient
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md): **Política de implementación** — ritmo de confirmación, cambios sin commitear al iniciar, worktrees, concurrencia y handoff de cierre desde `.sdd-devkit/settings.json`. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
@@ -478,7 +478,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 - Implementar en `main` u otra rama que no sea la del artefacto sin instruccion explicita — **salvo** los `WI-XXX` de tipo `bug-fix` y `security-update`, que por definicion van en la rama de integracion.
 - Crear una rama `fix/` para un WI de tipo `bug-fix` o `security-update`, u ofrecerles handoff a `work-integrate` / `pr-create` en el cierre: ya estan en la rama de integracion.
 - Tratar como ejecutable un artefacto que no esta en `Ready` — **salvo** en el modo correccion delegado desde `quality-check`, donde el artefacto ya esta implementado y el estado `Ready` no aplica.
-- Modificar la especificacion de producto (US/TK/WI/TC/FT, ADRs, technical-docs) durante la implementacion, salvo marcar checkboxes de subtareas completadas en el artefacto activo.
+- Modificar la especificacion de producto (US/TK/WI/TC/FT, ADRs, documentación técnica de capability) durante la implementacion, salvo marcar checkboxes de subtareas completadas en el artefacto activo.
 - En los tipos `TC-XXX` / `FT-XXX`: inventar casos de prueba que `test-define` no documento, automatizar un TC `Manual`, relajar una asercion para forzar el verde, o corregir codigo de produccion por iniciativa propia sin la decision explicita del usuario.
 - Leer un `FT-XXX` como plan de implementacion o tratarlo como funcionalidad por construir: documenta codigo **ya implementado**; lo unico que se implementa son sus pruebas.
 - Escribir funcionalidad nueva desde los tipos `TC-XXX` / `FT-XXX`: el codigo de produccion solo se toca como **correccion puntual** de un defecto revelado por una prueba; si crece hasta ser un desarrollo, escalar a `work-plan` como `WI-XXX` de tipo bug.

@@ -80,7 +80,7 @@ Categorías no funcionales (ISO/IEC 25010): Idoneidad funcional · Eficiencia de
 <!--
 Incluir únicamente enlaces a recursos ya almacenados; nunca pegar archivos, imágenes ni descripciones directamente aquí.
 Recursos válidos: investigaciones (RS-XXX) —incluido el discovery del que nació el feature—, documentación técnica, referencias visuales (mockups, wireframes, diagramas), bibliografía (URLs de la web).
-Rutas permitidas: assets/ (recursos propios de este feature) o docs/specs/technical-docs/ (documentación técnica compartida).
+Rutas permitidas: assets/ (recursos propios de este feature) o docs/architecture/ (documentación técnica compartida).
 La evidencia en código (archivo · símbolo) y las pruebas existentes NO van aquí: viven en el discovery (RS-XXX) citado; enlázalo abajo en «Investigación / discovery».
 -->
 

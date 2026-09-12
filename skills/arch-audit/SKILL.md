@@ -94,7 +94,7 @@ sección de **fitness functions**: cuáles existen y su resultado al ejecutarlas
 > es lo que la Fase 0 de este skill da por hecho al buscar la auditoría previa.
 >
 > Todo `docs/` —y por tanto `docs/audits/`— está **excluido del fingerprint canónico** de la tubería de
-> cierre (ver [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate)):
+> cierre (ver [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify)):
 > **escribir el informe** de auditoría no invalida la caché de pruebas, ni el `coverage.md`, ni el
 > `code-review.md`.
 >
@@ -400,7 +400,7 @@ flujo de `Comportamiento en Revalidación` descrito en la Fase 0 — no se reesc
    ``
 2. Asegurar el directorio: `docs/audits/` **de `<raíz-arq>`** (crearlo si no existe) — nunca el del repo principal cuando se auditó un submódulo.
 3. Leer `assets/audit-template.md` y redactar `docs/audits/arch-audit-<hoy>.md` siguiendo su estructura:
-   - Encabezado con fecha, repositorio, alcance, método y **veredicto** (`APPROVED` | `REJECTED` | `APPROVED_WITH_NOTES`, siguiendo el patrón de `trace-validate`).
+   - Encabezado con fecha, repositorio, alcance, método y **veredicto** (`APPROVED` | `REJECTED` | `APPROVED_WITH_NOTES`, siguiendo el patrón de `coverage-verify`).
      - **Alcance:** ser específico — indicar la **raíz de arquitectura auditada** (ruta relativa al repo principal, o «raíz principal»), cuántos criterios se auditaron y sobre cuántos estándares/requisitos de contexto, el desglose por estado de los excluidos, más las fuentes de AGENTS.md consideradas. Ejemplo: `submódulo packages/engine · 14 criterios en 4 estándares · 1 Draft, 1 Superseded excluidos + AGENTS.md raíz`.
      - **Método:** no es un texto fijo — describir en una frase corta qué se usó realmente en esta auditoría: las técnicas de inspección aplicadas (p. ej. `grep`, lectura de manifiestos) y las fitness functions ejecutadas. Aclarar que no se corre el build ni la suite completa.
    - **Resumen** con la tabla de conteos por prioridad y estado, seguida de 1-3 frases con la lectura global de la salud arquitectónica del repo.

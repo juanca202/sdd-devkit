@@ -421,20 +421,20 @@ Si el repo tiene un runner de validaciones de arquitectura (`scripts/arch/verify
 
 
 
-### trace-validate
+### coverage-verify
 
-**Cuándo:** verificar que cada criterio de aceptación de una historia, tarea o funcionalidad tenga una prueba que lo cubra.
+**Cuándo:** verificar que el código implementado cubre —alcanza— los criterios de aceptación de una historia, tarea o funcionalidad, con pruebas automatizadas, casos de prueba o ambos.
 
 **Produce:** una matriz de cobertura (`coverage.md`) con el estado de cada criterio: cubierto, parcial o sin cubrir, y un veredicto general.
 
 **Ejemplos de invocación:**
 
 ```text
-/trace-validate
-/trace-validate US-012
-/trace-validate WI-004
-/trace-validate FT-001
-/trace-validate US-012 solo AC-002 y AC-005
+/coverage-verify
+/coverage-verify US-012
+/coverage-verify WI-004
+/coverage-verify FT-001
+/coverage-verify US-012 solo AC-002 y AC-005
 ```
 
 - «Genera la matriz de trazabilidad de US-012»
@@ -451,7 +451,7 @@ Si el repo tiene un runner de validaciones de arquitectura (`scripts/arch/verify
 
 **Produce:** el merge de tu rama, ya verificado.
 
-**Antes de integrar, corre en orden:** `quality-check` → `code-review` → `trace-validate`. Si tienes cambios sin commitear, los comitea primero automáticamente.
+**Antes de integrar, corre en orden:** `quality-check` → `code-review` → `coverage-verify`. Si tienes cambios sin commitear, los comitea primero automáticamente.
 
 **Después del merge**, marca el trabajo como `Done` en su `progress.md` y te pregunta si quieres archivar la historia o tarea (mover su carpeta a `docs/archive/`), todo en un commit de cierre propio sobre la rama base. Va después del merge a propósito: primero integras y pruebas, luego cierras. Puedes declinar el archivado sin que eso afecte a la integración, que ya está hecha.
 
@@ -478,7 +478,7 @@ Si el repo tiene un runner de validaciones de arquitectura (`scripts/arch/verify
 
 **Produce:** el PR/MR creado, con título y descripción generados automáticamente. Detecta la plataforma (GitHub, GitLab, Bitbucket, Azure Repos, Gitea).
 
-**Antes de crear el PR, corre:** `quality-check`, `code-review` y `trace-validate` — salvo que sea una promoción entre ramas de despliegue (por ejemplo `develop` → `main`), donde cada trabajo ya pasó esas puertas al integrarse y solo corre `quality-check`.
+**Antes de crear el PR, corre:** `quality-check`, `code-review` y `coverage-verify` — salvo que sea una promoción entre ramas de despliegue (por ejemplo `develop` → `main`), donde cada trabajo ya pasó esas puertas al integrarse y solo corre `quality-check`.
 
 **Al terminar**, si corresponde, te pregunta si quieres archivar la historia o tarea ya cerrada. Puedes declinar sin que eso bloquee la creación del PR.
 

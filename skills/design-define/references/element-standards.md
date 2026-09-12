@@ -1,19 +1,20 @@
 # Estándares de definición por tipo de elemento
 
-Cómo se define cada tipo de elemento dentro del documento de capability. La estructura exacta de secciones y tablas está en `assets/technical-doc-template.md`; este archivo explica las reglas, los criterios de calidad y da un ejemplo completo por tipo.
+Cómo se define cada tipo de elemento de una capability. La estructura exacta de secciones y tablas está en las plantillas de `assets/` (`capability-readme-template.md` para el README con APIs y flujos; `model-template.md` y `diagram-template.md` para los archivos de `models/` y `diagrams/`); este archivo explica las reglas, los criterios de calidad y da un ejemplo completo por tipo.
 
 Reglas comunes a todos los tipos:
 
-- **Id estable por tipo:** `MD-XX`, `API-XX`, `FL-XX`, `DG-XX`, secuencial dentro de la capability. No renumerar nunca: otros artefactos enlazan por ancla. Si un elemento deja de aplicar, marcarlo `(Obsoleto)` en el título y explicar en qué fue reemplazado, en lugar de borrarlo, mientras existan consumidores que lo referencien.
-- **Ancla explícita, igual al id en minúsculas.** Cada elemento lleva **inmediatamente antes** de su encabezado una línea con su ancla, y el encabezado sigue siendo `### ID: Nombre`:
+- **Id estable por tipo:** `MD-XX`, `API-XX`, `FL-XX`, `DG-XX`, secuencial dentro de la capability (la secuencia es única aunque los elementos vivan en archivos distintos). No renumerar nunca: otros artefactos enlazan por ancla o por nombre de archivo. Si un elemento deja de aplicar, marcarlo `(Obsoleto)` en el título y explicar en qué fue reemplazado, en lugar de borrarlo, mientras existan consumidores que lo referencien.
+- **Dónde vive cada tipo:** APIs (`API-XX`) y flujos (`FL-XX`) en el `README.md` de la capability; cada modelo (`MD-XX`) y cada diagrama (`DG-XX`) en su propio archivo bajo `models/` y `diagrams/`, **nombrado por su id en minúsculas** (`models/md-01.md`, `diagrams/dg-01.md`) y enlazado desde la tabla índice correspondiente del README. El nombre de archivo sigue la misma doctrina que el ancla: nunca derivado del título. Su referencia externa es la ruta del archivo, sin ancla.
+- **Ancla explícita, igual al id en minúsculas** (elementos del README). Cada API o flujo lleva **inmediatamente antes** de su encabezado una línea con su ancla, y el encabezado sigue siendo `### ID: Nombre`:
 
   ```markdown
-  <a id="md-01"></a>
-  ### MD-01: Factura
+  <a id="api-01"></a>
+  ### API-01: Crear factura
   ```
 
-  El ancla es **solo el id** (`#md-01`, `#api-04`, `#fl-02`, `#dg-01`), sin el nombre. Es la única referencia que consumen US/TK/WI. **No es opcional ni cosmética:** ver [Por qué el ancla no se deriva del título](#por-qué-el-ancla-no-se-deriva-del-título).
-- **Referencias cruzadas por id:** cuando un elemento usa otro (una API recibe un modelo, un flujo invoca una API), citarlo por su id (`MD-01`, `API-02`) — dentro de la misma capability con ancla local (`[MD-01](#md-01)`); entre capabilities con ruta relativa + ancla (`[MD-01 de facturación](facturacion.md#md-01)`).
+  El ancla es **solo el id** (`#api-04`, `#fl-02`), sin el nombre. Junto con las rutas de archivo de `models/`/`diagrams/`, es la única referencia que consumen US/TK/WI. **No es opcional ni cosmética:** ver [Por qué el ancla no se deriva del título](#por-qué-el-ancla-no-se-deriva-del-título).
+- **Referencias cruzadas por id:** cuando un elemento usa otro (una API recibe un modelo, un flujo invoca una API), citarlo por su id (`MD-01`, `API-02`) con la ruta relativa desde el archivo donde se cita — desde el README a un modelo, `[MD-01](models/md-01.md)`; entre elementos del README, ancla local (`[API-02](#api-02)`); desde un archivo de `models/` al README, `[API-01](../README.md#api-01)`; entre capabilities, ruta relativa (`[MD-01 de facturación](../facturacion/models/md-01.md)` o `[API-01 de facturación](../facturacion/README.md#api-01)`).
 - **No inventar:** todo tipo, código de error, regla o rama de flujo que no venga del input, del código del repo o de la US/TK/WI de origen se pregunta (grilling) o queda en Observaciones. Un dato plausible pero no confirmado es peor que una laguna documentada.
 - **Idioma de los identificadores** (detalle de la excepción declarada en la sección «Resolución de idioma» de `SKILL.md`): los nombres de campos, rutas y payloads se escriben como existirán en el código. Resolver así, deteniéndose en el primer paso que aplique:
   1. Si ya existen modelos/DTOs/endpoints en el repo (código o documentos técnicos previos), seguir **su** convención de idioma tal cual está, aunque sea español — no imponer inglés sobre un código que ya usa español.
@@ -26,13 +27,13 @@ Reglas comunes a todos los tipos:
 
 ## Por qué el ancla no se deriva del título
 
-El ancla que un renderizador genera solo desde `### MD-01: Factura` **no sirve como contrato de enlace**, por tres motivos independientes:
+El ancla que un renderizador genera solo desde `### API-01: Crear factura` **no sirve como contrato de enlace**, por tres motivos independientes:
 
 1. **El consumidor no la puede construir.** Quien escribe la referencia —`work-define` o `work-plan` redactando la sección Referencias de una US/TK/WI— conoce el **id**, no el slug del nombre. Tiene que adivinarlo, y cualquier fallo produce un enlace que apunta a nada. Es el fallo más frecuente de esta convención.
-2. **Depende del renderizador.** Los slugs derivados **no** están estandarizados. `### MD-03: Nota de crédito` genera `#md-03-nota-de-credito` en unos motores (que translitera la tilde) y `#md-03-nota-de-crédito` en otros (que la conservan). El mismo documento, dos anclas distintas según dónde se lea: el enlace funciona en la web del repo y falla en el editor, o al revés. La puntuación agrava lo mismo — `API-02: Emitir factura (SRI/ATS)` colapsa a `#api-02-emitir-factura-sriats`, imposible de anticipar.
-3. **Rompe al renombrar.** El id es estable por diseño; el nombre no. Corregir «Factura» por «Factura de venta» invalidaría **todos** los enlaces entrantes, que es justo lo que la estabilidad del id pretendía evitar.
+2. **Depende del renderizador.** Los slugs derivados **no** están estandarizados. `### FL-02: Aprobación de crédito` genera `#fl-02-aprobacion-de-credito` en unos motores (que transliteran la tilde) y `#fl-02-aprobación-de-crédito` en otros (que la conservan). El mismo documento, dos anclas distintas según dónde se lea: el enlace funciona en la web del repo y falla en el editor, o al revés. La puntuación agrava lo mismo — `API-02: Emitir factura (SRI/ATS)` colapsa a `#api-02-emitir-factura-sriats`, imposible de anticipar.
+3. **Rompe al renombrar.** El id es estable por diseño; el nombre no. Corregir «Crear factura» por «Emitir factura» invalidaría **todos** los enlaces entrantes, que es justo lo que la estabilidad del id pretendía evitar.
 
-El ancla explícita `<a id="md-01"></a>` resuelve los tres: es derivable del id (`MD-01` → `#md-01`), idéntica en cualquier renderizador porque no se calcula, y sobrevive a cualquier cambio de nombre. `<a id>` es HTML admitido por GitHub, GitLab, Bitbucket y Azure Repos; **no** usar la sintaxis `{#md-01}` de kramdown/pandoc, que GitHub no interpreta y deja visible como texto dentro del título.
+El ancla explícita `<a id="api-01"></a>` resuelve los tres: es derivable del id (`API-01` → `#api-01`), idéntica en cualquier renderizador porque no se calcula, y sobrevive a cualquier cambio de nombre. `<a id>` es HTML admitido por GitHub, GitLab, Bitbucket y Azure Repos; **no** usar la sintaxis `{#api-01}` de kramdown/pandoc, que GitHub no interpreta y deja visible como texto dentro del título. Los archivos de `models/` y `diagrams/` siguen la misma doctrina con su nombre: `md-01.md`, nunca `factura.md`.
 
 > El ancla derivada del título sigue existiendo, no se pierde nada. Pero la **referencia canónica es la explícita**, y es la única que se cita.
 
@@ -150,7 +151,7 @@ Un `DG-XX` es un diagrama estructural o de arquitectura de la capability: clases
 Reglas:
 
 - **Tipo y alcance siempre declarados.** El tipo determina la notación; el alcance evita diagramas «de todo» que no responden ninguna pregunta concreta. Un buen `DG-XX` responde una pregunta de implementación: ¿qué clases forman el dominio?, ¿con qué sistemas se integra la capability?, ¿en qué contenedores corre?
-- **Mermaid como notación por defecto:** `classDiagram` para clases, `C4Context`/`C4Container`/`C4Component` para los niveles C4, `stateDiagram-v2` para estados, `flowchart` para despliegue si `C4Deployment` no aporta. Si el diagrama existe como archivo exportado (draw.io, PlantUML renderizado, imagen), guardarlo en `docs/specs/technical-docs/assets/[capability]/` y enlazarlo desde el elemento — pero preferir Mermaid porque vive en el propio documento y se versiona con él.
+- **Mermaid como notación por defecto:** `classDiagram` para clases, `C4Context`/`C4Container`/`C4Component` para los niveles C4, `stateDiagram-v2` para estados, `flowchart` para despliegue si `C4Deployment` no aporta. Si el diagrama existe como archivo exportado (draw.io, PlantUML renderizado, imagen), guardarlo en `docs/specs/technical-docs/[capability]/assets/` y enlazarlo desde el archivo del elemento — pero preferir Mermaid porque vive en el propio archivo y se versiona con él.
 - **Nivel de detalle por tipo:** en clases, atributos y relaciones con cardinalidad, métodos solo si son parte del contrato del dominio; en contexto, sistemas externos y actores con la dirección de cada interacción; en contenedores/componentes, tecnología entre corchetes y el protocolo de cada flecha. Una flecha sin etiqueta es una laguna.
 - **Coherencia con los demás elementos:** las clases del `DG-XX` de clases deben corresponderse con los `MD-XX` (citarlos en Notas); las interacciones del contexto con las `API-XX` o `FL-XX` que las materializan. Un diagrama que contradice las tablas es peor que ningún diagrama — al actualizar un `MD-XX`/`API-XX`/`FL-XX`, revisar los `DG-XX` que los citan.
 - **Un diagrama por elemento.** Si hacen falta el contexto y los contenedores, son `DG-01` y `DG-02`, cada uno enlazable por separado.

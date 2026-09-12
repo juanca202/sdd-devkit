@@ -70,7 +70,7 @@ Lo propio de este skill:
 | --------- | ---- |
 | Historia de usuario (**salida**) | `docs/specs/user-stories/US-XXX-[nombre-corto]/README.md` |
 | Archivos de apoyo | `docs/specs/user-stories/US-XXX-[nombre-corto]/assets/` |
-| Documentación técnica (solo lectura) | `docs/specs/technical-docs/[capability].md` — propiedad de `design-define`; este skill la referencia, nunca la crea ni la edita |
+| Documentación técnica (solo lectura) | `docs/specs/technical-docs/[capability]/` — `README.md`, `models/`, `diagrams/`; propiedad de `design-define`; este skill la referencia, nunca la crea ni la edita |
 | Glosario (opcional) | `docs/specs/glossary.md` |
 
 > **Las US archivadas siguen contando.** El siguiente `US-XXX` libre se calcula sobre la ruta activa **y** sobre `docs/archive/user-stories/`, y el flujo *Actualizar* busca ahí la historia cuando no está en la activa.

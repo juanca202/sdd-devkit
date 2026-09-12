@@ -180,5 +180,5 @@ Posicion: **implementacion** - entre `work-plan` e `work-integrate`.
 |--|--|
 | **Entrada** | US `Ready`; TK del alcance `Ready`; rama `feature/US-XXX-*` activa o creada desde la rama base. |
 | **Salida** | Codigo commiteado; `progress.md` con cada TK del alcance en `Done`; working tree limpio. |
-| **Siguiente paso** | Cada TK ya comiteada via `/git-commit` durante la implementacion => `pr-create` (opcional) => `work-integrate`. Nota: `work-integrate` ejecutara las tres puertas de cierre (`quality-check`, `code-review` y `trace-validate`) y exigira veredicto `APPROVED` en las tres antes de integrar. |
+| **Siguiente paso** | Cada TK ya comiteada via `/git-commit` durante la implementacion => `pr-create` (opcional) => `work-integrate`. Nota: `work-integrate` ejecutara las tres puertas de cierre (`quality-check`, `code-review` y `coverage-verify`) y exigira veredicto `APPROVED` en las tres antes de integrar. |
 | **Regreso desde plan** | TK en Draft o conflicto tecnico => volver a `work-plan`. |

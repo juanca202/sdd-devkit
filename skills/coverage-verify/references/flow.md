@@ -1,6 +1,6 @@
 # Flujo paso a paso, delegación de la ejecución y checklist
 
-Referencia detallada del skill `trace-validate`. El `SKILL.md` mantiene el resumen; aquí está el flujo íntegro.
+Referencia detallada del skill `coverage-verify`. El `SKILL.md` mantiene el resumen; aquí está el flujo íntegro.
 
 ---
 
@@ -36,7 +36,7 @@ Antes de trabajar, evitar regenerar si nada cambió (ver [Reutilización del rep
    >
    > **La exclusión es una ruta literal, no un glob — y la diferencia no es estética.** Un `':(exclude,glob)**/coverage.md'` **no** funciona aquí: combinado con el pathspec positivo `"$ARTEFACTO"`, git excluye **todo** y las tres órdenes devuelven vacío. La clave pasaría a ser el hash del blob vacío — constante —, con lo que la idempotencia se dispararía **siempre** y editar un criterio nunca invalidaría el reporte: peor que no excluir nada. (El `EXC` del `FINGERPRINT` sí usa globs porque ahí **no hay pathspec positivo**: solo exclusiones sobre todo el árbol.) Por eso `NO_REPORT` se construye interpolando `$ARTEFACTO`. Si el artefacto es un **archivo suelto**, el reporte va a su lado y no dentro, así que la exclusión no casa con nada y es inocua.
 3. Si el `coverage.md` **no existe** → no hay caché; continuar en el Paso 1.
-4. Si **existe**, leer su marca de pie `<!-- trace-validate:verdict=<canónico> · fingerprint=<hash> · spec=<hash> · generated=YYYY-MM-DD -->` y decidir:
+4. Si **existe**, leer su marca de pie `<!-- coverage-verify:verdict=<canónico> · fingerprint=<hash> · spec=<hash> · generated=YYYY-MM-DD -->` y decidir:
    - **Coinciden los dos hashes**, el reporte **no** registra ejecución fallida, y el usuario **no** pasó `revalidate` → **no regenerar**: devolver el veredicto y el resumen del reporte existente, indicando que no hubo cambios desde `{{generated}}`. No reescribir el archivo ni delegar en `quality-check`. Fin.
    - **Difiere alguno**, falta la marca o el campo `spec=`, el reporte trae filas en `NOT_RUN` por una delegación que no se pudo hacer, o el usuario pide `revalidate` → continuar el flujo completo (Pasos 1-7).
 
@@ -105,7 +105,7 @@ El mapeo se hace **por fila de la matriz**, no por criterio: la unidad es la com
 
 ### Paso 4 — Obtener resultados de pruebas (delegando en quality-check)
 
-`trace-validate` **no ejecuta la suite**. Obtiene los resultados de `quality-check` (única autoridad de
+`coverage-verify` **no ejecuta la suite**. Obtiene los resultados de `quality-check` (única autoridad de
 ejecución) y los mapea a los criterios.
 
 1. **Reusar el `FINGERPRINT` canónico** ya calculado en el Paso 0.
@@ -141,7 +141,7 @@ ejecución) y los mapea a los criterios.
    faltantes, `quality-check` no disponible en la sesión, o el usuario declina la delegación), dejar las filas con
    artefacto en `Ejecución = —` y `Resultado = `NOT_RUN`, con la razón en «Observaciones y pendientes», y entregar
    igualmente la cobertura estática (las filas sin artefacto siguen siendo `UNCOVERED`: ese hueco no
-   depende de la ejecución). **No** fabricar resultados ni reintroducir un runner propio en `trace-validate`.
+   depende de la ejecución). **No** fabricar resultados ni reintroducir un runner propio en `coverage-verify`.
 
 > Nunca reportar `PASS`/`FAIL` sin que la prueba se haya ejecutado realmente (en la corrida de
 > `quality-check` reflejada en `test-run.json`). Si no se ejecutó, el resultado es `NOT_RUN`.
@@ -209,7 +209,7 @@ Aplicar la tabla de «Veredicto» (en `SKILL.md`) sobre el conjunto de criterios
    > Escribir dentro de una carpeta archivada es la **excepción declarada** de este skill: el `coverage.md` es un derivado del artefacto, no trabajo nuevo, y revalidar un trabajo ya integrado tiene que seguir siendo posible. Ningún otro skill del catálogo escribe ahí.
 
 2. **Grabar las dos claves** para la próxima comprobación de frescura (Paso 0): escribir al pie del reporte
-   la marca `<!-- trace-validate:verdict=<VEREDICTO CANÓNICO> · fingerprint=<FINGERPRINT> · spec=<SPEC_FINGERPRINT> · generated=YYYY-MM-DD -->`
+   la marca `<!-- coverage-verify:verdict=<VEREDICTO CANÓNICO> · fingerprint=<FINGERPRINT> · spec=<SPEC_FINGERPRINT> · generated=YYYY-MM-DD -->`
    con los valores vigentes (los del Paso 0; el `FINGERPRINT` recalculado si hubo delegación). Esta marca se
    **conserva** en el documento publicado.
 3. Presentar al usuario el **veredicto** y el reporte. No modificar ningún otro artefacto del repo.
@@ -218,22 +218,22 @@ Aplicar la tabla de «Veredicto» (en `SKILL.md`) sobre el conjunto de criterios
 
 ## Ejecución de pruebas: delegación en quality-check
 
-`trace-validate` **no detecta runners ni ejecuta pruebas**. La ejecución la realiza `quality-check`, que
+`coverage-verify` **no detecta runners ni ejecuta pruebas**. La ejecución la realiza `quality-check`, que
 persiste el resultado en `.sdd-devkit/test-run.json` (esquema `test-run/v1`; ubicación fija, no por unidad).
-`trace-validate` solo **consume** ese artefacto.
+`coverage-verify` solo **consume** ese artefacto.
 
 **Fuente de resultados (orden):**
 
 1. **Caché fresca** — `test-run.json` cuyo `git.fingerprint` coincide con el `FINGERPRINT` canónico (Paso 0) **y** cuyo `generatedBy` es `quality-check` (si no lo es, descartarla). Se
    reutiliza tal cual: es el caso «no hubo cambios desde la última corrida de pruebas».
 2. **Delegación `tests-only`** — si no hay caché o está obsoleta, invocar `quality-check` en modo
-   `tests-only`; genera/actualiza `test-run.json` y trace-validate lo consume.
+   `tests-only`; genera/actualiza `test-run.json` y coverage-verify lo consume.
 3. **No ejecutable** — si `quality-check` no puede correr (sin stack, entorno sin red/dependencias, skill no
    disponible) o el usuario declina la delegación: filas con artefacto en `Ejecución = —` /
    `Resultado = `NOT_RUN` con la razón; entregar la cobertura estática.
 
 **Esquema `test-run.json`.** La definición canónica —campos, semántica y valores permitidos— vive en
-[`quality-check` → Caché de corrida de pruebas](../../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate).
+[`quality-check` → Caché de corrida de pruebas](../../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify).
 **No** se replica aquí para que no diverja. Lo que este skill necesita de ella:
 
 - `schema` debe ser `test-run/v1`; cualquier otro valor → **descartar la caché** y delegar en `quality-check`: un `suites[]` de otro esquema no es interpretable con estas reglas.
@@ -269,7 +269,7 @@ Reglas:
 - [ ] Casos de prueba y artefactos (unit / integración / e2e) inventariados con su ruta y criterio
 - [ ] Cada criterio con estado (`COVERED` / `PARTIAL` / `UNCOVERED`) y observaciones cuando aplica
 - [ ] Matriz expandida a una fila por criterio × TC × **tipo declarado** (un TC con `Unit, E2E` ocupa dos filas), sin omitir las filas `UNCOVERED`
-- [ ] Resultados de pruebas obtenidos de `quality-check` (caché fresca `test-run.json` o delegación `tests-only`); sin ejecutar la suite en `trace-validate` ni inventar resultados
+- [ ] Resultados de pruebas obtenidos de `quality-check` (caché fresca `test-run.json` o delegación `tests-only`); sin ejecutar la suite en `coverage-verify` ni inventar resultados
 - [ ] `Ejecución` y `Resultado` rellenados fila a fila (`Ejecución` sin la suite entre paréntesis); ninguna fila con `Evidencia = —` reporta `PASS`/`FAIL`
 - [ ] Cabecera completa (Fecha · Rama · Commit · Trabajo · Veredicto) y las dos tablas construidas desde `assets/coverage-template.md`
 - [ ] Resumen con la tabla de indicadores (4 columnas, 1 fila de cifras) cuadrada —cubiertos + parciales + no cubiertos = total de criterios— y la línea **Pruebas** con la procedencia y el resultado por suite (sin agregado inventado)

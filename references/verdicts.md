@@ -2,7 +2,7 @@
 
 Referencia transversal del plugin **SDD Devkit**. Fija cómo se nombran los veredictos y los estados en
 los informes que emiten un veredicto —las tres puertas de cierre (`quality-check`, `code-review`,
-`trace-validate`) y `arch-audit`— y cómo los leen sus consumidores (`work-integrate`, `pr-create`,
+`coverage-verify`) y `arch-audit`— y cómo los leen sus consumidores (`work-integrate`, `pr-create`,
 `work-implement`).
 
 ## La regla
@@ -26,7 +26,7 @@ Todo veredicto y todo estado tiene **tres formas**, y cada una tiene su lugar:
 ## Veredictos
 
 **Hay un solo vocabulario de veredicto para todo el catálogo.** Los cuatro informes que emiten uno
-—`quality-check`, `code-review`, `trace-validate` y `arch-audit`— usan estos mismos cuatro valores en la
+—`quality-check`, `code-review`, `coverage-verify` y `arch-audit`— usan estos mismos cuatro valores en la
 línea `Veredicto:`. Cada uno emite el subconjunto que le aplica; ninguno inventa valores propios:
 
 | Valor canónico | Símbolo | Lo emite | Efecto en el cierre |
@@ -34,13 +34,13 @@ línea `Veredicto:`. Cada uno emite el subconjunto que le aplica; ninguno invent
 | `APPROVED` | `✅` | los cuatro | Deja pasar. |
 | `REJECTED` | `❌` | los cuatro | **Bloquea.** |
 | `INCOMPLETE` | `⚠️` | `quality-check`, `code-review` | **Bloquea.** No se pudo verificar todo. |
-| `APPROVED_WITH_NOTES` | `⚠️` | `trace-validate`, `arch-audit` | **No bloquea**: se muestran las observaciones y se continúa. |
+| `APPROVED_WITH_NOTES` | `⚠️` | `coverage-verify`, `arch-audit` | **No bloquea**: se muestran las observaciones y se continúa. |
 
 `arch-audit` no es una puerta de cierre —su veredicto no condiciona ningún merge—, pero lo nombra igual
 que las tres puertas: un informe de auditoría se lee con el mismo vocabulario que un informe de calidad.
 
 > **El `⚠️` es ambiguo por sí solo** — significa `INCOMPLETE` (bloquea) en `quality-check` y
-> `code-review`, y `APPROVED_WITH_NOTES` (no bloquea) en `trace-validate` y `arch-audit`. Se desambigua
+> `code-review`, y `APPROVED_WITH_NOTES` (no bloquea) en `coverage-verify` y `arch-audit`. Se desambigua
 > por **qué informe lo emite** y por el **valor canónico de la marca oculta**, nunca por la palabra que
 > lleva al lado. Un consumidor que decida leyendo la etiqueta se rompe en cuanto cambia el idioma del repo.
 
@@ -63,14 +63,14 @@ pie del informe**, no la línea visible del veredicto:
 ```
 <!-- quality-check:verdict=APPROVED · fingerprint=<hash> · generated=YYYY-MM-DD -->
 <!-- code-review:verdict=APPROVED · mode=default · fingerprint=<hash> · base=<sha-corto> · generated=YYYY-MM-DD -->
-<!-- trace-validate:verdict=APPROVED_WITH_NOTES · fingerprint=<hash> · spec=<hash> · generated=YYYY-MM-DD -->
+<!-- coverage-verify:verdict=APPROVED_WITH_NOTES · fingerprint=<hash> · spec=<hash> · generated=YYYY-MM-DD -->
 <!-- arch-audit:verdict=APPROVED · generated=YYYY-MM-DD -->
 ```
 
 - `verdict=APPROVED` → deja pasar.
 - `verdict=REJECTED` → bloquea, siempre.
 - `verdict=INCOMPLETE` → bloquea (solo lo emiten `quality-check` y `code-review`).
-- `verdict=APPROVED_WITH_NOTES` → **no** bloquea (lo emiten `trace-validate` y `arch-audit`): se muestran
+- `verdict=APPROVED_WITH_NOTES` → **no** bloquea (lo emiten `coverage-verify` y `arch-audit`): se muestran
   las observaciones y se continúa.
 
 El valor canónico de la marca es **inequívoco por sí solo**, a diferencia del símbolo `⚠️`, que significa

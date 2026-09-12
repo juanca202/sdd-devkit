@@ -78,7 +78,7 @@ escapar partiría la celda). Fuera de tablas se mantiene la convención {{a | b 
 <!--
 Marca de frescura: NO eliminar al publicar. La lee el Paso 0 de la próxima invocación para decidir
 si el informe sigue vigente. `fingerprint` es el canónico de la tubería (el mismo de quality-check
-y trace-validate); `base` es el commit corto de la rama base del diff. Ambos, con el valor vigente
+y coverage-verify); `base` es el commit corto de la rama base del diff. Ambos, con el valor vigente
 tras la última corrección si la hubo. Solo se graba en el informe vigente de la rama —una revisión
 acotada (working-tree/scope) no escribe este archivo—.
 -->

@@ -110,7 +110,7 @@ refleja así en la línea `Veredicto:` del informe que lo reporta:
 | Informe | Veredicto con un bloqueo abierto |
 |---------|----------------------------------|
 | `quality-check`, `code-review` | `INCOMPLETE` — no se pudo verificar todo. Bloquea el cierre. |
-| `trace-validate`, `arch-audit` | `REJECTED` si el bloqueo deja un criterio sin cubrir; `APPROVED_WITH_NOTES` solo si lo bloqueado es una observación que no afecta la cobertura. |
+| `coverage-verify`, `arch-audit` | `REJECTED` si el bloqueo deja un criterio sin cubrir; `APPROVED_WITH_NOTES` solo si lo bloqueado es una observación que no afecta la cobertura. |
 
 **Ningún informe con un bloqueo abierto cierra en `APPROVED`.** Y un bloqueo saltado con
 `[Sáltalo y sigue]` sigue siendo un bloqueo abierto: se reporta igual.

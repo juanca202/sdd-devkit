@@ -156,7 +156,7 @@ Reglas al rellenar:
 | Informe existente **fresco** (mismo `FINGERPRINT`, misma base, mismo modo) | Devolver su veredicto y su resumen indicando desde cuándo no hay cambios. **No** volver a revisar ni reescribir el archivo. Si el usuario quiere una revisión nueva de todos modos, ofrecerle `revalidate`. |
 | Informe existente **sin marca de pie** (escrito a mano o generado fuera de este skill) | Tratarlo como caché ausente: revisar de nuevo y grabar la marca al guardar. |
 | Marca de pie ilegible, incompleta o con un hash que no parsea | No intentar repararla ni adivinar: tratar la caché como ausente, revisar y regrabarla. |
-| Cambia solo una carpeta oculta (`.sdd-devkit/`, `.github/`…), algo de `docs/` o un `coverage.md` suelto | **No** es un cambio de código: el fingerprint los excluye y la caché sigue fresca. Correr `quality-check`, `trace-validate` o `arch-audit` no invalida esta revisión. |
+| Cambia solo una carpeta oculta (`.sdd-devkit/`, `.github/`…), algo de `docs/` o un `coverage.md` suelto | **No** es un cambio de código: el fingerprint los excluye y la caché sigue fresca. Correr `quality-check`, `coverage-verify` o `arch-audit` no invalida esta revisión. |
 | Cambian los **criterios de aceptación** del artefacto origen (`docs/specs/…`) sin tocar el código | El fingerprint no se mueve porque `docs/` está excluido, pero la dimensión semántica sí cambia de vara. Avisar al usuario y revisar con `revalidate`; no devolver el informe cacheado. |
 | La base se movió (`git fetch`) sin tocar el árbol local | El `FINGERPRINT` no cambia pero `BASE_COMMIT` sí → caché obsoleta: revisar de nuevo. Es justo el caso que justifica guardar la base en la marca. |
 | La intención cambió sin cambiar el código (el usuario la aporta, o el ticket se editó fuera del repo) | El fingerprint no lo detecta. Decírselo al usuario y revisar con `revalidate`. |
@@ -175,7 +175,7 @@ Reglas al rellenar:
 | Bucle de correcciones que no converge | Tras 3 reinicios sin llegar a `✅`, resumir lo pendiente y preguntar al usuario cómo proceder. |
 | El usuario pide correr pruebas, linter o build | Fuera de alcance: redirigir a `quality-check`. No ejecutar checks desde aquí. |
 | El usuario pasa un modificador de la etapa automatizada (`tests-only`, `no-e2e`, `only build`…) | Explicar que esos modificadores viven en `quality-check` y ofrecer invocarlo. |
-| El usuario señala que a un criterio de aceptación le falta prueba | Es competencia de `trace-validate`, no de este skill: anotarlo como observación y remitir a esa puerta. Aquí solo se juzga la **calidad** de las pruebas presentes en el diff. |
+| El usuario señala que a un criterio de aceptación le falta prueba | Es competencia de `coverage-verify`, no de este skill: anotarlo como observación y remitir a esa puerta. Aquí solo se juzga la **calidad** de las pruebas presentes en el diff. |
 
 ---
 
@@ -185,7 +185,7 @@ Reglas al rellenar:
 - **Comportarse como una herramienta de CI:** ejecutar checks, listar exit codes o pegar salidas de herramientas. Eso es `quality-check`.
 - Invocar `quality-check` desde aquí o unificar ambos veredictos en un solo informe — son skills independientes.
 - Condicionar el veredicto cualitativo al resultado de las pruebas (o al revés): cada skill responde por su plano.
-- **Reportar como hallazgo la falta de pruebas de un criterio de aceptación** — esa es la pregunta de `trace-validate`. Aquí se juzga la calidad de las pruebas que el diff sí incluye.
+- **Reportar como hallazgo la falta de pruebas de un criterio de aceptación** — esa es la pregunta de `coverage-verify`. Aquí se juzga la calidad de las pruebas que el diff sí incluye.
 - Cerrar en `APPROVED` con una dimensión sin evaluar: eso es `INCOMPLETE`.
 - **Solo reportar violaciones de reglas** sin razonar sobre la intención del diseño ni el impacto en el sistema.
 - Dar un hallazgo sin explicar el **porqué** o sin **sugerencia concreta** (un "esto está mal" pelado no es feedback senior).

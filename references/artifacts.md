@@ -46,16 +46,16 @@ específico (una salida propia, una excepción de ruta).
 | Tarea de mantenimiento | `docs/specs/work-items/WI-XXX-[kebab-case]/README.md` | `work-plan` |
 | Feature ya implementada | `docs/specs/features/FT-XXX-[slug]/README.md` | `work-research` (flujo *Analizar legado*) |
 | Casos de prueba | `test-cases/TC-XXX-[slug].md` **dentro de la carpeta del artefacto padre**, con índice `test-cases/README.md` | `test-define` |
-| Documento técnico | `docs/specs/technical-docs/[capability].md`, apoyo en `docs/specs/technical-docs/assets/[capability]/` | `design-define` |
+| Documentación técnica de capability | `docs/specs/technical-docs/[capability]/` — `README.md` (APIs, flujos), `models/md-XX.md`, `diagrams/dg-XX.md`, apoyo en `assets/` | `design-define` |
 | Glosario | `docs/specs/glossary.md` (opcional) | `design-define` |
 | Investigación | `research/RS-XXX-[slug]/README.md` **dentro de la carpeta del artefacto vinculado**; suelta: `docs/specs/research/RS-XXX-[slug]/README.md` | `work-research` |
 | Progreso de un trabajo | `progress.md` dentro de la carpeta del trabajo (US / WI / FT) | `work-implement` |
 | Archivos de apoyo | `assets/` dentro de la carpeta del artefacto; enlazar con rutas relativas | — |
-| Reporte de trazabilidad | `coverage.md` dentro de la carpeta del artefacto | `trace-validate` |
+| Reporte de trazabilidad | `coverage.md` dentro de la carpeta del artefacto | `coverage-verify` |
 | Informe de calidad | `docs/audits/quality-check.md` (+ histórico `docs/audits/quality-check-<YYYYMMDD-HHMMSS>.md`) | `quality-check` |
 | Informe de code review | `docs/audits/code-review.md` (+ histórico `docs/audits/code-review-<YYYYMMDD-HHMMSS>.md`) | `code-review` |
 | Informe de auditoría de arquitectura | `<raíz-arq>/docs/audits/arch-audit-YYYY-MM-DD.md` (con sufijo `-HHMM` si ya hay uno de ese día) | `arch-audit` |
-| Caché de corrida de checks deterministas (pruebas + validaciones de arquitectura) | `.sdd-devkit/test-run.json` (**ubicación fija**, no por unidad) | `quality-check` (productor único; la consumen `trace-validate` y `arch-audit`) |
+| Caché de corrida de checks deterministas (pruebas + validaciones de arquitectura) | `.sdd-devkit/test-run.json` (**ubicación fija**, no por unidad) | `quality-check` (productor único; la consumen `coverage-verify` y `arch-audit`) |
 | Estado de iteración para el seguimiento de especificaciones | `.sdd-devkit/current-iteration.json` (**ubicación fija**, vive mientras dura la unidad o corrección en curso) | `work-implement` |
 
 ## Raíz de arquitectura (ADR, estándares y fitness functions)
@@ -163,7 +163,7 @@ trabajo:
    `docs/archive/`. **No** recrear la carpeta en la ruta activa.
 3. **La estructura interna se conserva** intacta (`README.md`, `TK-XXX-*.md`, `test-cases/`,
    `research/`, `progress.md`, `assets/`), así que todo se resuelve relativo a la carpeta encontrada.
-4. **Solo `trace-validate` escribe dentro de un artefacto archivado**, y solo su propio
+4. **Solo `coverage-verify` escribe dentro de un artefacto archivado**, y solo su propio
    `coverage.md`: es un derivado del artefacto, no trabajo nuevo.
 
 Detalle del flujo de archivado: [`skills/work-integrate/references/archive.md`](../skills/work-integrate/references/archive.md).

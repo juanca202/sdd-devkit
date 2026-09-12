@@ -97,7 +97,7 @@ Es una ejecución de **automatización de casos de prueba** de `work-implement` 
 3. **Traduce cada TC a código 1:1**, sin ampliarlo ni reinterpretarlo:
    - `Precondiciones` + `Datos de prueba` → *arrange*; `Pasos de ejecución` → *act*; `Resultado esperado del paso` y `Resultado esperado final` → *assert* sobre comportamiento observable.
    - El **nivel** de prueba lo fija el campo `Tipo de prueba` del TC (`Unit`, `Integration`, `API Test`, `Visual Test`, `E2E`). Si un TC lista varios, escribe una prueba por nivel. Un TC `Manual` **no se automatiza**.
-   - **Incluye el ID del TC** en el nombre del bloque o del caso (p. ej. `TC-004: should reject login when password is invalid`), o en la anotación/tag equivalente del framework: sin él la prueba no es trazable para `trace-validate`.
+   - **Incluye el ID del TC** en el nombre del bloque o del caso (p. ej. `TC-004: should reject login when password is invalid`), o en la anotación/tag equivalente del framework: sin él la prueba no es trazable para `coverage-verify`.
 4. **No inventes casos** que `test-define` no documentó, ni cubras un `AC-XXX` que se quedó sin TC: repórtalo como hueco al invocador.
 5. **El comportamiento ya está implementado**, así que lo esperado es que la prueba pase en verde a la primera. Si falla, **no toques el código de producción ni relajes la aserción**: verifica que la prueba sea fiel al TC y devuelve el fallo al invocador con la evidencia (qué se esperaba, qué ocurrió) para que él lo decida con el usuario.
 6. **Tu entregable es código de prueba, nunca funcionalidad.** Un `FT-XXX` no es un plan de implementación: registra código que ya existe. No escribas producción para «completar» lo que el feature describe ni para hacer pasar una prueba.

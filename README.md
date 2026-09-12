@@ -123,7 +123,7 @@ Skills del ciclo de vida de un requerimiento: de la idea al Pull Request mergead
 | [work‑implement](SKILLS.md#work-implement)         | Implementa una tarea planificada, o automatiza los casos de prueba ya definidos.                                                          |
 | [quality‑check](SKILLS.md#quality-check)           | Corre las verificaciones automáticas del proyecto (tipado, linter, pruebas, build, etc.) antes de integrar.                               |
 | [code‑review](SKILLS.md#code-review)               | Revisión de código antes de integrar: intención, diseño y feedback accionable.                                                            |
-| [trace‑validate](SKILLS.md#trace-validate)         | Verifica que cada criterio de aceptación tenga una prueba que lo cubra.                                                                    |
+| [coverage‑verify](SKILLS.md#coverage-verify)         | Verifica que el código cubra los criterios de aceptación del artefacto implementado —con pruebas o casos de prueba— y emite un reporte con veredicto.                                                                    |
 | [work‑integrate](SKILLS.md#work-integrate)         | Cierra e integra el trabajo directamente a la rama de desarrollo.                                                                          |
 | [pr‑create](SKILLS.md#pr-create)                   | Crea el Pull Request (o Merge Request) con las puertas de calidad ya verificadas.                                                          |
 
@@ -215,7 +215,7 @@ Tú defines la intención, las restricciones y las decisiones importantes; el ag
 | UX/UI (cómo debe verse)               | Diseñador                 | —                     |
 | Modelo de dominio / datos             | Arquitecto                | `/design-define`     |
 | Arquitectura                          | Arquitecto                | `/arch-manage`       |
-| Validación de criterios de aceptación | QA                        | `/trace-validate`    |
+| Validación de criterios de aceptación | QA                        | `/coverage-verify`    |
 | Implementación detallada              | —                          | `/work-implement`    |
 
 

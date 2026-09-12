@@ -102,7 +102,7 @@ del punto 3 y la comparación del punto 4.}}
 
 | Acción propuesta | Skill | Alcance |
 |------------------|-------|---------|
-| {{qué hacer}} | {{Analizar issue / test-define / work-plan (WI test-improvement) / work-define / trace-validate}} | {{qué entra}} |
+| {{qué hacer}} | {{Analizar issue / test-define / work-plan (WI test-improvement) / work-define / coverage-verify}} | {{qué entra}} |
 
 **Hallazgos secundarios** {{— fuera del veredicto principal; omitir si no hay}}
 

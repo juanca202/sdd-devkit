@@ -1,11 +1,16 @@
 <!--
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
-Un documento por capability. Los elementos llevan id secuencial por tipo (MD-XX, API-XX, FL-XX, DG-XX),
-estable en el tiempo: no renumerar aunque se eliminen elementos (marcar como Obsoleto en su lugar).
-Cada elemento va precedido de su ancla explícita en la línea anterior al ###, con el id en minúsculas
-y sin el nombre: la etiqueta <a> de HTML con id="{{id-en-minusculas}}". Esa ancla (#md-01, #api-04,
-#fl-02, #dg-01) es la referencia que consumen US/TK/WI; ver references/element-standards.md.
+Una carpeta por capability: este README.md (detalle) + models/ (un archivo por modelo, plantilla model-template.md)
++ diagrams/ (un archivo por diagrama, plantilla diagram-template.md) + assets/ (apoyo exportado, solo si hay).
+Los elementos llevan id secuencial por tipo (MD-XX, API-XX, FL-XX, DG-XX), estable en el tiempo: no renumerar
+aunque se eliminen elementos (marcar como Obsoleto en su lugar).
+APIs y Flujos viven en este README, cada uno precedido de su ancla explícita en la línea anterior al ###, con el
+id en minúsculas y sin el nombre: la etiqueta <a> de HTML con id="{{id-en-minusculas}}". Esa ancla (#api-04,
+#fl-02) es la referencia que consumen US/TK/WI; ver references/element-standards.md.
+Modelos y Diagramas viven cada uno en su propio archivo (models/md-01.md, diagrams/dg-01.md), nombrado por su id
+en minúsculas — nunca por el nombre del elemento — y enlazado desde las tablas índice de este README; su
+referencia es la ruta del archivo, sin ancla.
 Las secciones Modelos de datos / APIs / Flujos / Diagramas son opcionales: incluir solo las que la capability necesite.
 -->
 
@@ -20,23 +25,11 @@ Las secciones Modelos de datos / APIs / Flujos / Diagramas son opcionales: inclu
 
 ## Modelos de datos
 
-<!-- Un elemento por modelo/entidad/DTO. Formato detallado en references/element-standards.md del skill design-define. -->
+<!-- Tabla índice: un archivo por modelo en models/, con la plantilla model-template.md. Enlazar cada archivo; no duplicar aquí su contenido. -->
 
-<a id="md-01"></a>
-### MD-01: {{nombre del modelo}}
-
-{{descripción breve del modelo y su rol en la capability}}
-
-| Campo | Tipo | Requerido | Descripción | Validaciones / restricciones |
-| ----- | ---- | --------- | ----------- | ---------------------------- |
-| {{campo}} | {{tipo}} | {{Sí/No}} | {{qué representa}} | {{formato, rango, unicidad, valores permitidos; «—» si no hay}} |
-
-**Relaciones:** {{relaciones con otros modelos (MD-XX de esta u otra capability) o «Ninguna»}}
-
-```mermaid
-erDiagram
-  {{diagrama ER solo si hay dos o más modelos relacionados; omitir el bloque si no aporta}}
-```
+| Id | Modelo | Descripción |
+| -- | ------ | ----------- |
+| [MD-01](models/md-01.md) | {{nombre del modelo}} | {{una línea: qué representa}} |
 
 ## APIs / Endpoints
 
@@ -94,21 +87,11 @@ erDiagram
 
 ## Diagramas
 
-<!-- Diagramas estructurales o de arquitectura de la capability: clases, contexto (C4 nivel 1), contenedores (C4 nivel 2), componentes (C4 nivel 3), despliegue, estados. Formato detallado en references/element-standards.md del skill design-define. -->
+<!-- Tabla índice: un archivo por diagrama en diagrams/, con la plantilla diagram-template.md. Enlazar cada archivo; no duplicar aquí su contenido. -->
 
-<a id="dg-01"></a>
-### DG-01: {{nombre del diagrama — p. ej. Diagrama de clases del dominio, Contexto de la capability}}
-
-- **Tipo:** {{Clases | Contexto (C4) | Contenedores (C4) | Componentes (C4) | Despliegue | Estados | Otro}}
-- **Alcance:** {{qué parte de la capability cubre y qué queda fuera}}
-
-```mermaid
-{{classDiagram, C4Context, C4Container, C4Component, stateDiagram-v2… según el tipo; ver element-standards.md}}
-```
-
-**Notas**
-
-- {{decisión o aclaración que el diagrama no expresa por sí solo; citar elementos por id (MD-XX, API-XX, FL-XX) cuando aplique; omitir la lista si no hay notas}}
+| Id | Diagrama | Tipo | Alcance |
+| -- | -------- | ---- | ------- |
+| [DG-01](diagrams/dg-01.md) | {{nombre del diagrama}} | {{Clases / Contexto (C4) / Contenedores (C4) / Componentes (C4) / Despliegue / Estados / Otro}} | {{una línea}} |
 
 ## Observaciones
 

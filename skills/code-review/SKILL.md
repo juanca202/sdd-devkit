@@ -11,7 +11,7 @@ Revisar el **diff** de una implementación como lo haría un **ingeniero senior*
 
 > **NO te comportes como una herramienta de CI.** Aquí no se ejecutan pruebas, linter, tipado ni build. Ese plano —el de «¿el código corre y cumple las reglas?»— pertenece al skill **[`quality-check`](../quality-check/SKILL.md)**. Este skill responde la otra mitad: **¿resuelve el problema correcto, está bien diseñado y será mantenible?**
 >
-> **Skills independientes.** Las tres puertas del cierre —`quality-check`, `code-review` y `trace-validate`— son **hermanas**: ninguna condiciona el veredicto de otra; cada una emite el suyo y escribe su propio informe. Quien las encadena es el orquestador de cierre (`work-integrate`, `pr-create`). Ver [Relación con otros skills](#relación-con-otros-skills).
+> **Skills independientes.** Las tres puertas del cierre —`quality-check`, `code-review` y `coverage-verify`— son **hermanas**: ninguna condiciona el veredicto de otra; cada una emite el suyo y escribe su propio informe. Quien las encadena es el orquestador de cierre (`work-integrate`, `pr-create`). Ver [Relación con otros skills](#relación-con-otros-skills).
 >
 > **Alcance:** analiza, razona y **propone**. Aplica correcciones **solo si el usuario lo autoriza explícitamente** —o si `.sdd-devkit/settings.json` tiene `verification.codeReview.confirmFix: "never"` (ver [Política de corrección](#política-de-corrección))—. No hace commit/push/merge sin instrucción explícita.
 >
@@ -93,7 +93,7 @@ Evalúa el **diff** (no todo el repo) contra estas tres dimensiones. El detalle 
 
 ## Origen de la intención
 
-La dimensión 1 necesita saber **qué se pidió** para juzgar si el código lo resuelve. Ese contrato **no depende de los artefactos de este plugin**: es el mismo criterio abierto que aplican [`test-define`](../test-define/SKILL.md) y [`trace-validate`](../trace-validate/SKILL.md).
+La dimensión 1 necesita saber **qué se pidió** para juzgar si el código lo resuelve. Ese contrato **no depende de los artefactos de este plugin**: es el mismo criterio abierto que aplican [`test-define`](../test-define/SKILL.md) y [`coverage-verify`](../coverage-verify/SKILL.md).
 
 Resolver la intención por este orden, quedándose con la primera fuente disponible:
 
@@ -109,8 +109,8 @@ Reglas:
 - **Un artefacto archivado sigue siendo la fuente de intención.** `work-integrate` y `pr-create` pueden mover la carpeta de un trabajo cerrado a `docs/archive/user-stories/` o `docs/archive/work-items/`. Ocurre de forma rutinaria al revisar una rama cuyo archivado ya se commiteó, así que **buscar ahí antes de bajar a la siguiente fuente**: dar por «sin documento» un artefacto que sí existe degradaría la dimensión 1 a `INCOMPLETE` sin motivo. Solo se lee. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 - **La ausencia de artefacto no bloquea la revisión.** Las dimensiones 2 y 3 (arquitectura/diseño y feedback) se evalúan igual sobre cualquier diff, en cualquier repo, sin `docs/specs/` ni convención de ramas.
 - **Sí condiciona la dimensión 1.** Si la intención no es determinable y el usuario no la aporta, no inventarla ni inferirla del propio código —eso es circular, el código siempre "cumple" consigo mismo—: marcar esa dimensión como `NOT_ASSESSED` y emitir **`INCOMPLETE`**.
-- **Los criterios se citan verbatim.** Sea cual sea el formato del identificador (`AC-012`, `1.3`, `R-3`, `CA-07`), se usa **tal como está escrito** en el artefacto, sin normalizar — mismo contrato que `test-define` y `trace-validate`.
-- **Qué está probado no es asunto de este skill.** La cobertura criterio a criterio la valida `trace-validate`; aquí los criterios sirven solo para juzgar si el cambio resuelve el problema pedido.
+- **Los criterios se citan verbatim.** Sea cual sea el formato del identificador (`AC-012`, `1.3`, `R-3`, `CA-07`), se usa **tal como está escrito** en el artefacto, sin normalizar — mismo contrato que `test-define` y `coverage-verify`.
+- **Qué está probado no es asunto de este skill.** La cobertura criterio a criterio la valida `coverage-verify`; aquí los criterios sirven solo para juzgar si el cambio resuelve el problema pedido.
 
 ---
 
@@ -145,9 +145,9 @@ No continúes hasta haber leído y aplicado `verdicts.md`.
 
 Precedencia: `REJECTED` > `INCOMPLETE` > `APPROVED`.
 
-> **Este veredicto cubre solo el plano cualitativo.** El del plano automatizado lo emite `quality-check` y el de la cobertura funcional `trace-validate`, cada uno por separado: el cierre de un trabajo exige **las tres** puertas en aprobado. Un `APPROVED` aquí **no** dice nada sobre si las pruebas pasan ni sobre si cada criterio está cubierto. (En un **PR de promoción** —`develop → master`— esta puerta no corre: su unidad es un diff sin revisar, y ahí todo el diff ya se revisó PR a PR. Ver [`pr-create`](../pr-create/SKILL.md#puertas-en-un-pr-de-promoción).)
+> **Este veredicto cubre solo el plano cualitativo.** El del plano automatizado lo emite `quality-check` y el de la cobertura funcional `coverage-verify`, cada uno por separado: el cierre de un trabajo exige **las tres** puertas en aprobado. Un `APPROVED` aquí **no** dice nada sobre si las pruebas pasan ni sobre si cada criterio está cubierto. (En un **PR de promoción** —`develop → master`— esta puerta no corre: su unidad es un diff sin revisar, y ahí todo el diff ya se revisó PR a PR. Ver [`pr-create`](../pr-create/SKILL.md#puertas-en-un-pr-de-promoción).)
 >
-> **Ojo con el símbolo `⚠️` en el cierre:** aquí (y en `quality-check`) `INCOMPLETE` **bloquea**; en `trace-validate` y `arch-audit`, `APPROVED_WITH_NOTES` **no bloquea**. Mismo símbolo, efecto de compuerta opuesto.
+> **Ojo con el símbolo `⚠️` en el cierre:** aquí (y en `quality-check`) `INCOMPLETE` **bloquea**; en `coverage-verify` y `arch-audit`, `APPROVED_WITH_NOTES` **no bloquea**. Mismo símbolo, efecto de compuerta opuesto.
 
 **Ante un hallazgo bloqueante (🔴/🟠)**, lo que sigue depende de `verification.codeReview.confirmFix` (ver [Política de corrección](#política-de-corrección)):
 
@@ -184,7 +184,7 @@ Las **claves** de los modificadores son siempre en inglés (estándar). Si el us
 
 ## Reutilización del informe (idempotencia)
 
-Mismo principio de caché que [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate) y `trace-validate`: **si no hubo cambios en los archivos desde la última revisión, no se vuelve a revisar** — se devuelven el veredicto y el resumen del `docs/audits/code-review.md` existente. Revisar de nuevo un diff idéntico produciría el mismo informe y gasta el tiempo del usuario (y el contexto) sin aportar señal nueva.
+Mismo principio de caché que [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify) y `coverage-verify`: **si no hubo cambios en los archivos desde la última revisión, no se vuelve a revisar** — se devuelven el veredicto y el resumen del `docs/audits/code-review.md` existente. Revisar de nuevo un diff idéntico produciría el mismo informe y gasta el tiempo del usuario (y el contexto) sin aportar señal nueva.
 
 > **Contexto de ejecución.** Como las otras dos puertas, este skill es una **compuerta de cierre** (al integrar o antes del PR), no corre por tarea ni durante la implementación. La frescura se evalúa sobre la rama **consolidada** del cierre. Si `work-integrate` o `pr-create` invocan las puertas del cierre y el código no cambió desde la corrida anterior, esta devuelve su informe sin rehacer el análisis.
 
@@ -192,7 +192,7 @@ Mismo principio de caché que [`quality-check`](../quality-check/SKILL.md#caché
 
 | Componente | Qué cubre | Cómo se obtiene |
 |------------|-----------|-----------------|
-| `FINGERPRINT` | El lado de la rama: contenido trackeado, cambios sin stagear y rutas sin trackear, **excluyendo toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`** — se mueve solo cuando cambia el código. Es **el mismo valor** que calculan `quality-check` y `trace-validate`; receta exacta en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate). | `git hash-object` sobre `ls-files -s` + `status` + `diff` (ver receta) |
+| `FINGERPRINT` | El lado de la rama: contenido trackeado, cambios sin stagear y rutas sin trackear, **excluyendo toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`** — se mueve solo cuando cambia el código. Es **el mismo valor** que calculan `quality-check` y `coverage-verify`; receta exacta en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify). | `git hash-object` sobre `ls-files -s` + `status` + `diff` (ver receta) |
 | `BASE_COMMIT` | El otro lado: el commit de la **rama base** contra la que se diffea. Un `git fetch` que mueva la base cambia el diff sin tocar el árbol local, así que el `FINGERPRINT` solo no lo detectaría. Compara **commits**, no nombres de ref: `base develop` y `base origin/develop` apuntando al mismo commit son el mismo valor. | `git rev-parse --short <base>` con la base ya resuelta (Paso 0.1) |
 
 La exclusión de `docs/` es la que hace que **escribir el propio `code-review.md` no invalide su caché**.
@@ -240,22 +240,22 @@ Usar este skill **solo cuando se le invoca explícitamente** (ni de forma proact
 
 **Relación con [`quality-check`](../quality-check/SKILL.md):** son skills **hermanos e independientes**, no uno dentro del otro.
 
-| | `quality-check` | `code-review` | `trace-validate` |
+| | `quality-check` | `code-review` | `coverage-verify` |
 |---|---|---|---|
 | Pregunta que responde | ¿El código corre y cumple las reglas? | ¿Resuelve el problema correcto y está bien diseñado? | ¿Cada criterio de aceptación está probado? |
 | Qué hace | Ejecuta tipado, linter, validaciones de arquitectura, unit, coverage, build, e2e, sonar y las suites del estándar de testing | Analiza el diff en intención, arquitectura/diseño y feedback | Cruza criterios ↔ casos de prueba ↔ artefactos |
 | Artefactos | `docs/audits/quality-check.md`, `.sdd-devkit/test-run.json` | `docs/audits/code-review.md` | `coverage.md` del trabajo |
 | Veredicto | Propio, solo del plano automatizado | Propio, solo del plano cualitativo | Propio, solo de la cobertura funcional |
 
-Este skill **no ejecuta pruebas ni checks** y **no consume** `test-run.json`: si el usuario pide correr algo, redirigirlo a `quality-check`. El orden recomendado en el cierre es `quality-check` → `code-review` → `trace-validate` (revisar diseño sobre un código que ni compila suele ser trabajo perdido; y `trace-validate` va tras `quality-check` para reutilizar su corrida de pruebas), pero es una recomendación del orquestador, no una dependencia dura.
+Este skill **no ejecuta pruebas ni checks** y **no consume** `test-run.json`: si el usuario pide correr algo, redirigirlo a `quality-check`. El orden recomendado en el cierre es `quality-check` → `code-review` → `coverage-verify` (revisar diseño sobre un código que ni compila suele ser trabajo perdido; y `coverage-verify` va tras `quality-check` para reutilizar su corrida de pruebas), pero es una recomendación del orquestador, no una dependencia dura.
 
-> **Frontera con `trace-validate` — «criterio sin cubrir» significa dos cosas.** Aquí, en la dimensión semántica, un criterio «sin cubrir» es un criterio que **el código no implementa**. En `trace-validate` es un criterio que **ninguna prueba valida**. Son preguntas distintas y ambas bloquean, pero cada una en su skill: **no** emitir aquí un hallazgo 🔴/🟠 porque a un criterio le falte prueba —eso lo reporta `trace-validate`—, ni dar por implementado un criterio porque exista un test. Si al leer el diff se ve una carencia de pruebas, el encuadre correcto aquí es la **calidad** de las pruebas presentes (Mantenibilidad), no la cobertura de criterios.
+> **Frontera con `coverage-verify` — «criterio sin cubrir» significa dos cosas.** Aquí, en la dimensión semántica, un criterio «sin cubrir» es un criterio que **el código no implementa**. En `coverage-verify` es un criterio que **ninguna prueba valida**. Son preguntas distintas y ambas bloquean, pero cada una en su skill: **no** emitir aquí un hallazgo 🔴/🟠 porque a un criterio le falte prueba —eso lo reporta `coverage-verify`—, ni dar por implementado un criterio porque exista un test. Si al leer el diff se ve una carencia de pruebas, el encuadre correcto aquí es la **calidad** de las pruebas presentes (Mantenibilidad), no la cobertura de criterios.
 
 Es un proceso **posterior a la implementación**: no forma parte de `work-implement` ni del desarrollo de tareas. Sin invocación explícita, no corresponde usarlo.
 
 ### Fingerprint canónico de la tubería
 
-Las **tres** puertas del cierre usan el **mismo** fingerprint canónico como clave de frescura, con el mismo nombre de variable (`FINGERPRINT`) y la misma receta —que vive en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate)—, cada una sobre su propio artefacto: `test-run.json` en `quality-check`, `coverage.md` en `trace-validate` y `docs/audits/code-review.md` aquí. Este skill le añade un segundo componente, el commit de la **rama base**, porque su unidad de trabajo es un diff con dos lados (ver [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia)); el `FINGERPRINT` en sí **no** cambia de definición.
+Las **tres** puertas del cierre usan el **mismo** fingerprint canónico como clave de frescura, con el mismo nombre de variable (`FINGERPRINT`) y la misma receta —que vive en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify)—, cada una sobre su propio artefacto: `test-run.json` en `quality-check`, `coverage.md` en `coverage-verify` y `docs/audits/code-review.md` aquí. Este skill le añade un segundo componente, el commit de la **rama base**, porque su unidad de trabajo es un diff con dos lados (ver [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia)); el `FINGERPRINT` en sí **no** cambia de definición.
 
 Que la receta excluya **toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`** es lo que permite que escribir `code-review.md` no desplace la clave de frescura de ninguna de las tres. La contrapartida —que ni los criterios de aceptación de `docs/specs/` ni ningún otro `.md` del diff cuenten para la frescura de este informe— está en [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia).
 

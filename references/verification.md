@@ -23,7 +23,7 @@ if (fs.existsSync(settingsPath)) {
 const GATES = [
   { key: 'qualityCheck', skill: 'quality-check', appliesFix: true },
   { key: 'codeReview', skill: 'code-review', appliesFix: true },
-  { key: 'requirementCoverage', skill: 'trace-validate', appliesFix: false },
+  { key: 'requirementCoverage', skill: 'coverage-verify', appliesFix: false },
 ];
 
 const describeGate = (key, skill, appliesFix, gate) => {
@@ -32,9 +32,9 @@ const describeGate = (key, skill, appliesFix, gate) => {
     console.log('- ' + key + '.enabled = false -> NO ejecutar ' + skill + ' ni ofrecerlo en el cierre de work-integrate. La puerta queda OMITIDA: no bloquea el merge, pero tampoco cuenta como aprobada.');
     return;
   }
-  console.log('- ' + key + '.enabled = true -> ejecutar ' + skill + ' antes del merge en work-integrate. Su veredicto manda: solo APPROVED (o APPROVED_WITH_NOTES en trace-validate) deja continuar.');
+  console.log('- ' + key + '.enabled = true -> ejecutar ' + skill + ' antes del merge en work-integrate. Su veredicto manda: solo APPROVED (o APPROVED_WITH_NOTES en coverage-verify) deja continuar.');
   if (!appliesFix) {
-    console.log('  ' + key + '.confirmFix no tiene efecto: trace-validate no corrige por si mismo, solo reporta y delega la ejecucion de pruebas en quality-check.');
+    console.log('  ' + key + '.confirmFix no tiene efecto: coverage-verify no corrige por si mismo, solo reporta y delega la ejecucion de pruebas en quality-check.');
     return;
   }
   if (gate.confirmFix === 'never') {
@@ -55,7 +55,7 @@ if (verification) {
   }
 } else {
   console.log('No hay .sdd-devkit/settings.json con bloque \\'verification\\'. Aplicar el valor por defecto del catalogo:');
-  console.log('- **enabled = true** y **confirmFix = always** para las tres puertas (quality-check, code-review, trace-validate).');
+  console.log('- **enabled = true** y **confirmFix = always** para las tres puertas (quality-check, code-review, coverage-verify).');
   console.log('- **handoff = ask**.');
   console.log('**No decidir estos valores por cuenta propia** ni ofrecer escribirlos: arch-init es quien crea el archivo.');
 }
@@ -63,12 +63,12 @@ if (verification) {
 ```
 
 > **Qué gobierna cada puerta.** `qualityCheck` es `quality-check`; `codeReview` es `code-review`;
-> `requirementCoverage` es `trace-validate`. Cada una tiene dos ejes independientes: `enabled` decide si
+> `requirementCoverage` es `coverage-verify`. Cada una tiene dos ejes independientes: `enabled` decide si
 > la puerta **corre** antes del merge en `work-integrate` (no si aprueba — el veredicto sigue mandando
 > igual, y `REJECTED`/`INCOMPLETE` bloquean); `confirmFix` decide, cuando la puerta encuentra algo
 > corregible, si se **pide confirmación** primero (`always`) o se **corrige directo sin preguntar**
 > (`never`). `requirementCoverage.confirmFix` existe en el schema por simetría con las otras dos, pero no
-> tiene efecto: `trace-validate` no aplica correcciones por sí mismo, solo reporta y delega la ejecución
+> tiene efecto: `coverage-verify` no aplica correcciones por sí mismo, solo reporta y delega la ejecución
 > de pruebas en `quality-check`, ya de forma automática.
 
 > **Esto no relaja las demás condiciones del merge.** Working tree limpio, unidades en `Done`, rama base
@@ -79,17 +79,17 @@ if (verification) {
 > pero **debe reportarse explícitamente** como omitida, con el motivo (`policy`), en el resumen del cierre
 > y en el mensaje de merge. Nunca se omite en silencio ni se lista como aprobada.
 
-> **Dependencia entre puertas.** `trace-validate` reutiliza el `test-run.json` que produce
+> **Dependencia entre puertas.** `coverage-verify` reutiliza el `test-run.json` que produce
 > `quality-check` (y `arch-audit`, fuera de las puertas, reutiliza de ese mismo archivo la entrada
 > `architecture`: la corrida del runner de validaciones de arquitectura). Si `qualityCheck.enabled` es `false` y `requirementCoverage.enabled` es `true`, no hay
-> caché que reutilizar: `trace-validate` invocará `quality-check` en modo `tests-only` por su cuenta, que
+> caché que reutilizar: `coverage-verify` invocará `quality-check` en modo `tests-only` por su cuenta, que
 > es su comportamiento normal cuando no hay corrida fresca. Omitir `quality-check` no evita, por tanto,
 > que se ejecuten pruebas si la tercera puerta sigue activa.
 
 > **`handoff` gobierna el tramo final de `work-integrate`, no las puertas en sí.** Lo resuelve
 > **`work-integrate`** una vez pasadas sus puertas, para decidir si sigue con el archivado y el merge: con
 > `always` continúa directo; con `ask` (por defecto), presenta la opción y espera la confirmación del
-> usuario. Las puertas (`quality-check`, `code-review`, `trace-validate`) **no** leen esta clave.
+> usuario. Las puertas (`quality-check`, `code-review`, `coverage-verify`) **no** leen esta clave.
 
 > **`pr-create` no usa este bloque.** Sus puertas se rigen por su propio flujo: un PR es un artefacto
 > público y su contrato de puertas es independiente del de la integración local.

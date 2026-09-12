@@ -2,7 +2,7 @@
 'use strict';
 
 // Pruebas del FINGERPRINT canónico de la tubería de cierre (quality-check,
-// code-review, trace-validate). Node built-in test runner + assert, sin
+// code-review, coverage-verify). Node built-in test runner + assert, sin
 // dependencias externas; necesita `git` y `bash` en el PATH. Ejecutar con:
 //   node --test scripts/validate-fingerprint.test.js
 //
@@ -10,7 +10,7 @@
 //   1. Que la receta (`EXC=` + `FINGERPRINT=`) sea idéntica en los tres archivos
 //      que la copian: skills/quality-check/references/execution.md (canónica),
 //      skills/code-review/references/execution.md y
-//      skills/trace-validate/references/flow.md.
+//      skills/coverage-verify/references/flow.md.
 //   2. Que, ejecutada sobre un repo real, la clave se mueva SOLO cuando cambia
 //      algo que puede alterar el resultado de una prueba o de una compilación:
 //      código, tests, manifiestos y configuración visible de la raíz. Editar
@@ -28,7 +28,7 @@ const ROOT = path.resolve(__dirname, '..');
 const RECIPE_FILES = [
   'skills/quality-check/references/execution.md', // canónica
   'skills/code-review/references/execution.md',
-  'skills/trace-validate/references/flow.md',
+  'skills/coverage-verify/references/flow.md',
 ];
 
 // --- 1. Extraer la receta de cada archivo ------------------------------------

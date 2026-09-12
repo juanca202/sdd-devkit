@@ -44,7 +44,7 @@ En caso de duda entre A y B: preguntar al usuario antes de continuar. No combina
 |-----------|------|
 | Tarea | `docs/specs/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` |
 | ADR | `docs/adr/` |
-| Documentación técnica | `docs/specs/technical-docs/[capability].md` (propiedad de `design-define`; aquí solo se referencia) |
+| Documentación técnica | `docs/specs/technical-docs/[capability]/` — `README.md`, `models/`, `diagrams/` (propiedad de `design-define`; aquí solo se referencia) |
 | Glosario | `docs/specs/glossary.md` |
 | US padre ya archivada (fallback) | `docs/archive/user-stories/US-XXX-[nombre-corto]/` |
 
@@ -142,7 +142,7 @@ Una TK completa puede alcanzar `Estado: Ready` si cumple todas las condiciones d
    - **Metadatos**: `Historia` con enlace `[US-XXX](./README.md)`; `Repositorio` con el nombre del repositorio git afectado; `Asignado a` indicado por el usuario, inferido con `git config user.name`, u omitido; `Work Item (<sistema>)` con el enlace al work item solo si se creó vía el tracker vinculado (etiqueta y formato en su archivo de referencia).
    - **Descripción**: qué lograr — objetivo claro, tono imperativo y verificable; sin «podría», «quizá», «tal vez».
    - **Dependencias**: solo piezas *dentro del alcance de la tarea* — componentes, servicios, modelos, librerías. ADRs, technical-docs, contratos y referencias de diseño van en **Referencias**.
-   - **Referencias**: ADRs existentes, technical-docs (con ancla al elemento concreto, p. ej. `technical-docs/facturacion.md#api-01`), diseño. El ancla es **siempre `#<id en minúsculas>`** (`#md-01`, `#api-04`, `#fl-02`, `#dg-01`), nunca derivada del título del elemento: `design-define` la emite explícitamente y la devuelve ya formada, así que se **copia tal cual** — no se recompone a partir del nombre. Un `#api-01-crear-factura` apunta a nada. No crear ADRs; si falta una decisión, sugerirlo al usuario en Observaciones. Si la tarea depende de un modelo, API o flujo **sin especificación** en `technical-docs/`, registrarlo en Observaciones; si el usuario pide detallarlo, **delegar a `/design-define` vía subagente** y agregar aquí la referencia devuelta.
+   - **Referencias**: ADRs existentes, technical-docs (con la referencia al elemento concreto: para APIs y flujos, el README de la capability con ancla, p. ej. `technical-docs/facturacion/README.md#api-01`; para modelos y diagramas, el archivo del elemento, p. ej. `technical-docs/facturacion/models/md-01.md`), diseño. La referencia la emite `design-define` ya formada y se **copia tal cual** — el ancla es **siempre `#<id en minúsculas>`** (`#api-04`, `#fl-02`) y el archivo se nombra por el id, nunca derivados del título del elemento. Un `#api-01-crear-factura` o un `models/factura.md` apuntan a nada. No crear ADRs; si falta una decisión, sugerirlo al usuario en Observaciones. Si la tarea depende de un modelo, API o flujo **sin especificación** en `technical-docs/`, registrarlo en Observaciones; si el usuario pide detallarlo, **delegar a `/design-define` vía subagente** y agregar aquí la referencia devuelta.
    - **Plan de implementación**: pasos concretos acordados o derivados de fuentes citadas en Referencias. Si no se conocen aún, **no inventar** — indicar en Observaciones qué falta.
    - **Migración** (opcional): si la tarea proviene de una investigación de migración (`research/RS-XXX-{slug}/` de `work-research`), rellenar el bloque **Migración (origen → destino)** de la plantilla enlazando esa investigación (contexto progresivo: `discovery.md` y `validation.md` no se duplican). Los `AC-XXX` viven en la US y se validan con los casos Golden Master (`GM-XXX`). Omitir la sección si no es una migración.
    - **Observaciones**: solo si hay pendientes reales. Si no hay nada, **omitir la sección** (o una línea *Sin pendientes documentados* si el equipo lo exige). Con pendientes reales: `Estado: Draft`.
@@ -262,7 +262,7 @@ Aplica siempre que se planifiquen o secuencien **varias TK dentro de la misma US
 - [ ] **Dependencias** listadas dentro del alcance de la tarea
 - [ ] **Plan de implementación** con pasos concretos
 - [ ] **Observaciones** sin pendientes abiertos — sección omitida o con *Sin pendientes documentados*
-- [ ] Referencias a ADRs y technical-docs con rutas relativas válidas, y las de technical-docs con ancla `#<id>` (`#md-01`, `#api-04`) tal como las devolvió `design-define` — nunca un slug del título
+- [ ] Referencias a ADRs y technical-docs con rutas relativas válidas, y las de technical-docs tal como las devolvió `design-define` — `README.md#<id>` (`#api-04`, `#fl-02`) para APIs/flujos, `models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas — nunca un slug del título
 
 **Formato:**
 - [ ] Plantilla `assets/task-template.md` leída

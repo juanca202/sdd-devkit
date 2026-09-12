@@ -1,13 +1,13 @@
 ---
-name: trace-validate
+name: coverage-verify
 description: >-
-  Generar un reporte de trazabilidad que cruza los criterios de aceptación de un artefacto —una historia de usuario (US-XXX), una tarea de mantenimiento (WI-XXX), un feature ya implementado (FT-XXX) o cualquier documento cuyos criterios tengan identificador codificado (AC-001, 1.1, R-3…)— contra los casos y artefactos de prueba del repositorio. Por cada criterio indica qué lo cubre, su estado (`COVERED` / `PARTIAL` / `UNCOVERED`), si la prueba se ejecutó y con qué resultado, y cierra con un veredicto. No corre la suite: delega la ejecución en quality-check. Activar siempre que el usuario pida validar cobertura, generar una matriz o reporte de trazabilidad, verificar que los criterios de aceptación están probados, comprobar si un trabajo o un feature está cubierto por pruebas, o mencione "trazabilidad", "matriz de cobertura" o "validar criterios de aceptación", aunque no nombre el formato exacto. Traza también trabajo archivado en docs/archive/, dejando el reporte junto al artefacto.
+  Verificar que el código cubre —alcanza— los criterios de aceptación del artefacto implementado: una historia de usuario (US-XXX), una tarea de mantenimiento (WI-XXX), un feature (FT-XXX) o cualquier documento cuyos criterios tengan identificador codificado (AC-001, 1.1, R-3…). La evidencia son las pruebas automatizadas del repositorio, los casos de prueba (TC-XXX), o ambos. Por cada criterio indica qué lo cubre, su estado (`COVERED` / `PARTIAL` / `UNCOVERED`) y el resultado de su ejecución, y genera un reporte (coverage.md) con veredicto. No corre la suite: delega en quality-check. Activar cuando el usuario pida verificar que el código cumple o cubre los criterios de aceptación, validar cobertura, generar una matriz o reporte de trazabilidad, comprobar si un trabajo o feature está cubierto por pruebas, o mencione "trazabilidad" o "matriz de cobertura". Cubre también trabajo archivado en docs/archive/, dejando el reporte junto al artefacto.
 license: MIT
 ---
 
-# Skill: Validar trazabilidad de un trabajo
+# Skill: Verificar la cobertura de los criterios de aceptación
 
-Genera un **reporte de trazabilidad** que cruza los **criterios de aceptación** de un trabajo contra los **casos de prueba** y los **artefactos de prueba automatizada** (unit, integración, e2e) presentes en el repositorio, y emite un **veredicto** sobre si el trabajo queda cubierto.
+Verifica que el **código implementado cubre los criterios de aceptación** del artefacto. La evidencia son los **artefactos de prueba automatizada** (unit, integración, e2e) presentes en el repositorio y los **casos de prueba** (`TC-XXX`) cuando existen — basta con una de las dos fuentes, y se cruzan ambas cuando están disponibles. El resultado es un **reporte de cobertura** (`coverage.md`) que mapea cada criterio a lo que lo cubre y cierra con un **veredicto** sobre si el trabajo queda cubierto.
 
 El trazado primario es para **historias de usuario** (`US-XXX`) con sus **criterios de aceptación**. Sirve igual para cualquier otro artefacto que tenga criterios con **identificador codificado** — el formato es indiferente (`AC-001`, `1.1`, `R-3`…) y se usa **verbatim**, sin normalizar (ver [Tipos de trabajo y criterios](#tipos-de-trabajo-y-criterios)). Es el mismo contrato que produce `test-define`.
 
@@ -270,7 +270,7 @@ cambió.
 > **Contexto de ejecución.** Como `quality-check`, este skill es una **compuerta de cierre** (al integrar o
 > antes del PR), no corre por tarea ni durante la implementación. La frescura se evalúa sobre la rama
 > **consolidada** del cierre. En el pipeline típico de cierre `pr-create` corre `quality-check` **primero**
-> (produce `test-run.json` fresco) y luego `trace-validate`, que reutiliza esa corrida — sin doble
+> (produce `test-run.json` fresco) y luego `coverage-verify`, que reutiliza esa corrida — sin doble
 > ejecución de pruebas; y si el código tampoco cambió desde el último `coverage.md`, este Paso 0 lo
 > devuelve sin regenerarlo.
 
@@ -278,7 +278,7 @@ cambió.
 
 | Clave | Qué cubre | Cómo se calcula |
 |-------|-----------|-----------------|
-| `FINGERPRINT` | **El código y los tests.** El fingerprint canónico de la tubería, idéntico al de `quality-check` y `code-review`: excluye toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`, para que ni escribir un artefacto generado ni editar documentación invalide la caché: **solo se mueve cuando cambia el código**. Receta exacta en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-trace-validate). | Sobre todo el árbol, menos las exclusiones |
+| `FINGERPRINT` | **El código y los tests.** El fingerprint canónico de la tubería, idéntico al de `quality-check` y `code-review`: excluye toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`, para que ni escribir un artefacto generado ni editar documentación invalide la caché: **solo se mueve cuando cambia el código**. Receta exacta en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify). | Sobre todo el árbol, menos las exclusiones |
 | `SPEC_FINGERPRINT` | **Los criterios y los casos de prueba** del artefacto que se valida: su `README.md` y su carpeta `test-cases/`. Viven bajo `docs/specs/`, que el `FINGERPRINT` excluye — sin esta segunda clave, reescribir un criterio no invalidaría nada. | Sobre la **carpeta del artefacto**, excluyendo su propio `coverage.md` |
 
 `bash
@@ -313,7 +313,7 @@ donde `$ARTEFACTO` es la carpeta del trabajo (`docs/specs/user-stories/US-042-�
    previo o no: el Paso 7 los necesita para grabar la marca de pie, también en la primera validación.
 2. Buscar su `coverage.md`. Si no existe → generar normal (no hay caché).
 3. Si existe, leer los hashes guardados en su marca de pie
-   (`<!-- trace-validate:verdict=<canónico> · fingerprint=<hash> · spec=<hash> · generated=YYYY-MM-DD -->`) y reutilizarlo **solo si
+   (`<!-- coverage-verify:verdict=<canónico> · fingerprint=<hash> · spec=<hash> · generated=YYYY-MM-DD -->`) y reutilizarlo **solo si
    se cumple todo**: coinciden **los dos** hashes, el reporte **no** registra una ejecución fallida, y el
    usuario no pasó `revalidate`.
    - **Se cumple** → **no regenerar**: devolver el veredicto y el resumen del reporte existente tal cual,
@@ -340,7 +340,7 @@ donde `$ARTEFACTO` es la carpeta del trabajo (`docs/specs/user-stories/US-042-�
 
 ## Resultados de pruebas: delegación en quality-check
 
-`trace-validate` **no ejecuta la suite de pruebas**. La ejecución es responsabilidad de `quality-check`,
+`coverage-verify` **no ejecuta la suite de pruebas**. La ejecución es responsabilidad de `quality-check`,
 que la persiste en un artefacto reutilizable `test-run.json` (esquema `test-run/v1`). Como el review es
 una **corrida completa** de la rama, este artefacto vive en una **ubicación fija**, no por unidad:
 **`.sdd-devkit/test-run.json`**, en la raíz del repositorio.
@@ -407,7 +407,7 @@ ejemplo—, y va en Observaciones, no en la matriz.
 
 > Si el proyecto no usa `quality-check` (no está disponible en la sesión), degradar con elegancia: reportar
 > las filas **con artefacto** en `Ejecución = —` / `Resultado = `NOT_RUN` («ejecución delegada no disponible») —las que no tienen artefacto siguen en `UNCOVERED`— y entregar la cobertura estática. No
-> reintroducir un runner propio en `trace-validate`.
+> reintroducir un runner propio en `coverage-verify`.
 
 ---
 
@@ -441,7 +441,7 @@ Lo propio de este skill:
 | Caché de corrida de pruebas (entrada, la produce `quality-check`) | `.sdd-devkit/test-run.json` (ubicación fija, no por unidad) |
 | Reporte de trazabilidad (**salida**) | `coverage.md` **dentro de la carpeta del artefacto, allí donde se haya resuelto** — activa o bajo `docs/archive/`; para otro artefacto, junto a él (confirmar la ruta con el usuario antes de escribir) |
 
-> **Un `US`/`WI` archivado se traza igual.** Todo se resuelve relativo a la carpeta encontrada: los criterios, el `test-cases/`, la clave `SPEC_FINGERPRINT` y el `coverage.md` de salida. `trace-validate` es el **único** skill que escribe dentro de un artefacto archivado, y solo su propio informe: es un derivado del artefacto, no trabajo nuevo, y revalidar un trabajo ya integrado tiene que seguir siendo posible.
+> **Un `US`/`WI` archivado se traza igual.** Todo se resuelve relativo a la carpeta encontrada: los criterios, el `test-cases/`, la clave `SPEC_FINGERPRINT` y el `coverage.md` de salida. `coverage-verify` es el **único** skill que escribe dentro de un artefacto archivado, y solo su propio informe: es un derivado del artefacto, no trabajo nuevo, y revalidar un trabajo ya integrado tiene que seguir siendo posible.
 
 ---
 

@@ -39,12 +39,15 @@ los resultados por suite. **`tests-only` es no interactivo:** no hace ninguna de
 
 **En cualquier otro modo, la caché también manda.** Antes de ejecutar, comprobar `.sdd-devkit/test-run.json`
 con las mismas reglas de frescura (ver [Cómo se reutiliza](#cuándo-se-escribe-y-se-reutiliza)). Si es
-**fresca**, los checks que la alimentan —unit, coverage, e2e, las suites configuradas y las validaciones de
-arquitectura— **no se ejecutan**: se toma su `result` y su `summary` de la caché, la fila del informe lleva
-`caché` en la columna Duración y el encabezado registra la procedencia («pruebas tomadas de la corrida del
-{{timestamp}}»). Solo se ejecutan los checks que la caché no cubre (tipado, linter, build, sonar). **El
-código no cambió, así que el resultado de las pruebas no puede haber cambiado; volver a correrlas es tiempo
-perdido, no evidencia nueva.** Se salta la caché únicamente con el modificador `no-cache` (o cuando el
+**fresca**, **ningún check presente en la caché se ejecuta**: se toma su `result` y su `summary` de ahí —
+las suites y las validaciones de arquitectura de `suites[]`, y tipado/linter/build/sonar de `checks[]`
+cuando la corrida que la escribió fue completa —, la fila del informe lleva `caché` en la columna Duración
+y el encabezado registra la procedencia («resultados tomados de la corrida del {{timestamp}}»). Con una
+caché escrita por una corrida completa **no se re-ejecuta nada**: el informe y el veredicto se emiten
+desde la caché. Solo se ejecutan los checks que la caché no traiga (p. ej. los estáticos, cuando la
+escribió una corrida `tests-only`), y al cierre se completa la caché con ellos. **El código no cambió, así
+que el resultado de un check determinista no puede haber cambiado; volver a correrlo es tiempo perdido, no
+evidencia nueva.** Se salta la caché únicamente con el modificador `no-cache` (o cuando el
 usuario pida en el turno «vuelve a correr las pruebas»). Un `FAIL` servido desde caché es tan válido como
 uno recién ejecutado: entra igual al ciclo de corrección, y la corrección moverá la clave y forzará la
 re-ejecución real.
@@ -56,7 +59,7 @@ En otro caso, ejecutar **secuencialmente** (no en paralelo) los checks Bloqueant
 3. **validaciones de arquitectura** — solo si el Paso 1 encontró runner. Ejecutar el runner completo del repo (`node scripts/arch/verify.mjs` o el equivalente del stack), **sin acotar por estándar**: la caché es de la corrida entera. FAIL si exit ≠ 0. Capturar el comando y un `summary` corto con el número de criterios evaluados y de violaciones. Sin runner → `N/A` y **fila omitida**.
 4. **unit tests** — comando del stack; *fallback* canónico.
 5. **coverage** — PASS/FAIL según la regla del catálogo de checks (`SKILL.md`). Sin ninguna herramienta ni config de cobertura en el repo → `N/A` con nota en Próximas acciones, no `SKIPPED`.
-6. **suites configuradas** — una por cada requisito vigente del estándar de testing (integración, contrato, mutación…), en el **orden en que el estándar las declara**. Si el estándar no declara ninguna, este punto no existe: **no inventar una suite** ni partir la unitaria para simular una. Una suite configurada que necesite el artefacto compilado (rendimiento, carga, accesibilidad sobre la app desplegada) se ejecuta **después de build**, junto a e2e.
+6. **suites configuradas** — una por cada requisito vigente del estándar de testing (integración, contrato, mutación…), en el **orden en que el estándar las declara**. Si el estándar no declara ninguna, este punto no existe: **no inventar una suite** ni partir la unitaria para simular una. Una suite configurada que necesite la aplicación compilada (rendimiento, carga, accesibilidad sobre la app desplegada) se ejecuta **después de build**, junto a e2e.
 7. **build** — en Java/Go/Rust/.NET cubre la compilación.
 8. **e2e** — solo si hay script/tarea/perfil e2e o config Playwright/Cypress. **No es fija:** sin config queda en `N/A` y **la fila se omite** del informe, salvo que el estándar de testing la declare (entonces es `SKIPPED` y sí se lista).
 9. **sonar** — si falta `sonar-project.properties` → `N/A`. Si hay config y red falla → FAIL informativo.
@@ -69,7 +72,7 @@ En otro caso, ejecutar **secuencialmente** (no en paralelo) los checks Bloqueant
 
 1. **Estático** (tipado, linter, arquitectura): barato y determinista; el fail-fast del tipado evita ruido en cascada. El runner de arquitectura es análisis estático sobre el árbol —no levanta servicios ni toca la red—, así que va aquí y no entre las suites de prueba.
 2. **Unit + coverage**: mismo estrato; coverage justo después de unit.
-3. **Suites configuradas** (integración, contrato…): por encima de unit, por debajo de e2e; solo las que declare el estándar de testing, y las que dependen del artefacto compilado, después de build.
+3. **Suites configuradas** (integración, contrato…): por encima de unit, por debajo de e2e; solo las que declare el estándar de testing, y las que dependen de la aplicación compilada, después de build.
 4. **Build**: artefacto de integración; en Java/Go/Rust/.NET valida también la compilación.
 5. **E2E**: el más lento; suele requerir build previo.
 6. **Sonar**: informativo, al final.
@@ -162,8 +165,9 @@ Reglas al rellenar:
 ## Caché de corrida de pruebas
 
 Artefacto reutilizable que evita repetir los **checks deterministas** de la corrida: que `coverage-verify`
-vuelva a ejecutar las pruebas, y que `arch-audit` vuelva a correr el runner de validaciones de
-arquitectura. Esta sección es la **definición canónica y única** —los consumidores (`coverage-verify`,
+vuelva a ejecutar las pruebas, que `arch-audit` vuelva a correr el runner de validaciones de
+arquitectura, y que **este propio skill** vuelva a ejecutar cualquiera de sus checks —tipado, linter,
+build y sonar incluidos— cuando nada cambió. Esta sección es la **definición canónica y única** —los consumidores (`coverage-verify`,
 `arch-audit`, `code-review`) la referencian, no la copian—; `SKILL.md` solo la resume.
 
 > **Las validaciones de arquitectura se cachean con las mismas reglas que las demás.** Son una entrada
@@ -298,6 +302,11 @@ la copian:
       "standard": "testing/integration-testing" },
     { "type": "contract-testing",    "command": "npm run test:pact", "result": "SKIPPED", "summary": "config rota",
       "standard": "testing/contract-testing" }
+  ],
+  "checks": [
+    { "type": "typecheck", "command": "npx tsc --noEmit", "result": "PASS", "summary": "sin errores" },
+    { "type": "lint",      "command": "npm run lint",     "result": "PASS", "summary": "0 errores, 0 warnings" },
+    { "type": "build",     "command": "npm run build",    "result": "PASS", "summary": "build ok" }
   ]
 }
 ```
@@ -313,6 +322,7 @@ Semántica de los campos:
 - **`suites[].type`** — para las **fijas**, `unit` o `coverage` (slugs canónicos de este skill): **siempre se emiten las dos**, y la que el repo no tiene va con `result: "N/A"`. `e2e` usa también un slug canónico pero **no está garantizada**: se emite solo si el repo tiene config e2e o el estándar la declara. Para las **configuradas**, el `ID` **tal cual lo declara el requisito** en el estándar de testing (`integration-testing`, `contract-testing`, `performance-testing`…): se emite **una entrada por requisito vigente**, y ninguna si el estándar no declara más. **No** emitir una entrada por una suite que el estándar no declara.
 - **`suites[].standard`** — solo en las configuradas: referencia global al requisito del estándar, `<slug-del-estándar>/<ID-del-requisito>` (p. ej. `testing/integration-testing`). Ausente en las fijas y en un `e2e` que salga del catálogo de checks y no del estándar.
 - **`suites[].result`** — `PASS` · `FAIL` · `SKIPPED` (correspondía pero no se pudo ejecutar) · `N/A` (no aplica al repo).
+- **`checks[]`** (opcional) — los checks **estáticos** de una corrida completa: `typecheck`, `lint`, `build` y `sonar`, con la misma semántica de `command`/`result`/`summary` que `suites[]` (los que quedaron `N/A` se omiten, igual que en el informe). Los escribe **solo una corrida completa** de este skill — nunca `tests-only` — y su único consumidor es **este propio skill**, para no re-ejecutar nada con caché fresca; `coverage-verify` y `arch-audit` los ignoran. Su ausencia significa que la corrida que escribió la caché no los ejecutó — no es un fallo: la siguiente corrida completa los ejecuta y los añade.
 
 > **Solo `unit` y `coverage` están garantizadas.** Para **toda** otra entrada —`e2e` y `architecture` incluidas— la regla de consumo es la misma: buscarla en `suites[]` y, si no está, tratarla como algo que este repo no ejecuta. Nunca asumir su presencia ni deducir un fallo de su ausencia.
 
@@ -323,7 +333,9 @@ Semántica de los campos:
 **Cuándo se escribe.** Al final de toda corrida que ejecutó el **conjunto determinista completo** —las dos fijas,
 más e2e y todas las configuradas que apliquen, más `architecture` si el repo tiene runner— (Paso 5), sea o no spec-driven el repo. En corridas parciales, no — ver «Cuándo NO se escribe» más abajo. Ruta **fija**: `.sdd-devkit/test-run.json` en la **raíz del repositorio**, no por
 unidad y fuera de `docs/` (es un artefacto de máquina, no documentación). Se **sobrescribe** en cada
-corrida (es el estado vigente de la rama) y **no se versiona**.
+corrida (es el estado vigente de la rama) y **no se versiona**. Una corrida **completa** (con veredicto)
+guarda además en `checks[]` los checks estáticos que ejecutó (tipado, linter, build, sonar); una corrida
+`tests-only` escribe la caché **sin** `checks[]`.
 
 **El `.gitignore` se normaliza en el Paso 1**, no aquí: `git check-ignore -q .sdd-devkit/test-run.json` y,
 solo si devuelve distinto de 0, añadir esa línea (creando el archivo si hace falta), en silencio. Es la única
@@ -347,9 +359,9 @@ directorio, devolver los resultados en la respuesta y advertir que no habrá reu
 `testingStandard` (o `null`), y las entradas con su `command`, `result`
 (`PASS`/`FAIL`/`SKIPPED`/`N/A`) y un `summary` corto — el esquema completo y la semántica de cada campo están
 en [Esquema `test-run.json`](#esquema-test-runjson). Mapeo check → entrada: `unit tests` → `unit`, `coverage` → `coverage`, `e2e` → `e2e`,
-`validaciones de arquitectura` → `architecture`, y cada
+`validaciones de arquitectura` → `architecture`, cada
 suite configurada → el `ID` de su requisito en el estándar (p. ej. `integration-testing`), con su referencia
-global en `standard` (p. ej. `testing/integration-testing`). Las **dos fijas se emiten siempre**, con `result: "N/A"` si el repo no las
+global en `standard` (p. ej. `testing/integration-testing`), y —solo en corrida completa— `tipado` → `checks[].typecheck`, `linter` → `lint`, `build` → `build`, `sonar` → `sonar`. Las **dos fijas se emiten siempre**, con `result: "N/A"` si el repo no las
 tiene, para que el consumidor no tenga que distinguir «ausente» de «no aplica». **`e2e`, `architecture` y las configuradas se emiten
 solo si existen** —config e2e en el repo, runner en `scripts/arch/`, o la suite declarada en el estándar—: no inventar entradas que nadie declara.
 
@@ -358,7 +370,9 @@ solo si existen** —config e2e en el repo, runner en `scripts/arch/`, o la suit
 - **Su `schema` no es `test-run/v1`** → caché **inservible**, sin más comprobaciones: ejecutar y sobrescribir. Un `suites[]` de otro esquema no se puede comparar con el conjunto vigente.
 - **Coincide** y su `suites[]` cubre exactamente el **conjunto vigente** (dos fijas + e2e si aplica +
   configuradas del estándar + `architecture` si el repo tiene runner) → caché **fresca**: devolver esos resultados sin ejecutar nada (en `tests-only`) o
-  tomarlos como resultado de esos checks y ejecutar solo el resto (en los demás modos). Es el camino que hace que,
+  tomarlos como resultado de esos checks, reutilizando también las entradas de `checks[]` si las hay (en los
+  demás modos) — con `checks[]` presente **no queda nada que ejecutar**; sin él, ejecutar solo los checks
+  estáticos ausentes y completar la caché al cierre. Es el camino que hace que,
   si no hubo cambios desde la última corrida de pruebas, no se repita el trabajo — **ni en `coverage-verify`, ni en
   `arch-audit`, ni en una segunda invocación de este mismo skill**.
 - **Diferente, no existe, o su `suites[]` no cubre el conjunto vigente** (el estándar cambió, o apareció/desapareció el runner de arquitectura) → caché
@@ -467,3 +481,4 @@ estaba sucio, `workingTreeClean: false` queda registrado como señal para el con
 - **Ejecutar o reportar una suite que el estándar de testing no declara** — integración incluida: dejó de ser una fila fija. Si el repo la tiene y el estándar no la declara, va a Próximas acciones como recomendación, no a la tabla de verificaciones.
 - **Inferir el conjunto de pruebas del repo en lugar de leerlo del estándar** (deducirlo de carpetas o scripts). El estándar es la única fuente de las suites no fijas.
 - Dar por fresca una caché cuyo `suites[]` no coincide con el conjunto vigente porque el `FINGERPRINT` sí coincide — el estándar vive en `docs/`, que el fingerprint excluye.
+- Re-ejecutar tipado, linter, build o sonar con una caché fresca cuyo `checks[]` ya trae esos resultados — con una caché de corrida completa no se re-ejecuta nada.

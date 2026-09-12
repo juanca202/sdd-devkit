@@ -90,7 +90,7 @@ Verificar que el CLI elegido está instalado (`<cli> --version`); si falta, para
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
 

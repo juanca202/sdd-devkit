@@ -253,7 +253,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** documentar el diseño técnico de una historia o tarea — modelos de datos, endpoints, flujos o diagramas — como referencia para implementarla.
 
-**Produce:** documentación técnica (`docs/specs/technical-docs/`), enlazable desde la historia o tarea correspondiente.
+**Produce:** documentación técnica (`docs/architecture/`), enlazable desde la historia o tarea correspondiente.
 
 **Ejemplos de invocación:**
 

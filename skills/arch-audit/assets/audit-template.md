@@ -27,7 +27,7 @@ fecha/hora que lo confirma. Cada revalidación posterior agrega además una entr
 **Repositorio**: {{nombre/ruta del repo o subproyecto auditado}}
 **Alcance**: {{criterios auditados y estándares/requisitos de contexto cubiertos + fuentes AGENTS.md — p. ej. "14 criterios en 4 estándares (Testing, API, Persistence, Security) · 2 en Draft excluidos + AGENTS.md raíz"}}
 **Método**: {{descripción corta de lo que realmente se usó — herramientas de inspección y fitness functions ejecutadas, p. ej. "grep + lectura de package.json/composer.json; runner node scripts/arch/verify.mjs ejecutado". No se corre el build ni la suite completa.}}
-**Veredicto**: {{`APPROVED` | `REJECTED` | `APPROVED_WITH_NOTES`}} {{si hubo alguna revalidación, agregar aquí mismo "(revalidado YYYY-MM-DD HH:MM)" con la fecha/hora de la última entrada de ## Revalidaciones; omitir si no hubo ninguna}}
+**Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED | `❌` REJECTED | `⚠️` APPROVED_WITH_NOTES}} {{si hubo alguna revalidación, agregar aquí mismo "(revalidado YYYY-MM-DD HH:MM)" con la fecha/hora de la última entrada de ## Revalidaciones; omitir si no hubo ninguna}}
 
 ## Resumen
 
@@ -148,7 +148,7 @@ partiría la celda).
 ### Sugeridas
 
 <!--
-Por cada criterio apto que NO tiene fitness function (Verificación: no), sugerir crearla. Si todos los
+Por cada criterio apto que NO tiene fitness function (Verificación: Pending), sugerir crearla. Si todos los
 criterios aptos ya tienen una, escribir "Ninguna: todos los criterios aptos ya están cubiertos.".
 -->
 
@@ -210,7 +210,7 @@ refleja también en "Veredicto" de la cabecera, junto a la fecha/hora que lo con
 
 ### Revalidación — {{YYYY-MM-DD HH:MM}}
 
-**Veredicto resultante**: {{`APPROVED` | `REJECTED` | `APPROVED_WITH_NOTES`}}
+**Veredicto resultante:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED | `❌` REJECTED | `⚠️` APPROVED_WITH_NOTES}}
 
 **Cambios evidenciados:**
 

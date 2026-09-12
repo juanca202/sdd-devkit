@@ -34,7 +34,7 @@ Lo que sí exige el plugin instalado es que la carpeta `references/` viaje junto
 
 | Archivo | Qué contiene | Skills que lo consumen |
 |---------|--------------|------------------------|
-| [`language.md`](language.md) | Regla única de resolución del idioma de artefactos y mensajes: lectura obligatoria antes de ejecutar cualquier skill o agente | **Los 16 skills y los 3 agentes** |
+| [`language.md`](language.md) | Regla única de resolución del idioma de artefactos, documentos y mensajes: lectura obligatoria antes de ejecutar cualquier skill o agente | **Los 16 skills y los 3 agentes** |
 | [`planning.md`](planning.md) | Política de definición de casos de prueba resuelta desde `.sdd-devkit/settings.json`: `testCases.mode` decide si se pregunta, se invoca automáticamente o nunca se sugiere `test-define` al cerrar la planificación; `testCases.askDetails`, si `test-define` entrevista o aplica valores por defecto | `work-define`, `work-plan` (`mode`) · `test-define` (`askDetails`) |
 | [`implementation.md`](implementation.md) | Política de implementación resuelta desde `.sdd-devkit/settings.json`: ritmo de confirmación por unidad, qué hacer con cambios sin commitear al iniciar, worktrees y su ubicación, concurrencia máxima, handoff de cierre y modo de archivado | `work-implement` · `work-integrate`, `pr-create` (`archiveMode`) |
 | [`git.md`](git.md) | Política de commit y push resuelta desde `.sdd-devkit/settings.json`: si se confirma la división en varios commits, si se hace push tras completarlo (no aplica en invocación delegada) y qué ramas son de integración con su `commitPolicy` | `git-commit` · `work-implement`, `work-integrate` (`integrationBranches`) |
@@ -58,7 +58,7 @@ existir ninguna otra regla de idioma en el resto del archivo ni en sus `referenc
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
 

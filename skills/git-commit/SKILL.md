@@ -50,7 +50,7 @@ No continúes hasta haber leído y aplicado `git.md`.
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
 
@@ -136,7 +136,7 @@ Antes de aceptar el staging, seguir [references/secret-detection.md](references/
 
 **Los renombrados masivos de documentación van con tipo `docs`.** El archivado de un `US-XXX`/`WI-XXX` es el caso canónico: `docs(specs): archivar US-042 tras integrarla`. No es `chore` — mueve documentación, y el diff, si git detecta el *rename*, es solo la ruta. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 
-**Los borrados tienen tipo propio.** Un commit que solo elimina archivos se clasifica por lo que eran: `docs` si eran documentación o informes, `chore` si eran artefactos auxiliares, `refactor` si era código cuya funcionalidad se movió, `feat`/`fix` si el borrado es el cambio de comportamiento. No usar `chore` por defecto para todo borrado.
+**Los borrados tienen tipo propio.** Un commit que solo elimina archivos se clasifica por lo que eran: `docs` si eran documentación o informes, `chore` si eran archivos auxiliares generados, `refactor` si era código cuya funcionalidad se movió, `feat`/`fix` si el borrado es el cambio de comportamiento. No usar `chore` por defecto para todo borrado.
 
 ## Flujo: Commit estándar
 

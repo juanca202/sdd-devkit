@@ -73,10 +73,10 @@ Categorías no funcionales (ISO/IEC 25010): Idoneidad funcional · Eficiencia de
 <!--
 Incluir únicamente enlaces a recursos ya almacenados; nunca pegar archivos, imágenes ni descripciones directamente aquí.
 Recursos válidos: mockups, wireframes, flujos, modelos, diagramas, especificaciones técnicas.
-Rutas permitidas: assets/ (recursos propios de esta historia) o docs/specs/technical-docs/ (documentación técnica compartida).
-Al enlazar un elemento de technical-docs, copiar la referencia tal como la devuelve design-define, nunca el título
-convertido a slug: docs/specs/technical-docs/[capability]/README.md#api-04 (o #fl-02) para APIs y flujos;
-docs/specs/technical-docs/[capability]/models/md-01.md o diagrams/dg-01.md para modelos y diagramas.
+Rutas permitidas: assets/ (recursos propios de esta historia) o docs/architecture/ (documentación técnica compartida).
+Al enlazar un elemento de la documentación técnica, copiar la referencia tal como la devuelve design-define, nunca el título
+convertido a slug: docs/architecture/[capability]/README.md#api-04 (o #fl-02) para APIs y flujos;
+docs/architecture/[capability]/models/md-01.md o diagrams/dg-01.md para modelos y diagramas.
 -->
 - **Diseño / prototipo:** {{enlace markdown al diseño o prototipo}}
 - **Archivo local:** {{enlace markdown al archivo en assets/}}

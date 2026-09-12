@@ -13,7 +13,7 @@ Flujo para **ejecutar en codigo** las tareas tecnicas `TK-XXX` de una historia d
 | Historia de usuario | `docs/specs/user-stories/US-XXX-[nombre-corto]/README.md` |
 | Tareas | `docs/specs/user-stories/US-XXX-[nombre-corto]/TK-XXX-[nombre].md` |
 | Progreso | `docs/specs/user-stories/US-XXX-[nombre-corto]/progress.md` |
-| Glosario | `docs/specs/glossary.md` |
+| Glosario | `docs/glossary.md` |
 | US ya archivada (fallback) | `docs/archive/user-stories/US-XXX-[nombre-corto]/`, con la misma estructura interna |
 
 **Rama de trabajo:** `feature/US-XXX-[nombre-corto]` (el segmento tras `feature/` coincide con la carpeta de la US).

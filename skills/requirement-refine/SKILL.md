@@ -28,7 +28,7 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.* Este skill declara una excepción de ritmo (cierre de lagunas por tandas de hasta 3) — ver la tabla de excepciones en ese archivo.
 
@@ -42,7 +42,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
 
@@ -61,7 +61,7 @@ Lo propio de este skill:
 | Wireframes de pantalla (si el requerimiento tiene UI) | `docs/specs/requirements/SRS-XXX-[nombre-corto]/assets/wireframes/[pantalla-slug].md` (documento) y `[pantalla-slug].svg` (SVG enlazado) |
 | Otros archivos de apoyo | `docs/specs/requirements/SRS-XXX-[nombre-corto]/assets/` |
 | Investigación de stack delegada (si se investigó) | `docs/specs/requirements/SRS-XXX-[nombre-corto]/research/RS-XXX-[slug]/README.md` — la crea `/work-research`, este skill solo la referencia |
-| Glosario (opcional) | `docs/specs/glossary.md` |
+| Glosario (opcional) | `docs/glossary.md` |
 
 > **`references/` vs. `assets/`.** `references/` guarda el **insumo tal como llegó** (el ticket, el correo, la transcripción de reunión, diseños, wireframes ya existentes, capturas o documentación técnica) para trazabilidad — nunca se edita ni se reescribe, solo se añade. `assets/` guarda lo que **este skill produce** como apoyo del documento (wireframes, y cualquier otro archivo derivado); eso sí se actualiza cuando cambia.
 

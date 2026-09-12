@@ -42,8 +42,8 @@ No existe aquí el modo «stubs desde una historia»: no hay US que descomponer.
 | Work item | `docs/specs/work-items/WI-XXX-[kebab-case]/README.md` |
 | Progreso | `docs/specs/work-items/WI-XXX-[kebab-case]/progress.md` |
 | ADR | `docs/adr/` |
-| Documentación técnica | `docs/specs/technical-docs/[capability]/` — `README.md`, `models/`, `diagrams/` (propiedad de `design-define`; aquí solo se referencia) |
-| Glosario | `docs/specs/glossary.md` |
+| Documentación técnica | `docs/architecture/[capability]/` — `README.md`, `models/`, `diagrams/` (propiedad de `design-define`; aquí solo se referencia) |
+| Glosario | `docs/glossary.md` |
 | WI ya archivado (fallback) | `docs/archive/work-items/WI-XXX-[kebab-case]/`, con la misma estructura interna |
 
 > **Los WI archivados siguen contando.** `work-integrate` y `pr-create` pueden mover la carpeta de un WI cerrado a `docs/archive/work-items/`, si el usuario confirma el archivado. Ese WI **no desaparece** a efectos de este skill: su ID sigue ocupado, su alcance sigue siendo alcance ya cubierto, y su carpeta se busca ahí cuando no está en la ruta activa. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
@@ -73,7 +73,7 @@ Antes de crear o editar cualquier WI, tener clara esta información. **No invent
 | **Descripción** | Del mensaje del usuario: qué problema/necesidad motiva el trabajo. **Si viene de un dossier de bug de `work-research`** (flujo «Analizar issue»), la descripción y los criterios ya están redactados ahí: no re-entrevistar, mapear — ver la nota de abajo | Para stub: basta un objetivo breve. Para WI completo: preguntar hasta entender el problema |
 | **Criterios de aceptación** (WI completo) | Del usuario o derivados del requerimiento: cómo se verifica que quedó hecho | Si no se pueden formular criterios verificables: publicar como stub en Draft y pedirlos |
 | **Repositorio** | Nombre del repositorio git al que afecta el work item; inferir del repo (git remote / carpeta) o indicado por el usuario | Stub: puede quedar `Por definir`. WI completo: obligatorio; sin él el estado no puede ser `Ready` |
-| **Contexto técnico** (WI completo) | ADRs existentes, technical-docs, descripción del usuario | Si falta decisión técnica relevante: sugerir ADR al usuario, no crearlo. Si un modelo, API o flujo mencionado no tiene especificación en `technical-docs/` y el usuario pide detallarlo: delegar a `/design-define` vía subagente y enlazar la referencia devuelta |
+| **Contexto técnico** (WI completo) | ADRs existentes, documentación técnica, descripción del usuario | Si falta decisión técnica relevante: sugerir ADR al usuario, no crearlo. Si un modelo, API o flujo mencionado no tiene especificación en `architecture/` y el usuario pide detallarlo: delegar a `/design-define` vía subagente y enlazar la referencia devuelta |
 | **Referencia de UI** (solo si toca UI) | Figma, wireframe o imagen de alta fidelidad aportados por el usuario | Obligatoria para `Ready`; sin ella el WI de UI no puede salir de `Draft` |
 | **Tipo** | Del usuario o inferido del requerimiento (bug-fix / refactor / dependency-update / optimization / security-update / test-improvement / documentation-update / operational-change) | Si es ambiguo, preguntar; si hay un tracker externo vinculado, condiciona el tipo de work item que se crea allí (mapeo exacto en su archivo de referencia) |
 | **Vinculación con el gestor de proyectos** | Ver sección «Resolución de la integración con el gestor de proyectos» de `SKILL.md` | Si la integración está activa, seguir el archivo de referencia del proveedor antes de crear archivos |
@@ -141,12 +141,12 @@ Un WI completo puede alcanzar `Estado: Ready` si cumple todas las condiciones de
    - **Descripción**: qué problema/necesidad motiva el trabajo — claro y concreto; sin diseño técnico.
    - **Reglas de negocio** (opcional — incluir solo si el dominio impone restricciones, obligaciones o prohibiciones explícitas; omitir si no aplica): cada regla lleva id secuencial `BR-01`, `BR-02`, … con enunciado RFC 2119 en MAYÚSCULAS. **Cada `BR-XX` declarada debe quedar verificada por al menos un `AC-XXX`** de la sección Criterios de aceptación (anotar `→ verificado por AC-XXX` junto a la regla); si al redactar los criterios alguna `BR-XX` queda sin ningún `AC-XXX` que la verifique, es una laguna — cerrarla con una pregunta o registrarla en Observaciones, nunca dejarla sin verificar.
    - **Criterios de aceptación**: cómo se verifica que quedó hecho; lista verificable. Tono imperativo; sin «podría», «quizá».
-   - **Dependencias**: solo piezas *dentro del alcance del work item*. ADRs, technical-docs y referencias de diseño van en **Referencias**.
-   - **Referencias**: ADRs existentes, technical-docs (con la referencia al elemento concreto: para APIs y flujos, el README de la capability con ancla, p. ej. `technical-docs/facturacion/README.md#api-01`; para modelos y diagramas, el archivo del elemento, p. ej. `technical-docs/facturacion/models/md-01.md`), diseño. La referencia la emite `design-define` ya formada y se **copia tal cual** — el ancla es **siempre `#<id en minúsculas>`** (`#api-04`, `#fl-02`) y el archivo se nombra por el id, nunca derivados del título del elemento. Un `#api-01-crear-factura` o un `models/factura.md` apuntan a nada. No crear ADRs; si falta una decisión, sugerirlo en Observaciones. Si el WI depende de un modelo, API o flujo **sin especificación** en `technical-docs/`, registrarlo en Observaciones; si el usuario pide detallarlo, **delegar a `/design-define` vía subagente** y agregar aquí la referencia devuelta.
+   - **Dependencias**: solo piezas *dentro del alcance del work item*. ADRs, documentación técnica y referencias de diseño van en **Referencias**.
+   - **Referencias**: ADRs existentes, documentación técnica (con la referencia al elemento concreto: para APIs y flujos, el README de la capability con ancla, p. ej. `architecture/facturacion/README.md#api-01`; para modelos y diagramas, el archivo del elemento, p. ej. `architecture/facturacion/models/md-01.md`), diseño. La referencia la emite `design-define` ya formada y se **copia tal cual** — el ancla es **siempre `#<id en minúsculas>`** (`#api-04`, `#fl-02`) y el archivo se nombra por el id, nunca derivados del título del elemento. Un `#api-01-crear-factura` o un `models/factura.md` apuntan a nada. No crear ADRs; si falta una decisión, sugerirlo en Observaciones. Si el WI depende de un modelo, API o flujo **sin especificación** en `architecture/`, registrarlo en Observaciones; si el usuario pide detallarlo, **delegar a `/design-define` vía subagente** y agregar aquí la referencia devuelta.
    - **Plan de implementación**: pasos concretos acordados o derivados de fuentes citadas en Referencias. Si no se conocen aún, **no inventar** — indicar en Observaciones qué falta.
    - **Migración** (opcional): si el WI proviene de una investigación de migración (`research/RS-XXX-{slug}/` de `work-research`), rellenar el bloque **Migración (origen → destino)** de la plantilla enlazando esa investigación (contexto progresivo: `discovery.md` y `validation.md` no se duplican) y mapear los `AC-XXX` a los casos Golden Master (`GM-XXX`). Omitir la sección si no es una migración.
    - **Observaciones**: solo si hay pendientes reales. Si no hay nada, **omitir la sección**. Con pendientes reales: `Estado: Draft`.
-3. **Documentación técnica y glosario**: si el WI requiere crear o actualizar especificaciones en `technical-docs/`, **delegar a `/design-define` vía subagente** (nunca editarlas desde este skill) y enlazar las referencias devueltas; glossary sí puede actualizarse aquí con entradas breves (no sustituye ADR ni technical-doc).
+3. **Documentación técnica y glosario**: si el WI requiere crear o actualizar especificaciones en `architecture/`, **delegar a `/design-define` vía subagente** (nunca editarlas desde este skill) y enlazar las referencias devueltas; glossary sí puede actualizarse aquí con entradas breves (no sustituye ADR ni technical-doc).
 4. **Verificar el checklist** antes de asignar `Estado: Ready`.
 5. **Handoff:** con el WI en `Ready`, aplicar antes `specification.testCases.mode` sobre el propio WI (ver [`${PLUGIN_ROOT}/references/planning.md`](../../../references/planning.md)); después, si el usuario quiere implementar, **invocar `/work-implement`** (no implementar directamente desde este skill). Si quedó en `Draft`, listar qué falta para completarlo.
 
@@ -210,7 +210,7 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - [ ] **Dependencias** listadas dentro del alcance del work item
 - [ ] **Plan de implementación** con pasos concretos
 - [ ] **Observaciones** sin pendientes abiertos — sección omitida o con *Sin pendientes documentados*
-- [ ] Referencias a ADRs y technical-docs con rutas relativas válidas, y las de technical-docs tal como las devolvió `design-define` — `README.md#<id>` (`#api-04`, `#fl-02`) para APIs/flujos, `models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas — nunca un slug del título
+- [ ] Referencias a ADRs y documentación técnica con rutas relativas válidas, y las de `docs/architecture/` tal como las devolvió `design-define` — `README.md#<id>` (`#api-04`, `#fl-02`) para APIs/flujos, `models/md-XX.md` / `diagrams/dg-XX.md` para modelos y diagramas — nunca un slug del título
 
 **Formato:**
 - [ ] Plantilla `assets/work-item-template.md` leída
@@ -251,8 +251,8 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - Crear el WI como un archivo suelto `WI-XXX-[slug].md` en lugar de una carpeta `WI-XXX-[slug]/README.md`.
 - Crear un `WI` con sub-tareas hijas; un esfuerzo grande se parte en varios `WI-` hermanos.
 - Crear ADRs sin pedido explícito del usuario; solo referenciar existentes o sugerir su creación.
-- Crear o editar documentos en `docs/specs/technical-docs/` directamente desde este skill; la especificación técnica se delega a `/design-define` vía subagente y aquí solo se enlaza la referencia devuelta.
-- Redactar en el WI la definición de un modelo, API o flujo (tablas de campos, contratos, diagramas) en lugar de referenciar su elemento en `technical-docs/`.
+- Crear o editar documentos en `docs/architecture/` directamente desde este skill; la especificación técnica se delega a `/design-define` vía subagente y aquí solo se enlaza la referencia devuelta.
+- Redactar en el WI la definición de un modelo, API o flujo (tablas de campos, contratos, diagramas) en lugar de referenciar su elemento en `architecture/`.
 - Publicar `Estado: Ready` sin criterios de aceptación verificables.
 - Publicar `Estado: Ready` con pendientes en Observaciones.
 - Publicar `Estado: Ready` sin el repositorio afectado en la cabecera del WI.

@@ -16,6 +16,8 @@ Node**; para otro stack se genera el equivalente respetando el mismo contrato.
 ```
 scripts/arch/
 ├── verify.mjs             # Runner: ejecuta las validaciones (todas, o las del estándar indicado)
+├── lib/
+│   └── colors.mjs         # colorStatus() / stripAnsi() — color de PASS/WARN/FAIL (ver nota del contrato)
 └── checks/
     ├── testing.mjs        # UN archivo por ESTÁNDAR (nombre = slug del estándar)
     └── frontend.mjs       # Dentro, un chequeo por CR, con su trazabilidad (CR-XXX)
@@ -42,6 +44,15 @@ scripts/arch/
 3. El runner ejecuta cada check como subproceso, cuenta las líneas de protocolo
    para el resumen y sale `≠ 0` solo si algún check salió `≠ 0`.
 4. Un slug pedido por argumento que no tiene check registrado es un error (`≠ 0`).
+
+> **Nota — color (no es parte del contrato).** La implementación de referencia en Node colorea los
+> estados (`PASS` verde, `WARN` amarillo, `FAIL` rojo) cuando la salida es una terminal real, o cuando
+> se fuerza con `FORCE_COLOR`, y respeta `NO_COLOR`. Como los checks corren como subprocesos con stdout
+> por pipe (nunca TTY), es el **runner** quien decide si hay color y lo propaga a cada hijo vía
+> `FORCE_COLOR=1` (`util.styleText` la respeta aunque el stream no sea TTY); por eso su conteo del
+> resumen quita los códigos ANSI (`stripAnsi`) antes de comparar el prefijo de cada línea. En otro
+> stack, colorear es una **mejora opcional** con el mecanismo propio de ese ecosistema (o se omite):
+> el contrato mínimo es el texto `PASS|FAIL|WARN`, no el color.
 
 ## Ejecutar las validaciones
 

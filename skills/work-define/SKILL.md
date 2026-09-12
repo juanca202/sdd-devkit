@@ -9,7 +9,7 @@ license: MIT
 
 Guía para **crear o actualizar** historias de usuario en el repo del producto.
 
-> **Alcance de una US:** El `README.md` es un documento **funcional**. Registra el valor para el usuario, los **criterios de aceptación** (lista plana con ids `AC-XXX`, categoría entre paréntesis y enunciado RFC 2119) y el estado de avance. El detalle de implementación (DTOs, endpoints, esquemas) va en `docs/specs/technical-docs/` — creado y mantenido por el skill **`design-define`**, nunca directamente desde aquí — o en tareas `TK-XXX`, nunca en la narrativa de la historia. Los documentos técnicos **no son parte de la descripción funcional**; se enlazan desde la sección Referencias de la US y pueden citarse para justificar criterios de INVEST o condiciones del DoR.
+> **Alcance de una US:** El `README.md` es un documento **funcional**. Registra el valor para el usuario, los **criterios de aceptación** (lista plana con ids `AC-XXX`, categoría entre paréntesis y enunciado RFC 2119) y el estado de avance. El detalle de implementación (DTOs, endpoints, esquemas) va en `docs/architecture/` — creado y mantenido por el skill **`design-define`**, nunca directamente desde aquí — o en tareas `TK-XXX`, nunca en la narrativa de la historia. Los documentos técnicos **no son parte de la descripción funcional**; se enlazan desde la sección Referencias de la US y pueden citarse para justificar criterios de INVEST o condiciones del DoR.
 
 La plantilla canónica está en `assets/user-story-template.md` (léela antes de escribir cualquier US).
 
@@ -30,7 +30,7 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md): **Política de planificación** — si se pregunta, se invoca automáticamente o nunca se sugiere `test-define` al dejar la US en Ready. *Lectura obligatoria antes de ejecutar el skill.*
 
@@ -44,7 +44,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
 
@@ -70,8 +70,8 @@ Lo propio de este skill:
 | --------- | ---- |
 | Historia de usuario (**salida**) | `docs/specs/user-stories/US-XXX-[nombre-corto]/README.md` |
 | Archivos de apoyo | `docs/specs/user-stories/US-XXX-[nombre-corto]/assets/` |
-| Documentación técnica (solo lectura) | `docs/specs/technical-docs/[capability]/` — `README.md`, `models/`, `diagrams/`; propiedad de `design-define`; este skill la referencia, nunca la crea ni la edita |
-| Glosario (opcional) | `docs/specs/glossary.md` |
+| Documentación técnica (solo lectura) | `docs/architecture/[capability]/` — `README.md`, `models/`, `diagrams/`; propiedad de `design-define`; este skill la referencia, nunca la crea ni la edita |
+| Glosario (opcional) | `docs/glossary.md` |
 
 > **Las US archivadas siguen contando.** El siguiente `US-XXX` libre se calcula sobre la ruta activa **y** sobre `docs/archive/user-stories/`, y el flujo *Actualizar* busca ahí la historia cuando no está en la activa.
 

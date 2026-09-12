@@ -22,7 +22,7 @@ Inicializa, en un proyecto **en cualquier punto de partida**, las primeras instr
 | Skill | Qué asume/hace, y cómo se relaciona con `arch-init` |
 | ----- | ----------------------------------------------------- |
 | `arch-manage` | Crea/actualiza ADRs y estándares de dominio. `arch-init` lo invoca en el Paso 5 con los candidatos que se aceptaron en el Paso 4 — nunca redacta un ADR/estándar por su cuenta. |
-| `arch-discover` | Infiere ADR/estándares candidatos **del código ya existente** y los crea por su cuenta (su Fase 5 invoca `arch-manage`). `arch-init` lo invoca **completo** en el Paso 4.1 cuando el punto de partida es "con implementación" — no reimplementa esa inspección ni repite su creación de artefactos. |
+| `arch-discover` | Infiere ADR/estándares candidatos **del código ya existente** y los crea por su cuenta (su Fase 5 invoca `arch-manage`). `arch-init` lo invoca **completo** en el Paso 4.1 cuando el punto de partida es "con implementación" — no reimplementa esa inspección ni repite su creación de documentos. |
 | `arch-audit` | Audita `docs/standards/` y `AGENTS.md` contra el repo — de `AGENTS.md` toma también el contexto de stack (`# Stack tecnológico`). `arch-init` es lo que le da a `arch-audit` algo que auditar la primera vez. |
 | `quality-check` | Sabe qué se suele validar por stack — tipado, linter, unit tests, coverage, build, e2e, sonar (`quality-check/references/stacks.md`) — más las suites de prueba que declare el **estándar de testing** del repo, que son las únicas no fijas ([Suites de prueba](../quality-check/SKILL.md#suites-de-prueba-fijas-y-configuradas)). `arch-init` lo **consulta** en el Paso 4 para saber qué le falta a la compuerta de calidad; no ejecuta la corrida completa (esa corre sobre código ya implementado, no aplica en una inicialización). |
 | `work-define` / `work-plan` | Reciben el handoff que `arch-init` ofrece al cerrar (Paso 5). |
@@ -49,7 +49,7 @@ Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
 
@@ -69,10 +69,10 @@ No continúes hasta haber leído y aplicado `language.md`.
 | `docs/adr/README.md` | Índice de ADRs vigentes | Paso 3 (stub) → Paso 5 (poblado por `arch-manage`) |
 | `docs/standards/README.md` | Índice de estándares vigentes | Paso 3 (stub) → Paso 5 (poblado por `arch-manage`) |
 
-Los archivos del harness que **ya existan** en el proyecto se revisan en el Paso 3. `AGENTS.md`, `CLAUDE.md`, `.agents/MEMORY.md`, `.sdd-devkit/settings.json`, `docs/adr/README.md` y `docs/standards/README.md` se llevan al formato de su plantilla (ver [3.1 Migración de formato](#31-migración-de-formato)) — no admiten variantes de formato, porque el resto del catálogo lee sus secciones por título; en multi-repo, esto aplica **una vez por cada copia** de `AGENTS.md`/`CLAUDE.md` (raíz principal y cada submódulo), cada una comparada contra la plantilla que le corresponde. `README.md` es distinto: **no tiene una plantilla de secciones fija**: es un artefacto libre del proyecto, y su única regla de conformidad es tener, cerca del inicio, la descripción de qué hace el proyecto (o ese repositorio, en un submódulo) en 1-2 párrafos, sin que `arch-init` toque el resto de su contenido — ver [3.4 README.md raíz — descripción del proyecto](#34-readmemd-raíz--descripción-del-proyecto).
+Los archivos del harness que **ya existan** en el proyecto se revisan en el Paso 3. `AGENTS.md`, `CLAUDE.md`, `.agents/MEMORY.md`, `.sdd-devkit/settings.json`, `docs/adr/README.md` y `docs/standards/README.md` se llevan al formato de su plantilla (ver [3.1 Migración de formato](#31-migración-de-formato)) — no admiten variantes de formato, porque el resto del catálogo lee sus secciones por título; en multi-repo, esto aplica **una vez por cada copia** de `AGENTS.md`/`CLAUDE.md` (raíz principal y cada submódulo), cada una comparada contra la plantilla que le corresponde. `README.md` es distinto: **no tiene una plantilla de secciones fija**: es un documento libre del proyecto, y su única regla de conformidad es tener, cerca del inicio, la descripción de qué hace el proyecto (o ese repositorio, en un submódulo) en 1-2 párrafos, sin que `arch-init` toque el resto de su contenido — ver [3.4 README.md raíz — descripción del proyecto](#34-readmemd-raíz--descripción-del-proyecto).
 
 > **Raíz de los índices de arquitectura.** Los dos índices (`docs/adr/README.md`, `docs/standards/README.md`)
-> son artefactos de **arquitectura**: pertenecen a la raíz del repositorio cuyo código documentan (ver
+> son documentación de **arquitectura**: pertenecen a la raíz del repositorio cuyo código documentan (ver
 > [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions)).
 > La raíz principal los recibe (`AGENTS.md` los referencia) **salvo que esté clasificada "Solo specs"**
 > (Paso 1.2) — un repositorio sin código de aplicación nunca los recibe, sin excepción y sin preguntarlo; el
@@ -119,6 +119,11 @@ que lo infiera con confianza, a diferencia de la clasificación del 1.2.
 
 - `git rev-parse --is-inside-work-tree`. Si falla, ejecutar `git init` e informar que se creó el repositorio (sin hacer commit todavía — el primer commit queda a criterio del usuario, p. ej. vía `git-commit` después del Paso 3).
 - Si ya es un repo git, no tocar la configuración existente (remoto, ramas, hooks).
+- **Si el proyecto parte de otro proyecto** (el usuario da una URL o ruta como punto de partida), distinguir dos casos — la diferencia decide si esa URL termina como `origin` o como `upstream`:
+  1. **Proyecto base** (plantilla, starter, semilla corporativa): ese repositorio **no es** el repo del proyecto, solo su punto de partida. Clonarlo y dejarlo como remote **`upstream`** del repo del proyecto: `git clone <url-base> <destino> && git -C <destino> remote rename origin upstream`. `origin` se agrega cuando exista el remoto propio del proyecto (`git remote add origin <url>`); mientras tanto, las actualizaciones del base se traen con `git fetch upstream` sin confundir ambos repos.
+  2. **Proyecto existente**: la URL o ruta dada **es** el repo del proyecto. Usarlo tal cual (clonarlo si aún no está local), sin reconfigurar remotos — aplica la regla anterior de no tocar la configuración existente.
+
+  Ante una URL sin contexto, **preguntar cuál de los dos es** en vez de asumir.
 - **Multi-repo:** este paso ya se resolvió al crear/usar el repositorio de especificaciones en el 1.0; no
   se repite aquí.
 
@@ -257,7 +262,7 @@ Si los siete archivos existen y **todos** están conformes (los seis con plantil
 
 ### 3.4 README.md raíz — descripción del proyecto
 
-A diferencia de los otros seis archivos del harness, `README.md` no tiene una plantilla de secciones fija: es un artefacto libre del proyecto, no una plantilla del catálogo. `arch-init` solo garantiza que tenga, cerca del inicio, una descripción de **qué hace el proyecto** — no toca el resto de su contenido (instalación, badges, licencia, contribución, tabla de contenidos, etc.), ni le impone secciones.
+A diferencia de los otros seis archivos del harness, `README.md` no tiene una plantilla de secciones fija: es un documento libre del proyecto, no una plantilla del catálogo. `arch-init` solo garantiza que tenga, cerca del inicio, una descripción de **qué hace el proyecto** — no toca el resto de su contenido (instalación, badges, licencia, contribución, tabla de contenidos, etc.), ni le impone secciones.
 
 1. **De dónde sale la descripción:**
    - **Sin código:** la necesidad capturada en el [Paso 2.1](#21-preguntar-qué-se-quiere-desarrollar) — qué problema resuelve y para quién.
@@ -364,7 +369,7 @@ No confirmar el cierre antes de que `AGENTS.md` tenga el stack ya escrito.
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 
@@ -391,7 +396,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 - Escribir el stack completo de todos los submódulos en el `AGENTS.md` del repositorio de especificaciones en vez de en el `AGENTS.md` de cada uno — la raíz principal solo resume con una tabla que enlaza a cada uno (`references/multi-repo.md § 7`).
 - Duplicar la lista de submódulos en `.sdd-devkit/settings.json` o en cualquier otro archivo del harness — `.gitmodules` ya es la fuente de verdad.
 - Agregar un repositorio como submódulo sin antes preguntar si ya existe (local o remoto) o si hay que crearlo desde cero.
-- Crear `docs/adr/README.md` o `docs/standards/README.md` para un repositorio clasificado "Solo specs" — nunca aplica, ni siquiera preguntándolo como opt-in; no es lo mismo que "el usuario no los pidió", es que no hay código que esos artefactos puedan describir.
+- Crear `docs/adr/README.md` o `docs/standards/README.md` para un repositorio clasificado "Solo specs" — nunca aplica, ni siquiera preguntándolo como opt-in; no es lo mismo que "el usuario no los pidió", es que no hay código que esos documentos puedan describir.
 - Asumir "Sin código" por defecto ante un repositorio vacío sin evaluar si en realidad es "Solo specs" — la sola ausencia de manifiestos no distingue un greenfield normal de un repositorio que nunca va a tener código de aplicación.
 - Preguntar la situación del repositorio de especificaciones en modo multi-repo, o correr el Paso 2 o el Paso 4 sobre él — es "Solo specs" por definición, automático, nunca se evalúa ni se pregunta.
 - Ejecutar el Paso 4 (candidatos de arquitectura o compuerta de calidad) sobre un repositorio "Solo specs" — no hay código que lo justifique, se salta completo.

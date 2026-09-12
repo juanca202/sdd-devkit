@@ -1,9 +1,17 @@
 # Artefactos: rutas, identificadores y archivado (compartida)
 
 Referencia transversal del plugin **SDD Devkit**. Es la **fuente única** del layout del harness: dónde
-vive cada artefacto, cómo se numera y qué pasa cuando se archiva. Cada `SKILL.md` apunta aquí en lugar
+vive cada artefacto y cada documento, cómo se numera y qué pasa cuando se archiva. Cada `SKILL.md` apunta aquí en lugar
 de repetir la tabla completa, y solo lista **las filas que él escribe o lee** cuando aporta algo
 específico (una salida propia, una excepción de ruta).
+
+> **Qué es un artefacto.** Se llama **artefacto** únicamente a las especificaciones que pueden derivar
+> en una implementación: requerimientos (`SRS-XXX`), historias de usuario (`US-XXX`) con sus tareas
+> (`TK-XXX`), tareas de mantenimiento (`WI-XXX`), features (`FT-XXX`) e investigaciones (`RS-XXX`), más
+> sus casos de prueba (`TC-XXX`). Viven bajo `docs/specs/` y son lo que se numera con `XXX`, se archiva
+> y se traza. Todo lo demás — la documentación técnica de capability (`docs/architecture/`), el glosario,
+> los ADRs, los estándares, los informes y las políticas — es **documentación**: describe, gobierna o
+> verifica, pero no deriva una implementación por sí misma.
 
 > **Notación de placeholders.** `[nombre-corto]`, `[kebab-case]`, `[slug]`, `[capability]`, `XXX`.
 > En documentos antiguos aparece la forma equivalente `{slug}` / `{nombre}`; significan lo mismo.
@@ -12,8 +20,8 @@ específico (una salida propia, una excepción de ruta).
 > [`project-managers/azure-devops.md`](project-managers/azure-devops.md).
 
 > **Resolución de la raíz.** Las rutas de esta tabla son **relativas a una raíz**, no al directorio desde
-> el que se invoca el skill. Cuál es esa raíz depende de la familia del artefacto: los de **arquitectura**
-> (ADR, estándares, fitness functions, informe de `arch-audit`) cuelgan de la **raíz de arquitectura** —
+> el que se invoca el skill. Cuál es esa raíz depende de la familia: la documentación de **arquitectura**
+> (ADR, estándares, fitness functions, informe de `arch-audit`) cuelga de la **raíz de arquitectura** —
 > ver [Raíz de arquitectura](#raíz-de-arquitectura-adr-estándares-y-fitness-functions); los de
 > **especificación** (`docs/specs/…`) cuelgan de la raíz del repositorio principal según
 > `specification.basePath`, y **no** se ven afectados por la resolución de arquitectura.
@@ -46,8 +54,8 @@ específico (una salida propia, una excepción de ruta).
 | Tarea de mantenimiento | `docs/specs/work-items/WI-XXX-[kebab-case]/README.md` | `work-plan` |
 | Feature ya implementada | `docs/specs/features/FT-XXX-[slug]/README.md` | `work-research` (flujo *Analizar legado*) |
 | Casos de prueba | `test-cases/TC-XXX-[slug].md` **dentro de la carpeta del artefacto padre**, con índice `test-cases/README.md` | `test-define` |
-| Documentación técnica de capability | `docs/specs/technical-docs/[capability]/` — `README.md` (APIs, flujos), `models/md-XX.md`, `diagrams/dg-XX.md`, apoyo en `assets/` | `design-define` |
-| Glosario | `docs/specs/glossary.md` (opcional) | `design-define` |
+| Documentación técnica de capability | `docs/architecture/[capability]/` — `README.md` (APIs, flujos), `models/md-XX.md`, `diagrams/dg-XX.md`, apoyo en `assets/` | `design-define` |
+| Glosario | `docs/glossary.md` (opcional) | `design-define` |
 | Investigación | `research/RS-XXX-[slug]/README.md` **dentro de la carpeta del artefacto vinculado**; suelta: `docs/specs/research/RS-XXX-[slug]/README.md` | `work-research` |
 | Progreso de un trabajo | `progress.md` dentro de la carpeta del trabajo (US / WI / FT) | `work-implement` |
 | Archivos de apoyo | `assets/` dentro de la carpeta del artefacto; enlazar con rutas relativas | — |
@@ -55,21 +63,22 @@ específico (una salida propia, una excepción de ruta).
 | Informe de calidad | `docs/audits/quality-check.md` (+ histórico `docs/audits/quality-check-<YYYYMMDD-HHMMSS>.md`) | `quality-check` |
 | Informe de code review | `docs/audits/code-review.md` (+ histórico `docs/audits/code-review-<YYYYMMDD-HHMMSS>.md`) | `code-review` |
 | Informe de auditoría de arquitectura | `<raíz-arq>/docs/audits/arch-audit-YYYY-MM-DD.md` (con sufijo `-HHMM` si ya hay uno de ese día) | `arch-audit` |
-| Caché de corrida de checks deterministas (pruebas + validaciones de arquitectura) | `.sdd-devkit/test-run.json` (**ubicación fija**, no por unidad) | `quality-check` (productor único; la consumen `coverage-verify` y `arch-audit`) |
+| Caché de corrida de checks deterministas (pruebas + validaciones de arquitectura + checks estáticos de la corrida completa) | `.sdd-devkit/test-run.json` (**ubicación fija**, no por unidad) | `quality-check` (productor único; la consumen `coverage-verify` y `arch-audit`) |
 | Estado de iteración para el seguimiento de especificaciones | `.sdd-devkit/current-iteration.json` (**ubicación fija**, vive mientras dura la unidad o corrección en curso) | `work-implement` |
 
 ## Raíz de arquitectura (ADR, estándares y fitness functions)
 
-Los artefactos de arquitectura describen **el código de un repositorio concreto**: sus decisiones, sus
+La documentación de arquitectura describe **el código de un repositorio concreto**: sus decisiones, sus
 normas y los chequeos que las verifican. Por eso **no viven siempre en la raíz del repo principal**, sino
 en la raíz del repositorio al que pertenece el código del que trata la decisión — el **`<raíz-arq>`** de la
 tabla de arriba. Un submódulo con su propio stack tiene sus propios ADR, sus propios estándares y su propio
 runner de fitness functions, versionados junto a su código.
 
-> **Esto no afecta a las especificaciones.** `docs/specs/…` (US, WI, FT, TC, investigaciones, documentos
-> técnicos, glosario) se resuelve siempre contra `specification.basePath` de `.sdd-devkit/settings.json`,
-> sobre el repositorio principal. Un skill de arquitectura que escriba en un submódulo **no** mueve ni
-> duplica nada bajo `docs/specs/`.
+> **Esto no afecta a las especificaciones.** `docs/specs/…` (US, WI, FT, TC, investigaciones) se
+> resuelve siempre contra `specification.basePath` de `.sdd-devkit/settings.json`, sobre el repositorio
+> principal; la documentación técnica (`docs/architecture/`) y el glosario (`docs/glossary.md`) cuelgan
+> directamente de `docs/` del repositorio principal y tampoco se ven afectados. Un skill de arquitectura
+> que escriba en un submódulo **no** mueve ni duplica nada bajo `docs/specs/` ni bajo `docs/architecture/`.
 
 ### Cómo se resuelve
 
@@ -81,10 +90,10 @@ runner de fitness functions, versionados junto a su código.
      `docs/standards/`, `scripts/arch/`. Fin — no se pregunta nada.
 2. **Si hay uno o más repositorios anidados**, resolver el destino **preguntando al usuario** con la
    herramienta de preguntas estructuradas del cliente: presentar la raíz principal y cada submódulo
-   detectado (ruta relativa + stack detectado, si se conoce) y dejar que elija dónde vive el artefacto.
+   detectado (ruta relativa + stack detectado, si se conoce) y dejar que elija dónde vive el documento.
    No inferirlo en silencio: un mismo ADR puede pertenecer legítimamente a la raíz (decisión transversal)
    o a un submódulo (decisión de ese componente).
-3. **Preguntar una sola vez por invocación.** Resuelta la raíz, todos los artefactos de esa corrida
+3. **Preguntar una sola vez por invocación.** Resuelta la raíz, todos los documentos de esa corrida
    —ADR, estándar, checks, runner, índices— se escriben bajo ella. En invocaciones en lote (p. ej.
    `arch-discover` generando varios ADR) se resuelve una vez para todo el lote, salvo que el propio lote
    abarque explícitamente varios repositorios.

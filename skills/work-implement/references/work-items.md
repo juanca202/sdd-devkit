@@ -15,8 +15,8 @@ Flujo para **ejecutar en codigo** una tarea de mantenimiento `WI-XXX` bajo `docs
 | Work item | `docs/specs/work-items/WI-XXX-[kebab-case]/README.md` |
 | Progreso | `docs/specs/work-items/WI-XXX-[kebab-case]/progress.md` |
 | ADR | `docs/adr/` |
-| Documentacion tecnica | `docs/specs/technical-docs/` |
-| Glosario | `docs/specs/glossary.md` |
+| Documentacion tecnica | `docs/architecture/` |
+| Glosario | `docs/glossary.md` |
 
 **Rama de trabajo:** `feature/WI-XXX-[kebab-case]` por defecto. Si el equipo usa prefijos por tipo, derivarlo del campo `Tipo` del WI segun esta tabla — son los ocho valores canonicos de la plantilla (`work-plan/assets/work-item-template.md`), sin abreviar ni traducir:
 

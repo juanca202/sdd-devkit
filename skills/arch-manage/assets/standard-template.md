@@ -17,7 +17,7 @@ en MAYÚSCULAS en el idioma de preferencia (MUST/DEBE, SHOULD/DEBERÍA, MAY/PUED
 verificable es el **criterio de cumplimiento** (`CR-XXX`): pertenece a un requisito, pero **no vive
 dentro de su bloque** — todos los criterios de cumplimiento del estándar, de todos sus requisitos, se
 listan juntos en la sección `## Criterios de cumplimiento`, al final del documento, antes de
-`## Referencias`. Es lo que audita `arch-audit` y lo que traza a su ADR de origen. El estándar
+`## Referencias`. Es lo que audita `arch-audit`. El estándar
 es vivo (se actualiza); el ADR es historia inmutable.
 
 Ubicación (dos formas):
@@ -62,18 +62,14 @@ criterios de cumplimiento se redactan más abajo, en la tabla única `## Criteri
 La unidad verificable y trazable NO es el requisito, sino cada **criterio de cumplimiento** (`CR-XXX`).
 La sección `## Criterios de cumplimiento`, al final del documento (antes de `## Referencias`), reúne en
 una sola tabla los criterios medibles de TODOS los requisitos de arriba (p. ej. cobertura ≥ 80%), cada
-uno con ID `CR-XXX` (único en el estándar, correlativo a través de todos los requisitos), Requisito (el
-`ID` del requisito al que pertenece), Origen (el ADR que lo fijó), si es Automatizable (fitness function)
-y si su Verificación ya existe (yes/no). Un CR es lo que un ADR referencia en `emits` mediante su referencia global
-`<slug-del-estándar>/CR-XXX` (p. ej. testing/CR-001). Su fitness function vive en el archivo de checks
-del ESTÁNDAR — scripts/arch/checks/<slug-del-estándar>.<ext> (p. ej. checks/testing.mjs en un repo
-Node), un archivo por estándar escrito en el lenguaje del stack del repo — donde el chequeo del CR se
-localiza por su referencia CR-XXX en comentarios y líneas de salida. El runner
-scripts/arch/verify.<ext> los ejecuta todos, o solo el de un estándar pasando su slug como argumento.
-
-Rutas relativas a los ADR en la columna Origen: dependen de la forma del estándar. Forma simple
-(docs/standards/<slug>.md) → `../adr/`. Forma con carpeta (docs/standards/<slug>/README.md) →
-`../../adr/`. Ajustar la profundidad según corresponda.
+uno con ID `CR-XXX` (único en el estándar, correlativo a través de todos los requisitos), si es
+Automatizable (fitness function) y su Verificación (enlace al archivo donde vive, o Pending si aún no existe). Un CR es lo que un ADR
+referencia en `emits` mediante su referencia global `<slug-del-estándar>/CR-XXX` (p. ej.
+testing/CR-001). Su fitness function vive en el archivo de checks del ESTÁNDAR —
+scripts/arch/checks/<slug-del-estándar>.<ext> (p. ej. checks/testing.mjs en un repo Node), un archivo
+por estándar escrito en el lenguaje del stack del repo — donde el chequeo del CR se localiza por su
+referencia CR-XXX en comentarios y líneas de salida. El runner scripts/arch/verify.<ext> los ejecuta
+todos, o solo el de un estándar pasando su slug como argumento.
 
 Si un requisito necesita documentos de apoyo (guías, ejemplos, matrices), usar la forma de carpeta
 (docs/standards/<slug>/) y enlazarlos con rutas relativas desde el requisito.
@@ -105,30 +101,29 @@ verificable y trazable, no el requisito. Ej.: el requisito «Unit testing» pued
 Columnas:
   - ID: `CR-XXX` (prefijo + 3 dígitos), único en el estándar, correlativo a través de todos los
     requisitos. Su referencia global es `<estándar>/CR-XXX` (p. ej. testing/CR-001); es lo que el ADR
-    de Origen lista en `emits`.
-  - Requisito: el `ID` (slug) del requisito al que pertenece este criterio (p. ej. unit-testing),
-    para trazar la fila de vuelta a su bloque `## <Requisito>` de arriba.
+    de origen lista en `emits`.
   - Descripción: qué se mide (umbral, check, evidencia); si el criterio es normativo, usar palabra clave
     RFC 2119 en MAYÚSCULAS en el idioma de preferencia.
-  - Origen: el ADR que fijó este criterio de cumplimiento (traza CR → ADR).
   - Automatizable: yes = objetivo/automatizable como fitness function; no = criterio humano/evidencia externa.
   - Enfoque: `bloqueante` = su incumplimiento hace fallar el gate (exit ≠ 0 del runner); `warning` =
     se reporta pero NO tumba el gate. Por defecto `bloqueante`. Se implementa DENTRO del chequeo del CR
     en el archivo de checks de su estándar, no en el nombre del archivo.
-  - Verificación: yes = la verificación ya existe (el chequeo del CR está registrado en el archivo de
-    checks de su estándar — que se localiza POR CONVENCIÓN en
-    scripts/arch/checks/<slug-del-estándar>.<ext>, p. ej. checks/testing.mjs en un repo Node, donde el
-    chequeo se identifica por su referencia CR-XXX; la ruta NO se escribe en la tabla — o hay evidencia
-    externa registrada en el requisito: archivo, job CI, etc.); no = aún no existe.
+  - Verificación: si la verificación ya existe, ENLACE markdown al archivo donde vive: el archivo de
+    checks de su estándar — scripts/arch/checks/<slug-del-estándar>.<ext>, p. ej.
+    [checks/testing.mjs](../../scripts/arch/checks/testing.mjs) desde docs/standards/<slug>.md (un ../
+    adicional en la forma de carpeta docs/standards/<slug>/README.md) —, donde el chequeo se identifica
+    por su referencia CR-XXX; o el archivo/URL de la evidencia externa registrada en el requisito
+    (archivo, job CI, etc.). Pending = aún no existe. Nunca yes/no a secas: el enlace hace la
+    verificación navegable desde la propia tabla.
 -->
 
-| ID | Requisito | Descripción | Origen | Automatizable | Enfoque | Verificación |
-|----|-----------|-------------|--------|-------------|---------|----------------|
-| CR-{{001}} | {{unit-testing}} | Cobertura de pruebas unitarias **DEBE** ser ≥ {{80%}} | [ADR-{{XXX}}](../adr/ADR-{{XXX}}-{{slug}}.md) | {{yes \| no}} | {{bloqueante \| warning}} | {{yes \| no}} |
-| CR-{{002}} | {{unit-testing}} | {{…otro criterio del mismo requisito, si aplica}} | [ADR-{{XXX}}](../adr/ADR-{{XXX}}-{{slug}}.md) | {{yes \| no}} | {{bloqueante \| warning}} | {{yes \| no}} |
-| CR-{{003}} | {{e2e-testing}} | Los flujos críticos definidos por producto **DEBEN** tener cobertura e2e con Playwright | [ADR-{{YYY}}](../adr/ADR-{{YYY}}-{{slug}}.md) | {{yes \| no}} | {{bloqueante \| warning}} | {{yes \| no}} |
+| ID | Descripción | Automatizable | Enfoque | Verificación |
+|----|-------------|-------------|---------|----------------|
+| CR-{{001}} | Cobertura de pruebas unitarias **DEBE** ser ≥ {{80%}} | {{yes \| no}} | {{bloqueante \| warning}} | {{[checks/<slug-estándar>.<ext>](../../scripts/arch/checks/<slug-estándar>.<ext>) \| Pending}} |
+| CR-{{002}} | {{…otro criterio del mismo requisito, si aplica}} | {{yes \| no}} | {{bloqueante \| warning}} | {{[checks/<slug-estándar>.<ext>](../../scripts/arch/checks/<slug-estándar>.<ext>) \| Pending}} |
+| CR-{{003}} | Los flujos críticos definidos por producto **DEBEN** tener cobertura e2e con Playwright | {{yes \| no}} | {{bloqueante \| warning}} | {{[checks/<slug-estándar>.<ext>](../../scripts/arch/checks/<slug-estándar>.<ext>) \| Pending}} |
 
 ## Referencias
 
-- ADR de origen de cada criterio de cumplimiento (ver columna `Origen` y `source_adrs`) y otros estándares relacionados
+- ADR de origen de cada criterio de cumplimiento (ver `source_adrs`) y otros estándares relacionados
 - {{documentos de apoyo del estándar, si usa la forma de carpeta — rutas relativas dentro de docs/standards/<slug>/}}

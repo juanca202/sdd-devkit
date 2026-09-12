@@ -1,7 +1,7 @@
 # Rastreo heurístico de fitness functions existentes
 
 Leer en la Fase 2B, paso 1, **solo cuando** la fila del criterio (`CR-XXX`) no existe o está incompleta
-(estándares antiguos, o un ADR sin criterio) — si el criterio ya tiene `Verificación: yes`, o el
+(estándares antiguos, o un ADR sin criterio) — si el criterio ya tiene un enlace en `Verificación`, o el
 runner del paso 0 ya lo cubrió, no hace falta este rastreo.
 
 ## Preferir el runner de validaciones
@@ -55,7 +55,7 @@ ls scripts/arch/verify.* scripts/arch/checks/* 2>/dev/null
   código de salida agregado resumen la salud arquitectónica ejecutable: el runner sale con código ≠ 0
   **solo** si falla algún criterio `bloqueante`; un criterio `warning` que falla se reporta como `WARN`
   pero **no** cambia el código de salida ni el veredicto ejecutable.
-- Un criterio con `Verificación: yes` cuyo archivo de checks (`checks/<slug-estándar>.<ext>`) **no**
+- Un criterio con enlace en `Verificación` cuyo archivo de checks **no**
   existe, o cuya referencia `CR-XXX` no aparece en la salida de la corrida, se ejecuta individualmente
   (pasos 1-2) y además se anota como observación: la fitness function no está registrada en el archivo
   de checks de su estándar (sugerir corregirlo vía `arch-manage`).
@@ -88,5 +88,5 @@ find . -type f \( -iname "*archtest*" -o -iname "*fitness*" -o -iname ".dependen
 
 Mapear cada fitness function encontrada al criterio que valida: en un archivo de checks
 (`checks/<slug-estándar>.<ext>`), por la referencia `CR-XXX` de cada chequeo (en sus comentarios de
-trazabilidad y en su línea de salida `PASS|FAIL|WARN <estándar>/CR-XXX — …`); en artefactos sueltos,
+trazabilidad y en su línea de salida `PASS|FAIL|WARN <estándar>/CR-XXX — …`); en scripts sueltos,
 por comentarios o por la regla que comprueba. Un criterio puede no tener ninguna, tener una, o varias.

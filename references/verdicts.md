@@ -102,7 +102,7 @@ Todo esto son **identificadores**, no contenido:
   `Draft` / `Ready` / `Obsolete` en un TC, `Pending` / `In Progress` / `Done` en `progress.md`,
   `Unit` / `Integration` / `API Test` / `Visual Test` / `E2E` / `Manual` como tipo de prueba.
 - Los nombres de los modificadores de invocación y los identificadores de suite.
-- Los identificadores de artefacto (`US-XXX`, `TK-XXX`, `WI-XXX`, `TC-XXX`, `FT-XXX`, `ADR-XXX`,
+- Los identificadores de artefactos y documentos (`US-XXX`, `TK-XXX`, `WI-XXX`, `TC-XXX`, `FT-XXX`, `ADR-XXX`,
   `AC-XXX`, `BR-XX`, `CR-XXX`, `RS-XXX`) y los nombres de skill.
 
 Y al revés: **sí** se traducen las etiquetas visibles de esos mismos campos —`**Estado:**`,

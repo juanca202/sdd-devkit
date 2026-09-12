@@ -39,8 +39,8 @@ técnico o funcional), no el estándar entero, ni el requisito como bloque, ni e
   `testing/unit-testing`) reúne una o varias filas de criterios `CR-XXX` bajo `### Criterios de
   cumplimiento`. Sirve para leer y ubicar los criterios, pero lo que se audita es cada `CR-XXX`.
 - **El ADR es contexto, no la norma auditada.** Un ADR registra el *por qué* de una decisión; es
-  historia. Se cita como **Origen** de cada criterio (`Origen` de la fila / `source_adrs` del estándar)
-  para dar trazabilidad, pero no se audita "el ADR" en abstracto.
+  historia. Se cita como origen del criterio a través de `source_adrs` del estándar, para dar
+  trazabilidad, pero no se audita "el ADR" en abstracto.
 - **ADR sin criterio (CR)** = decisión histórica que no fijó ningún criterio (`emits: []`), sin regla
   continua auditable → no genera hallazgo de cumplimiento. Si un ADR `Accepted` contiene una regla
   claramente enforceable pero **no fijó** ningún criterio (repos antiguos, previos a esta separación),
@@ -71,7 +71,7 @@ de arquitectura detectados. Si un criterio no puede confirmarse ni por inspecci�
 function, se marca *No verificable* y se anota qué evidencia haría falta — nunca inventar un veredicto.
 Para cada criterio, el skill evalúa si es **apto** para una fitness function (cumplimiento objetivo y
 automatizable — normalmente ya declarado en su columna `Automatizable: yes`), comprueba si ya existe y la
-ejecuta; si es apto pero no existe (`Verificación: no`), **sugiere crearla**.
+ejecuta; si es apto pero no existe (`Verificación: Pending`), **sugiere crearla**.
 
 **Salida:** un único informe en el `docs/audits/arch-audit-YYYY-MM-DD.md` **de la raíz auditada**, agrupado por prioridad
 (alta / media / baja), donde cada hallazgo referencia el criterio incumplido (`<estándar>/CR-XXX`, con
@@ -120,7 +120,7 @@ cualquier informe y respetar su estructura.
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
 
@@ -162,7 +162,7 @@ y las notas sobre `docs/audits/` compartido y el fingerprint de la tubería de c
 `code-review.md`, `work-integrate`), que describen el `docs/audits/` **del repo principal** — el de un
 submódulo no participa de esa tubería.
 
-> **Si los artefactos quedan en un submódulo**, el informe se commitea **dentro del submódulo** y luego se
+> **Si la documentación de arquitectura queda en un submódulo**, el informe se commitea **dentro del submódulo** y luego se
 > actualiza el puntero en el repo padre: un `git add` desde el padre no stagea contenido del submódulo.
 
 Resuelta la raíz, comprobar si ya existen informes previos **en ella**:
@@ -220,13 +220,13 @@ En una **Nueva auditoría desde cero** se ignora el histórico para el análisis
    requisitos viven juntos en la tabla única `## Criterios de cumplimiento`, al final del documento
    (antes de `## Referencias`). Extraer **de cada fila `CR-XXX`** (la unidad auditable; referencia
    global `<slug-estándar>/CR-XXX`): `ID` (`CR-XXX`), `Requisito` (slug del requisito al que
-   pertenece), `Descripción` (medible, con su palabra clave RFC 2119 si es normativa), `Origen` (ADR
-   que fijó ese criterio), `Automatizable` (yes/no), `Enfoque` (`bloqueante` | `warning`; por defecto
-   `bloqueante`) y `Verificación` (`yes` = la verificación existe — el chequeo vive en el archivo de
-   checks de su estándar, que se localiza por convención en `scripts/arch/checks/<slug-estándar>.<ext>`,
-   o hay evidencia externa registrada en el requisito; `no` = pendiente). **Si el estándar no sigue esa
+   pertenece), `Descripción` (medible, con su palabra clave RFC 2119 si es normativa),
+   `Automatizable` (yes/no), `Enfoque` (`bloqueante` | `warning`; por defecto
+   `bloqueante`) y `Verificación` (un **enlace** al archivo donde vive la verificación — el archivo de checks de su
+   estándar, `scripts/arch/checks/<slug-estándar>.<ext>`, o la evidencia externa registrada en el
+   requisito —; `Pending` = pendiente). **Si el estándar no sigue esa
    estructura** (una tabla `### Criterios de cumplimiento` dentro de cada requisito en vez de la tabla única,
-   sin columna `Requisito`, o con rutas/`TODO`/`N/A` en `Verificación` en vez de yes/no), leer esas
+   sin columna `Requisito`, o con `TODO`/`N/A`/`yes`/`no` en `Verificación` en vez del enlace o `Pending`), leer esas
    tablas igual y señalarlo como observación (estándar fuera de la convención de `arch-manage`) — no bloquea la
    auditoría. **Cada criterio `CR-XXX` es una entrada en la lista de reglas a auditar**,
    contextualizado por el requisito que lo agrupa.
@@ -341,18 +341,18 @@ existe, ejecutarla para validar el cumplimiento. Las fitness functions son **por
 **Antes de ejecutar nada, mirar la caché.** `quality-check` corre el runner de validaciones de arquitectura como un check más y persiste el resultado en `.sdd-devkit/test-run.json` (entrada `suites[]` de `type: "architecture"`). Si esa corrida es **fresca** —mismo `FINGERPRINT` canónico, con las mismas reglas que las demás entradas de esa caché—, **reutilizarla** en vez de volver a ejecutar el runner: las validaciones de arquitectura son deterministas. Este skill **no escribe** `test-run.json`; si la caché está obsoleta o ausente, ejecuta el runner aquí y no persiste nada. **La caché aporta la corrida, no el juicio:** el reparto por `CR-XXX`, la clasificación de incumplimientos y el veredicto se hacen igual, aquí. Sin caché fresca, comprobar si el proyecto tiene un **runner** que corre todas las validaciones de una vez
 (`ls scripts/arch/verify.* scripts/arch/checks/* 2>/dev/null`; lo crea `arch-manage`). **Si existe, es la vía
 preferida** — procedimiento completo (comprobaciones exactas de la caché, cómo ejecutar el runner, mapear su
-salida a cada criterio por `CR-XXX`, y el caso de un criterio con `Verificación: yes` que no aparece en la
+salida a cada criterio por `CR-XXX`, y el caso de un criterio con enlace en `Verificación` que no aparece en la
 corrida) en [`references/fitness-function-heuristics.md`](references/fitness-function-heuristics.md#preferir-el-runner-de-validaciones). **Si no existe**, continuar con la detección y ejecución individuales (pasos 1-2) y, si hay dos o más fitness functions sueltas, sugerir crear el runner vía `arch-manage`.
 
 ### 1. Detectar fitness functions existentes
 
 **Primero, leer la fila del criterio (`CR-XXX`) en la tabla `## Criterios de cumplimiento` de su estándar** (lo escribe
-`arch-manage`). Es la fuente más fiable: si `Verificación: yes`, localizar el archivo de checks de su
-estándar **por convención** (`scripts/arch/checks/<slug-estándar>.<ext>`, p. ej. `checks/testing.mjs`),
+`arch-manage`). Es la fuente más fiable: si `Verificación` trae un enlace, resolver el archivo enlazado
+(por convención vive en `scripts/arch/checks/<slug-estándar>.<ext>`, p. ej. `checks/testing.mjs`),
 ejecutar ese estándar vía el runner con su slug (`node scripts/arch/verify.mjs testing`) y leer la
 línea del `CR-XXX` (salvo que la corrida del paso 0 ya lo haya cubierto); si no hay archivo de checks,
 la verificación es evidencia externa — buscarla en el requisito. Si `Automatizable: yes` pero
-`Verificación: no`, el criterio es apto pero aún no tiene fitness function → va a las sugerencias
+`Verificación: Pending`, el criterio es apto pero aún no tiene fitness function → va a las sugerencias
 (paso 3). Si `Automatizable: no`, no automatizarlo.
 
 Si la fila no existe o está incompleta (estándares antiguos, o ADR sin criterio), leer
@@ -373,18 +373,18 @@ Alimentar el resultado al estado del criterio en la Fase 2 (PASS → refuerza �
 
 ### 3. Criterios aptos SIN fitness function
 
-Si un criterio es **apto** pero no tiene fitness function (`Verificación: no`), añadirlo a la lista de **sugerencias**. Para cada uno proponer:
+Si un criterio es **apto** pero no tiene fitness function (`Verificación: Pending`), añadirlo a la lista de **sugerencias**. Para cada uno proponer:
 - **Qué medir** — la característica arquitectónica a comprobar (la `Descripción` del criterio).
 - **Herramienta sugerida** — según el stack (tabla de [`references/fitness-function-heuristics.md`](references/fitness-function-heuristics.md)).
 - **Esbozo** — una frase de cómo sería el chequeo (p. ej. "regla dependency-cruiser: prohibir imports desde `src/api/**` que no sean del esquema GraphQL").
 
 Esto no crea la fitness function (eso es otra tarea); solo la **recomienda** en el informe. Sugerir
-además dejar constancia en el criterio: mantener su columna `Verificación: no` (vía `arch-manage`), con el esbozo en el informe,
+además dejar constancia en el criterio: mantener su columna `Verificación: Pending` (vía `arch-manage`), con el esbozo en el informe,
 para que la próxima auditoría la descubra sin heurística. Al crearla, `arch-manage` investigará la forma
 más común/eficiente de verificarla, instalará lo necesario si hace falta, registrará el chequeo en el
 archivo de checks de su estándar (`scripts/arch/checks/<slug-estándar>.<ext>`, con la trazabilidad
 `CR-XXX` en comentarios y líneas de salida, y el enfoque `bloqueante`/`warning` implementado dentro del
-chequeo) y marcará `Verificación: yes`, quedando incluida en la ejecución del runner
+chequeo) y pondrá en `Verificación` el enlace al archivo de checks, quedando incluida en la ejecución del runner
 (`scripts/arch/verify.<ext>`).
 
 ---
@@ -480,7 +480,7 @@ hallazgo vive en `assets/`. **Leerlos solo cuando la fase correspondiente lo pid
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/escalation.md`](../../references/escalation.md): **Límite de intentos** — cuántos intentos sobre un mismo problema irresoluble antes de escalar, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 

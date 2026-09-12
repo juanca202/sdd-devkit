@@ -67,13 +67,19 @@ Por cada repositorio que la solución vaya a usar (además del de especificacion
 todos en la misma tanda si son varios — si **ya existe o hay que crearlo**, mismo patrón que usa el resto
 del catálogo para esta distinción (p. ej. `/requirement-refine` con "nuevo o existente"):
 
-*"¿El repositorio `<nombre>` ya existe (local o remoto) o hay que crearlo desde cero?"* — opciones
-`Ya existe` / `Hay que crearlo`.
+*"¿El repositorio `<nombre>` ya existe (local o remoto), parte de un proyecto base, o hay que crearlo
+desde cero?"* — opciones `Ya existe` / `Parte de un proyecto base` / `Hay que crearlo`.
 
-- **Ya existe** → pedir la referencia: una URL remota, o una ruta local si ya está clonado en otro lugar
-  del disco (texto libre). Aprovechar la misma respuesta para capturar, en una frase, el **rol de ese
-  repositorio** dentro de la solución (p. ej. "el backend de pedidos") — se reutiliza en el Paso 2 (si
-  aplica) y en la descripción de su `README.md` (§ 4.3), para no repreguntarlo.
+- **Ya existe** → la referencia dada **es el repo del proyecto**: pedir una URL remota, o una ruta local
+  si ya está clonado en otro lugar del disco (texto libre), y usarlo tal cual. Aprovechar la misma
+  respuesta para capturar, en una frase, el **rol de ese repositorio** dentro de la solución (p. ej.
+  "el backend de pedidos") — se reutiliza en el Paso 2 (si aplica) y en la descripción de su `README.md`
+  (§ 4.3), para no repreguntarlo.
+- **Parte de un proyecto base** → pedir la URL o ruta del **proyecto base** (plantilla, starter, semilla
+  corporativa). Ese repositorio **no es** el repo del proyecto, solo su punto de partida: el repo del
+  proyecto se crea a partir de él y el base queda como remote **`upstream`**, para poder traer sus
+  actualizaciones futuras (`git fetch upstream`) sin confundir ambos repos. Capturar igual el rol del
+  repositorio, por la misma razón.
 - **Hay que crearlo** → no pedir nada más aquí; se crea vacío en el paso siguiente. Capturar igual el rol
   que va a cumplir, por la misma razón.
 
@@ -85,6 +91,7 @@ Para cada repositorio, desde la raíz del repo de especificaciones:
 | ---- | -------- |
 | Ya existe, con URL remota | `git submodule add <url> <nombre>` |
 | Ya existe, solo local (sin remoto todavía) | `git submodule add <ruta-local-o-relativa> <nombre>` — advertir que otros clones del repo de especificaciones no podrán descargar este submódulo hasta que se le agregue un remoto y se actualice con `git submodule set-url <nombre> <url>` |
+| Parte de un proyecto base | `git clone <url-base> <nombre> && git -C <nombre> remote rename origin upstream` — el base queda como remote `upstream`, no como `origin`: el repo del proyecto es nuevo y su `origin` se agrega cuando exista su remoto propio (`git remote add origin <url>`). Luego `git submodule add <ruta-relativa> <nombre>` desde la raíz del repo de especificaciones — misma advertencia sobre remoto pendiente que el caso anterior |
 | Hay que crearlo | `mkdir <nombre> && cd <nombre> && git init` para crear el repo vacío, luego `git submodule add <ruta-relativa> <nombre>` desde la raíz del repo de especificaciones — misma advertencia sobre remoto pendiente que el caso anterior |
 
 Al terminar con todos, ejecutar `git submodule status` y confirmar al usuario la lista de submódulos

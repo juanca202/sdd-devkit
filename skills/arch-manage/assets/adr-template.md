@@ -7,8 +7,8 @@ docs/standards/ (ver campo `emits`). No mezclar aquí el enunciado normativo del
 
 `emits`: criterios de cumplimiento (CR) que esta decisión fija — referencia `<estándar>/CR-XXX`
 dentro del estándar de dominio correspondiente (p. ej. testing/CR-001). Cada CR vive en el requisito
-que lo agrupa y traza de vuelta a este ADR por su columna Origen. Vacío si la decisión es
-puntual/histórica y no establece una norma continua que cumplir.
+que lo agrupa; la traza de vuelta a este ADR queda en `source_adrs` del estándar. Vacío si la decisión
+es puntual/histórica y no establece una norma continua que cumplir.
 -->
 ---
 id: ADR-{{XXX}}

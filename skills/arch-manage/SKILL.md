@@ -18,7 +18,7 @@ license: MIT
 
 # Skill: arch-manage
 
-Crea y actualiza los dos artefactos de arquitectura del proyecto — **ADRs** y **estándares de dominio** —
+Crea y actualiza los dos documentos de arquitectura del proyecto — **ADRs** y **estándares de dominio** —
 siguiendo el flujo de este documento.
 
 > **Este SKILL.md es el router.** El detalle de consulta puntual (catálogo de dominios, convenciones de
@@ -27,7 +27,7 @@ siguiendo el flujo de este documento.
 
 ## Concepto: ADR ≠ estándar (y el estándar es más amplio)
 
-Este skill mantiene separados dos artefactos que suelen confundirse. La distinción es la razón de ser
+Este skill mantiene separados dos documentos que suelen confundirse. La distinción es la razón de ser
 de esta versión: **el ADR es la decisión; el estándar es la norma de dominio que la decisión alimenta.**
 
 | | **ADR** (`docs/adr/`) | **Estándar** (`docs/standards/`) |
@@ -126,7 +126,7 @@ El ADR y el estándar se enlazan **por referencia**, nunca duplicando contenido:
 - **El estándar contiene solo el *qué hay que cumplir hoy*** — requisitos con su descripción normativa
   (RFC 2119) y sus criterios de cumplimiento (`CR-XXX`) verificables — y `source_adrs`. **Nunca** aloja el porqué,
   los drivers ni las alternativas: eso es historia y vive en el ADR.
-- **El enlace es cruzado, no copiado:** `emits` (ADR) ↔ `source_adrs` / columna `Origen` (estándar). Si
+- **El enlace es cruzado, no copiado:** `emits` (ADR) ↔ `source_adrs` (estándar). Si
   te descubres copiando el enunciado normativo dentro del ADR, o el contexto/alternativas dentro del
   estándar, estás mezclando alcances: mueve cada parte a su documento y deja solo la referencia.
 
@@ -143,7 +143,7 @@ El ADR y el estándar se enlazan **por referencia**, nunca duplicando contenido:
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
 
@@ -151,10 +151,10 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 ## Resolución de la raíz de arquitectura
 
-**Antes de leer, numerar o escribir cualquier artefacto**, resolver **dónde vive la arquitectura del
+**Antes de leer, numerar o escribir cualquier documento**, resolver **dónde vive la arquitectura del
 código del que trata la decisión**. Los ADR, los estándares y las fitness functions describen el código de
 **un repositorio concreto** y se versionan junto a él: si ese código está en un **submódulo (o repositorio
-anidado)**, sus artefactos van en el `docs/` de ese submódulo, no en el del repo principal.
+anidado)**, sus documentos van en el `docs/` de ese submódulo, no en el del repo principal.
 
 Regla completa —detección, pregunta, numeración por raíz— en
 [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
@@ -175,7 +175,7 @@ En resumen:
 > `specification.basePath` de `.sdd-devkit/settings.json`, sobre el repositorio principal. Elegir un
 > submódulo como raíz de arquitectura **no** mueve, duplica ni redirige nada bajo `docs/specs/`.
 
-> **Al commitear en un submódulo**, los artefactos se commitean **dentro del submódulo** y después se
+> **Al commitear en un submódulo**, los documentos se commitean **dentro del submódulo** y después se
 > actualiza el puntero en el repo padre: un `git add` lanzado desde el padre no stagea el contenido del
 > submódulo. Advertirlo al confirmar (paso 10) para que el cambio no quede a medias.
 
@@ -234,16 +234,16 @@ Antes de redactar un ADR nuevo o de añadir un requisito, **con la raíz de arqu
      - **Forma simple:** `docs/standards/<slug>.md`.
      - **Forma con documentos adicionales:** si el estándar necesita archivos de apoyo (guías, ejemplos, matrices), crear la carpeta `docs/standards/<slug>/`, escribir el estándar en `docs/standards/<slug>/README.md` y colocar los documentos adicionales dentro de esa carpeta (enlazados con rutas relativas desde el estándar). Si un estándar simple pasa a necesitar extras, migrarlo de `<slug>.md` a `<slug>/README.md`.
 6. **Redactar el requisito y proponer sus criterios de cumplimiento** (campos exactos en [`references/conventions.md`](references/conventions.md)):
-   - Un bloque `## <Nombre del requisito>` con: `**ID:** <slug-requisito>`, `**Estado:** Active` (los otros valores, `Deprecated` y `Superseded`, son para retirarlo después sin borrarlo), el párrafo de qué es / cómo se usa / cómo se implementa, que **debe incluir el enunciado normativo con RFC 2119** (MUST/SHOULD/MAY… en mayúsculas), y `### Excepciones`. **No** incluir aquí los criterios de cumplimiento: van todos juntos en la tabla única `## Criterios de cumplimiento`, al final del documento (antes de `## Referencias`). El **origen y la verificación se registran por criterio (CR)**, no a nivel de requisito.
+   - Un bloque `## <Nombre del requisito>` con: `**ID:** <slug-requisito>`, `**Estado:** Active` (los otros valores, `Deprecated` y `Superseded`, son para retirarlo después sin borrarlo), el párrafo de qué es / cómo se usa / cómo se implementa, que **debe incluir el enunciado normativo con RFC 2119** (MUST/SHOULD/MAY… en mayúsculas), y `### Excepciones`. **No** incluir aquí los criterios de cumplimiento: van todos juntos en la tabla única `## Criterios de cumplimiento`, al final del documento (antes de `## Referencias`). La **verificación se registra por criterio (CR)**, no a nivel de requisito; el origen (ADR) se traza a nivel de documento en `source_adrs`.
    - **Los CR no se escriben directamente: se proponen y el usuario elige.** Cada criterio define un **resultado arquitectónico medible y su umbral**, no una decisión de implementación — la tecnología o herramienta con que se logra o verifica pertenece a la implementación, salvo que sea explícitamente una restricción arquitectónica (ver el objetivo en [`references/fitness-functions.md`](references/fitness-functions.md)). Derivar los criterios candidatos del requisito, investigar el **mecanismo de verificación** de cada uno, presentarlos en una **tabla de propuesta simplificada** (`#`, criterio, enfoque y la herramienta con la que se verificaría — sin comandos ni código, que aún no existen) y preguntar al usuario **cuáles quiere crear** y **para cuáles quiere la fitness function ahora** — flujo completo en [`references/fitness-functions.md`](references/fitness-functions.md). Solo lo seleccionado se escribe.
-   - Añadir a la tabla única `## Criterios de cumplimiento` la fila (o filas) `CR-XXX` **seleccionadas**: `ID` (`CR-XXX`, correlativo único en el estándar), `Requisito` (el `ID` del requisito al que pertenece), `Descripción` (medible, con RFC 2119 si es normativa), `Origen` (`ADR-XXX`), `Automatizable` (yes/no), `Enfoque` (`bloqueante`/`warning`; por defecto `bloqueante`) y `Verificación` (yes/no: si la verificación ya existe; la ruta del chequeo no se escribe — se resuelve por convención).
-   - **Enlazar en ambos sentidos:** añadir la referencia global de cada CR (`<slug-estándar>/CR-XXX`, p. ej. `testing/CR-001`) al `emits` del ADR, y el `ADR-XXX` a `source_adrs` del estándar (a nivel de documento) además de en la columna `Origen` del CR.
-7. **Crear las fitness functions que el usuario seleccionó en el paso 6** — flujo completo en [`references/fitness-functions.md`](references/fitness-functions.md): **instalar y configurar** la herramienta ya decidida en la propuesta si hace falta, y registrar el chequeo en el **archivo de checks de su estándar** (`scripts/arch/checks/<slug-estándar>.<ext>`, un archivo por estándar, con la trazabilidad `CR-XXX` en comentarios y líneas de salida), asegurando el **runner** `scripts/arch/verify.<ext>` — ambos escritos en el **lenguaje del stack del repo** (p. ej. Node en un proyecto Angular/React/Vue). Al quedar registrado el chequeo, **volver a la fila del CR** y poner `Verificación: yes` (los CR seleccionados sin fitness function se quedan en `no`, pendientes). La verificación cuelga de **cada criterio de cumplimiento**, no del requisito, del ADR ni del estándar entero.
+   - Añadir a la tabla única `## Criterios de cumplimiento` la fila (o filas) `CR-XXX` **seleccionadas**: `ID` (`CR-XXX`, correlativo único en el estándar), `Requisito` (el `ID` del requisito al que pertenece), `Descripción` (medible, con RFC 2119 si es normativa), `Automatizable` (yes/no), `Enfoque` (`bloqueante`/`warning`; por defecto `bloqueante`) y `Verificación` (si la verificación ya existe, el enlace al archivo donde vive — el archivo de checks del estándar, o la evidencia externa —; `Pending` si aún no).
+   - **Enlazar en ambos sentidos:** añadir la referencia global de cada CR (`<slug-estándar>/CR-XXX`, p. ej. `testing/CR-001`) al `emits` del ADR, y el `ADR-XXX` a `source_adrs` del estándar (a nivel de documento).
+7. **Crear las fitness functions que el usuario seleccionó en el paso 6** — flujo completo en [`references/fitness-functions.md`](references/fitness-functions.md): **instalar y configurar** la herramienta ya decidida en la propuesta si hace falta, y registrar el chequeo en el **archivo de checks de su estándar** (`scripts/arch/checks/<slug-estándar>.<ext>`, un archivo por estándar, con la trazabilidad `CR-XXX` en comentarios y líneas de salida), asegurando el **runner** `scripts/arch/verify.<ext>` — ambos escritos en el **lenguaje del stack del repo** (p. ej. Node en un proyecto Angular/React/Vue). Al quedar registrado el chequeo, **volver a la fila del CR** y poner en `Verificación` el enlace al archivo de checks (los CR seleccionados sin fitness function se quedan en `Pending`). La verificación cuelga de **cada criterio de cumplimiento**, no del requisito, del ADR ni del estándar entero.
 8. **Ofrecer instalar dependencias referenciadas ausentes** — flujo en [`references/dependencies.md`](references/dependencies.md) (no repite las herramientas de fitness function ya resueltas en el paso 7).
 9. **Actualizar los índices `README.md`** (los de `<raíz-arq>`, nunca los de otra raíz):
    - `docs/adr/README.md`: añadir `- [ADR-XXX: Título](ADR-XXX-slug.md)` en orden ascendente.
    - `docs/standards/README.md`: si el estándar de dominio es nuevo, añadir `- [Nombre del estándar](<slug>.md)` (forma simple) o `- [Nombre del estándar](<slug>/README.md)` (forma carpeta); si ya existía, no duplicar.
-   - **Si el índice no existe todavía y la carpeta ya tenía artefactos previos** (p. ej. `docs/adr/ADR-001-*.md` y `ADR-002-*.md` ya existían pero nunca hubo `docs/adr/README.md`): al crear el índice por primera vez, listar **todos** los artefactos existentes en la carpeta (`ls docs/adr/*.md` / `docs/standards/*.md` o `*/README.md`), no solo el que se acaba de crear — el índice debe reflejar el estado real de la carpeta desde su primera versión, en el mismo orden ascendente que usaría en adelante. Si la carpeta no tenía nada más, el índice arranca con la única entrada nueva.
+   - **Si el índice no existe todavía y la carpeta ya tenía documentos previos** (p. ej. `docs/adr/ADR-001-*.md` y `ADR-002-*.md` ya existían pero nunca hubo `docs/adr/README.md`): al crear el índice por primera vez, listar **todos** los documentos existentes en la carpeta (`ls docs/adr/*.md` / `docs/standards/*.md` o `*/README.md`), no solo el que se acaba de crear — el índice debe reflejar el estado real de la carpeta desde su primera versión, en el mismo orden ascendente que usaría en adelante. Si la carpeta no tenía nada más, el índice arranca con la única entrada nueva.
    - Crearlos con encabezado y lista si no existen. Nunca reordenar ni eliminar entradas.
 10. **Confirmar** mostrando: la **raíz de arquitectura** usada (ruta relativa al repo principal; indicarlo explícitamente cuando no sea la raíz principal), ruta del ADR, estándar de dominio y requisito(s) añadido(s)/actualizado(s), líneas de índice, y —si aplica— la fitness function creada (en qué archivo de checks quedó), el comando del runner (`node scripts/arch/verify.mjs` en un repo Node, o el equivalente del stack; con el slug del estándar para correr solo ese) **y desde qué directorio se ejecuta** — el runner vive en `<raíz-arq>/scripts/arch/` y se corre desde `<raíz-arq>` y las dependencias instaladas.
 
@@ -274,12 +274,12 @@ la decisión ya tomada — para cambiar de rumbo se crea un ADR nuevo que supers
 A veces se refina una regla sin una decisión nueva (afinar un umbral, ampliar el alcance, aclarar una
 excepción, añadir un requisito a un dominio existente). El estándar es **vivo**: se edita.
 
-1. **Todo criterio de cumplimiento (CR) debería trazar a un ADR** (columna `Origen` + `source_adrs`). Si se pide añadir un criterio
+1. **Todo criterio de cumplimiento (CR) debería trazar a un ADR** (`source_adrs`). Si se pide añadir un criterio
    sin decisión registrada, ofrecer crear primero el ADR de origen (flujo de arriba). Si el usuario
    prefiere no crearlo, permitir el CR dejando constancia de que su decisión de origen está
    pendiente de documentar (lo señalará `arch-audit`).
 2. Resolver `<raíz-arq>` si aún no está fijada e identificar el estándar de dominio **dentro de ella** (o crearlo, `docs/standards/<slug>.md` o `docs/standards/<slug>/README.md` si lleva documentos adicionales; dominio según [`references/functional-domains.md`](references/functional-domains.md)).
-3. Añadir o editar el bloque de requisito (`ID`, `Estado`, descripción con el enunciado normativo en RFC 2119, `Excepciones`). Si el cambio implica **CR nuevos**, pasar antes por la **propuesta y selección** de [`references/fitness-functions.md`](references/fitness-functions.md) (tabla simplificada de criterios candidatos → el usuario elige cuáles crear), y escribir solo los seleccionados como filas `CR-XXX` en la tabla única `## Criterios de cumplimiento`, al final del documento (`Requisito`, `Descripción`, `Origen`, `Automatizable`, `Enfoque`, `Verificación`; ver [`references/conventions.md`](references/conventions.md)). Actualizar `last_update` a hoy.
+3. Añadir o editar el bloque de requisito (`ID`, `Estado`, descripción con el enunciado normativo en RFC 2119, `Excepciones`). Si el cambio implica **CR nuevos**, pasar antes por la **propuesta y selección** de [`references/fitness-functions.md`](references/fitness-functions.md) (tabla simplificada de criterios candidatos → el usuario elige cuáles crear), y escribir solo los seleccionados como filas `CR-XXX` en la tabla única `## Criterios de cumplimiento`, al final del documento (`Requisito`, `Descripción`, `Automatizable`, `Enfoque`, `Verificación`; ver [`references/conventions.md`](references/conventions.md)). Actualizar `last_update` a hoy.
 4. Reevaluar la fitness function de cada CR afectado: si cambió su descripción, ajustar su chequeo en el archivo de checks de su estándar (`scripts/arch/checks/<slug-estándar>.<ext>`; ver [`references/fitness-functions.md`](references/fitness-functions.md)).
 5. Si el nuevo estado del estándar o de un requisito es `Deprecated`/`Superseded`, enlazar el reemplazo y actualizar `docs/standards/README.md`.
 6. **Confirmar** los cambios.
@@ -289,7 +289,7 @@ excepción, añadir un requisito a un dominio existente). El estándar es **vivo
 ## Anti-patterns
 
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
-- Mezclar el alcance de ADR y estándar: meter el enunciado normativo (RFC 2119) o los criterios de cumplimiento dentro del ADR, o el contexto/alternativas/consecuencias dentro del estándar. Cada uno contiene solo lo suyo y se enlazan por referencia (`emits` ↔ `source_adrs`/`Origen`).
+- Mezclar el alcance de ADR y estándar: meter el enunciado normativo (RFC 2119) o los criterios de cumplimiento dentro del ADR, o el contexto/alternativas/consecuencias dentro del estándar. Cada uno contiene solo lo suyo y se enlazan por referencia (`emits` ↔ `source_adrs`).
 - Crear un estándar nuevo por cada decisión en vez de añadir un requisito al estándar de dominio existente — el estándar es de **dominio**, no de decisión.
 - Redactar un ADR o un requisito sin pasar primero por la [Validación de conflictos](#validación-de-conflictos-solo-al-crear): duplicar o contradecir un ADR `Accepted` o un requisito `Active` ya existente.
 - Reescribir la decisión de un ADR `Accepted` en vez de crear uno nuevo que lo supersede — un ADR es histórico e inmutable una vez aceptado.
@@ -298,14 +298,15 @@ excepción, añadir un requisito a un dominio existente). El estándar es **vivo
 - Escribir en la tabla del estándar filas de criterios que el usuario **no seleccionó** (aunque se hayan propuesto, aunque parezcan buena idea, aunque sea «para dejarlos pendientes») — solo lo seleccionado se crea y se registra.
 - Preguntar «¿creo la fitness function?» sin haber investigado ni mostrado la **herramienta concreta** con la que se verificaría (y si hay que instalarla): el usuario no puede decidir sobre un chequeo que no sabe cómo se hará. El comando y el código no se muestran aquí — todavía no existen.
 - Crear una fitness function sin la aprobación explícita del usuario, o sin investigar primero si ya existe una herramienta/convención establecida para ese chequeo en el stack — un script propio a medida es el último recurso, no el primero (`references/fitness-functions.md`).
+- Re-ejecutar desde un chequeo de arch una herramienta que ya es compuerta de calidad propia del proyecto (`lint` corriendo ESLint, `test` corriendo la suite con cobertura…) para buscar violaciones vivas — duplica el trabajo en cada `npm run arch` y acopla dos compuertas que deben poder correr por separado. El chequeo audita **estáticamente la configuración** de esa herramienta (regla registrada con la severidad esperada, umbral ≥ el requerido) y deja que la compuerta dueña reporte los incumplimientos reales (`references/fitness-functions.md`).
 - Quemar números `CR-XXX` en criterios que el usuario aún no ha seleccionado — los candidatos se numeran `C1`, `C2`… solo para la conversación; el `CR-XXX` se asigna al escribir.
 - Dejar la herramienta de verificación de una fitness function sin instalar cuando el usuario aceptó instalarla, o repreguntar por ella en el paso de dependencias generales (`references/dependencies.md`) después de ya haberla resuelto en `references/fitness-functions.md`.
 - Escribir el runner o los checks en un lenguaje ajeno al stack del repo (p. ej. shell en un proyecto Node) — se escriben con el runtime que el proyecto ya usa; el shell POSIX es solo el último recurso cuando el repo no tiene ningún runtime de stack.
 - Crear un archivo de chequeo por criterio de cumplimiento — el archivo de checks es **por estándar** (`scripts/arch/checks/<slug-estándar>.<ext>`); la trazabilidad por CR va dentro, en comentarios y en las líneas de salida de cada chequeo.
 - Instalar o configurar dependencias sin la aprobación explícita del usuario, o correr build/suites completas por iniciativa propia.
-- Al invocarse en lote (p. ej. desde `arch-discover`), volver a preguntar los decisores o la instalación de dependencias por cada artefacto en vez de resolverlo una sola vez para todo el lote.
+- Al invocarse en lote (p. ej. desde `arch-discover`), volver a preguntar los decisores o la instalación de dependencias por cada documento en vez de resolverlo una sola vez para todo el lote.
 - Pedirle al usuario el número del próximo ADR o CR — siempre se calcula releyendo `docs/adr/` o la tabla del estándar, nunca se pregunta.
-- Escribir los artefactos de arquitectura en el `docs/` del repo principal cuando la decisión trata del código de un **submódulo** (o al revés). El ADR, el estándar y sus checks se versionan junto al código que gobiernan: se resuelve `<raíz-arq>` **antes** de tocar nada.
+- Escribir la documentación de arquitectura en el `docs/` del repo principal cuando la decisión trata del código de un **submódulo** (o al revés). El ADR, el estándar y sus checks se versionan junto al código que gobiernan: se resuelve `<raíz-arq>` **antes** de tocar nada.
 - Dar por hecha la raíz cuando el workspace tiene submódulos: se **pregunta** (una vez por invocación o lote). Y al revés: preguntarla en un repo sin repositorios anidados, donde no hay nada que elegir.
 - Continuar la numeración `ADR-XXX` de una raíz en otra, o tratar como conflicto/duplicado un ADR que vive en otra raíz — cada repositorio lleva su propia serie independiente.
 - Redirigir, mover o duplicar artefactos de `docs/specs/` por haber elegido un submódulo como raíz de arquitectura: las especificaciones se resuelven siempre contra `specification.basePath`, sobre el repo principal.
@@ -329,14 +330,14 @@ mantiene ligero):
 - [`references/functional-domains.md`](references/functional-domains.md) — catálogo de los 9 dominios funcionales canónicos. Leer al **clasificar el dominio** de un estándar (casos B/C).
 - [`references/conventions.md`](references/conventions.md) — convenciones de identidad, numeración y **frontmatter** de ADR / estándar / requisito / CR. Leer al escribir frontmatter o identificadores.
 - [`references/fitness-functions.md`](references/fitness-functions.md) — cómo **proponer los criterios (CR) con su mecanismo de verificación** para que el usuario elija cuáles crear, cómo crear la **fitness function** de los seleccionados, registrarla en el archivo de checks de su estándar y mantener el **runner** `scripts/arch/verify.<ext>`. Leer **antes de escribir CR nuevos**, al automatizar un CR o al tocar el runner.
-- [`references/dependencies.md`](references/dependencies.md) — flujo para ofrecer **instalar dependencias** ausentes que referencia la decisión. Leer tras crear los artefactos si referencian una tecnología concreta.
+- [`references/dependencies.md`](references/dependencies.md) — flujo para ofrecer **instalar dependencias** ausentes que referencia la decisión. Leer tras crear los documentos si referencian una tecnología concreta.
 
 
 ### Referencias compartidas del plugin
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, **resolución de la raíz de arquitectura** (repo principal vs. submódulo), identificadores, archivado. *Lectura obligatoria al resolver una ruta o calcular un ID.*
 
 ---

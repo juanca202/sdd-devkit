@@ -1,6 +1,6 @@
 ---
 name: arch-discover
-description: Inspeccionar un proyecto existente para descubrir decisiones arquitectónicas implícitas y las reglas/convenciones vivas que están en vigor, y proponer los ADR y estándares candidatos que las documentarían. Usar cuando el usuario quiera auditar un repositorio en busca de decisiones o normas no documentadas, pida "descubrir ADRs", "descubrir estándares", "qué decisiones arquitectónicas tiene este proyecto", "qué convenciones sigue el código", "analiza la arquitectura del proyecto" o cualquier variante que implique explorar el código/estructura para inferir arquitectura relevante que merezca documentarse. Activar también cuando el usuario llegue a un proyecto nuevo y quiera entender qué decisiones y reglas ya existen, aunque no mencione explícitamente "ADR" o "estándar". Descubre una raíz de arquitectura por corrida —el repo principal o un submódulo—, y crea los artefactos aprobados en esa misma raíz.
+description: Inspeccionar un proyecto existente para descubrir decisiones arquitectónicas implícitas y las reglas/convenciones vivas que están en vigor, y proponer los ADR y estándares candidatos que las documentarían. Usar cuando el usuario quiera auditar un repositorio en busca de decisiones o normas no documentadas, pida "descubrir ADRs", "descubrir estándares", "qué decisiones arquitectónicas tiene este proyecto", "qué convenciones sigue el código", "analiza la arquitectura del proyecto" o cualquier variante que implique explorar el código/estructura para inferir arquitectura relevante que merezca documentarse. Activar también cuando el usuario llegue a un proyecto nuevo y quiera entender qué decisiones y reglas ya existen, aunque no mencione explícitamente "ADR" o "estándar". Descubre una raíz de arquitectura por corrida —el repo principal o un submódulo—, y crea los documentos aprobados en esa misma raíz.
 license: MIT
 ---
 
@@ -13,7 +13,7 @@ nunca se documentaron formalmente.
 Cada hallazgo se traduce en artefactos de dos tipos (ver el skill `arch-manage` para la distinción completa):
 
 - Un **ADR** — la *decisión* histórica: por qué se eligió algo. Todo hallazgo relevante produce un ADR candidato.
-- Un **requisito** dentro de un **estándar de dominio** — la *regla viva* que el código sigue hoy (`docs/standards/`). El estándar es **amplio** (un **dominio técnico o funcional** entero: *Testing Standards*, *API Standards*…; un aspecto de arquitectura, no un dominio de negocio/DDD) y agrupa varios requisitos; cada requisito se redacta con RFC 2119/8174 (MUST/SHOULD/MAY…). Un hallazgo que es una norma continua y verificable propone **un requisito**, dentro del estándar de dominio que le corresponde (agrupándolo con otros del mismo dominio). La unidad verificable fina —el **criterio de cumplimiento** (`CR-XXX`), que pertenece a un requisito pero vive en la tabla única del estándar— la propone `arch-manage` al crear el artefacto, para que el usuario elija cuáles crear; en descubrimiento basta con proponer el requisito y su regla.
+- Un **requisito** dentro de un **estándar de dominio** — la *regla viva* que el código sigue hoy (`docs/standards/`). El estándar es **amplio** (un **dominio técnico o funcional** entero: *Testing Standards*, *API Standards*…; un aspecto de arquitectura, no un dominio de negocio/DDD) y agrupa varios requisitos; cada requisito se redacta con RFC 2119/8174 (MUST/SHOULD/MAY…). Un hallazgo que es una norma continua y verificable propone **un requisito**, dentro del estándar de dominio que le corresponde (agrupándolo con otros del mismo dominio). La unidad verificable fina —el **criterio de cumplimiento** (`CR-XXX`), que pertenece a un requisito pero vive en la tabla única del estándar— la propone `arch-manage` al crear el documento, para que el usuario elija cuáles crear; en descubrimiento basta con proponer el requisito y su regla.
 
 Ejemplo: detectar "unit tests con PHPUnit" y "e2e con Playwright" son **dos decisiones** (dos ADR),
 pero **un solo estándar de dominio** *Testing Standards* con **dos requisitos** («Unit testing»,
@@ -37,7 +37,7 @@ aprobados — nadie más los vuelve a crear después.
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
 
-Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos y mensajes generados por este skill.
+Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
 
@@ -47,9 +47,9 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 Antes de inspeccionar, determinar el alcance:
 
-1. **Resolver la raíz de arquitectura (`<raíz-arq>`)** — el repositorio cuyo código se va a descubrir y donde vivirán los artefactos resultantes. Listar los repositorios anidados (`git submodule status` / `.gitmodules`, más directorios con `.git` propio): si no hay ninguno, es la raíz del repo actual y no se pregunta; si los hay, **preguntar al usuario** qué raíz descubrir (principal o submódulo `X`). Se resuelve **una vez para todo el lote** y todo lo demás —inspección, lectura de artefactos existentes y creación— es relativo a ella. Regla completa: [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
+1. **Resolver la raíz de arquitectura (`<raíz-arq>`)** — el repositorio cuyo código se va a descubrir y donde vivirán los documentos resultantes. Listar los repositorios anidados (`git submodule status` / `.gitmodules`, más directorios con `.git` propio): si no hay ninguno, es la raíz del repo actual y no se pregunta; si los hay, **preguntar al usuario** qué raíz descubrir (principal o submódulo `X`). Se resuelve **una vez para todo el lote** y todo lo demás —inspección, lectura de documentos existentes y creación— es relativo a ella. Regla completa: [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions).
 2. **Leer `AGENTS.md`** (si existe, sección `# Stack tecnológico`) y **`.agents/MEMORY.md`** (si existe, contexto operativo) del **repo principal** para entender lo ya conocido — el harness es uno solo; el stack vive en `AGENTS.md` y no se duplica en `MEMORY.md`. Si la raíz elegida es un submódulo, su stack puede diferir del que describe `AGENTS.md`: prevalece lo que se observe en la Fase 2.
-3. **Leer `docs/adr/` y `docs/standards/` de `<raíz-arq>`** para listar los artefactos ya existentes — nunca proponer un candidato que duplique un ADR o estándar existente **de esa raíz** (en cualquier estado). Los de otra raíz son series independientes y no cuentan como duplicado.
+3. **Leer `docs/adr/` y `docs/standards/` de `<raíz-arq>`** para listar los documentos ya existentes — nunca proponer un candidato que duplique un ADR o estándar existente **de esa raíz** (en cualquier estado). Los de otra raíz son series independientes y no cuentan como duplicado.
 4. Si el usuario no indicó ruta y no hay repositorios anidados, asumir raíz del repositorio actual.
 
 ---
@@ -163,9 +163,9 @@ Por cada candidato aprobado por el usuario:
    - **Si fija un requisito:** el enunciado de la regla en lenguaje RFC 2119 y **el estándar de dominio** al que pertenece (para que `arch-manage` cree o amplíe ese estándar)
    - Las alternativas implícitas detectadas (si las hay)
    - Los **Decisores**, acordados una sola vez para todo el lote, de modo que `arch-manage` no vuelva a preguntar lo mismo por cada artefacto
-   - La **raíz de arquitectura (`<raíz-arq>`)** resuelta en la Fase 1, para que `arch-manage` escriba ahí y **no vuelva a preguntarla** por cada artefacto del lote
+   - La **raíz de arquitectura (`<raíz-arq>`)** resuelta en la Fase 1, para que `arch-manage` escriba ahí y **no vuelva a preguntarla** por cada documento del lote
 
-2. Dejar que `arch-manage` ejecute su flujo completo: crea el ADR y, cuando corresponda, añade el requisito al estándar de dominio (creándolo o ampliándolo), **propone los criterios de cumplimiento candidatos con su mecanismo de verificación para que el usuario elija cuáles crear**, escribe los seleccionados como `CR-XXX` con su `Enfoque` (bloqueante/warning), enlaza `emits` (a nivel de CR) / `source_adrs` y crea las fitness functions elegidas. En lote, esa propuesta y selección se presenta **una sola vez para todos los candidatos aprobados** (una tabla con columna `Estándar`), no una por artefacto.
+2. Dejar que `arch-manage` ejecute su flujo completo: crea el ADR y, cuando corresponda, añade el requisito al estándar de dominio (creándolo o ampliándolo), **propone los criterios de cumplimiento candidatos con su mecanismo de verificación para que el usuario elija cuáles crear**, escribe los seleccionados como `CR-XXX` con su `Enfoque` (bloqueante/warning), enlaza `emits` (a nivel de CR) / `source_adrs` y crea las fitness functions elegidas. En lote, esa propuesta y selección se presenta **una sola vez para todos los candidatos aprobados** (una tabla con columna `Estándar`), no una por documento.
 
 3. **Agrupar por dominio en el lote:** procesar juntos los candidatos del mismo dominio para que sus requisitos caigan en el **mismo** estándar (no crear un estándar por candidato).
 
@@ -183,11 +183,11 @@ como subagente (p. ej. `arch-init`) debe dejarlo correr hasta aquí — no hay u
 
 - **No narrar el flujo interno.** Nada de anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, ni ir enumerando las fases en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - **No inventar decisiones ni reglas.** Si la evidencia es ambigua, mencionar la incertidumbre en "Evidencia" y marcarlo como baja prioridad.
-- **No proponer artefactos triviales.** "Usamos Git" no es un ADR.
+- **No proponer documentos triviales.** "Usamos Git" no es un ADR.
 - **No repetir trabajo.** Si ya existe un ADR o un requisito de estándar que cubre el hallazgo, omitir el candidato y mencionarlo en un pie de página: "X hallazgos omitidos por estar ya documentados."
 - **Distinguir decisión de regla, y agrupar por dominio.** No todo ADR fija un requisito; proponer requisito solo cuando hay una norma continua y verificable. Consolidar los requisitos del mismo dominio en un solo estándar (no un estándar por regla).
 - **Priorizar calidad sobre cantidad.** Mejor 4 candidatos sólidos que 12 rellenos.
-- **Una raíz por corrida.** El descubrimiento cubre **una** raíz de arquitectura: no mezclar hallazgos del repo principal y de un submódulo en el mismo lote, ni escribir sus artefactos en la raíz equivocada. Para cubrir otra raíz, otra corrida.
+- **Una raíz por corrida.** El descubrimiento cubre **una** raíz de arquitectura: no mezclar hallazgos del repo principal y de un submódulo en el mismo lote, ni escribir sus documentos en la raíz equivocada. Para cubrir otra raíz, otra corrida.
 
 ---
 
@@ -203,5 +203,5 @@ presentación están en `references/`; **leerlos solo cuando la fase correspondi
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
-- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 

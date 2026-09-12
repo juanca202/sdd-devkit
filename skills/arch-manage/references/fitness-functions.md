@@ -86,6 +86,14 @@ propuesta debe mostrarle al usuario el mecanismo real (herramienta + comando), n
 - Primero comprobar si el repo **ya tiene** configurada una herramienta apta para este tipo de
   chequeo (p. ej. ya usa `dependency-cruiser` para otra regla, o ya hay tests con ArchUnit) — en
   ese caso, **añadir la regla ahí**, no montar una herramienta nueva en paralelo.
+- Investigar además si esa herramienta corre ya como **compuerta de calidad propia del proyecto** —
+  tiene su propio script en `package.json`/`Makefile`/CI (`lint`, `test`, `stylelint`, cobertura…).
+  Si es así, el mecanismo de verificación del CR es **auditar la configuración**, no **re-ejecutar la
+  herramienta**: la fitness function comprueba de forma estática que la regla o el umbral está
+  correctamente cableado en la configuración (registrado, con la severidad o el umbral esperado), y
+  deja que sea esa otra compuerta la que reporte los incumplimientos reales del código. Re-ejecutarla
+  desde el check de arch duplica el trabajo (la misma suite o el mismo linter corren varias veces por
+  `npm run arch`) y acopla dos compuertas que deben poder correr por separado.
 - Si no hay nada montado, identificar la herramienta **más común y eficiente** para ese tipo de
   chequeo en ese stack: dependency-cruiser / ESLint boundaries (JS/TS), ArchUnit (JVM),
   import-linter (Python), NetArchTest (.NET), un runner del propio framework (p. ej. cobertura de
@@ -163,11 +171,11 @@ No crear, escribir ni instalar nada sin esta aprobación explícita.
 - **Candidato no seleccionado** → no se escribe: no entra en la tabla del estándar y no deja rastro. Si
   el usuario lo descartó por desacuerdo de fondo (no por prioridad), vale la pena mencionarlo en
   `### Excepciones` del requisito.
-- **Seleccionado, no automatizable** → fila del CR con `Automatizable: no`; `Verificación: yes` si hay
-  evidencia externa registrada en el requisito (archivo, job CI…), `no` si no la hay; explicar en el
-  requisito cómo se verifica manualmente.
+- **Seleccionado, no automatizable** → fila del CR con `Automatizable: no`; en `Verificación`, el
+  enlace al archivo o job de la evidencia externa registrada en el requisito si la hay, `Pending` si no
+  la hay; explicar en el requisito cómo se verifica manualmente.
 - **Seleccionado y automatizable, sin fitness function ahora** → `Automatizable: yes`,
-  `Verificación: no` (pendiente). `arch-audit` lo reportará como sugerencia.
+  `Verificación: Pending`. `arch-audit` lo reportará como sugerencia.
 - **Seleccionado y con fitness function** → crear la fitness function (siguiente sección) y registrarla.
 
 Asignar los `CR-XXX` definitivos en este momento, correlativos dentro del estándar, solo a los
@@ -195,7 +203,7 @@ el comando ya están decididos (paso 2b de la propuesta) — aquí se instalan y
    pero resuelto en este paso — no repetir la pregunta en el paso 8 del flujo principal para esta
    misma herramienta). Si rechaza instalar pero quiere seguir, volver al paso 2b de la propuesta con
    la alternativa que proponga y **reproponerle el mecanismo**; si no hay ninguna viable sin instalar
-   nada, dejar el criterio con `Verificación: no` (pendiente).
+   nada, dejar el criterio con `Verificación: Pending`.
 
 2. **Escribir el chequeo.** Si ya existe configuración de la herramienta en el repo, **añadir la
    nueva regla** ahí en vez de duplicar setup; si no, crear el archivo mínimo (test/script + config) en
@@ -204,6 +212,45 @@ el comando ya están decididos (paso 2b de la propuesta) — aquí se instalan y
    fallar si hay tests unit fuera de PHPUnit; fallar si no hay specs de Playwright para los flujos
    marcados) invocando la herramienta elegida — no reimplementar en un script propio una regla que la
    herramienta ya sabe expresar de forma nativa.
+
+   **Excepción: la herramienta ya es una compuerta propia del repo** (resuelto en el paso 2b de la
+   propuesta). En ese caso el chequeo **no invoca la herramienta** para buscar violaciones vivas —
+   nada de `execSync('npx eslint . --format json')` para contar mensajes, ni de correr
+   `ng test --coverage` para leer el resultado. En su lugar, **lee o importa su configuración de forma
+   estática** y verifica el cableado: que la regla esté registrada con la severidad esperada, o que el
+   umbral configurado sea ≥ el que exige el CR. Ejemplos del patrón correcto en un proyecto Angular:
+   importar `eslint.config.mjs` en memoria (`await import(...)`) e inspeccionar que la regla esté en
+   severidad `error` — útil extraerlo a un helper reutilizable tipo
+   `scripts/arch/lib/eslint-config.mjs` con
+   `requireRuleSeverity(config, ruleId, minSeverity, { contains, label })` cuando varios CR auditan el
+   mismo config —; o leer el umbral de cobertura de `angular.json` y confirmar que sea ≥ el requerido,
+   sin ejecutar la suite. Las violaciones reales las reporta la compuerta dueña de la herramienta
+   (`lint`, `test`…), no el check de arch — y la **descripción que imprime el chequeo** debe dejar
+   claro que audita cableado, no comportamiento (ver «Redacción de la descripción», a continuación):
+   son la misma idea vista desde el código y desde el texto que se imprime.
+
+   **Redacción de la descripción (lo que imprime la línea de protocolo).** La descripción de un
+   `check()` debe decir la verdad sobre **qué** se validó:
+
+   - Un chequeo que **audita cableado** (una regla de lint registrada en la severidad correcta, un
+     umbral declarado en un archivo de config) lo dice con un patrón consistente: `«regla de <qué
+     exige> activa»` o `«<umbral/config> configurado»` — nunca fraseado como si validara el
+     comportamiento directamente. «path alias obligatorio» es ambiguo: quien lee `PASS` asume que el
+     código se validó, cuando solo se validó que la regla sigue registrada; «regla de path alias
+     obligatorio activa» no lo es. Los chequeos que **sí verifican estado real** (corren la
+     herramienta de verdad, leen el filesystem, ejecutan un comando) conservan su redacción directa
+     de siempre — esto aplica solo a los que auditan cableado.
+   - Cuando el mecanismo auditado es una **regla de una herramienta de lint/análisis estático**
+     (ESLint, ArchUnit, ruff, clippy, el equivalente del stack), la línea indica **cuál regla es**,
+     con un sufijo `[regla <herramienta>: <id-de-la-regla>]` (o `[reglas <herramienta>: id1, id2]` si
+     son varias) — así se sabe qué regla audita cada CR sin tener que abrir el archivo de checks. El
+     sufijo se arma con los identificadores de regla que este mismo paso ya conoce (el mecanismo de
+     verificación decidido en la propuesta), no es nada que haya que inventar aparte; un helper de una
+     línea (tipo `ruleTag(...ids)`) es razonable si el stack lo hace cómodo, pero no hace falta un
+     asset compartido — cada stack formatea el sufijo como le resulte natural.
+
+   Ejemplo real del patrón completo:
+   `PASS architecture/CR-004 — regla de path alias obligatorio activa [regla ESLint: project-rules/require-layer-path-alias]`
 
 3. **Confirmar con el usuario el comando acotado** para ejecutar el chequeo. No ejecutar build ni suites
    completas por iniciativa propia.
@@ -223,11 +270,13 @@ el comando ya están decididos (paso 2b de la propuesta) — aquí se instalan y
      `warning` imprime `WARN` sin cambiar el código de salida.
    - Asegurar el runner (`scripts/arch/verify.<ext>`) si aún no existe — ver "Runner de validaciones".
 
-5. **Referenciar en la fila del CR:** poner `Automatizable: yes`, el `Enfoque` (`bloqueante`/`warning`) y
-   `Verificación: yes` — la columna solo indica **que la verificación existe**, no lleva la ruta: el
-   archivo de checks se localiza **por convención** (`scripts/arch/checks/<slug-estándar>.<ext>`, p. ej.
-   `checks/testing.mjs`) y dentro el chequeo del CR se identifica por su referencia `CR-XXX`. Así
-   `arch-audit` lo descubre y lo ejecuta, y además queda incluido en el runner.
+5. **Referenciar en la fila del CR:** poner `Automatizable: yes`, el `Enfoque` (`bloqueante`/`warning`) y,
+   en `Verificación`, el **enlace markdown al archivo de checks** donde quedó registrado el chequeo —
+   ruta relativa desde el documento del estándar, p. ej.
+   `[checks/testing.mjs](../../scripts/arch/checks/testing.mjs)` desde `docs/standards/<slug>.md` (un
+   `../` adicional en la forma de carpeta). El archivo sigue viviendo en su ubicación por convención
+   (`scripts/arch/checks/<slug-estándar>.<ext>`) y dentro el chequeo del CR se identifica por su
+   referencia `CR-XXX`. Así `arch-audit` lo descubre y lo ejecuta, y además queda incluido en el runner.
 
 > **En invocación en lote** (p. ej. desde `arch-discover`), acumular los candidatos de todos los
 > requisitos del lote y presentar **una sola tabla de propuesta** al final —con una columna extra
@@ -290,9 +339,12 @@ contrato, y se copia igualmente el `README.md` adaptando los comandos.
 Al crear una fitness function seleccionada (sección anterior), registrarla:
 
 1. **Asegurar el runner.** Si `scripts/arch/verify.<ext>` no existe, crearlo: en un repo Node, copiar
-   `assets/arch-fitness/verify.mjs` (y el `README.md` de esa carpeta) tal cual; en otro stack, generar
-   el equivalente en el lenguaje del repo con el mismo contrato. Crear el directorio
-   `scripts/arch/checks/` si falta. Si ya existe, no tocarlo — descubre los checks solo.
+   `assets/arch-fitness/verify.mjs` **y** `assets/arch-fitness/lib/colors.mjs` (creando `scripts/arch/lib/`
+   si falta), más el `README.md` de esa carpeta, tal cual — el runner importa `lib/colors.mjs` para la
+   salida coloreada de PASS/WARN/FAIL. En otro stack, generar el equivalente en el lenguaje del repo con
+   el mismo contrato; ahí colorear es opcional y se resuelve con el mecanismo de color propio de ese
+   ecosistema (o se omite) — el contrato es el texto `PASS|FAIL|WARN`, no el color. Crear el directorio
+   `scripts/arch/checks/` si falta. Si el runner ya existe, no tocarlo — descubre los checks solo.
 2. **Añadir el chequeo al archivo de su estándar.** Si `scripts/arch/checks/<slug-estándar>.<ext>` ya
    existe, añadir dentro el bloque del CR (comentario de trazabilidad + `check('CR-XXX', …)` con el
    comando acotado confirmado). Si no, crearlo a partir de

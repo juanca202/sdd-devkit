@@ -21,6 +21,7 @@
 // `node scripts/arch/verify.mjs {{slug-estándar}}` se ejecuta solo este estándar.
 // =============================================================================
 import { execSync } from 'node:child_process';
+import { colorStatus } from '../lib/colors.mjs';
 
 const STANDARD = '{{slug-estándar}}';
 let blockingFailures = 0;
@@ -29,11 +30,11 @@ let blockingFailures = 0;
 function check(cr, enfoque, descripcion, fn) {
   try {
     fn();
-    console.log(`PASS ${STANDARD}/${cr} — ${descripcion}`);
+    console.log(`${colorStatus('PASS')} ${STANDARD}/${cr} — ${descripcion}`);
   } catch (err) {
     const status = enfoque === 'warning' ? 'WARN' : 'FAIL';
     if (status === 'FAIL') blockingFailures += 1;
-    console.log(`${status} ${STANDARD}/${cr} — ${descripcion}`);
+    console.log(`${colorStatus(status)} ${STANDARD}/${cr} — ${descripcion}`);
     const detail = err?.stdout?.toString?.() || err?.message || '';
     if (detail) console.log(detail.trim().split('\n').map((l) => `     ${l}`).join('\n'));
   }
@@ -46,6 +47,8 @@ const run = (cmd) => execSync(cmd, { stdio: 'pipe', encoding: 'utf8' });
 // {{Descripción del criterio, tal como aparece en la tabla del estándar.}}
 // Invoca la herramienta real de la fitness function (dependency-cruiser, ESLint,
 // runner del framework, etc.) — no reimplementar lo que la herramienta ya sabe hacer.
+// Si en vez de ejecutarla el chequeo AUDITA su cableado (regla/umbral configurado), la descripción
+// lo dice: «regla de … activa [regla <herramienta>: <id>]» — ver references/fitness-functions.md.
 check('CR-{{XXX}}', 'bloqueante', '{{descripción corta del criterio}}', () => {
   run('{{comando acotado de la fitness function}}');
 });

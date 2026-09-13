@@ -196,7 +196,7 @@ Cada regla lleva id secuencial BR-01, BR-02, … con enunciado RFC 2119 en MAYÚ
 <!--
 Desglose por tipo, por convención de ISO/IEC/IEEE 29148. Cada subsección es opcional; eliminar la que
 no aplique en vez de dejarla vacía. Es existencia y propósito de la interfaz, no su contrato detallado
-(endpoints, payloads, protocolos exactos) — eso lo redacta design-define (API-XX) a nivel de US o TK.
+(endpoints, payloads, protocolos exactos) — eso lo redacta design-define (API-XXX) a nivel de US o TK.
 -->
 
 ### 9.1 Interfaces de usuario
@@ -224,7 +224,7 @@ no aplique en vez de dejarla vacía. Es existencia y propósito de la interfaz, 
 <!--
 Sección opcional — incluir si el requerimiento crea, modifica o retiene datos propios. Formaliza la
 existencia de las entidades de datos, no su modelo detallado (campos, tipos, relaciones) — eso es
-design-define (MD-XX). «No aplica» si el requerimiento no maneja datos propios (p. ej. una integración
+design-define (MD-XXX). «No aplica» si el requerimiento no maneja datos propios (p. ej. una integración
 de solo lectura).
 -->
 | Entidad de datos | Descripción | Retención / privacidad | Volumen estimado |

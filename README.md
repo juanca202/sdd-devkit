@@ -1,6 +1,6 @@
 # SDD Devkit
 
-![version](https://img.shields.io/badge/version-2.1.0-blue) ![license](https://img.shields.io/badge/license-MIT-green)
+![version](https://img.shields.io/badge/version-2.1.1-blue) ![license](https://img.shields.io/badge/license-MIT-green)
 
 **SDD Devkit** es un plugin de Spec-Driven Development: convierte un requerimiento en documentación (historias de usuario, decisiones de arquitectura, diseño técnico, casos de prueba) y te acompaña hasta un entregable verificado. Incluye skills para:
 
@@ -59,6 +59,7 @@ Skills que preparan y mantienen la base del proyecto — arquitectura y control 
 | Skill                                    | Uso                                                                                                                                                                                                        |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | [arch‑init](SKILLS.md#arch-init)         | Prepara el proyecto para trabajar con el plugin: repositorio git, archivos base, stack tecnológico y una compuerta de calidad mínima. Funciona con uno o varios repositorios.                           |
+| [plugin‑migrate](SKILLS.md#plugin-migrate) | Normaliza el contenido producido con versiones anteriores del plugin a la estructura vigente: rutas, plantillas y formatos, con confirmación y mapeo de cambios.                                        |
 | [arch‑manage](SKILLS.md#arch-manage)     | Crea o actualiza decisiones de arquitectura (ADRs) y estándares del proyecto (`docs/adr/`, `docs/standards/`).                                                                                            |
 | [arch‑discover](SKILLS.md#arch-discover) | Analiza un repositorio existente y propone qué decisiones y estándares documentar a partir de lo que ya está implementado.                                                                               |
 | [arch‑audit](SKILLS.md#arch-audit)       | Audita si el código cumple los estándares definidos y genera un informe con hallazgos priorizados (`docs/audits/`).                                                                                       |

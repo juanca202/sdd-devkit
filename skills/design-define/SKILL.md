@@ -6,11 +6,11 @@ license: MIT
 
 # Skill: Documentación técnica por capability
 
-Guía para **crear o actualizar** la documentación técnica en `docs/architecture/`. Cada **capability** (una capacidad del sistema: facturación, autenticación, catálogo…) tiene su **carpeta** `[capability]/` con un `README.md` que concentra el detalle —propósito, **APIs/endpoints** y **flujos/procesos**— y las subcarpetas `models/` y `diagrams/` con un archivo por **modelo de datos** y por **diagrama** (clases, contexto, contenedores, componentes…), enlazados desde el README. Todos los elementos llevan id identificable (`MD-XX`, `API-XX`, `FL-XX`, `DG-XX`) que las US, TK y WI enlazan como referencia de implementación.
+Guía para **crear o actualizar** la documentación técnica en `docs/architecture/`. Cada **capability** (una capacidad del sistema: facturación, autenticación, catálogo…) tiene su **carpeta** `[capability]/` con un `README.md` que concentra el detalle —propósito y **APIs/endpoints**— y las subcarpetas `models/`, `flows/` y `diagrams/` con un archivo por **modelo de datos**, por **flujo/proceso** y por **diagrama** (clases, contexto, contenedores, componentes…), enlazados desde el README. Todos los elementos llevan id identificable (`MD-XXX`, `API-XXX`, `FL-XXX`, `DG-XXX`) que las US, TK y WI enlazan como referencia de implementación.
 
 > **Alcance:** este skill produce **especificación técnica**, no documentación funcional ni código. El valor de negocio y los criterios de aceptación viven en la US (`work-define`); el plan de implementación vive en las TK/WI (`work-plan`); las decisiones de arquitectura viven en ADRs (`docs/adr/`, nunca creados desde aquí). Un documento técnico describe **qué forma tienen** los modelos, contratos y flujos — no por qué se eligió una tecnología ni cómo se codifica.
 
-Las plantillas canónicas están en `assets/`: `capability-readme-template.md` (el README de la capability), `model-template.md` (cada archivo de `models/`) y `diagram-template.md` (cada archivo de `diagrams/`) — léelas antes de escribir. Los estándares de cada tipo de elemento están en `references/element-standards.md`.
+Las plantillas canónicas están en `assets/`: `capability-readme-template.md` (el README de la capability), `model-template.md` (cada archivo de `models/`), `flow-template.md` (cada archivo de `flows/`) y `diagram-template.md` (cada archivo de `diagrams/`) — léelas antes de escribir. Los estándares de cada tipo de elemento están en `references/element-standards.md`.
 
 ## Subagente
 
@@ -30,8 +30,8 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 | Necesitas… | Archivo |
 | ---------- | ------- |
 | Flujo paso a paso de **crear** y **actualizar**, grilling de preguntas, validación antes de crear, modo delegado, checklist, ejemplos, anti-patrones y handoffs | [`references/flow.md`](references/flow.md) |
-| Estándares de definición de **modelos de datos** (`MD-XX`), **APIs/endpoints** (`API-XX`), **flujos/procesos** (`FL-XX`) y **diagramas** (`DG-XX`: clases, contexto, contenedores, componentes): tablas, diagramas Mermaid, ejemplos | [`references/element-standards.md`](references/element-standards.md) |
-| Estructura de la carpeta de capability (README, modelos, diagramas) | `assets/capability-readme-template.md` · `assets/model-template.md` · `assets/diagram-template.md` |
+| Estándares de definición de **modelos de datos** (`MD-XXX`), **APIs/endpoints** (`API-XXX`), **flujos/procesos** (`FL-XXX`) y **diagramas** (`DG-XXX`: clases, contexto, contenedores, componentes): tablas, diagramas Mermaid, ejemplos | [`references/element-standards.md`](references/element-standards.md) |
+| Estructura de la carpeta de capability (README, modelos, flujos, diagramas) | `assets/capability-readme-template.md` · `assets/model-template.md` · `assets/flow-template.md` · `assets/diagram-template.md` |
 
 
 ### Referencias compartidas del plugin
@@ -45,7 +45,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 
 ## Rutas de las referencias compartidas
 
-`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `references/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/references/<archivo>.md`. Para resolverla, ejecutar `PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"; [ -n "$PLUGIN_ROOT" ] && PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd)"; echo "PLUGIN_ROOT=$PLUGIN_ROOT"` — siempre imprime un valor: si trae ruta, usarla; si imprime vacío, usar la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../references/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `references/` en el proyecto**: un `<proyecto>/references/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+`${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `references/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/references/<archivo>.md`. Para resolverla: la raíz es la **carpeta desde la que se cargó este archivo**, dos niveles arriba (`<raíz>/skills/<nombre>/SKILL.md`) — el cliente anuncia esa ubicación al invocar el skill (p. ej. «Base directory for this skill: …»). Si esa ubicación no está disponible, localizar la instalación buscando el manifiesto del plugin: `PLUGIN_ROOT="$(dirname "$(grep -rl '\"name\": *\"sdd-devkit\"' "$HOME/.claude/plugins" --include=plugin.json 2>/dev/null | head -1)")"`. En ambos casos, **verificar antes de usarla** que `$PLUGIN_ROOT/references/language.md` existe. El destino de cada enlace markdown (`../../references/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `references/` en el proyecto**: un `<proyecto>/references/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
 
 ## Resolución de idioma
 
@@ -68,9 +68,10 @@ Lo propio de este skill:
 | Artefacto | Ruta |
 | --------- | ---- |
 | Carpeta de capability (**salida**) | `docs/architecture/[capability]/` |
-| Detalle de la capability (propósito, APIs, flujos, índices, observaciones) | `docs/architecture/[capability]/README.md` |
-| Modelos de datos (un archivo por modelo) | `docs/architecture/[capability]/models/md-XX.md` |
-| Diagramas (un archivo por diagrama) | `docs/architecture/[capability]/diagrams/dg-XX.md` |
+| Detalle de la capability (propósito, APIs, índices, observaciones) | `docs/architecture/[capability]/README.md` |
+| Modelos de datos (un archivo por modelo) | `docs/architecture/[capability]/models/MD-XXX-[slug].md` |
+| Flujos / procesos (un archivo por flujo) | `docs/architecture/[capability]/flows/FL-XXX-[slug].md` |
+| Diagramas (un archivo por diagrama) | `docs/architecture/[capability]/diagrams/DG-XXX-[slug].md` |
 | Archivos de apoyo (imágenes, esquemas exportados) | `docs/architecture/[capability]/assets/` |
 | Glosario (opcional) | `docs/glossary.md` |
 
@@ -78,9 +79,9 @@ Lo propio de este skill:
 
 - **Una carpeta por capability.** Si la carpeta de la capability ya existe, se **actualiza** (se añaden o modifican elementos); nunca crear una segunda carpeta para la misma capability.
 - Nombre de la carpeta: capability en minúsculas, kebab-case, sin artículos ni palabras vacías. Ejemplos: `facturacion/`, `gestion-recetas/`, `autenticacion/`.
-- Cada elemento lleva id secuencial **por tipo**, único en el ámbito de la capability: modelos `MD-01, MD-02, …`; APIs `API-01, API-02, …`; flujos `FL-01, FL-02, …`; diagramas `DG-01, DG-02, …`. No renumerar elementos existentes: los ids son estables porque otras historias y tareas ya pueden enlazarlos.
-- **APIs y flujos viven en el `README.md`** como encabezados `###` con el formato `### API-01: Nombre`, precedidos de su **ancla explícita** `<a id="api-01"></a>` en la línea inmediatamente anterior. Su referencia es `docs/architecture/facturacion/README.md#api-01` — **el id en minúsculas, sin el nombre**. Nunca un ancla derivada del título (`#api-01-crear-factura`): depende del renderizador y se rompe al renombrar el elemento. Ver [Por qué el ancla no se deriva del título](references/element-standards.md#por-qué-el-ancla-no-se-deriva-del-título).
-- **Modelos y diagramas viven cada uno en su propio archivo**, en `models/` y `diagrams/`, **nombrado por su id en minúsculas** — `models/md-01.md`, `diagrams/dg-02.md` — nunca por el nombre del elemento (misma doctrina que las anclas: el id es estable, el nombre puede cambiar). Su referencia es la ruta del archivo, sin ancla: `docs/architecture/facturacion/models/md-01.md`. El nombre humano vive en el `# {{ID}}: Nombre` del propio archivo y en las **tablas índice** del README («Modelos de datos» y «Diagramas»), que enlazan cada archivo — un modelo o diagrama sin fila en su índice es un elemento huérfano.
+- Cada elemento lleva id secuencial **por tipo**, único en el ámbito de la capability: modelos `MD-001, MD-002, …`; APIs `API-001, API-002, …`; flujos `FL-001, FL-002, …`; diagramas `DG-001, DG-002, …` — todos con **3 dígitos**, como los identificadores de artefactos del catálogo. No renumerar elementos existentes: los ids son estables porque otras historias y tareas ya pueden enlazarlos.
+- **Las APIs viven en el `README.md`** como encabezados `###` con el formato `### API-001: Nombre`, precedidos de su **ancla explícita** `<a id="api-001"></a>` en la línea inmediatamente anterior. Su referencia es `docs/architecture/facturacion/README.md#api-001` — **el id en minúsculas, sin el nombre**. Nunca un ancla derivada del título (`#api-001-crear-factura`): depende del renderizador y se rompe al renombrar el elemento. Ver [Por qué el ancla no se deriva del título](references/element-standards.md#por-qué-el-ancla-no-se-deriva-del-título).
+- **Modelos, flujos y diagramas viven cada uno en su propio archivo**, en `models/`, `flows/` y `diagrams/`, nombrado con el estándar **`MD-XXX-{slug}` / `FL-XXX-{slug}` / `DG-XXX-{slug}`** — `models/MD-001-factura.md`, `flows/FL-001-emision-factura.md`, `diagrams/DG-002-contexto.md` — donde `{slug}` es el nombre del elemento en kebab-case, **fijado al crearlo**: renombrar el elemento después no renombra el archivo (el id sigue siendo el contrato de enlace; mismo criterio que las carpetas `US-XXX-[nombre-corto]`). Su referencia es la ruta del archivo, sin ancla: `docs/architecture/facturacion/models/MD-001-factura.md`. El nombre humano vive en el `# {{ID}}: Nombre` del propio archivo y en las **tablas índice** del README («Modelos de datos», «Flujos / Procesos» y «Diagramas»), que enlazan cada archivo — un elemento sin fila en su índice es un elemento huérfano.
 - El `README.md` lleva **fecha de creación** y **última actualización** de la capability. Las lagunas abiertas se registran en **Observaciones** del README, citando el elemento afectado esté donde esté.
 
 ---
@@ -90,7 +91,7 @@ Lo propio de este skill:
 | Modo | Quién invoca | Entrada típica | Salida esperada |
 | ---- | ------------ | -------------- | --------------- |
 | **Directo** | El usuario | «Documenta el modelo de factura», «especifica la API de pagos», «dame más detalle del flujo de aprobación de la TK-004» | Carpeta de capability creada/actualizada + resumen al usuario + oferta de enlazarla desde la US/TK/WI relacionada |
-| **Delegado** | `work-define` o `work-plan` vía subagente | Contexto de la US/TK/WI + los elementos técnicos a especificar | Carpeta creada/actualizada y, **como respuesta final del subagente, la lista de referencias** — para API/FL la ruta del README con ancla `#<id>`; para MD/DG la ruta de su archivo en `models/`/`diagrams/` — para que el skill llamador las agregue a la sección Referencias del artefacto |
+| **Delegado** | `work-define` o `work-plan` vía subagente | Contexto de la US/TK/WI + los elementos técnicos a especificar | Carpeta creada/actualizada y, **como respuesta final del subagente, la lista de referencias** — para las APIs la ruta del README con ancla `#<id>`; para MD/FL/DG la ruta de su archivo en `models/`/`flows/`/`diagrams/` — para que el skill llamador las agregue a la sección Referencias del artefacto |
 
 En modo delegado, el grilling de preguntas se dirige igualmente al usuario (el subagente hereda la herramienta de preguntas estructuradas); si el entorno no permite preguntar, documentar las lagunas en Observaciones y reportarlas en la respuesta final en lugar de inventar. **En modo directo**, si el entorno tampoco permite preguntar (p. ej. sesión desatendida/programada sin nadie que responda en el momento), aplicar el mismo criterio: no inventar, documentar cada laguna en Observaciones citando el elemento afectado, y destacarlas de forma prominente al principio del resumen final — a diferencia del modo delegado, aquí no hay un skill llamador que las recoja, así que es el propio resumen al usuario el único lugar donde quedan visibles.
 
@@ -127,12 +128,12 @@ El detalle de **qué preguntar por tipo de elemento** (campos sin tipo, códigos
 
 El procedimiento completo está en [`references/flow.md`](references/flow.md). Síntesis:
 
-- **Crear/actualizar:** resolver capability → leer la carpeta existente si la hay (README y archivos de `models/` y `diagrams/`) → detectar lagunas y hacer el grilling → redactar con las plantillas de `assets/` y los estándares de `references/element-standards.md`: APIs/flujos en el README, cada modelo y diagrama en su archivo, enlazado desde los índices del README → asignar ids estables → actualizar la fecha de última actualización → glosario si aplica.
-- **Enlazar:** en modo delegado, devolver las referencias (`README.md#<id>` para API/FL; ruta del archivo para MD/DG) al skill llamador; en modo directo, ofrecer agregar la referencia a la sección Referencias de la US/TK/WI relacionada.
+- **Crear/actualizar:** resolver capability → leer la carpeta existente si la hay (README y archivos de `models/` y `diagrams/`) → detectar lagunas y hacer el grilling → redactar con las plantillas de `assets/` y los estándares de `references/element-standards.md`: las APIs en el README, cada modelo, flujo y diagrama en su archivo, enlazado desde los índices del README → asignar ids estables → actualizar la fecha de última actualización → glosario si aplica.
+- **Enlazar:** en modo delegado, devolver las referencias (`README.md#<id>` para APIs; ruta del archivo para MD/FL/DG) al skill llamador; en modo directo, ofrecer agregar la referencia a la sección Referencias de la US/TK/WI relacionada.
 - **Cierre:** si quedaron lagunas en Observaciones, ofrecerle al usuario las preguntas que las cerrarían (misma mecánica de grilling).
 
 ---
 
 ## Mensaje al usuario
 
-Solo resultados y lo que el usuario debe saber o decidir. No incluir razonamiento interno ni narración del trabajo en curso («leí la US», «creé el archivo»). Si hay pendientes, listarlos agrupados por elemento (`MD-XX`, `API-XX`, `FL-XX`, `DG-XX`). En modo delegado, la respuesta final del subagente es **datos para el skill llamador** (rutas y anclas `#<id>`), no prosa para el humano.
+Solo resultados y lo que el usuario debe saber o decidir. No incluir razonamiento interno ni narración del trabajo en curso («leí la US», «creé el archivo»). Si hay pendientes, listarlos agrupados por elemento (`MD-XXX`, `API-XXX`, `FL-XXX`, `DG-XXX`). En modo delegado, la respuesta final del subagente es **datos para el skill llamador** (rutas y anclas `#<id>`), no prosa para el humano.

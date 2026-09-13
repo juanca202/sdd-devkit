@@ -75,8 +75,9 @@ Incluir únicamente enlaces a recursos ya almacenados; nunca pegar archivos, im�
 Recursos válidos: mockups, wireframes, flujos, modelos, diagramas, especificaciones técnicas.
 Rutas permitidas: assets/ (recursos propios de esta historia) o docs/architecture/ (documentación técnica compartida).
 Al enlazar un elemento de la documentación técnica, copiar la referencia tal como la devuelve design-define, nunca el título
-convertido a slug: docs/architecture/[capability]/README.md#api-04 (o #fl-02) para APIs y flujos;
-docs/architecture/[capability]/models/md-01.md o diagrams/dg-01.md para modelos y diagramas.
+convertido a slug: docs/architecture/[capability]/README.md#api-004 para APIs;
+docs/architecture/[capability]/models/MD-XXX-{slug}.md, flows/FL-XXX-{slug}.md o diagrams/DG-XXX-{slug}.md
+para modelos, flujos y diagramas.
 -->
 - **Diseño / prototipo:** {{enlace markdown al diseño o prototipo}}
 - **Archivo local:** {{enlace markdown al archivo en assets/}}

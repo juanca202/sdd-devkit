@@ -46,6 +46,22 @@ Skills que preparan y mantienen la base del proyecto — arquitectura y control 
 
 
 
+### plugin-migrate
+
+**Cuándo:** después de actualizar el plugin, para normalizar el contenido que una versión anterior dejó con otra estructura (rutas, plantillas, cabeceras, formatos). También cuando otro skill detecta contenido de una versión anterior y lo deriva aquí — ningún otro skill migra.
+
+**Produce:** el contenido del proyecto en la estructura vigente, con confirmación previa, ids y redacción conservados, referencias internas actualizadas y un mapeo viejo → nuevo de las rutas movidas.
+
+**Ejemplos de invocación:**
+
+```text
+/plugin-migrate
+/plugin-migrate revisa la documentación técnica
+```
+
+- «Acabo de actualizar el plugin, normaliza el proyecto»
+- «Este estándar tiene el formato viejo de Verificación, arréglalo»
+
 ### arch-manage
 
 **Cuándo:** documentar o cambiar una decisión de arquitectura (ADR) o una norma del proyecto (estándar).

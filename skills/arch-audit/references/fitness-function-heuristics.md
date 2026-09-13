@@ -1,7 +1,7 @@
 # Rastreo heurístico de fitness functions existentes
 
 Leer en la Fase 2B, paso 1, **solo cuando** la fila del criterio (`CR-XXX`) no existe o está incompleta
-(estándares antiguos, o un ADR sin criterio) — si el criterio ya tiene un enlace en `Verificación`, o el
+(estándares aún no normalizados — sugerir `/plugin-migrate` — o un ADR sin criterio) — si el criterio ya tiene un enlace en `Verificación`, o el
 runner del paso 0 ya lo cubrió, no hace falta este rastreo.
 
 ## Preferir el runner de validaciones

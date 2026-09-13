@@ -46,7 +46,7 @@ Plantilla canónica del reporte de trazabilidad (coverage-verify).
 <!--
 - «Total» = M, el total de criterios de aceptación del artefacto. `COVERED` + `PARTIAL` + `UNCOVERED`s DEBE sumar M.
 - Cifras siempre numéricas: 0, no «—».
-- La línea «Pruebas» se copia de test-run.json: `result` viene por suite —las fijas (unit/coverage), más e2e
+- La línea «Pruebas» se copia de quality-check-run.json: `result` viene por suite —las fijas (unit/coverage), más e2e
   si el repo la ejecuta y las que declare el estándar de testing (integration, contract…)—, no hay agregado global: no
   inventar uno, ni listar una suite que no venga en `suites[]`. Si no hubo corrida, decir «no ejecutable» y
   el motivo, sin suites.

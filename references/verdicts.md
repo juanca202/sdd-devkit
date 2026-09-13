@@ -11,7 +11,7 @@ Todo veredicto y todo estado tiene **tres formas**, y cada una tiene su lugar:
 
 | Forma | Qué es | Dónde se usa |
 |-------|--------|--------------|
-| **Valor canónico** | Identificador estable en MAYÚSCULAS (`APPROVED`, `PASS`, `BLOCKING`…). No es idioma, es un identificador. | El razonamiento del skill, las tablas normativas de su `SKILL.md` y sus `references/`, y los artefactos que consume una máquina (`test-run.json`). |
+| **Valor canónico** | Identificador estable en MAYÚSCULAS (`APPROVED`, `PASS`, `BLOCKING`…). No es idioma, es un identificador. | El razonamiento del skill, las tablas normativas de su `SKILL.md` y sus `references/`, y los artefactos que consume una máquina (`quality-check-run.json`). |
 | **Símbolo** | El emoji/carácter asociado (`✅`, `❌`, `⚠️`, `⏭️`, `⏸️`, `—`). | El informe, siempre pegado a la etiqueta. **Es el contrato entre skills.** |
 | **Etiqueta** | La palabra que lee la persona. | **Solo** el informe, y **siempre redactada en el idioma resuelto** por [`language.md`](language.md). |
 
@@ -19,7 +19,7 @@ Todo veredicto y todo estado tiene **tres formas**, y cada una tiene su lugar:
 > cuyo idioma resuelto es inglés está incumpliendo la sección «Resolución de idioma» de ese skill. La
 > etiqueta se redacta al momento de escribir el informe, a partir del valor canónico.
 
-> **Nunca al revés.** El valor canónico no se traduce, ni en el razonamiento, ni en `test-run.json`, ni
+> **Nunca al revés.** El valor canónico no se traduce, ni en el razonamiento, ni en `quality-check-run.json`, ni
 > en las tablas normativas de los `SKILL.md`. Escribir una etiqueta traducida donde va un valor canónico
 > rompe el esquema o la comparación.
 
@@ -94,7 +94,7 @@ Los estados que **no** tienen símbolo propio (p. ej. las categorías `BLOCKING`
 
 Todo esto son **identificadores**, no contenido:
 
-- El `result` de `.sdd-devkit/test-run.json`: `PASS` · `FAIL` · `SKIPPED` · `N/A`, y el resto de sus claves.
+- El `result` de `.sdd-devkit/quality-check-run.json`: `PASS` · `FAIL` · `SKIPPED` · `N/A`, y el resto de sus claves.
 - Las claves y los valores de `.sdd-devkit/settings.json`.
 - Las **marcas ocultas** de los artefactos y todas sus claves (`verdict`, `status`, `testType`,
   `fingerprint`, `spec`, `base`, `mode`, `generated`…).

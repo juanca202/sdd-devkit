@@ -195,15 +195,15 @@ repositorio:
   descripción en vez de volver a preguntar; solo abrir la pregunta abierta del 3.4 si no alcanza para
   redactarla con confianza.
 
-### 4.5 Idempotencia y migración por repositorio
+### 4.5 Idempotencia por repositorio
 
 Los criterios de [Idempotencia / reejecución](../SKILL.md#idempotencia--reejecución) y
-[3.1 Migración de formato](../SKILL.md#31-migración-de-formato) del `SKILL.md` se aplican **por
+[3.1 Archivos fuera de formato](../SKILL.md#31-archivos-fuera-de-formato) del `SKILL.md` se aplican **por
 repositorio**: un submódulo puede ya tener su propio `AGENTS.md`/`CLAUDE.md`/`README.md` (escrito a mano o
 por otra herramienta) sin que eso diga nada sobre el estado del repo de especificaciones, y viceversa —
 comparar cada copia contra la plantilla que le corresponde (`agents-template.md` en la raíz,
-`agents-submodule-template.md` en cada submódulo) y aplicar la migración de cada una por separado, aunque
-se agrupen todas en la misma tanda de confirmación (regla general del punto 6 de 3.1).
+`agents-submodule-template.md` en cada submódulo). Los hallazgos fuera de formato de todas las copias se
+agrupan en la misma mención y se delegan juntos en `/plugin-migrate`.
 
 ## 5. Candidatos de arquitectura y compuerta de calidad por submódulo
 
@@ -272,5 +272,5 @@ del repositorio de especificaciones puede seguir enlazándolo, mostrando ese mis
 - `.sdd-devkit/settings.json` no gana ninguna clave nueva para describir la topología: `.gitmodules`, que
   git ya mantiene, es la fuente de verdad de qué submódulos existen y dónde. No duplicar esa lista en
   `settings.json` ni en ningún otro archivo del harness.
-- El resto de reglas del Paso 3 (idempotencia, migración de formato) aplican igual sobre cada repositorio
+- El resto de reglas del Paso 3 (idempotencia, delegación de archivos fuera de formato) aplican igual sobre cada repositorio
   que sobre un repo único — ver § 4.5.

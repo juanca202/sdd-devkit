@@ -15,10 +15,12 @@ agente resuelve, y el destino la ruta que navega en GitHub o en un editor:
 **`${PLUGIN_ROOT}` es la raíz del plugin instalado** —la carpeta que contiene `skills/`, `agents/` y
 `references/`— y es un **placeholder del catálogo, no una variable de ningún cliente**: el agente lo
 sustituye siguiendo la regla que cada `SKILL.md` y cada agente llevan en su sección **Rutas de las
-referencias compartidas** (antes de «Resolución de idioma»): ejecutar
-`PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"; [ -n "$PLUGIN_ROOT" ] && PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd)"; echo "PLUGIN_ROOT=$PLUGIN_ROOT"`
-— siempre imprime un valor: si trae ruta, usarla; si imprime vacío, la carpeta desde la que se cargó
-el archivo (dos niveles arriba de `skills/<nombre>/SKILL.md`, uno arriba de `agents/<nombre>.md`). Por qué un placeholder y no la
+referencias compartidas** (antes de «Resolución de idioma»): la raíz es la **carpeta desde la que se
+cargó el archivo** — dos niveles arriba de `skills/<nombre>/SKILL.md`, uno arriba de
+`agents/<nombre>.md`; el cliente anuncia esa ubicación al invocar el skill (p. ej. «Base directory for
+this skill: …»). Si no está disponible, localizar la instalación buscando el manifiesto del plugin:
+`PLUGIN_ROOT="$(dirname "$(grep -rl '\"name\": *\"sdd-devkit\"' "$HOME/.claude/plugins" --include=plugin.json 2>/dev/null | head -1)")"`
+En ambos casos, verificar antes de usarla que `<raíz>/references/language.md` existe. Por qué un placeholder y no la
 variable de Claude a secas: el catálogo se instala también en clientes que no la definen, y un nombre
 propio evita que otro cliente lo interprete como suyo.
 
@@ -34,13 +36,13 @@ Lo que sí exige el plugin instalado es que la carpeta `references/` viaje junto
 
 | Archivo | Qué contiene | Skills que lo consumen |
 |---------|--------------|------------------------|
-| [`language.md`](language.md) | Regla única de resolución del idioma de artefactos, documentos y mensajes: lectura obligatoria antes de ejecutar cualquier skill o agente | **Los 16 skills y los 3 agentes** |
+| [`language.md`](language.md) | Regla única de resolución del idioma de artefactos, documentos y mensajes: lectura obligatoria antes de ejecutar cualquier skill o agente | **Los 18 skills y los 3 agentes** |
 | [`planning.md`](planning.md) | Política de definición de casos de prueba resuelta desde `.sdd-devkit/settings.json`: `testCases.mode` decide si se pregunta, se invoca automáticamente o nunca se sugiere `test-define` al cerrar la planificación; `testCases.askDetails`, si `test-define` entrevista o aplica valores por defecto | `work-define`, `work-plan` (`mode`) · `test-define` (`askDetails`) |
 | [`implementation.md`](implementation.md) | Política de implementación resuelta desde `.sdd-devkit/settings.json`: ritmo de confirmación por unidad, qué hacer con cambios sin commitear al iniciar, worktrees y su ubicación, concurrencia máxima, handoff de cierre y modo de archivado | `work-implement` · `work-integrate`, `pr-create` (`archiveMode`) |
 | [`git.md`](git.md) | Política de commit y push resuelta desde `.sdd-devkit/settings.json`: si se confirma la división en varios commits, si se hace push tras completarlo (no aplica en invocación delegada) y qué ramas son de integración con su `commitPolicy` | `git-commit` · `work-implement`, `work-integrate` (`integrationBranches`) |
 | [`verification.md`](verification.md) | Puertas de cierre (`quality-check`, `code-review`, `coverage-verify`) resueltas desde `.sdd-devkit/settings.json`: si cada una corre antes del merge (`enabled`, lo resuelve `work-integrate`) y si pide confirmación antes de corregir lo que encuentre (`confirmFix`, lo resuelve cada puerta); omitida ≠ aprobada | `quality-check`, `code-review`, `work-integrate` |
 | [`escalation.md`](escalation.md) | Límite de intentos consecutivos sobre un mismo problema que no se resuelve (prueba en rojo, build roto, regla violada) resuelto desde `.sdd-devkit/settings.json`: `maxAttempts` fija el techo por problema y `onLimit` decide si al agotarlo se presenta el parte de bloqueo y se pregunta al usuario (`ask`) o se registra como `BLOCKED` y se continúa (`report`) | `work-implement`, `quality-check`, `code-review`, `coverage-verify`, `work-integrate`, `arch-audit` y los 3 agentes |
-| [`asking.md`](asking.md) | Mecanismo de preguntas estructuradas, ritmo de las tandas, fallback en prosa y qué hacer si falta una herramienta | `arch-init`, `design-define`, `git-commit`, `quality-check`, `test-define`, `coverage-verify`, `work-implement`, `work-integrate`, `work-plan`, `work-research` |
+| [`asking.md`](asking.md) | Mecanismo de preguntas estructuradas, ritmo de las tandas, fallback en prosa y qué hacer si falta una herramienta | `arch-init`, `design-define`, `git-commit`, `plugin-migrate`, `quality-check`, `test-define`, `coverage-verify`, `work-implement`, `work-integrate`, `work-plan`, `work-research` |
 | [`verdicts.md`](verdicts.md) | Vocabulario de veredictos y estados de los informes: valor canónico, símbolo y etiqueta en el idioma resuelto; cómo los lee un consumidor | `quality-check`, `code-review`, `coverage-verify`, `arch-audit`, `work-integrate`, `pr-create` |
 | [`artifacts.md`](artifacts.md) | Layout del harness (rutas de cada artefacto), **resolución de la raíz de arquitectura** (repo principal vs. submódulo), identificadores y numeración, y el contrato de archivado | Todo el ciclo de trabajo y de arquitectura |
 | [`project-management.md`](project-management.md) | Integración con el gestor de proyectos resuelta desde `.sdd-devkit/settings.json`: si está activada, con qué proveedor y con qué datos de conexión (`host`, `workspace`, `project`) | `work-plan`, `test-define`, `work-research` |

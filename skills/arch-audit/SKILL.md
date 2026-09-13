@@ -114,7 +114,7 @@ cualquier informe y respetar su estructura.
 
 ---
 
-> **Rutas de las referencias compartidas.** `${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `references/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/references/<archivo>.md`. Para resolverla, ejecutar `PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-}"; [ -n "$PLUGIN_ROOT" ] && PLUGIN_ROOT="$(cd "$PLUGIN_ROOT" 2>/dev/null && pwd)"; echo "PLUGIN_ROOT=$PLUGIN_ROOT"` — siempre imprime un valor: si trae ruta, usarla; si imprime vacío, usar la carpeta desde la que se cargó este archivo, dos niveles arriba. El destino de cada enlace markdown (`../../references/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `references/` en el proyecto**: un `<proyecto>/references/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
+> **Rutas de las referencias compartidas.** `${PLUGIN_ROOT}` es la **raíz del plugin instalado** (la carpeta que contiene `skills/`, `agents/` y `references/`), y toda referencia compartida de este skill se escribe como `${PLUGIN_ROOT}/references/<archivo>.md`. Para resolverla: la raíz es la **carpeta desde la que se cargó este archivo**, dos niveles arriba (`<raíz>/skills/<nombre>/SKILL.md`) — el cliente anuncia esa ubicación al invocar el skill (p. ej. «Base directory for this skill: …»). Si esa ubicación no está disponible, localizar la instalación buscando el manifiesto del plugin: `PLUGIN_ROOT="$(dirname "$(grep -rl '\"name\": *\"sdd-devkit\"' "$HOME/.claude/plugins" --include=plugin.json 2>/dev/null | head -1)")"`. En ambos casos, **verificar antes de usarla** que `$PLUGIN_ROOT/references/language.md` existe. El destino de cada enlace markdown (`../../references/…`) existe solo para navegar el repositorio en GitHub o en un editor: **no** resolverlo desde el directorio de trabajo. **Nunca buscar `references/` en el proyecto**: un `<proyecto>/references/language.md` que no existe no es un archivo que falte, es una ruta mal resuelta — corregir la raíz y volver a leer, sin preguntar al usuario ni saltarse la lectura.
 
 ## Resolución de idioma
 
@@ -227,8 +227,8 @@ En una **Nueva auditoría desde cero** se ignora el histórico para el análisis
    requisito —; `Pending` = pendiente). **Si el estándar no sigue esa
    estructura** (una tabla `### Criterios de cumplimiento` dentro de cada requisito en vez de la tabla única,
    sin columna `Requisito`, o con `TODO`/`N/A`/`yes`/`no` en `Verificación` en vez del enlace o `Pending`), leer esas
-   tablas igual y señalarlo como observación (estándar fuera de la convención de `arch-manage`) — no bloquea la
-   auditoría. **Cada criterio `CR-XXX` es una entrada en la lista de reglas a auditar**,
+   tablas igual, señalarlo como observación y **sugerir `/plugin-migrate`** para normalizarlo — la
+   migración no se hace desde aquí, y no bloquea la auditoría. **Cada criterio `CR-XXX` es una entrada en la lista de reglas a auditar**,
    contextualizado por el requisito que lo agrupa.
 
 2. **ADRs — solo trazabilidad y huecos.** Listar `docs/adr/*.md`. Para cada criterio auditado, tener a

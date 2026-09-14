@@ -33,9 +33,8 @@ específico (una salida propia, una excepción de ruta).
 > fallback de lectura, o escaneo de IDs bajo el archivo), leer `specification.archivePath`: si el
 > repo declaró un valor distinto del default, sustituirlo por ese valor en lugar de
 > `docs/archive/`. Si no hay `settings.json`, o la clave falta, aplica el default. `basePath`
-> (`docs/specs/` en esta tabla) es puramente convencional hoy — solo lo resuelve el hook de
-> seguimiento de especificaciones (ver [`../hooks/README.md`](../hooks/README.md)) — y no se
-> sustituye en el resto del catálogo.
+> (`docs/specs/` en esta tabla) es puramente convencional hoy y no se sustituye en el resto del
+> catálogo.
 
 ## Layout del harness
 
@@ -64,7 +63,6 @@ específico (una salida propia, una excepción de ruta).
 | Informe de code review | `docs/audits/code-review.md` (+ histórico `docs/audits/code-review-<YYYYMMDD-HHMMSS>.md`) | `code-review` |
 | Informe de auditoría de arquitectura | `<raíz-arq>/docs/audits/arch-audit-YYYY-MM-DD.md` (con sufijo `-HHMM` si ya hay uno de ese día) | `arch-audit` |
 | Caché de corrida de checks deterministas (pruebas + validaciones de arquitectura + checks estáticos de la corrida completa) | `.sdd-devkit/quality-check-run.json` (**ubicación fija**, no por unidad) | `quality-check` (productor único; la consumen `coverage-verify` y `arch-audit`) |
-| Estado de iteración para el seguimiento de especificaciones | `.sdd-devkit/current-iteration.json` (**ubicación fija**, vive mientras dura la unidad o corrección en curso) | `work-implement` |
 
 ## Raíz de arquitectura (ADR, estándares y fitness functions)
 

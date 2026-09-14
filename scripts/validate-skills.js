@@ -5,7 +5,7 @@
 // de frontmatter, convenciones de AGENTS.md (name/description/license),
 // senales blandas (lineas/description extendido) y enlaces/anclas rotas en
 // SKILL.md y sus references/*.md. Sin dependencias externas — solo modulos
-// nativos de Node.js, igual que hooks/events/artifact-events.js.
+// nativos de Node.js.
 //
 // Uso: node scripts/validate-skills.js
 // Codigo de salida: 1 si hay algun ERROR, 0 en cualquier otro caso.

@@ -8,8 +8,7 @@ mecanismo; no se repite en cada sección.
 
 Usar la **herramienta de preguntas estructuradas nativa del cliente** (la que renderiza opciones
 tappables o un selector) en lugar de redactar la pregunta como prosa libre. No usar una tool MCP
-(`ask-question` ni ninguna otra) para preguntarle al usuario: el seguimiento de esas preguntas, si
-está activo, lo hacen los hooks del plugin observando la tool nativa.
+(`ask-question` ni ninguna otra) para preguntarle al usuario.
 
 | Cliente | Tool |
 |---------|------|

@@ -10,14 +10,14 @@ runner del paso 0 ya lo cubrió, no hace falta este rastreo.
 
 Leer en la Fase 2B, paso 0, **antes de ejecutar el runner**. `quality-check` corre el runner de
 validaciones de arquitectura como un check más de su batería y persiste el resultado en
-`.sdd-devkit/test-run.json`, como una entrada `suites[]` de `type: "architecture"`. Esa corrida es
+`.sdd-devkit/quality-check-run.json`, como una entrada `suites[]` de `type: "architecture"`. Esa corrida es
 reutilizable aquí si es **fresca**, con las **mismas reglas que las demás entradas** de esa caché
 (definición canónica en
 [`../../quality-check/references/execution.md`](../../quality-check/references/execution.md#caché-de-corrida-de-pruebas)):
 
 | Comprobación | Qué exige |
 |--------------|-----------|
-| `schema` | `test-run/v1`. Otro valor ⇒ caché inservible. |
+| `schema` | `quality-check-run/v1`. Otro valor ⇒ caché inservible. |
 | `generatedBy` | `"quality-check"`. Otro valor ⇒ descartar: es el único productor autorizado. |
 | Entrada | Existe una de `type: "architecture"`. Si no está, el repo no tenía runner en esa corrida ⇒ no hay caché que usar. |
 | `git.fingerprint` | Coincide con el `FINGERPRINT` recalculado ahora, con la [receta canónica](../../quality-check/references/execution.md#fingerprint-canónico). Difiere ⇒ obsoleta. |
@@ -26,7 +26,7 @@ reutilizable aquí si es **fresca**, con las **mismas reglas que las demás entr
   procedencia en el informe («runner tomado de la corrida de `quality-check` del {{fecha}}»). Las
   validaciones de arquitectura son **deterministas**: con el mismo árbol dan el mismo resultado.
 - **Obsoleta, ausente o inservible** ⇒ ejecutar el runner aquí, como siempre. **Este skill no escribe
-  `test-run.json`**: la caché se repuebla en la siguiente corrida de `quality-check`.
+  `quality-check-run.json`**: la caché se repuebla en la siguiente corrida de `quality-check`.
 - **La caché aporta la corrida, no el juicio.** El reparto por `CR-XXX`, la clasificación de
   incumplimientos y el veredicto se hacen igual, aquí, sobre esa salida. Si la salida cacheada no
   permite resolver un `CR-XXX` concreto (resumen agregado, sin la línea del criterio), ejecutar el

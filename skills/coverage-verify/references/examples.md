@@ -8,7 +8,7 @@ Referencia del skill `coverage-verify`. Casos de uso y errores a evitar.
 
 **Ejemplo 1 — US completa con tests**
 - *Entrada:* «Valida la trazabilidad de US-042.»
-- *Comportamiento:* lee `US-042/README.md`, extrae los criterios con su identificador verbatim, lee la carpeta `test-cases/` del artefacto e inventaria tests (unit/integración/e2e), mapea cada criterio, obtiene los resultados de pruebas de `quality-check` (caché `test-run.json` fresca o delegación en modo `tests-only`), construye la matriz, guarda `coverage.md` y reporta el veredicto.
+- *Comportamiento:* lee `US-042/README.md`, extrae los criterios con su identificador verbatim, lee la carpeta `test-cases/` del artefacto e inventaria tests (unit/integración/e2e), mapea cada criterio, obtiene los resultados de pruebas de `quality-check` (caché `quality-check-run.json` fresca o delegación en modo `tests-only`), construye la matriz, guarda `coverage.md` y reporta el veredicto.
 
 **Ejemplo 2 — Work item con criterios de aceptación**
 - *Entrada:* «Valida la cobertura de WI-007.»
@@ -56,7 +56,7 @@ Referencia del skill `coverage-verify`. Casos de uso y errores a evitar.
 - Ejecutar la suite directamente desde este skill, o asumir un runner: la ejecución se delega **siempre** en `quality-check`.
 - Forzar el mapeo de un test a un criterio cuando el vínculo es incierto, en lugar de dejarlo en «Observaciones y pendientes».
 - **Confundir los dos destinos de observación:** lo atribuible a un criterio va en la columna `Observaciones` de «Cobertura por criterio»; lo que es de la corrida (suite `coverage` en `FAIL`, árbol sucio, ejecución no delegable, tests no vinculables) va en la sección «Observaciones y pendientes».
-- Inventar un resultado global agregado de la corrida: `test-run.json` da `result` **por suite**, no un total.
+- Inventar un resultado global agregado de la corrida: `quality-check-run.json` da `result` **por suite**, no un total.
 - **Normalizar o renombrar el identificador de un criterio** (p. ej. escribir `AC-001` donde el artefacto dice `1.1`): rompe el vínculo con los TCs que produjo `test-define`.
 - **Bloquear porque el artefacto no sigue las convenciones del plugin** (formato del identificador, ubicación, campo `Estado:` del **artefacto**). El único requisito es que los criterios tengan identificador. El `Estado:` del **TC** sí se lee: filtra la cobertura (ver «Estados de cobertura»).
 - Ignorar la carpeta `test-cases/` del artefacto y su índice, reconstruyendo el mapeo solo por heurística de nombres de test.

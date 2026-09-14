@@ -120,7 +120,7 @@ No inventar nada. Si un dato no es explícito, obtenerlo del repo o preguntar al
 | **Criterios de aceptación** | Según el tipo (ver [Tipos de trabajo y criterios](#tipos-de-trabajo-y-criterios)) | Si el trabajo no tiene criterios de aceptación: **bloquear** y reportar — sin criterios no hay nada que trazar |
 | **Casos de prueba** | **Fuente primaria:** la carpeta `test-cases/` **junto al artefacto** y su índice `test-cases/README.md`, más la línea `Casos de prueba:` que `test-define` deja bajo cada criterio. **Fallback:** inferir desde los tests del repo | Si no hay casos documentados, derivar la cobertura desde los artefactos de prueba del repo |
 | **Artefactos de prueba** | Buscar en el repo archivos de test unit / integración / e2e relacionados con el trabajo (ver el Paso 2 en `references/flow.md`) | Si no se encuentran, marcar criterios sin artefacto como `UNCOVERED` y dejar Observación |
-| **Resultados de pruebas** | **Delegados en `quality-check`**: caché fresca `test-run.json` o invocación `tests-only` (ver [Resultados de pruebas: delegación en quality-check](#resultados-de-pruebas-delegación-en-quality-check)) | Si `quality-check` no puede ejecutarlas (sin stack, entorno sin correr, no disponible en la sesión) o el usuario declina la delegación: las filas **con artefacto** van con `Ejecución = —` y `Resultado = `NOT_RUN`, y el motivo a «Observaciones y pendientes» |
+| **Resultados de pruebas** | **Delegados en `quality-check`**: caché fresca `quality-check-run.json` o invocación `tests-only` (ver [Resultados de pruebas: delegación en quality-check](#resultados-de-pruebas-delegación-en-quality-check)) | Si `quality-check` no puede ejecutarlas (sin stack, entorno sin correr, no disponible en la sesión) o el usuario declina la delegación: las filas **con artefacto** van con `Ejecución = —` y `Resultado = `NOT_RUN`, y el motivo a «Observaciones y pendientes» |
 | **Alcance** | Todo el trabajo por defecto; el usuario puede acotar a ciertos criterios | Si es ambiguo, preguntar |
 
 > Leer **siempre** el documento de criterios completo (el `README.md` del trabajo, o el archivo del artefacto externo) antes de generar el reporte. No asumir criterios que no estén escritos.
@@ -135,7 +135,7 @@ Resumen de los pasos. El detalle íntegro de cada paso está en **`references/fl
 1. **Localizar y leer el trabajo** — resolver tipo y ubicación; extraer todos los criterios con su identificador **verbatim**. Sin criterios (o sin identificador) → bloquear (ver «Cuándo bloquear»).
 2. **Inventariar casos y artefactos** — leer la carpeta `test-cases/` del artefacto y su índice como fuente primaria, y clasificar los tests del repo por tipo, con ruta y criterio.
 3. **Mapear cobertura fila a fila** — expandir cada criterio en sus filas (criterio × TC × tipo declarado), rellenar `Evidencia` y derivar el estado del criterio (ver «Estados de cobertura») con sus observaciones. No forzar mapeos inciertos.
-4. **Obtener resultados de pruebas (delegando en `quality-check`)** — reutilizar la caché `test-run.json` si está fresca, o invocar `quality-check` en modo `tests-only`; mapear por suite a las filas y rellenar `Ejecución` (`quality-check` / `Manual` / `—`) y `Resultado` (`PASS` / `FAIL` / `NOT_RUN` / `UNCOVERED` / `N/A`). **No** correr pruebas directamente. Nunca fabricar resultados (ver [Resultados de pruebas: delegación en quality-check](#resultados-de-pruebas-delegación-en-quality-check) y `references/flow.md`).
+4. **Obtener resultados de pruebas (delegando en `quality-check`)** — reutilizar la caché `quality-check-run.json` si está fresca, o invocar `quality-check` en modo `tests-only`; mapear por suite a las filas y rellenar `Ejecución` (`quality-check` / `Manual` / `—`) y `Resultado` (`PASS` / `FAIL` / `NOT_RUN` / `UNCOVERED` / `N/A`). **No** correr pruebas directamente. Nunca fabricar resultados (ver [Resultados de pruebas: delegación en quality-check](#resultados-de-pruebas-delegación-en-quality-check) y `references/flow.md`).
 5. **Redactar el reporte** desde `assets/coverage-template.md` (leerla antes de redactar): cabecera, Resumen (prosa con la procedencia + tabla de indicadores), **cobertura por criterio** (una fila por criterio, con su Estado), **matriz de trazabilidad** (una fila por criterio × TC × tipo declarado, con Evidencia, Ejecución y Resultado) y, si los hay, los caveats globales en «Observaciones y pendientes». Ver [Vistas del reporte](#vistas-del-reporte-cobertura-por-criterio-y-matriz).
 6. **Emitir el veredicto** (ver «Veredicto») respondiendo si todos los criterios quedan cubiertos.
 7. **Entregar y guardar** el reporte en la ubicación del tipo (ver «Ubicación de archivos»), **grabando el fingerprint** del estado actual para la próxima comprobación de frescura; no modificar otros artefactos.
@@ -181,7 +181,7 @@ El **Resumen** las precede con una tabla de indicadores de **cuatro columnas y u
 —criterios de aceptación, cubiertos, parciales, no cubiertos— cuyos tres últimos valores deben sumar el total. No lleva indicadores de
 pruebas (fallidas, no ejecutadas): esa granularidad ya está en la matriz y mezclar los dos ejes confunde.
 La **procedencia** de los resultados y el `result` **por suite** van en la línea «Pruebas» del Resumen;
-`test-run.json` no trae un agregado global, así que no se inventa uno.
+`quality-check-run.json` no trae un agregado global, así que no se inventa uno.
 
 **1. Cobertura por criterio** — la vista de veredicto. Una fila por criterio:
 
@@ -270,7 +270,7 @@ cambió.
 > **Contexto de ejecución.** Como `quality-check`, este skill es una **compuerta de cierre** (al integrar o
 > antes del PR), no corre por tarea ni durante la implementación. La frescura se evalúa sobre la rama
 > **consolidada** del cierre. En el pipeline típico de cierre `pr-create` corre `quality-check` **primero**
-> (produce `test-run.json` fresco) y luego `coverage-verify`, que reutiliza esa corrida — sin doble
+> (produce `quality-check-run.json` fresco) y luego `coverage-verify`, que reutiliza esa corrida — sin doble
 > ejecución de pruebas; y si el código tampoco cambió desde el último `coverage.md`, este Paso 0 lo
 > devuelve sin regenerarlo.
 
@@ -301,10 +301,10 @@ donde `$ARTEFACTO` es la carpeta del trabajo (`docs/specs/user-stories/US-042-�
 
 > **Un solo cálculo por corrida, con una excepción.** Ambos hashes se computan una vez, en el Paso 0. El
 > `FINGERPRINT` sirve para las **dos** comprobaciones de frescura —la del `coverage.md` (Paso 0) y la del
-> `test-run.json` (Paso 4, delegación)—; el `SPEC_FINGERPRINT` solo para la primera. Los dos se regraban en el
+> `quality-check-run.json` (Paso 4, delegación)—; el `SPEC_FINGERPRINT` solo para la primera. Los dos se regraban en el
 > Paso 7. La delegación en `tests-only` no toca código (y el `.gitignore` que puede normalizar está excluido de
 > la receta), así que el `FINGERPRINT` calculado en el Paso 0 sigue siendo válido al grabar: **no hace falta
-> recalcularlo**. Si aun así el valor guardado por `quality-check` en `test-run.json` no coincide con el del
+> recalcularlo**. Si aun así el valor guardado por `quality-check` en `quality-check-run.json` no coincide con el del
 > Paso 0, algo cambió el código en medio: tratar la caché como obsoleta, no como fresca.
 
 **Comportamiento (Paso 0 del flujo):**
@@ -341,14 +341,14 @@ donde `$ARTEFACTO` es la carpeta del trabajo (`docs/specs/user-stories/US-042-�
 ## Resultados de pruebas: delegación en quality-check
 
 `coverage-verify` **no ejecuta la suite de pruebas**. La ejecución es responsabilidad de `quality-check`,
-que la persiste en un artefacto reutilizable `test-run.json` (esquema `test-run/v1`). Como el review es
+que la persiste en un artefacto reutilizable `quality-check-run.json` (esquema `quality-check-run/v1`). Como el review es
 una **corrida completa** de la rama, este artefacto vive en una **ubicación fija**, no por unidad:
-**`.sdd-devkit/test-run.json`**, en la raíz del repositorio.
+**`.sdd-devkit/quality-check-run.json`**, en la raíz del repositorio.
 
 **Cómo obtener los resultados (Paso 4 del flujo):**
 
 1. **Reusar el fingerprint canónico** ya calculado en el Paso 0 (mismo valor; no recalcular).
-2. **Si existe `test-run.json`, su `schema` es `test-run/v1`, su `generatedBy` es `"quality-check"`, su `git.fingerprint` coincide y su
+2. **Si existe `quality-check-run.json`, su `schema` es `quality-check-run/v1`, su `generatedBy` es `"quality-check"`, su `git.fingerprint` coincide y su
    `suites[]` cubre el conjunto vigente** (las dos fijas, más e2e si el repo la ejecuta, las que
    declare el estándar de testing y la entrada `architecture` si el repo tiene runner de arquitectura) → caché **fresca**: no hubo cambios desde la corrida de `quality-check`. **Reutilizar**
    los resultados por suite sin ejecutar nada. Si `generatedBy` trae cualquier otro valor,
@@ -357,14 +357,14 @@ una **corrida completa** de la rama, este artefacto vive en una **ubicación fij
    coincida** —el estándar vive en `docs/`, excluido del fingerprint—: delegar. Anotar la procedencia en la línea «Pruebas» del **Resumen**: «resultados tomados de
    la corrida de `quality-check` del {{commit/fecha}}».
 3. **Si no existe o el fingerprint difiere** (hubo cambios, o nunca corrió) → **delegar en `quality-check`
-   en modo `tests-only`**, que ejecuta solo los checks de pruebas, escribe `test-run.json` y devuelve los
+   en modo `tests-only`**, que ejecuta solo los checks de pruebas, escribe `quality-check-run.json` y devuelve los
    resultados. Luego consumir esa caché ya fresca.
 4. **Si `quality-check` no puede ejecutarlas** (stack no detectable, entorno sin poder correr, dependencias
    ausentes, o el usuario declina la delegación) → las filas con artefacto van con `Ejecución = —` y
    `Resultado = `NOT_RUN`, con la razón en «Observaciones y pendientes», y se entrega igualmente la matriz con los
    artefactos hallados. **Nunca fabricar resultados.**
 
-**Mapeo a la matriz.** Cada entrada `suites[]` de `test-run.json` trae `type` y `result`
+**Mapeo a la matriz.** Cada entrada `suites[]` de `quality-check-run.json` trae `type` y `result`
 (`PASS`/`FAIL`/`SKIPPED`/`N/A`). Las **dos fijas** —`unit`, `coverage`— vienen siempre; `e2e` solo si el repo la ejecuta, y el resto son
 **suites configuradas** en el estándar de testing del repo, cuyo `type` es el `ID` del requisito que las
 declara (p. ej. `integration-testing`, `contract-testing`) y que traen su referencia global en `standard`
@@ -438,7 +438,7 @@ Lo propio de este skill:
 |-----|------|
 | Artefacto a trazar (entrada) | La carpeta de la `US-XXX` / `WI-XXX` / `FT-XXX`; para cualquier otro artefacto, la ruta que indique el usuario |
 | Casos de prueba documentados (entrada, los produce `test-define`) | `test-cases/` **dentro de la carpeta del artefacto**, con su índice `test-cases/README.md` |
-| Caché de corrida de pruebas (entrada, la produce `quality-check`) | `.sdd-devkit/test-run.json` (ubicación fija, no por unidad) |
+| Caché de corrida de pruebas (entrada, la produce `quality-check`) | `.sdd-devkit/quality-check-run.json` (ubicación fija, no por unidad) |
 | Reporte de trazabilidad (**salida**) | `coverage.md` **dentro de la carpeta del artefacto, allí donde se haya resuelto** — activa o bajo `docs/archive/`; para otro artefacto, junto a él (confirmar la ruta con el usuario antes de escribir) |
 
 > **Un `US`/`WI` archivado se traza igual.** Todo se resuelve relativo a la carpeta encontrada: los criterios, el `test-cases/`, la clave `SPEC_FINGERPRINT` y el `coverage.md` de salida. `coverage-verify` es el **único** skill que escribe dentro de un artefacto archivado, y solo su propio informe: es un derivado del artefacto, no trabajo nuevo, y revalidar un trabajo ya integrado tiene que seguir siendo posible.
@@ -471,7 +471,7 @@ Posición: **validación / cierre de calidad** — después de `work-implement`.
 
 | | |
 |--|--|
-| **Entrada** | Trabajo (`US-XXX` / `WI-XXX`, u otro artefacto) con **criterios de aceptación identificados**; código implementado; idealmente tests escritos por `quality-specialist` en el cierre de `work-implement`. Resultados de pruebas **vía `quality-check`** (caché `test-run.json` o delegación `tests-only`). **O** un `FT-XXX` (registro de funcionalidad ya implementada — inferida de código legacy o documentada como existente) para comprobar si está cubierta por pruebas. |
+| **Entrada** | Trabajo (`US-XXX` / `WI-XXX`, u otro artefacto) con **criterios de aceptación identificados**; código implementado; idealmente tests escritos por `quality-specialist` en el cierre de `work-implement`. Resultados de pruebas **vía `quality-check`** (caché `quality-check-run.json` o delegación `tests-only`). **O** un `FT-XXX` (registro de funcionalidad ya implementada — inferida de código legacy o documentada como existente) para comprobar si está cubierta por pruebas. |
 | **Salida** | `coverage.md` en la ubicación del tipo + veredicto sobre la cobertura. |
 | **Veredicto `REJECTED` (US/WI)** | Volver a `work-implement` (fase de pruebas con `quality-specialist`) para cubrir los criterios faltantes; revalidar después. |
 | **Veredicto `REJECTED` (FT)** | Hay comportamiento ya implementado **sin pruebas**: escribir los tests faltantes sobre el código existente (no código funcional) con `work-implement` en su tipo **feature** —que automatiza los `TC-XXX` del `FT-XXX`— y revalidar. Formalizar ese trabajo como una tarea de mantenimiento (`WI-XXX`) es opcional y lo decide el usuario. |
@@ -483,7 +483,7 @@ Posición: **validación / cierre de calidad** — después de `work-implement`.
 
 | Archivo | Cuándo leerlo |
 |---------|---------------|
-| `references/flow.md` | Flujo paso a paso (Pasos 0-7), delegación de la ejecución de pruebas en `quality-check` (caché `test-run.json` / `tests-only`) y checklist completo. Leer antes de ejecutar el flujo. |
+| `references/flow.md` | Flujo paso a paso (Pasos 0-7), delegación de la ejecución de pruebas en `quality-check` (caché `quality-check-run.json` / `tests-only`) y checklist completo. Leer antes de ejecutar el flujo. |
 | `references/examples.md` | Ejemplos por tipo (US / WI, sin criterios, sin runner, criterio sin prueba) y anti-patrones. Leer ante dudas de comportamiento. |
 | `assets/coverage-template.md` | Plantilla canónica del reporte de trazabilidad. Leer antes de redactar el reporte. |
 

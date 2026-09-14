@@ -15,7 +15,7 @@
 //      algo que puede alterar el resultado de una prueba o de una compilación:
 //      código, tests, manifiestos y configuración visible de la raíz. Editar
 //      documentación (*.md, LICENSE, CHANGELOG, docs/**), el .gitignore o el
-//      contenido de carpetas ocultas NO debe invalidar la caché de test-run.json.
+//      contenido de carpetas ocultas NO debe invalidar la caché de quality-check-run.json.
 
 const test = require('node:test');
 const assert = require('node:assert/strict');
@@ -129,7 +129,7 @@ test('la clave se mueve solo cuando cambia el código', { skip: !hasTools && 'gi
     ['src/nuevo.md sin trackear', () => write('src/nuevo.md', 'x\n')],
     ['coverage.md junto a un artefacto externo', () => write('specs/US-1/coverage.md', 'x\n')],
     ['.gitignore editado', () => write('.gitignore', 'node_modules\ndist\n')],
-    ['.sdd-devkit/test-run.json escrito', () => write('.sdd-devkit/test-run.json', '{}\n')],
+    ['.sdd-devkit/quality-check-run.json escrito', () => write('.sdd-devkit/quality-check-run.json', '{}\n')],
     ['.github/wf.yml (carpeta oculta)', () => write('.github/wf.yml', 'x\n')],
   ];
   for (const [name, mutate] of stable) {

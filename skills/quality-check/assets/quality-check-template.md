@@ -16,7 +16,7 @@ Ver ../../references/verdicts.md.
 **Fecha:** {{YYYY-MM-DD HH:MM}}
 **Rama:** {{rama}}
 **Commit:** {{sha-corto}}
-**Modo:** {{default | blocking-only | only nombre-del-check | no-tests | …}}  <!-- `tests-only` no produce este informe: su único artefacto es test-run.json -->
+**Modo:** {{default | blocking-only | only nombre-del-check | no-tests | …}}  <!-- `tests-only` no produce este informe: su único artefacto es quality-check-run.json -->
 **Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED | `❌` REJECTED | `⚠️` INCOMPLETE}}
 
 ## Resumen
@@ -66,7 +66,7 @@ Renumerar la columna `#` de forma correlativa sobre las filas que queden; no dej
 filas omitidas. El orden relativo de los checks no cambia.
 El resto de checks (tipado, linter, build, sonar) no son pruebas: se incluyen solo si aplican al stack.
 La columna Estado lleva SÍMBOLO + ETIQUETA EN EL IDIOMA RESUELTO, siempre de la leyenda de arriba.
-Los valores canónicos (PASS/FAIL/SKIPPED/PENDING/N/A) son vocabulario interno y del test-run.json:
+Los valores canónicos (PASS/FAIL/SKIPPED/PENDING/N/A) son vocabulario interno y del quality-check-run.json:
 no aparecen en el informe, tampoco en la columna Detalle.
 Un check informativo (Sonar) que falla se reporta con el estado normal `❌` + etiqueta de FAIL; lo que
 lo hace informativo es su Categoría, no su Estado. El símbolo `ℹ️` solo aparece en la leyenda y en

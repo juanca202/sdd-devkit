@@ -128,7 +128,7 @@ seguimiento no está configurado, el hook no hace nada.
   (`Write|Edit|MultiEdit|Bash`, mismos matchers que usa `artifact-events.js`)
   contra el último `iterationId` conocido, persistido en
   `.sdd-devkit/activity-iteration-state.json` (caché local desechable, igual
-  que `.sdd-devkit/current-iteration.json` y `.sdd-devkit/test-run.json`: no
+  que `.sdd-devkit/current-iteration.json` y `.sdd-devkit/quality-check-run.json`: no
   se versiona).
 
 ### Por qué `tool.completed` se construye desde dos hooks distintos

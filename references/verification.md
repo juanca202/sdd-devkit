@@ -79,7 +79,7 @@ if (verification) {
 > pero **debe reportarse explícitamente** como omitida, con el motivo (`policy`), en el resumen del cierre
 > y en el mensaje de merge. Nunca se omite en silencio ni se lista como aprobada.
 
-> **Dependencia entre puertas.** `coverage-verify` reutiliza el `test-run.json` que produce
+> **Dependencia entre puertas.** `coverage-verify` reutiliza el `quality-check-run.json` que produce
 > `quality-check` (y `arch-audit`, fuera de las puertas, reutiliza de ese mismo archivo la entrada
 > `architecture`: la corrida del runner de validaciones de arquitectura). Si `qualityCheck.enabled` es `false` y `requirementCoverage.enabled` es `true`, no hay
 > caché que reutilizar: `coverage-verify` invocará `quality-check` en modo `tests-only` por su cuenta, que

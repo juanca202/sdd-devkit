@@ -99,4 +99,4 @@ Puede incluir campos adicionales propios del runtime (p. ej. identificadores de 
 
 ---
 
-Cuando el seguimiento de specs está activo, el token `SDD_DEVKIT_ACCESS_TOKEN` vive en `.sdd-devkit/.env` (no versionado, `arch-init` lo deja en `.gitignore`) — no en `settings.json`.
+El token `SDD_DEVKIT_ACCESS_TOKEN` que usa el CLI de tracking vive en `.sdd-devkit/.env` (no versionado, `arch-init` lo deja en `.gitignore`) — no en `settings.json`.

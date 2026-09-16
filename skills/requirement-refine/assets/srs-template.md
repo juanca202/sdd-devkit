@@ -44,7 +44,7 @@ de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md
 <!--
 Documentos o estándares EXTERNOS a los que este SRS remite (guías de estilo, contratos, normativa,
 otras especificaciones) — no confundir con la sección 15 (Enlaces y archivos de apoyo), que enlaza los
-archivos propios de esta carpeta (requerimiento original, investigación, wireframes).
+archivos propios de esta carpeta (requerimiento original, investigación) y los wireframes de la capability.
 Sección opcional. Eliminar si no aplica.
 -->
 - {{título del documento/estándar}}: {{versión, fecha, enlace o ubicación}}
@@ -250,8 +250,10 @@ Sección opcional — incluir solo si el requerimiento involucra una interfaz de
 se infiere del objetivo funcional y los FR-XXX (solo se pregunta al usuario si la inferencia es ambigua) —
 ver flow.md, paso 4. Eliminar la sección por completo (incluida la marca oculta) si no aplica — p. ej. un
 servicio o API sin UI.
-Cada fila enlaza a un wireframe generado con assets/wireframe-template.md, uno por pantalla, guardado en
-assets/wireframes/[pantalla-slug].md. El SRS no se declara Ready mientras alguna pantalla siga
+Cada fila enlaza a un wireframe generado con la plantilla wireframe-template.md de design-define, uno por
+pantalla, guardado POR CAPABILITY en docs/architecture/[capability]/wireframes/WF-XXX-[pantalla-slug].md
+(+ su .svg hermano) — no en la carpeta del SRS — y con fila en el índice «Wireframes» del README de esa
+capability (ver flow.md, paso 4, punto 3). El SRS no se declara Ready mientras alguna pantalla siga
 "Pendiente": las observaciones de la revisión deben quedar reflejadas aquí y en los FR-XXX afectados
 antes de cerrar.
 -->
@@ -268,9 +270,9 @@ wireframes, incluido el `viewBox` de cada SVG (retrato para móvil, ancho para w
 
 **¿Debe ser responsiva (adaptable a distintos tamaños de pantalla)?** {{Sí | No | No aplica — app nativa de un solo dispositivo}}
 
-| Pantalla | Wireframe | Estado de revisión | Observaciones ya incorporadas |
-| -------- | --------- | --------------------- | -------------------------------- |
-| {{nombre de la pantalla}} | {{enlace a `assets/wireframes/[pantalla-slug].md`}} | {{Pendiente / Revisado con cambios / Aprobado}} | {{resumen de los cambios pedidos y en qué FR-XXX quedaron reflejados; «Ninguna» si se aprobó sin cambios}} |
+| Pantalla | Capability | Wireframe | Estado de revisión | Observaciones ya incorporadas |
+| -------- | ---------- | --------- | --------------------- | -------------------------------- |
+| {{nombre de la pantalla}} | {{capability}} | {{[WF-XXX](../../../architecture/[capability]/wireframes/WF-XXX-[pantalla-slug].md)}} | {{Pendiente / Revisado con cambios / Aprobado}} | {{resumen de los cambios pedidos y en qué FR-XXX quedaron reflejados; «Ninguna» si se aprobó sin cambios}} |
 
 ## 13. Verificación y trazabilidad
 
@@ -300,7 +302,7 @@ derivadas), que se completa después del handoff y por eso no puede ir aquí.
 <!-- Archivos propios de esta carpeta del SRS — no confundir con la sección 1.4 (referencias a documentos o estándares externos). Solo enlaces a recursos ya almacenados; nunca pegar archivos, imágenes ni descripciones directamente aquí. -->
 - **Requerimiento original:** {{enlace markdown a `references/[archivo]`, dentro de esta misma carpeta}}
 - **Investigación de stack:** {{enlace a `research/RS-XXX-{slug}/README.md`, si se investigó}}
-- **Wireframes:** {{enlace a `assets/wireframes/`, si el requerimiento tiene UI}}
+- **Wireframes:** {{enlace a `../../../architecture/[capability]/wireframes/` por cada capability involucrada, si el requerimiento tiene UI — el detalle por pantalla está en la sección 12}}
 - {{añadir entradas adicionales o indicar «Ninguna por ahora»}}
 
 ## 16. Historias de usuario derivadas

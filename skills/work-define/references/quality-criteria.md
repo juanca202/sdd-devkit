@@ -86,7 +86,7 @@ Tabla con los seis criterios de la plantilla. Para cada uno: `Cumple` / `No cump
 | Inputs/outputs claros              | Entradas y salidas funcionales bien definidas. |
 | Repositorios definidos             | Campo **Repositorios:** de la cabecera poblado con el/los repositorio(s) git afectados, separados por coma. |
 | Sin decisiones técnicas pendientes | No quedan decisiones técnicas abiertas que condicionen el alcance. |
-| Referencias de UI                  | Para US de UI: enlaces de diseño presentes (`No aplica` si no hay UI propia). |
+| Referencias de UI                  | Para US de UI: enlaces de diseño presentes — diseño/Figma aportado, o wireframes `WF-XXX` de la capability (`docs/architecture/[capability]/wireframes/`) heredados del SRS o generados por este skill y **aprobados** (uno `Pendiente` deja el criterio en `Parcial`) (`No aplica` si no hay UI propia). |
 | Sin aclaraciones pendientes        | Observaciones vacías o «Ninguna»; nada pendiente con usuario/producto. |
 
 El estado **Ready** requiere todos los datos sin excepción: Criterios de aceptación completos (al menos un `AC-XXX`), DoR completado, repositorios afectados identificados y Observaciones sin pendientes abiertos.

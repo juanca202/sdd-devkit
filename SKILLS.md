@@ -220,7 +220,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** tienes un requerimiento en bruto (idea, ticket, correo, wireframes) y quieres estructurarlo antes de convertirlo en historias de usuario. Paso opcional: si el requerimiento ya está claro, puedes ir directo a `work-define`.
 
-**Produce:** una especificación de requisitos (`docs/specs/requirements/`) con alcance, requisitos priorizados, wireframes si hay interfaz, stack tecnológico, repositorios y equipo.
+**Produce:** una especificación de requisitos (`docs/specs/requirements/`) con alcance, requisitos priorizados, stack tecnológico, repositorios y equipo; si hay interfaz, wireframes `WF-XXX` por capability en `docs/architecture/[capability]/wireframes/`, enlazados desde el SRS.
 
 **Estados:** `Draft` (quedan cosas por resolver) · `Ready` (listo para convertir en historias con `work-define`).
 
@@ -244,7 +244,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** crear o actualizar una historia de usuario. Puede partir de una necesidad descrita por ti, o de una especificación ya resuelta con `requirement-refine`.
 
-**Produce:** una historia de usuario (`docs/specs/user-stories/`) con criterios de aceptación.
+**Produce:** una historia de usuario (`docs/specs/user-stories/`) con criterios de aceptación; si toca UI y no hereda wireframes, los genera por capability en `docs/architecture/[capability]/wireframes/` (`WF-XXX`).
 
 **Estados:** `Draft` (quedan cosas por resolver) · `Ready` (lista para planificar tareas o definir casos de prueba).
 

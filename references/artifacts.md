@@ -54,6 +54,7 @@ específico (una salida propia, una excepción de ruta).
 | Feature ya implementada | `docs/specs/features/FT-XXX-[slug]/README.md` | `work-research` (flujo *Analizar legado*) |
 | Casos de prueba | `test-cases/TC-XXX-[slug].md` **dentro de la carpeta del artefacto padre**, con índice `test-cases/README.md` | `test-define` |
 | Documentación técnica de capability | `docs/architecture/[capability]/` — `README.md` (APIs), `models/MD-XXX-[slug].md`, `flows/FL-XXX-[slug].md`, `diagrams/DG-XXX-[slug].md`, apoyo en `assets/` | `design-define` |
+| Wireframes de pantalla | `docs/architecture/[capability]/wireframes/WF-XXX-[slug].md` + `WF-XXX-[slug].svg` (SVG hermano, enlazado) — con fila en la tabla índice «Wireframes» del `README.md` de la capability | `requirement-refine` (desde un SRS) · `work-define` (desde una US que toca UI y no hereda wireframes). Única carpeta de `docs/architecture/` que escriben skills distintos de `design-define`; plantilla en `design-define/assets/wireframe-template.md` |
 | Glosario | `docs/glossary.md` (opcional) | `design-define` |
 | Investigación | `research/RS-XXX-[slug]/README.md` **dentro de la carpeta del artefacto vinculado**; suelta: `docs/specs/research/RS-XXX-[slug]/README.md` | `work-research` |
 | Progreso de un trabajo | `progress.md` dentro de la carpeta del trabajo (US / WI / FT) | `work-implement` |

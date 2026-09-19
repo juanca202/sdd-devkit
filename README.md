@@ -210,6 +210,7 @@ Tú defines la intención, las restricciones y las decisiones importantes; el ag
 
 | Nivel                                 | Lo defines tú           | Te asiste           |
 | -------------------------------------- | ------------------------ | -------------------- |
+| Refinar el requerimiento (alcance, stack, SRS) | Product Owner, Arquitecto, Diseñador UI/UX | `/requirement-refine` |
 | Problema de negocio                   | Product Owner            | `/work-define`       |
 | Comportamiento esperado               | Desarrollador             | `/work-plan`         |
 | Casos de prueba                       | QA                        | `/test-define`       |

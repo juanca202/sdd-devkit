@@ -65,9 +65,11 @@ mostrar ambos y preguntar.
 
 ## 4. Documentación técnica de capability en estructura anterior
 
-**Estructura vigente:** `docs/architecture/[capability]/` con `README.md` (propósito, APIs `API-XXX`
-con ancla explícita `<a id="api-xxx">`, tablas índice), `models/MD-XXX-{slug}.md`,
-`flows/FL-XXX-{slug}.md`, `diagrams/DG-XXX-{slug}.md` y `assets/`.
+**Estructura vigente:** `docs/architecture/[capability]/` con `README.md` (propósito, tablas índice y
+Observaciones — **sin contratos ni definiciones**), `models/MD-XXX-{slug}.md`, `apis/API-XXX-{slug}.md`
+(un archivo por **grupo** de endpoints de una entidad o funcionalidad, con ancla explícita de método+ruta
+`<a id="post-invoices">` por operación), `flows/FL-XXX-{slug}.md`, `diagrams/DG-XXX-{slug}.md` y
+`assets/`.
 
 **Detección** (cualquiera de estas señales):
 
@@ -76,15 +78,30 @@ con ancla explícita `<a id="api-xxx">`, tablas índice), `models/MD-XXX-{slug}.
 - Una carpeta de capability define modelos, flujos o diagramas **dentro del README** (encabezados
   `### MD-…`/`### FL-…`/`### DG-…`) en vez de en sus archivos, o sus archivos no siguen
   `MD-XXX-{slug}.md` / `FL-XXX-{slug}.md` / `DG-XXX-{slug}.md`, o faltan las tablas índice.
-- APIs del README sin su ancla explícita `<a id="…">`.
+- Las **APIs viven en el README** (encabezados `### API-XXX: …` con o sin ancla `<a id="api-xxx">`) en vez
+  de en `apis/API-XXX-{slug}.md`.
+- Existe `apis/` pero con **un `API-XXX` por operación** (`API-001-crear-factura.md`,
+  `API-002-listar-facturas.md`) en vez de un grupo por entidad o funcionalidad, o sus operaciones no llevan
+  el ancla de método+ruta.
 
 **Normalización:** mover a `docs/architecture/[capability]/`; extraer cada modelo, flujo y diagrama a su
 archivo en `models/`/`flows/`/`diagrams/`, nombrado con su **id heredado tal cual** (un `MD-01` de 2
 dígitos → `MD-01-{slug}.md`; no renumerar ni rellenar a 3 dígitos) y el slug kebab-case de su nombre
 vigente (congelado desde la migración); crear las tablas índice del README enlazando cada archivo;
-añadir a las APIs las anclas que falten; conservar fechas y Observaciones. Reescribir las referencias
-internas (secciones Referencias de US/TK/WI) según el mapeo y reportar el mapeo completo — los
-consumidores externos al repo no se pueden reescribir desde aquí.
+conservar fechas y Observaciones.
+
+**Las APIs se reagrupan**, y es el único punto donde los ids **no** se conservan uno a uno: los
+`API-XXX` de la estructura anterior eran una operación cada uno, y la vigente es un archivo por **grupo**
+de entidad o funcionalidad. Proponer la agrupación al usuario (por el recurso que manipula cada ruta;
+`/auth/*` y similares como funcionalidad) y **confirmarla antes de escribir**; luego crear
+`apis/API-XXX-{slug}.md` por grupo con ids nuevos que continúan la secuencia de la capability, mover
+cada operación intacta a su grupo y darle su ancla de método+ruta sin prefijo de versión. El mapeo
+`README.md#api-004` → `apis/API-001-facturas.md#post-invoices` es parte obligatoria del reporte,
+porque es el que rompe enlaces entrantes. Si el hallazgo es solo un `apis/` con un archivo por operación,
+la reagrupación es la misma sin mover nada de sitio.
+
+Reescribir las referencias internas (secciones Referencias de US/TK/WI) según el mapeo y reportar el
+mapeo completo — los consumidores externos al repo no se pueden reescribir desde aquí.
 
 ## 5. Historias de usuario con cabecera de versiones anteriores
 

@@ -7,7 +7,7 @@ crear el flujo — renombrar el flujo después no renombra el archivo; el id es 
 Enlazar este archivo desde la tabla índice «Flujos / Procesos» del README.md de la capability. La referencia
 que consumen US/TK/WI es la ruta del archivo (docs/architecture/{{capability}}/flows/FL-001-emision-factura.md), sin ancla.
 Referencias cruzadas: a otro flujo de la misma capability, [FL-002](FL-002-anulacion.md); a un modelo,
-[MD-001](../models/MD-001-factura.md); a un elemento del README, [API-001](../README.md#api-001); a otra
+[MD-001](../models/MD-001-factura.md); a un endpoint, [API-001](../apis/API-001-facturas.md#post-invoices); a otra
 capability, ruta relativa (../../{{otra-capability}}/flows/FL-001-emision-factura.md).
 Formato detallado en references/element-standards.md del skill design-define.
 -->

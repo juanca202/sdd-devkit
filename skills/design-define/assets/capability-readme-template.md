@@ -1,20 +1,20 @@
 <!--
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
-Una carpeta por capability: este README.md (detalle) + models/ (un archivo por modelo, plantilla model-template.md)
-+ flows/ (un archivo por flujo, plantilla flow-template.md) + diagrams/ (un archivo por diagrama, plantilla
-diagram-template.md) + wireframes/ (un .md + un .svg por pantalla, plantilla wireframe-template.md; los crean
-requirement-refine y work-define, no design-define) + assets/ (apoyo exportado, solo si hay).
+Una carpeta por capability: este README.md (índice) + models/ (un archivo por modelo, plantilla model-template.md)
++ apis/ (un archivo por GRUPO de endpoints, plantilla api-template.md) + flows/ (un archivo por flujo, plantilla
+flow-template.md) + diagrams/ (un archivo por diagrama, plantilla diagram-template.md) + wireframes/ (un .md y un
+.svg por pantalla, plantilla wireframe-template.md; los crean requirement-refine y work-define, no design-define)
++ assets/ (apoyo exportado, solo si hay).
 Los elementos llevan id secuencial por tipo (MD-XXX, API-XXX, FL-XXX, DG-XXX, WF-XXX), estable en el tiempo: no renumerar
 aunque se eliminen elementos (marcar como Obsoleto en su lugar).
-Las APIs viven en este README, cada una precedida de su ancla explícita en la línea anterior al ###, con el
-id en minúsculas y sin el nombre: la etiqueta <a> de HTML con id="{{id-en-minusculas}}". Esa ancla (#api-004)
-es la referencia que consumen US/TK/WI; ver references/element-standards.md.
-Modelos, Flujos y Diagramas viven cada uno en su propio archivo, nombrado con el estándar MD-XXX-{slug} /
-FL-XXX-{slug} / DG-XXX-{slug} (models/MD-001-factura.md, flows/FL-001-emision-factura.md,
-diagrams/DG-001-contexto.md; slug kebab-case del nombre, fijado al crear el elemento — renombrar el elemento
-no renombra el archivo) y enlazado desde las tablas índice de este README; su referencia es la ruta del
-archivo, sin ancla.
+Este README no define elementos: es el índice. Modelos, Grupos de APIs, Flujos y Diagramas viven cada uno en su
+propio archivo, nombrado con el estándar MD-XXX-{slug} / API-XXX-{slug} / FL-XXX-{slug} / DG-XXX-{slug}
+(models/MD-001-factura.md, apis/API-001-facturas.md, flows/FL-001-emision-factura.md, diagrams/DG-001-contexto.md;
+slug kebab-case del nombre, fijado al crear el elemento — renombrar el elemento no renombra el archivo) y enlazado
+desde las tablas índice de este README; su referencia es la ruta del archivo, sin ancla.
+Un API-XXX agrupa los endpoints de una misma entidad o funcionalidad (todo el CRUD de proyectos en un archivo;
+login/logout/forgot-password en otro); dentro del archivo cada operación lleva su ancla de método+ruta.
 Las secciones Modelos de datos / APIs / Flujos / Diagramas / Wireframes son opcionales: incluir solo las que la capability necesite.
 Si la carpeta de la capability nace por un wireframe (requirement-refine o work-define la crean antes que design-define),
 el README lleva solo Propósito, Wireframes y Observaciones; design-define añade el resto después sin tocar Wireframes.
@@ -39,33 +39,11 @@ el README lleva solo Propósito, Wireframes y Observaciones; design-define añad
 
 ## APIs / Endpoints
 
-<a id="api-001"></a>
-### API-001: {{operación en verbo — p. ej. Crear factura}}
+<!-- Tabla índice: un archivo por grupo de endpoints en apis/, con la plantilla api-template.md. Un grupo = una entidad o funcionalidad (todo el CRUD de un recurso y sus endpoints relacionados; o login/logout/forgot-password juntos). Enlazar cada archivo; no duplicar aquí sus contratos. -->
 
-- **Método y ruta:** `{{POST /api/v1/recurso}}`
-- **Autenticación:** {{mecanismo y permisos/roles requeridos, o «Pública»}}
-- **Descripción:** {{qué hace y cuándo se usa}}
-
-**Request**
-
-| Parámetro | Ubicación | Tipo | Requerido | Descripción |
-| --------- | --------- | ---- | --------- | ----------- |
-| {{nombre}} | {{path / query / header / body}} | {{tipo o MD-XXX}} | {{Sí/No}} | {{…}} |
-
-```json
-{{ejemplo de request body; omitir el bloque si no hay body}}
-```
-
-**Responses**
-
-| Código | Condición | Cuerpo |
-| ------ | --------- | ------ |
-| {{200/201}} | {{caso de éxito}} | {{tipo o MD-XXX}} |
-| {{4XX}} | {{condición de error}} | {{estructura de error estándar del proyecto}} |
-
-```json
-{{ejemplo de response de éxito}}
-```
+| Id | Grupo | Operaciones | Descripción |
+| -- | ----- | ----------- | ----------- |
+| [API-001](apis/API-001-{{slug}}.md) | {{nombre del grupo — entidad o funcionalidad}} | {{`POST /api/v1/recurso`, `GET /api/v1/recurso/{id}`, …}} | {{una línea: qué cubre el grupo}} |
 
 ## Flujos / Procesos
 
@@ -95,4 +73,4 @@ el README lleva solo Propósito, Wireframes y Observaciones; design-define añad
 
 <!-- Lagunas abiertas, decisiones pendientes, datos por confirmar. Si no hay nada: «Sin pendientes documentados». -->
 
-- {{pendiente concreto, indicando el elemento afectado (MD-XXX / API-XXX / FL-XXX / DG-XXX / WF-XXX)}}
+- {{pendiente concreto, indicando el elemento afectado (MD-XXX / API-XXX / FL-XXX / DG-XXX / WF-XXX) y, si aplica, la operación dentro del grupo}}

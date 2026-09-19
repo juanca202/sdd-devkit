@@ -77,9 +77,10 @@ Rutas permitidas: assets/ (recursos propios de esta historia) o docs/architectur
 y wireframes de la capability). Los wireframes nunca van en assets/: viven en
 docs/architecture/[capability]/wireframes/WF-XXX-{slug}.md (+ .svg hermano), heredados del SRS o generados por work-define.
 Al enlazar un elemento de la documentación técnica, copiar la referencia tal como la devuelve design-define, nunca el título
-convertido a slug: docs/architecture/[capability]/README.md#api-004 para APIs;
-docs/architecture/[capability]/models/MD-XXX-{slug}.md, flows/FL-XXX-{slug}.md o diagrams/DG-XXX-{slug}.md
-para modelos, flujos y diagramas.
+convertido a slug. Toda referencia es la ruta del archivo del elemento:
+docs/architecture/[capability]/models/MD-XXX-{slug}.md, apis/API-XXX-{slug}.md (añadiendo el ancla de
+operación #<método-ruta> cuando se cita un endpoint concreto, p. ej. apis/API-001-facturas.md#post-invoices),
+flows/FL-XXX-{slug}.md o diagrams/DG-XXX-{slug}.md.
 -->
 - **Diseño / prototipo:** {{enlace markdown al diseño o prototipo}}
 - **Wireframe:** {{[WF-XXX: pantalla](../../../architecture/[capability]/wireframes/WF-XXX-{slug}.md), uno por pantalla; omitir si la US no tiene UI}}

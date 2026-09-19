@@ -1,6 +1,6 @@
+<!--
 # Plantilla de caso de prueba — IEEE 29119-4
 
-<!--
 Convención de placeholders: sustituir manualmente cada {{texto}}.
 Eliminar este bloque al publicar el documento final.
 
@@ -18,9 +18,9 @@ Nombre de archivo: TC-XXX-{slug}.md
 
 El nombre del archivo y, si hay un tracker externo vinculado, el título usado al crear el work item deben respetar cualquier límite de longitud propio de ese sistema (ver su archivo de referencia).
 -->
-
 # TC-{{XXX}} — Dado {{contexto/precondición}}, Cuando {{acción/evento}}, Entonces {{resultado esperado}}
 
+<!-- tc:status={{Draft|Ready|Obsolete}} · testType={{Manual|Unit|Integration|API Test|Visual Test|E2E, separados por coma}} · criterion={{identificador verbatim del criterio}} · parent={{US-XXX|WI-XXX|FT-XXX}} -->
 **Perspectiva:** {{Happy Path | Error | Límite}}
 **Tipo de prueba:** {{Manual | Tipo[, Tipo…]}}  <!-- intención de diseño. Tipo ∈ {Unit | Integration | API Test | Visual Test | E2E}; uno o varios separados por coma, en ESE orden (de menor a mayor nivel; p. ej. Unit, E2E). Manual solo cuando el caso no se automatiza por diseño; no se combina con tipos. -->
 **Prioridad:** {{Alta | Media | Baja}}
@@ -28,13 +28,6 @@ El nombre del archivo y, si hay un tracker externo vinculado, el título usado a
 **Artefacto padre:** {{US-XXX | WI-XXX | FT-XXX | identificador o ruta del artefacto externo}}
 **Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema vinculado — solo si se creó vía MCP; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica}}
 **Estado:** {{Draft | Ready | Obsolete}}
-
-<!-- tc:status={{Draft|Ready|Obsolete}} · testType={{Manual|Unit|Integration|API Test|Visual Test|E2E, separados por coma}} · criterion={{identificador verbatim del criterio}} · parent={{US-XXX|WI-XXX|FT-XXX}} -->
-<!--
-Esta marca se CONSERVA al publicar. Sus claves y sus valores van en inglés SIEMPRE, aunque el resto del
-documento esté en otro idioma: es el ancla que otros skills parsean, no contenido. La etiqueta visible
-de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
--->
 **Creado por:** {{nombre}}
 **Fecha:** {{YYYY-MM-DD}}
 

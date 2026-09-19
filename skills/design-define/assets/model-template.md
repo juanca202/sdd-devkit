@@ -6,8 +6,8 @@ MD-XXX-{slug} (models/MD-001-factura.md): id de 3 dígitos + slug kebab-case del
 modelo — renombrar el modelo después no renombra el archivo; el id es el contrato de enlace.
 Enlazar este archivo desde la tabla índice «Modelos de datos» del README.md de la capability. La referencia
 que consumen US/TK/WI es la ruta del archivo (docs/architecture/{{capability}}/models/MD-001-factura.md), sin ancla.
-Referencias cruzadas: a otro modelo de la misma capability, [MD-002](MD-002-linea-factura.md); a un elemento del
-README, [API-001](../README.md#api-001); a otra capability, ruta relativa
+Referencias cruzadas: a otro modelo de la misma capability, [MD-002](MD-002-linea-factura.md); a un endpoint de un
+grupo de APIs, [API-001](../apis/API-001-facturas.md#post-invoices); a otra capability, ruta relativa
 (../../{{otra-capability}}/models/MD-001-factura.md).
 Formato detallado en references/element-standards.md del skill design-define.
 -->

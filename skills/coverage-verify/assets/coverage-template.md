@@ -23,7 +23,7 @@ Plantilla canónica del reporte de trazabilidad (coverage-verify).
 - EXCEPCIÓN: la marca de fingerprint del pie del documento se CONSERVA (idempotencia, Paso 0/7).
 -->
 
-# Reporte de trazabilidad — {{US-XXX-nombre-corto | WI-XXX-nombre | FT-XXX-slug | nombre del artefacto}}
+# Reporte de cobertura — {{US-XXX-nombre-corto | WI-XXX-nombre | FT-XXX-slug | nombre del artefacto}}
 
 **Fecha:** {{YYYY-MM-DD HH:MM}}
 **Rama:** {{rama}}

@@ -16,7 +16,7 @@ Skills que preparan y mantienen la base del proyecto — arquitectura y control 
 
 **Cuándo:** preparar un proyecto (nuevo o existente, uno o varios repositorios) para trabajar con el plugin.
 
-**Produce:** los archivos base del proyecto (`AGENTS.md`, `CLAUDE.md`, memoria, configuración, índices de arquitectura) y una compuerta de calidad mínima. Al terminar sugiere continuar con `work-define` o `work-plan`.
+**Produce:** los archivos base del proyecto (`AGENTS.md`, memoria, configuración, índices de arquitectura) y una compuerta de calidad mínima. Al terminar sugiere continuar con `work-define` o `work-plan`.
 
 **Según el punto de partida:**
 

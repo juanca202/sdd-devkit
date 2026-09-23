@@ -14,10 +14,11 @@ cada copia contra la plantilla que le corresponde.
 ## 1. Archivos del harness fuera del formato de su plantilla
 
 **Plantillas vigentes:** `${PLUGIN_ROOT}/skills/arch-init/assets/` — `agents-template.md` (raíz) /
-`agents-submodule-template.md` (submódulo), `claude-template.md`, `memory-template.md`,
-`adr-index-template.md`, `standards-index-template.md`.
+`agents-submodule-template.md` (submódulo), `memory-template.md`, `adr-index-template.md`,
+`standards-index-template.md`. **`CLAUDE.md` ya no tiene plantilla: dejó de ser parte del harness** — ver
+la familia 8.
 
-**Detección:** `AGENTS.md`, `CLAUDE.md`, `.agents/MEMORY.md`, `docs/adr/README.md` o
+**Detección:** `AGENTS.md`, `.agents/MEMORY.md`, `docs/adr/README.md` o
 `docs/standards/README.md` existe pero es **reconociblemente el mismo archivo** (mismo propósito) con
 otro formato: le faltan secciones de la plantilla, tiene otros títulos u otro orden, o perdió los
 comentarios-marcador (`<!-- … -->` que `arch-manage` usa como punto de inserción en los índices).
@@ -36,9 +37,7 @@ preguntar si fusionar, reemplazar o dejar como está.
    **preserva** bajo `# Stack tecnológico` (reemplaza el comentario de la plantilla). Si no decía nada
    del stack, la sección queda con el comentario de la plantilla — la rellena `arch-init` en su cierre,
    nunca este skill.
-4. **`CLAUDE.md`:** la plantilla vigente es un puntero (`@AGENTS.md`). Un `CLAUDE.md` artesanal cuyo
-   contenido es material de `AGENTS.md` se reubica allí y el `CLAUDE.md` se reduce al puntero.
-5. **Contenido sin sección equivalente:** conservarlo al final bajo un encabezado propio, nunca
+4. **Contenido sin sección equivalente:** conservarlo al final bajo un encabezado propio, nunca
    descartarlo, y mencionarlo al presentar el diff.
 
 Si el usuario declina la normalización de un archivo, dejarlo intacto y registrar en el cierre que queda
@@ -130,9 +129,36 @@ chequeo del CR existe en el archivo de checks localizado por convención
 relativo a ese archivo; si no existe, `Pending`. No crear fitness functions aquí — eso es de
 `arch-manage`.
 
-## 7. Referencias internas a rutas movidas
+## 7. `CLAUDE.md` heredado del harness
 
-**Detección:** tras aplicar las familias 3, 4 o 6, quedan en el repositorio citas a las rutas antiguas
+**Estructura vigente:** el harness **no incluye `CLAUDE.md`**. Versiones anteriores de `arch-init` creaban
+en cada repositorio un `CLAUDE.md` con una sola línea (`@AGENTS.md`) como puntero de compatibilidad;
+`AGENTS.md` es hoy la única fuente de instrucciones para agentes.
+
+**Detección** (por repositorio — raíz principal y cada submódulo):
+
+- Existe un `CLAUDE.md` cuyo contenido útil es **solo** el puntero (`@AGENTS.md`, con o sin líneas en
+  blanco o comentarios): es el que dejó una versión anterior del plugin.
+- Existe un `CLAUDE.md` **con contenido propio** (reglas, comandos, notas del equipo): no es el puntero del
+  plugin, es material del usuario.
+
+**Normalización:**
+
+- **Puntero solo:** proponer **eliminarlo** y hacerlo si el usuario confirma. Antes de proponerlo, verificar
+  que ese repositorio tiene su `AGENTS.md` — si no lo tiene, no borrar nada: informarlo y sugerir
+  `/arch-init` primero, porque borrar el puntero sin el archivo al que apunta deja al repositorio sin
+  instrucciones.
+- **Contenido propio:** **nunca borrarlo sin más.** Proponer reubicar su contenido en las secciones
+  equivalentes de `AGENTS.md` (misma mecánica que la familia 1: reglas sueltas → `# Reglas generales`,
+  contenido sin sección equivalente al final bajo su propio encabezado) y, una vez vaciado y confirmado el
+  diff, eliminar el archivo. Si el usuario declina la reubicación, dejarlo intacto y registrar en el cierre
+  que su contenido no lo verá el resto del catálogo, que lee `AGENTS.md`.
+- En ambos casos la eliminación va en el plan con su propia confirmación, y en multi-repo se evalúa **una
+  vez por repositorio** — el usuario puede querer conservarlo en uno y no en otro.
+
+## 8. Referencias internas a rutas movidas
+
+**Detección:** tras aplicar las familias 3, 4, 6 o 7, quedan en el repositorio citas a las rutas antiguas
 (secciones Referencias de US/TK/WI, índices, prosa de documentos del proyecto).
 
 **Normalización:** reescribirlas según el mapeo viejo → nuevo de esta corrida. Es el **último paso** de

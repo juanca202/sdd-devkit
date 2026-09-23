@@ -49,7 +49,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md).
 
-Las reglas de `implementation.md` son obligatorias y tienen prioridad para determinar el ritmo de confirmacion entre unidades (`confirmByUnit`), que hacer con cambios sin commitear al iniciar o reanudar (`uncommittedChanges`), el uso y la ubicacion de los worktrees (`workTree`, `workTreePath`), el maximo de subagentes concurrentes (`maxParallel`) y si el cierre pasa al siguiente skill sin preguntar (`handoff`, ver [Regla de handoff](#regla-de-handoff-transversal)).
+Las reglas de `implementation.md` son obligatorias y tienen prioridad para determinar el ritmo de confirmacion entre unidades (`confirmByUnit`), que hacer con cambios sin commitear al iniciar o reanudar (`uncommittedChanges`), el uso y la ubicacion de los worktrees (`workTree`, `workTreePath`), el maximo de subagentes concurrentes (`maxParallel`), si el cierre pasa al siguiente skill sin preguntar (`handoff`, ver [Regla de handoff](#regla-de-handoff-transversal)) y donde vive el codigo bajo prueba (`target`: `source` por defecto; `external` => **repositorio de pruebas contra un sistema desplegado**, solo tipos `TC-XXX`/`FT-XXX`, reglas propias en [`references/test-cases.md` § Modo externo](references/test-cases.md#modo-externo-implementationtarget-external)). Con `target` ausente, `implementation.md` describe una deteccion de respaldo por `.env` que pregunta una vez; con `source` nada cambia.
 
 No continues hasta haber leido y aplicado `implementation.md`.
 
@@ -94,6 +94,7 @@ La senal que distingue los tipos es **el artefacto que el usuario referencia** (
 Reglas de seleccion:
 
 - **Identificar el artefacto -> leer su referencia -> seguir unicamente su flujo.**
+- **Con `target: external`** (politica de implementacion) solo se admiten los tipos **Caso de prueba** y **Feature**: un `TK-XXX`/`WI-XXX` referenciado en un repositorio de pruebas externo => **parar** e indicar que ese trabajo se implementa en el repositorio de la aplicacion, no aqui.
 - Si la referencia del usuario es ambigua (p. ej. un numero sin prefijo, o no esta claro si hay historia asociada), **preguntar al usuario** antes de continuar; no asumir el tipo ni inventar artefactos.
 - Solo se implementa trabajo en **`Estado: Ready`** (la US/TK, el WI, el TC o el FT). Si esta en `Draft`, parar y devolver a la fase que lo produce (`work-plan` / `work-define` para US/TK/WI, `test-define` para un TC, el flujo «Analizar legado» de `work-research` para un FT).
 - **Codigo de produccion vs. pruebas.** Los tipos `TK-XXX` y `WI-XXX` implementan funcionalidad nueva con sus tests. Los tipos `TC-XXX` y `FT-XXX` **entregan pruebas**: el comportamiento ya existe, asi que las pruebas confirman lo documentado.

@@ -36,6 +36,24 @@ Copiar el patron del stack del repo; la orden exacta sale de los scripts del man
 
 **Lint:** pasar los archivos tocados como argumentos (`eslint src/a.ts src/b.ts`, `ruff check src/modulo/`, `golangci-lint run ./pkg/modulo/...`), no la raiz.
 
+## Modo externo (`implementation.target: external`)
+
+Cuando la politica de implementacion resolvio `target = external` (repositorio de pruebas contra un sistema desplegado, ver [`test-cases.md` § Modo externo](test-cases.md#modo-externo-implementationtarget-external)), **todas** las pruebas del proyecto son API, E2E o visuales, asi que la fila «Playwright / Cypress: no se ejecutan en iteracion» de la tabla de arriba **no aplica**: no habria nada que ejecutar hasta el cierre. La regla de tres niveles se conserva; cambia solo que se corre en cada nivel:
+
+| Momento | `target: external` — que se ejecuta | Que NO se ejecuta |
+|---------|--------------------------------------|-------------------|
+| **Verificacion de cada prueba** (equivalente a Red/Green) | **Solo el spec o el caso recien escrito**, con el filtro del runner (`npx playwright test tests/api/TC-005.spec.ts`, `pytest tests/api/test_tc_005.py -k TC_005`, `newman run … --folder TC-005`), contra el ambiente que identifica el `.env`. | Los demas specs del padre, la carpeta entera. |
+| **Cierre de la unidad** | Los specs **del artefacto padre** escritos o tocados en la unidad (`npx playwright test tests/us-042/`, `pytest -k US_042`). Lint sobre los archivos tocados. | La suite completa del proyecto, specs de otros padres. |
+| **Cierre de la implementacion** | Una sola corrida de los specs del padre escritos en la ejecucion. | La suite completa: eso es `quality-check`. |
+
+Reglas adicionales del modo:
+
+- La orden de prueba **nunca lleva la URL ni credenciales en linea** (`BASE_URL=https://… npx playwright test` esta prohibido): el runner las toma del `.env` a traves del modulo de configuracion del proyecto. Si hace falta apuntar a otro ambiente, se cambia el `.env` — y lo cambia el usuario.
+- No se «estabiliza» un rojo repitiendo la corrida mas alla del limite de `escalation.md`; un rojo fiel al TC es un hallazgo (ver `test-cases.md`).
+- La salida del runner que se muestra al usuario o se registra en `automation.md` se revisa antes: sin tokens, cookies ni cabeceras de autorizacion.
+
+Con `target: source` esta seccion no aplica y la tabla principal rige sin cambios.
+
 ## Anti-patrones
 
 - `npm test`, `pytest`, `go test ./...`, `mvn test`, `dotnet test` **a secas** durante la implementacion: es la bateria completa con otro nombre.

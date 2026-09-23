@@ -25,8 +25,8 @@ solución?"* — opciones `Uno solo` / `Más de uno (voy a necesitar un repo de 
 
 El repositorio de especificaciones es el **proyecto principal** en una solución multi-repo: es la raíz que
 recibe los artefactos que son **únicos** en toda la solución (`.agents/MEMORY.md`, `.sdd-devkit/settings.json`)
-y actúa como **padre** del resto de repositorios, agregados como submódulos en su raíz. `AGENTS.md`,
-`CLAUDE.md` y `README.md` **no** son únicos — cada submódulo recibe su propia copia; ver § 4.
+y actúa como **padre** del resto de repositorios, agregados como submódulos en su raíz. `AGENTS.md` y
+`README.md` **no** son únicos — cada submódulo recibe su propia copia; ver § 4.
 
 Este repositorio es, por definición, **"Solo specs"** (`stack-detection.md § 2`): no tiene ni va a tener
 código de aplicación propio — es harness y documentación. Esa clasificación no se le pregunta ni se evalúa,
@@ -110,7 +110,7 @@ uno por uno:
 | 1.2 Clasificar la situación | Una vez | **Una vez por cada submódulo** — cada uno puede quedar en una situación distinta (uno "con implementación", otro "sin código", otro "Solo specs"), nunca en el repo de especificaciones (siempre "Solo specs", automático) |
 | 1.3 Detectar el stack | Una vez | **Una vez por cada submódulo**, sobre su propia raíz (salvo que ese submódulo sea "Solo specs") |
 | 2 (conseguir el stack) | Si 1.2 dio "sin código" | **Por cada submódulo** que 1.2 haya clasificado "sin código" (nunca si dio "Solo specs") — si son varios a la vez, agrupar sus preguntas del 2.1 en una sola tanda (una sub-pregunta por submódulo), no una tanda por submódulo. Si al identificar el repositorio en el § 2.3 el usuario ya describió su rol (p. ej. "este va a ser el backend de pedidos"), usar esa descripción para no repreguntar el 2.1 desde cero — solo completar lo que falte |
-| 3 (placeholders del harness) | Sobre el directorio de invocación | `AGENTS.md`, `CLAUDE.md` y `README.md` se crean **en el repo de especificaciones y en cada submódulo** (§ 4); `.agents/MEMORY.md`, `.sdd-devkit/settings.json` y `.gitignore` solo en el repo de especificaciones; `docs/adr/README.md` + `docs/standards/README.md` siguen su propia lógica por raíz de arquitectura, **nunca** en el repo de especificaciones ni en un submódulo "Solo specs" (§ 6) |
+| 3 (placeholders del harness) | Sobre el directorio de invocación | `AGENTS.md` y `README.md` se crean **en el repo de especificaciones y en cada submódulo** (§ 4); `.agents/MEMORY.md`, `.sdd-devkit/settings.json` y `.gitignore` solo en el repo de especificaciones; `docs/adr/README.md` + `docs/standards/README.md` siguen su propia lógica por raíz de arquitectura, **nunca** en el repo de especificaciones ni en un submódulo "Solo specs" (§ 6) |
 | 4.1 / 4.2 (candidatos y compuerta de calidad) | Una vez, sobre la raíz principal | **Una vez por cada submódulo que no sea "Solo specs"**, cada uno como su propia raíz de arquitectura — ver § 5. Nunca sobre el repo de especificaciones ni sobre un submódulo "Solo specs" |
 | 5.1 (documentar decisiones) | Una corrida de `arch-manage` | **Una corrida por submódulo** — cada uno con su propia serie `ADR-XXX`, igual que cualquier otra raíz de arquitectura (`../../references/artifacts.md#raíz-de-arquitectura-adr-estándares-y-fitness-functions`) |
 | 5.2 (stack en `AGENTS.md`) | Un stack, en el único `AGENTS.md` | Cada submódulo escribe su propio stack en su propio `AGENTS.md`; el `AGENTS.md` del repo de especificaciones resume con una tabla que enlaza a cada uno — ver § 7 |
@@ -118,16 +118,16 @@ uno por uno:
 No preguntar la situación ni el stack "para el proyecto" en general cuando es multi-repo: siempre es "para
 `<nombre-del-submódulo>`".
 
-## 4. `AGENTS.md`, `CLAUDE.md` y `README.md`: uno por repositorio
+## 4. `AGENTS.md` y `README.md`: uno por repositorio
 
 A diferencia de `.agents/MEMORY.md` y `.sdd-devkit/settings.json` (únicos, solo en el repo de
-especificaciones — § 8), estos tres archivos **no son artefactos únicos de la solución**: cada repositorio
+especificaciones — § 8), estos dos archivos **no son artefactos únicos de la solución**: cada repositorio
 —el de especificaciones y cada submódulo— tiene su propio código, su propio estilo y potencialmente su
 propio stack, y un agente que trabaje directamente dentro de un submódulo (sin pasar por el repo de
 especificaciones) necesita encontrar ahí sus propias instrucciones. Por eso el Paso 3 los crea **en la raíz
 principal y en cada submódulo**, no solo en la raíz principal.
 
-Antes de escribir el `AGENTS.md` de un submódulo, resolver primero para ese submódulo el punto 4-5 del
+Antes de escribir el `AGENTS.md` de un submódulo, resolver primero para ese submódulo los puntos 3-4 del
 Paso 3 (si recibe o no sus propios índices de arquitectura, § 6) — la plantilla de abajo depende de esa
 respuesta.
 
@@ -165,7 +165,7 @@ lectura según la tabla.
 - `@../.agents/MEMORY.md` — apunta al repo de especificaciones **solo si está anidado**; un submódulo nunca
   tiene su propio `MEMORY.md`.
 - `docs/adr/README.md` / `docs/standards/README.md` — ruta **local** (`docs/adr/README.md`) si este
-  submódulo recibió sus propios índices en el Paso 3, puntos 4-5; ruta al **padre**
+  submódulo recibió sus propios índices en el Paso 3, puntos 3-4; ruta al **padre**
   (`../docs/adr/README.md` / `../docs/standards/README.md`) si no los recibió (y está anidado).
 - `@README.md` — siempre local (§ 4.3); aplica en anidado y en clone directo. En **repo único** es la
   única línea de README (`assets/agents-template.md`); no hay padre.
@@ -178,13 +178,7 @@ La sección `# Stack tecnológico` de un `AGENTS.md` de submódulo es la **únic
 repositorio** — mismo formato de un repo único (no la tabla-resumen que usa la raíz principal), y se
 completa en el Paso 5.2 de ese mismo submódulo.
 
-### 4.3 `CLAUDE.md` de cada repositorio
-
-Idéntico en todos: copiar `assets/claude-template.md` tal cual (`@AGENTS.md`). No cambia entre raíz
-principal y submódulo porque el include es relativo al propio archivo — siempre apunta al `AGENTS.md`
-local de ese mismo repositorio.
-
-### 4.4 `README.md` de cada repositorio
+### 4.3 `README.md` de cada repositorio
 
 Misma regla que el Paso 3.4 (1-2 párrafos, cerca del inicio, sin plantilla de secciones fija), aplicada por
 repositorio:
@@ -195,15 +189,20 @@ repositorio:
   descripción en vez de volver a preguntar; solo abrir la pregunta abierta del 3.4 si no alcanza para
   redactarla con confianza.
 
-### 4.5 Idempotencia por repositorio
+### 4.4 Idempotencia por repositorio
 
 Los criterios de [Idempotencia / reejecución](../SKILL.md#idempotencia--reejecución) y
 [3.1 Archivos fuera de formato](../SKILL.md#31-archivos-fuera-de-formato) del `SKILL.md` se aplican **por
-repositorio**: un submódulo puede ya tener su propio `AGENTS.md`/`CLAUDE.md`/`README.md` (escrito a mano o
+repositorio**: un submódulo puede ya tener su propio `AGENTS.md`/`README.md` (escrito a mano o
 por otra herramienta) sin que eso diga nada sobre el estado del repo de especificaciones, y viceversa —
 comparar cada copia contra la plantilla que le corresponde (`agents-template.md` en la raíz,
 `agents-submodule-template.md` en cada submódulo). Los hallazgos fuera de formato de todas las copias se
 agrupan en la misma mención y se delegan juntos en `/plugin-migrate`.
+
+**`CLAUDE.md` no se crea en ningún repositorio** — ni en la raíz principal ni en un submódulo. Versiones
+anteriores de este plugin dejaban ahí un puntero `@AGENTS.md`; ya no. Uno que exista se deja como esté (su
+eliminación, cuando es solo el puntero, la ofrece `/plugin-migrate`), y su ausencia nunca hace que el
+harness de ese repositorio se considere incompleto.
 
 ## 5. Candidatos de arquitectura y compuerta de calidad por submódulo
 
@@ -273,4 +272,4 @@ del repositorio de especificaciones puede seguir enlazándolo, mostrando ese mis
   git ya mantiene, es la fuente de verdad de qué submódulos existen y dónde. No duplicar esa lista en
   `settings.json` ni en ningún otro archivo del harness.
 - El resto de reglas del Paso 3 (idempotencia, delegación de archivos fuera de formato) aplican igual sobre cada repositorio
-  que sobre un repo único — ver § 4.5.
+  que sobre un repo único — ver § 4.4.

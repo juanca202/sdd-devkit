@@ -28,6 +28,7 @@ if (impl) {
   const max = impl.maxParallel === undefined ? 3 : impl.maxParallel;
   const archive = impl.archiveMode || 'ask';
   const handoff = impl.handoff;
+  const target = impl.target || 'source';
 
   console.log('Politica de implementacion resuelta desde .sdd-devkit/settings.json:');
 
@@ -68,6 +69,12 @@ if (impl) {
   } else {
     console.log('- handoff = ask -> al cerrar el alcance implementado, presentar las opciones de cierre con la herramienta de preguntas estructuradas y esperar la eleccion del usuario.');
   }
+
+  if (target === 'external') {
+    console.log('- target = external -> **sistema bajo prueba externo**: este repositorio contiene solo pruebas contra una aplicacion desplegada cuyo codigo NO esta aqui. Solo aplican los tipos TC-XXX y FT-XXX de work-implement (un TK/WI no se implementa en este repo). Reglas del modo: no hay codigo de produccion que corregir (una prueba en rojo es un hallazgo), URLs y credenciales salen del .env via el modulo de configuracion del proyecto, no se crea ni se toca progress.md (el registro va a test-cases/automation.md del padre), y las e2e/API se ejecutan aisladas en cada iteracion. Ver work-implement/references/test-cases.md § Modo externo.');
+  } else {
+    console.log('- target = source -> el codigo bajo prueba vive en este repositorio (comportamiento por defecto). Sin cambios respecto al flujo habitual.');
+  }
 } else {
   console.log('No hay .sdd-devkit/settings.json con bloque \\'implementation\\'. Aplicar los valores por defecto del catalogo:');
   console.log('- **confirmByUnit = always**: una unidad por confirmacion; esperar confirmacion explicita entre unidades.');
@@ -77,6 +84,7 @@ if (impl) {
   console.log('- **maxParallel = 3**: hasta 3 subagentes concurrentes.');
   console.log('- **archiveMode = ask**: preguntar antes de archivar.');
   console.log('- **handoff = ask**: presentar las opciones de cierre y esperar la eleccion del usuario.');
+  console.log('- **target = source**: el codigo bajo prueba vive en este repositorio. Si el repositorio NO tiene codigo de aplicacion y su .env o .env.example declara BASE_URL o API_BASE_URL, ver la deteccion de respaldo de la nota **Modo externo** de esta referencia antes de asumirlo.');
   console.log('**No decidir estos valores por cuenta propia** ni ofrecer escribirlos: arch-init es quien crea el archivo.');
 }
 "
@@ -85,6 +93,16 @@ if (impl) {
 > **Una peticion explicita del usuario gana.** Si en el turno el usuario pide algo incompatible con lo
 > resuelto ("de corrido", "sin preguntar", "una por una", "sin worktrees"), se respeta esa peticion para
 > **esa** ejecucion y no se modifica `settings.json`.
+
+> **Modo externo (`target: external`) — detección de respaldo.** La clave manda: si `implementation.target` existe,
+> se aplica tal cual y no se infiere nada. Si **no** existe (o no hay `settings.json`) y el repositorio cumple
+> **las dos** condiciones — no contiene código de aplicación propio (solo pruebas, configuración y docs) **y** su
+> `.env` o `.env.example` declara `BASE_URL` o `API_BASE_URL` —, `work-implement` **pregunta una sola vez** si se
+> trata de un proyecto de pruebas contra un sistema externo y, con respuesta afirmativa, aplica el modo externo en
+> esa ejecución y ofrece persistir `"target": "external"` en `.sdd-devkit/settings.json` (única excepción a «no
+> ofrecer escribir la política»; si el archivo no existe, la persistencia la hace `arch-init`). Con respuesta
+> negativa, o si falta cualquiera de las dos condiciones, se aplica `source` sin volver a preguntar en la sesión.
+> Nunca leer ni mostrar los **valores** del `.env`: la detección mira solo los nombres de variable.
 
 > **Modo delegado.** Cuando el skill se ejecuta invocado por otro skill (subagente), la politica ya
 > resuelta se le pasa en la delegacion: en ese modo no se vuelve a resolver ni se pregunta nada.

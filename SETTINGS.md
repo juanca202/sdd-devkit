@@ -12,15 +12,16 @@ Referencia completa de cada opción de `.sdd-devkit/settings.json`: para qué si
 
 ## `specification`
 
-Rutas de las especificaciones y política de casos de prueba al planificar.
+Rutas de las especificaciones (cambios, estado actual y archivado) y política de casos de prueba al planificar. Las tres rutas son la **fuente de verdad del layout**: cada ruta literal del catálogo (`docs/specs/changes/…`, `docs/specs/current/…`, `docs/specs/archived/…`) es el valor por defecto de su clave y se sustituye por el valor del repo — ver [references/artifacts.md](references/artifacts.md).
 
 | Campo | Valores | Para qué sirve |
 |-------|---------|-----------------|
-| `basePath` | ruta relativa (ej. `docs/specs/`) | Dónde viven las especificaciones (`US-XXX`, `WI-XXX`, `TK-XXX`, `TC-XXX`, `RS-XXX`...). |
-| `archivePath` | ruta relativa (ej. `docs/archive/`) | Dónde se archiva el trabajo cerrado. Ver el contrato de archivado en [references/artifacts.md](references/artifacts.md). |
+| `changesPath` | ruta relativa (ej. `docs/specs/changes/`) | Dónde viven las especificaciones que **cambian** el sistema: `user-stories/US-XXX-…` (con sus `TK-XXX` y `TC-XXX`), `work-items/WI-XXX-…`, `requirements/SRS-XXX-…` y las investigaciones sueltas `research/RS-XXX-…`. Reemplaza a `basePath`. |
+| `currentPath` | ruta relativa (ej. `docs/specs/current/`) | Dónde viven los features `FT-XXX-…` que describen el sistema **tal como está**: los que descubre `work-research` (flujo *Analizar legado*) o documentan funcionalidad existente. Cuelgan directamente de esta ruta, sin subcarpeta. |
+| `archivedPath` | ruta relativa (ej. `docs/specs/archived/`) | Dónde `work-integrate`/`pr-create` archivan el trabajo cerrado, espejando las subcarpetas de `changesPath`. Reemplaza a `archivePath`. Ver el contrato de archivado en [references/artifacts.md](references/artifacts.md). |
 | `artifactRoot` | código (ej. `US-001`) | Artefacto raíz que el CLI de tracking consulta por defecto cuando la invocación no trae `--requirement <code>`. |
-| `testCases.mode` | `ask` · `always` · `never` | Si `work-define`/`work-plan` ofrecen `test-define` al dejar una historia o sus tareas en `Ready`: preguntando, invocándolo directo o sin ofrecerlo. Detalle en [references/planning.md](references/planning.md). |
-| `testCases.askDetails` | `true` · `false` | Si `test-define` entrevista al usuario (entorno, roles, datos, escenarios de error) antes de generar los `TC-XXX`, o aplica valores por defecto documentados y anota los supuestos. No cambia el alcance: siempre cubre todos los criterios de aceptación. |
+| `testCases.createMode` | `ask` · `always` · `never` | Si `work-define`/`work-plan` ofrecen `test-define` al dejar una historia o sus tareas en `Ready`: preguntando, invocándolo directo o sin ofrecerlo. Detalle en [references/planning.md](references/planning.md). |
+| `testCases.createDetailsMode` | `ask` · `never` | Si `test-define` entrevista al usuario (entorno, roles, datos, escenarios de error) antes de generar los `TC-XXX`, o aplica valores por defecto documentados y anota los supuestos. No cambia el alcance: siempre cubre todos los criterios de aceptación. |
 
 ## `implementation`
 
@@ -33,8 +34,9 @@ Ritmo de confirmación y control de flujo durante `work-implement`. Detalle en [
 | `workTree` | `ask` · `always` · `never` | Si el trabajo se aísla en un git worktree temporal. Con worktrees, **el árbol principal no se toca**: la rama del artefacto se crea y se usa desde su propio worktree, y la rama en la que estás al empezar es la misma al terminar (ver [`work-implement/references/worktrees.md`](skills/work-implement/references/worktrees.md)). |
 | `workTreePath` | ruta (ej. `../worktrees`) | Dónde crear esos worktrees temporales. |
 | `maxParallel` | entero, `-1` = sin límite | Máximo de tareas ejecutándose en paralelo. |
-| `archiveMode` | `ask` · `always` · `never` | Al cerrar un trabajo, si `work-integrate`/`pr-create` mueven su carpeta a `archivePath`: preguntando (mostrando origen/destino), siempre o nunca. |
+| `archiveMode` | `ask` · `always` · `never` | Al cerrar un trabajo, si `work-integrate`/`pr-create` mueven su carpeta a `archivedPath`: preguntando (mostrando origen/destino), siempre o nunca. |
 | `handoff` | `always` · `ask` | Al cerrar el alcance implementado, si se invoca directo el siguiente skill del ciclo o se presentan las opciones y se espera la elección del usuario. |
+| `scope` | `code` · `tests` | Qué implementa este repositorio. `code` (por defecto si se omite): código de aplicación con sus pruebas — los cuatro tipos de `work-implement`. `tests`: **solo pruebas automatizadas** (API, E2E, visuales) contra un sistema desplegado cuyo código vive en otro lugar — solo tipos `TC-XXX`/`FT-XXX`, URLs y credenciales desde `.env` vía el módulo de configuración, registro en `test-cases/automation.md` en vez de `progress.md`, y una prueba en rojo se trata como hallazgo, no como código a corregir. Lo escribe `arch-init` al clasificar un proyecto de pruebas; sin la clave, `work-implement` puede detectarlo por `.env` y preguntar una vez. Detalle en [`work-implement/references/test-cases.md`](skills/work-implement/references/test-cases.md#modo-pruebas-implementationscope-tests). |
 
 ## `verification`
 

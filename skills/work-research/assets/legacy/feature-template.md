@@ -7,10 +7,10 @@ YA IMPLEMENTADA. No es trabajo por construir. Puede nacer de dos formas:
   - inferido de código legado por el flujo «Analizar legado» de work-research; o
   - documentando funcionalidad existente que se quiere registrar (no necesariamente legacy).
 En ambos casos el contenido y el uso downstream son idénticos. Vive en:
-  docs/specs/features/FT-XXX-{slug}/README.md
+  docs/specs/current/FT-XXX-{slug}/README.md
 
 Sus casos de prueba se generan con test-define y viven en la MISMA carpeta:
-  docs/specs/features/FT-XXX-{slug}/test-cases/
+  docs/specs/current/FT-XXX-{slug}/test-cases/
 
 Reglas de contenido:
   - Describe el comportamiento REAL ya implementado, no el deseado.

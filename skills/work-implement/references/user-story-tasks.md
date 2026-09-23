@@ -1,6 +1,6 @@
 # Tipo de implementacion: Tarea de historia de usuario
 
-Flujo para **ejecutar en codigo** las tareas tecnicas `TK-XXX` de una historia de usuario `US-XXX` bajo `docs/specs/user-stories/`. Esta referencia se carga desde `SKILL.md` cuando la seleccion de tipo resuelve a este caso. Asume ya resueltos el mecanismo de preguntas, el idioma, la validacion de repositorio y el ritmo de confirmacion (ver `SKILL.md`).
+Flujo para **ejecutar en codigo** las tareas tecnicas `TK-XXX` de una historia de usuario `US-XXX` bajo `docs/specs/changes/user-stories/`. Esta referencia se carga desde `SKILL.md` cuando la seleccion de tipo resuelve a este caso. Asume ya resueltos el mecanismo de preguntas, el idioma, la validacion de repositorio y el ritmo de confirmacion (ver `SKILL.md`).
 
 > **Unidad de confirmacion:** **una `TK-XXX` por turno.** Al terminar cada TK, detenerse y preguntar si continuar con la siguiente, aunque el usuario haya aprobado la cola completa. **Excepcion:** si el alcance tiene varias TK y la politica resuelta no exige pausar entre ellas (`confirmByUnit: never`, o peticion explicita del usuario en el turno), se activa el **modo de ejecucion paralela** del `SKILL.md` (analisis de dependencias, subagentes con worktree — hasta `maxParallel` — y merge secuencial), que omite estas pausas.
 
@@ -10,11 +10,11 @@ Flujo para **ejecutar en codigo** las tareas tecnicas `TK-XXX` de una historia d
 
 | Artefacto | Ruta |
 | --------- | ---- |
-| Historia de usuario | `docs/specs/user-stories/US-XXX-[nombre-corto]/README.md` |
-| Tareas | `docs/specs/user-stories/US-XXX-[nombre-corto]/TK-XXX-[nombre].md` |
-| Progreso | `docs/specs/user-stories/US-XXX-[nombre-corto]/progress.md` |
+| Historia de usuario | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/README.md` |
+| Tareas | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/TK-XXX-[nombre].md` |
+| Progreso | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/progress.md` |
 | Glosario | `docs/glossary.md` |
-| US ya archivada (fallback) | `docs/archive/user-stories/US-XXX-[nombre-corto]/`, con la misma estructura interna |
+| US ya archivada (fallback) | `docs/specs/archived/user-stories/US-XXX-[nombre-corto]/`, con la misma estructura interna |
 
 **Rama de trabajo:** `feature/US-XXX-[nombre-corto]` (el segmento tras `feature/` coincide con la carpeta de la US).
 
@@ -39,9 +39,9 @@ Flujo para **ejecutar en codigo** las tareas tecnicas `TK-XXX` de una historia d
 Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
 - **US padre con README.md:** la carpeta de la US existe y tiene `README.md` con metadato `Estado: Ready`.
-- **US no archivada:** si la carpeta no aparece en `docs/specs/user-stories/`, buscarla en `docs/archive/user-stories/` antes de darla por inexistente. Si esta ahi, la US **ya se cerro e integro**: **parar** y avisar — «`US-042` esta archivada; para retomarla hay que desarchivarla primero (mover su carpeta de vuelta), y eso lo decide el usuario». **Excepcion:** en [modo correccion](../SKILL.md#modo-correccion-delegado-desde-quality-check) delegado por `quality-check`, un artefacto archivado es esperable —la correccion llega en la fase de cierre, con el archivado ya commiteado—: ahi se continua, pero **sin escribir dentro de la carpeta archivada** (la nota de retrabajo va en el informe de `quality-check`). **Nunca** crear una carpeta nueva en la ruta activa por no haberla encontrado: dejaria dos artefactos con el mismo identificador. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+- **US no archivada:** si la carpeta no aparece en `docs/specs/changes/user-stories/`, buscarla en `docs/specs/archived/user-stories/` antes de darla por inexistente. Si esta ahi, la US **ya se cerro e integro**: **parar** y avisar — «`US-042` esta archivada; para retomarla hay que desarchivarla primero (mover su carpeta de vuelta), y eso lo decide el usuario». **Excepcion:** en [modo correccion](../SKILL.md#modo-correccion-delegado-desde-quality-check) delegado por `quality-check`, un artefacto archivado es esperable —la correccion llega en la fase de cierre, con el archivado ya commiteado—: ahi se continua, pero **sin escribir dentro de la carpeta archivada** (la nota de retrabajo va en el informe de `quality-check`). **Nunca** crear una carpeta nueva en la ruta activa por no haberla encontrado: dejaria dos artefactos con el mismo identificador. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 - **TK en estado Ready:** solo encolar tareas con `Estado: Ready`. Las `Draft` o `Done` en `progress.md` no son ejecutables por defecto.
-- **Test cases presentes:** verificar si existe la carpeta `docs/specs/user-stories/US-XXX-[nombre-corto]/test-cases/` con al menos un archivo `TC-XXX-*.md`. Si no existe o esta vacia, **preguntar al usuario** (herramienta estructurada) antes de continuar:
+- **Test cases presentes:** verificar si existe la carpeta `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/test-cases/` con al menos un archivo `TC-XXX-*.md`. Si no existe o esta vacia, **preguntar al usuario** (herramienta estructurada) antes de continuar:
 
   > "Esta US no tiene test cases definidos para la implementacion. ¿Como quieres continuar?"
   > Opciones: [Definir test cases primero] / [Si, continuar sin test cases] / [No, detener aqui]
@@ -50,7 +50,7 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
   - Si elige **continuar sin test cases**: continuar normalmente.
   - Si elige **detener**: parar y sugerir ejecutar `test-define` primero.
 
-- **README de test cases:** si la carpeta `test-cases/` existe, **leer su `README.md`** (`docs/specs/user-stories/US-XXX-[nombre-corto]/test-cases/README.md`) para identificar que `TC-XXX` describen y cuales son **automatizables** (unit, integracion, e2e). Esta lectura alimenta el ciclo TDD del Paso 3 y las notas de cobertura en `progress.md`. Si el `README.md` no existe pero hay archivos `TC-XXX-*.md`, leer los propios test cases como fuente.
+- **README de test cases:** si la carpeta `test-cases/` existe, **leer su `README.md`** (`docs/specs/changes/user-stories/US-XXX-[nombre-corto]/test-cases/README.md`) para identificar que `TC-XXX` describen y cuales son **automatizables** (unit, integracion, e2e). Esta lectura alimenta el ciclo TDD del Paso 3 y las notas de cobertura en `progress.md`. Si el `README.md` no existe pero hay archivos `TC-XXX-*.md`, leer los propios test cases como fuente.
 
 ---
 
@@ -115,7 +115,7 @@ Por cada tarea aprobada, en orden numerico salvo dependencias obvias en el texto
 Un `TK-XXX` siempre vive bajo la carpeta de una US. Si el usuario indica solo el numero de tarea:
 
 1. **Preguntar** a que `US-XXX` pertenece antes de continuar.
-2. **Validar** que `TK-XXX-[nombre].md` existe dentro de `docs/specs/user-stories/US-XXX-[nombre-corto]/`.
+2. **Validar** que `TK-XXX-[nombre].md` existe dentro de `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/`.
 3. Si no pertenece o no se encuentra, **parar** e informar:
 
 `

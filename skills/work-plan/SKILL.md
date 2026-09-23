@@ -1,6 +1,6 @@
 ---
 name: work-plan
-description: "Planifica trabajo de distintos tipos sin generar código ni pruebas. Dos tipos de plan: (1) tareas técnicas (TK-XXX) bajo una historia de usuario existente; (2) tareas de mantenimiento (WI-XXX) sin historia asociada — bugs, refactor, deuda técnica, actualización de dependencias, tareas operativas. Activar cuando el usuario pida planificar implementación, descomponer trabajo, definir alcance técnico o planificar mantenimiento/deuda técnica/refactor, aunque no nombre «tarea», «TK» o «WI». Activar también, por defecto, cuando solo entregue una referencia a una historia («US-004», «planifica US-007»): proponer la descomposición en tareas por repositorio cubriendo los AC-XXX y preguntar si crear los planes completos, stubs, ajustar u otro, o cancelar. Selecciona el tipo según haya o no historia asociada y carga su definición desde references/. Cuenta el trabajo archivado en docs/archive/ al asignar IDs y detectar solapamientos; lo archivado no se edita."
+description: "Planifica trabajo de distintos tipos sin generar código ni pruebas. Dos tipos de plan: (1) tareas técnicas (TK-XXX) bajo una historia de usuario existente; (2) tareas de mantenimiento (WI-XXX) sin historia asociada — bugs, refactor, deuda técnica, actualización de dependencias, tareas operativas. Activar cuando el usuario pida planificar implementación, descomponer trabajo, definir alcance técnico o planificar mantenimiento/deuda técnica/refactor, aunque no nombre «tarea», «TK» o «WI». Activar también, por defecto, cuando solo entregue una referencia a una historia («US-004», «planifica US-007»): proponer la descomposición en tareas por repositorio cubriendo los AC-XXX y preguntar si crear los planes completos, stubs, ajustar u otro, o cancelar. Selecciona el tipo según haya o no historia asociada y carga su definición desde references/. Cuenta el trabajo archivado en docs/specs/archived/ al asignar IDs y detectar solapamientos; lo archivado no se edita."
 license: MIT
 ---
 
@@ -35,7 +35,7 @@ No sustituir una invocación de skill por "hacer el trabajo aquí". El handoff e
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md).
 
-Las reglas de `planning.md` son obligatorias y determinan, vía `specification.testCases.mode`, si al dejar las tareas del alcance en `Ready` se pregunta si definir los casos de prueba (`ask`, comportamiento por defecto), se invoca `/test-define` automáticamente sin preguntar (`always`), o nunca se sugiere ni se invoca (`never`). La otra clave del objeto, `askDetails`, **no la consume este skill**: la lee `test-define`.
+Las reglas de `planning.md` son obligatorias y determinan, vía `specification.testCases.createMode`, si al dejar las tareas del alcance en `Ready` se pregunta si definir los casos de prueba (`ask`, comportamiento por defecto), se invoca `/test-define` automáticamente sin preguntar (`always`), o nunca se sugiere ni se invoca (`never`). La otra clave del objeto, `createDetailsMode`, **no la consume este skill**: la lee `test-define`.
 
 No continúes hasta haber leído y aplicado `planning.md`.
 
@@ -81,7 +81,7 @@ La señal que distingue los tipos es **si el trabajo tiene una historia de usuar
 Reglas de selección:
 
 - **Hay historia asociada → tarea de historia de usuario. No la hay → mantenimiento.** Leer la referencia correspondiente y seguir **únicamente** su flujo.
-- **Una US archivada sigue siendo una US.** Antes de concluir que «no hay historia asociada», buscarla también bajo `docs/archive/user-stories/`: `work-integrate` y `pr-create` mueven ahí la carpeta al cerrar el trabajo. Si aparece ahí, el tipo **es** tarea de historia de usuario y su referencia dirá que hay que parar por estar archivada — degradarla a `WI-XXX` por no encontrarla en la ruta activa crearía un artefacto nuevo para trabajo que ya existe. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+- **Una US archivada sigue siendo una US.** Antes de concluir que «no hay historia asociada», buscarla también bajo `docs/specs/archived/user-stories/`: `work-integrate` y `pr-create` mueven ahí la carpeta al cerrar el trabajo. Si aparece ahí, el tipo **es** tarea de historia de usuario y su referencia dirá que hay que parar por estar archivada — degradarla a `WI-XXX` por no encontrarla en la ruta activa crearía un artefacto nuevo para trabajo que ya existe. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 - Si no está claro **si existe o no** una historia asociada (p. ej. una referencia ambigua que podría apuntar a una US), **preguntar al usuario** antes de continuar; no asumir la existencia de una US ni inventarla.
 - Si el tipo seleccionado aún no tiene su flujo definido, la propia referencia indica cómo proceder (p. ej. confirmar con el usuario en lugar de inventar estructura).
 

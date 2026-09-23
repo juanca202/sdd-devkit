@@ -1,6 +1,6 @@
 <!--
-Plantilla de `test-cases/automation.md` — SOLO para `implementation.target: external` (repositorio de
-pruebas contra un sistema externo). En `target: source` no se usa: ahi el registro va en `progress.md`.
+Plantilla de `test-cases/automation.md` — SOLO para `implementation.scope: tests` (repositorio de
+pruebas contra un sistema externo). En `scope: code` no se usa: ahi el registro va en `progress.md`.
 
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.

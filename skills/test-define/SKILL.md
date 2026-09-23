@@ -1,6 +1,6 @@
 ---
 name: test-define
-description: 'Crear casos de prueba (TC-XXX) a partir de los criterios de aceptación de cualquier artefacto de especificación que los tenga con identificador codificado: una historia de usuario (US-XXX), un work item (WI-XXX), un feature ya implementado (FT-XXX) o cualquier otro documento de especificación cuyos criterios estén numerados o codificados (AC-001, 1.1, R-3, etc.), siguiendo el estándar IEEE 29119-4. Activar cuando el usuario pida "definir test cases", "crear casos de prueba", "generar TCs", "pruebas para la US/WI/FT", "pruebas para este spec/documento", "documentar pruebas", "casos de prueba para los criterios de aceptación", o cualquier variante que implique producir documentación de prueba a partir de requisitos ya especificados. También activar cuando el usuario mencione "test-define" o "/test-define". Si el artefacto está archivado en docs/archive/, se detiene: es trabajo cerrado y hay que desarchivarlo antes.'
+description: 'Crear casos de prueba (TC-XXX) a partir de los criterios de aceptación de cualquier artefacto de especificación que los tenga con identificador codificado: una historia de usuario (US-XXX), un work item (WI-XXX), un feature ya implementado (FT-XXX) o cualquier otro documento de especificación cuyos criterios estén numerados o codificados (AC-001, 1.1, R-3, etc.), siguiendo el estándar IEEE 29119-4. Activar cuando el usuario pida "definir test cases", "crear casos de prueba", "generar TCs", "pruebas para la US/WI/FT", "pruebas para este spec/documento", "documentar pruebas", "casos de prueba para los criterios de aceptación", o cualquier variante que implique producir documentación de prueba a partir de requisitos ya especificados. También activar cuando el usuario mencione "test-define" o "/test-define". Si el artefacto está archivado en docs/specs/archived/, se detiene: es trabajo cerrado y hay que desarchivarlo antes.'
 license: MIT
 ---
 
@@ -28,7 +28,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
-- [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md): **Casos de prueba** — de ahí sale `askDetails`, que decide si este skill entrevista o aplica valores por defecto. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md): **Casos de prueba** — de ahí sale `createDetailsMode`, que decide si este skill entrevista o aplica valores por defecto. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/project-management.md`](../../references/project-management.md): **Gestor de proyectos** — si la integración está activa, proveedor y datos de conexión. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/project-managers/azure-devops.md`](../../references/project-managers/azure-devops.md): **Azure DevOps** — MCP, URL, límites, sincronización. *Solo si el `provider` resuelto es `azure-devops`.*
@@ -65,14 +65,14 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md).
 
-De ese bloque, este skill consume **`specification.testCases.askDetails`** y **`specification.testCases.mode`**:
+De ese bloque, este skill consume **`specification.testCases.createDetailsMode`** y **`specification.testCases.createMode`**:
 
 | Clave | Valor | Comportamiento |
 |-------|-------|----------------|
-| `askDetails` | `true` | **Hacer la entrevista de clarificación** del [Paso 2](#paso-2--entrevista-de-clarificación) antes de generar los TC. |
-| `askDetails` | `false` | **No preguntar nada** en el Paso 2: aplicar los [valores por defecto](#valores-por-defecto-askdetails-false) y dejar constancia de los supuestos en los propios TC. |
-| `mode` | `always` | **No pedir aceptación final** en el [Paso 4, punto 5](#paso-4--guardar-y-reportar): mostrar el resumen, dar el resultado por aceptado y cerrar el skill directamente. |
-| `mode` | `ask` / `never` (o sin `settings.json`) | Pedir aceptación final como hoy (Paso 4, punto 5). |
+| `createDetailsMode` | `ask` | **Hacer la entrevista de clarificación** del [Paso 2](#paso-2--entrevista-de-clarificación) antes de generar los TC. |
+| `createDetailsMode` | `never` | **No preguntar nada** en el Paso 2: aplicar los [valores por defecto](#valores-por-defecto-createdetailsmode-never) y dejar constancia de los supuestos en los propios TC. |
+| `createMode` | `always` | **No pedir aceptación final** en el [Paso 4, punto 5](#paso-4--guardar-y-reportar): mostrar el resumen, dar el resultado por aceptado y cerrar el skill directamente. |
+| `createMode` | `ask` / `never` (o sin `settings.json`) | Pedir aceptación final como hoy (Paso 4, punto 5). |
 
 Ambas claves se aplican igual venga este skill invocado por la planificación o directamente por el usuario.
 **Ninguna afecta al alcance:** con cualquier valor, los TC cubren **todos** los criterios de aceptación.
@@ -104,25 +104,25 @@ El usuario indica un artefacto: puede ser un identificador conocido del repo (`U
 
 | Tipo | Ubicación del artefacto | Ubicación de los TCs |
 |------|------------------------|----------------------|
-| Historia de usuario | `docs/specs/user-stories/US-XXX-{nombre}/README.md` | `docs/specs/user-stories/US-XXX-{nombre}/test-cases/` |
-| Work item | `docs/specs/work-items/WI-XXX-{kebab-case}/README.md` | `docs/specs/work-items/WI-XXX-{kebab-case}/test-cases/` |
-| Feature (funcionalidad ya implementada) | `docs/specs/features/FT-XXX-{slug}/README.md` | `docs/specs/features/FT-XXX-{slug}/test-cases/` |
+| Historia de usuario | `docs/specs/changes/user-stories/US-XXX-{nombre}/README.md` | `docs/specs/changes/user-stories/US-XXX-{nombre}/test-cases/` |
+| Work item | `docs/specs/changes/work-items/WI-XXX-{kebab-case}/README.md` | `docs/specs/changes/work-items/WI-XXX-{kebab-case}/test-cases/` |
+| Feature (funcionalidad ya implementada) | `docs/specs/current/FT-XXX-{slug}/README.md` | `docs/specs/current/FT-XXX-{slug}/test-cases/` |
 | **Cualquier otro artefacto** de especificación, sea cual sea su origen o formato | La ruta que indique el usuario (buscarla en el repo si solo da un nombre) | `test-cases/` dentro de la carpeta que contiene el artefacto; si el artefacto es un archivo suelto, `test-cases/` junto a él. Confirmar la ruta con el usuario antes de escribir. |
 
 > La carpeta `test-cases/` se crea si no existe; el archivo del artefacto permanece donde está.
 
-> **Artefacto archivado.** Si un `US-XXX`/`WI-XXX` no aparece en su ruta activa, buscarlo bajo `docs/archive/user-stories/` o `docs/archive/work-items/` antes de darlo por inexistente — `work-integrate` y `pr-create` pueden moverlo ahí al cerrar el trabajo, si el usuario lo confirma. Si está archivado, **parar y avisar**: definir casos de prueba nuevos para un trabajo ya cerrado requiere desarchivarlo primero, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado: además de duplicar el identificador, la numeración de TCs del [Paso 3](#numeración-y-nombres-de-archivo) reiniciaría en `001` ignorando los TCs que ya existen en el archivo. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> **Artefacto archivado.** Si un `US-XXX`/`WI-XXX` no aparece en su ruta activa, buscarlo bajo `docs/specs/archived/user-stories/` o `docs/specs/archived/work-items/` antes de darlo por inexistente — `work-integrate` y `pr-create` pueden moverlo ahí al cerrar el trabajo, si el usuario lo confirma. Si está archivado, **parar y avisar**: definir casos de prueba nuevos para un trabajo ya cerrado requiere desarchivarlo primero, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado: además de duplicar el identificador, la numeración de TCs del [Paso 3](#numeración-y-nombres-de-archivo) reiniciaría en `001` ignorando los TCs que ya existen en el archivo. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 
 ### Feature (`FT-XXX`) — funcionalidad ya implementada
 
 Un `FT-XXX` es el registro de una funcionalidad **ya implementada**, que vive en
-`docs/specs/features/`. Puede nacer del flujo «Analizar legado» de `work-research` —feature
+`docs/specs/current/`. Puede nacer del flujo «Analizar legado» de `work-research` —feature
 inferido de código— o documentar funcionalidad existente en general; en ambos casos
 `test-define` lo trata **igual** que una US o un WI: lee los criterios de la sección
 **Criterios de aceptación** del `README.md` —con el identificador que usen, normalmente `AC-XXX`—
 y verifica el estado si el artefacto lo declara (`Estado: Ready`), sigue el
 flujo normal (entrevista, perspectivas happy/error/límite, índice, trazabilidad del Paso
-5) y guarda los TCs bajo `docs/specs/features/FT-XXX-{slug}/test-cases/`. Particularidad: los
+5) y guarda los TCs bajo `docs/specs/current/FT-XXX-{slug}/test-cases/`. Particularidad: los
 criterios del feature describen el comportamiento **ya implementado**, así que los TCs son
 la **red de seguridad** para cubrirlo; cuando un TC valide un comportamiento que el
 discovery marcó como posible bug preservado, anotarlo para trazabilidad.
@@ -161,9 +161,9 @@ discovery marcó como posible bug preservado, anotarlo para trazabilidad.
 
 ## Paso 2 — Entrevista de clarificación
 
-> **Este paso entero se salta con `specification.testCases.askDetails: false`** — ver [Política de
+> **Este paso entero se salta con `specification.testCases.createDetailsMode: never`** — ver [Política de
 > definición de casos de prueba](#política-de-definición-de-casos-de-prueba). En ese caso, aplicar los
-> [valores por defecto](#valores-por-defecto-askdetails-false) y pasar directamente al Paso 3.
+> [valores por defecto](#valores-por-defecto-createdetailsmode-never) y pasar directamente al Paso 3.
 
 Antes de generar ningún TC, resolver las dudas que puedan afectar la calidad de los casos. Las preguntas a continuación son el conjunto estándar; **omitir las que ya estén respondidas en el artefacto o en la conversación** para no interrogar innecesariamente al usuario.
 
@@ -183,9 +183,9 @@ Preguntar usando la herramienta de preguntas estructuradas sobre:
 
 No avanzar al Paso 3 hasta recibir respuesta a las preguntas que apliquen.
 
-### Valores por defecto (`askDetails: false`)
+### Valores por defecto (`createDetailsMode: never`)
 
-Con `askDetails: false` **no se pregunta ninguna de las cuatro**: se resuelven en este orden — primero lo
+Con `createDetailsMode: never` **no se pregunta ninguna de las cuatro**: se resuelven en este orden — primero lo
 que diga el artefacto, y solo si calla, el valor por defecto. Lo que salga de un valor por defecto (no del
 artefacto) se **marca como supuesto** en el TC que lo use, para que quien lo ejecute sepa qué no estaba
 especificado.
@@ -198,7 +198,7 @@ especificado.
 | **Escenarios de error críticos** | Los que el **artefacto detalle**, más los que se deriven de las perspectivas de error y límite del Paso 3. No inventar prioridades de negocio que nadie escribió. |
 
 Si al aplicar un valor por defecto se detecta una **ambigüedad que haría el TC incorrecto** —no meramente
-incompleto—, sí se pregunta: `askDetails: false` suprime la entrevista estándar, no la obligación de no
+incompleto—, sí se pregunta: `createDetailsMode: never` suprime la entrevista estándar, no la obligación de no
 escribir un caso de prueba que se sabe erróneo.
 
 ---
@@ -250,7 +250,7 @@ Usar `assets/test-case-template.md` para todos los campos. Reglas de llenado:
 - **Prioridad:** derivar del impacto del criterio en el negocio: Alta si el criterio es bloqueante o afecta seguridad/datos; Media si es funcional importante; Baja si es edge case o cosmético. Si no hay suficiente contexto, preguntar al usuario.
 - **Creado por:** usar `git config user.name` del repositorio. Si no está disponible, dejar el campo vacío.
 - **Precondiciones:** ser específico — incluir estado del sistema, datos existentes y permisos requeridos.
-- **Datos de prueba:** usar los confirmados en el Paso 2 o, con `askDetails: false`, los propuestos según los [valores por defecto](#valores-por-defecto-askdetails-false); si se proponen, marcarlos con `[propuesto]`.
+- **Datos de prueba:** usar los confirmados en el Paso 2 o, con `createDetailsMode: never`, los propuestos según los [valores por defecto](#valores-por-defecto-createdetailsmode-never); si se proponen, marcarlos con `[propuesto]`.
 - **Pasos:** acciones atómicas y observables; cada fila incluye actor + acción + resultado esperado del paso.
 - **Resultado esperado final:** estado observable del sistema (UI, código HTTP, mensaje, evento publicado), no estado interno.
 
@@ -278,7 +278,7 @@ Usar `assets/test-case-template.md` para todos los campos. Reglas de llenado:
    - Criterios procesados.
    - TCs generados: ID · título · perspectiva.
    - TCs omitidos con justificación.
-5. **Aceptación del resultado — depende de `specification.testCases.mode`** (ver [Política de definición de casos de prueba](#política-de-definición-de-casos-de-prueba)):
+5. **Aceptación del resultado — depende de `specification.testCases.createMode`** (ver [Política de definición de casos de prueba](#política-de-definición-de-casos-de-prueba)):
    - **`mode: always`** → no preguntar: dar el resultado por aceptado y cerrar directamente. Sugerir como siguiente paso `work-implement` (tipo `TC-XXX`/`FT-XXX`) para automatizar los TCs en `Ready`, y `coverage-verify` para el veredicto de cobertura.
    - **`mode: ask` / `mode: never`** (o sin `settings.json`) → preguntar si el usuario acepta el resultado:
      - **Acepta** → cerrar; el skill termina. Sugerir como siguiente paso `work-implement` (tipo `TC-XXX`/`FT-XXX`) para automatizar los TCs en `Ready`, y `coverage-verify` para el veredicto de cobertura.
@@ -316,7 +316,7 @@ Tras editar, informar al usuario qué criterios quedaron enlazados con qué TCs.
 
 El flujo de los Pasos 1–5 **crea** casos de prueba. Pero tres skills devuelven aquí el control para **corregir o ampliar un TC que ya existe** —`work-implement` cuando al automatizar descubre que el TC está mal (`references/test-cases.md`), y `work-research` cuando el análisis de un caso de prueba concluye que la especificación es la que falla—, y ese camino necesita su propio procedimiento: regenerar desde cero perdería el identificador, que es el vínculo de trazabilidad que sostienen el índice, la línea `Casos de prueba:` del artefacto y todos los `coverage.md`.
 
-1. **Localizar el TC** por su identificador dentro de `test-cases/` del artefacto padre. Si el **padre** no está en su ruta activa, buscarlo bajo `docs/archive/` como en [Selección del artefacto](#selección-del-artefacto): si está archivado, **parar y avisar** — editar un TC de un trabajo ya cerrado es escribir dentro del archivo, y eso exige desarchivarlo primero. Es el caso más frecuente al llegar aquí desde una escalada de `work-implement` en modo corrección. Si el TC no aparece, parar y preguntar: no crear uno nuevo con ese ID.
+1. **Localizar el TC** por su identificador dentro de `test-cases/` del artefacto padre. Si el **padre** no está en su ruta activa, buscarlo bajo `docs/specs/archived/` como en [Selección del artefacto](#selección-del-artefacto): si está archivado, **parar y avisar** — editar un TC de un trabajo ya cerrado es escribir dentro del archivo, y eso exige desarchivarlo primero. Es el caso más frecuente al llegar aquí desde una escalada de `work-implement` en modo corrección. Si el TC no aparece, parar y preguntar: no crear uno nuevo con ese ID.
 2. **Entender el cambio pedido.** Quien delega debe traer el motivo (paso ambiguo, dato de prueba irreal, resultado esperado que contradice el comportamiento correcto, criterio que quedó sin cubrir). Si no viene, pedirlo; no deducirlo del código, que es circular.
 3. **Aplicar el cambio conservando el identificador y el archivo.** Se editan los campos afectados; **nunca** se renumera, ni se renombra el archivo, ni se crea un TC nuevo para sustituirlo.
 4. **Ajustar el `Estado`** según el desenlace:
@@ -361,13 +361,13 @@ La trazabilidad inversa (de un criterio a sus TCs) se obtiene buscando el identi
 ## Anti-patterns
 
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
-- Generar TCs sin haber completado la entrevista del Paso 2 (incluso si parece obvio) **cuando `askDetails` es `true`**.
-- **Hacer la entrevista del Paso 2 con `askDetails: false`**, aunque las respuestas parezcan valiosas: ese valor es la instrucción de no preguntar. Lo que se hace en su lugar es aplicar los valores por defecto y **marcar los supuestos** en los TC, no callarlos.
-- Confundir `askDetails` con el alcance: `false` suprime las preguntas de clarificación, **no** reduce los criterios cubiertos.
+- Generar TCs sin haber completado la entrevista del Paso 2 (incluso si parece obvio) **cuando `createDetailsMode` es `ask`**.
+- **Hacer la entrevista del Paso 2 con `createDetailsMode: never`**, aunque las respuestas parezcan valiosas: ese valor es la instrucción de no preguntar. Lo que se hace en su lugar es aplicar los valores por defecto y **marcar los supuestos** en los TC, no callarlos.
+- Confundir `createDetailsMode` con el alcance: `false` suprime las preguntas de clarificación, **no** reduce los criterios cubiertos.
 - Crear un TC que cubra más de un criterio de aceptación.
 - **Preguntar al usuario si quiere cubrir todos los criterios o solo algunos.** Por defecto se cubren **todos**; un subconjunto solo se genera cuando el usuario lo pidió por su cuenta, sin que el skill se lo ofrezca.
 - **Pedir confirmación de la lista de criterios extraídos en el Paso 1** antes de generar los TC: el alcance ya es todos por defecto, no hay nada que confirmar en ese punto.
-- **Preguntar si se acepta el resultado en el Paso 4.5 cuando `specification.testCases.mode: always`**: con ese valor el resultado se da por aceptado sin preguntar.
+- **Preguntar si se acepta el resultado en el Paso 4.5 cuando `specification.testCases.createMode: always`**: con ese valor el resultado se da por aceptado sin preguntar.
 - **Dejar un criterio sin TC en una corrida de alcance completo** — aunque parezca trivial, redundante o difícil de probar. Si de verdad no admite un caso de prueba, generar igual el TC y dejar constancia del motivo, en vez de omitirlo en silencio.
 - Omitir una perspectiva que evidentemente debería existir sin dejar constancia del motivo (una perspectiva que no aplica al criterio puede omitirse sin justificación; ver Paso 3).
 - Dejar el campo **Criterio de aceptación** vacío o con un valor genérico ("criterio 1").

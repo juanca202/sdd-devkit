@@ -24,7 +24,7 @@ Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/references/asking.md`]
 
 Antes de crear archivos, verificar:
 
-- **Duplicado de ID:** si el usuario proporciona `SRS-XXX`, confirmar que esa carpeta no existe ya en `docs/specs/requirements/`.
+- **Duplicado de ID:** si el usuario proporciona `SRS-XXX`, confirmar que esa carpeta no existe ya en `docs/specs/changes/requirements/`.
 - **Solapamiento de alcance:** revisar los títulos de otros SRS existentes para detectar si el mismo requerimiento ya tiene una especificación en curso. Si coincide, sugerir actualizar la existente en vez de crear una nueva.
 - **Requerimiento demasiado vago:** si no hay ni siquiera un objetivo funcional identificable (una frase de qué se quiere lograr y para quién), no crear el archivo todavía — preguntar primero. Con un objetivo funcional mínimo, sí se puede crear en Draft.
 
@@ -35,7 +35,7 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
 ## Flujo: Crear un SRS nuevo
 
 1. **Fijar el ID y nombre de carpeta**
-   - Usar el `SRS-XXX` indicado por el usuario o inferir el siguiente libre listando carpetas `SRS-*` en `docs/specs/requirements/`.
+   - Usar el `SRS-XXX` indicado por el usuario o inferir el siguiente libre listando carpetas `SRS-*` en `docs/specs/changes/requirements/`.
    - Proponer el `nombre-corto` en kebab-case; validar con el usuario si hay ambigüedad.
    - Crear la carpeta `SRS-XXX-[nombre-corto]/` y `assets/` si habrá archivos vinculados.
 
@@ -139,7 +139,7 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
 
 ## Flujo: Actualizar un SRS existente
 
-1. **Identificar el archivo** — por ID, nombre-corto o título, buscándolo en `docs/specs/requirements/`.
+1. **Identificar el archivo** — por ID, nombre-corto o título, buscándolo en `docs/specs/changes/requirements/`.
 2. **Leer el** `README.md` **actual** completo antes de editar.
 3. **Aplicar los cambios** solicitados. Reglas invariantes:
    - Mantener siempre los ids `FR-XXX`, `NFR-XXX` y `BR-XX` existentes, también al reordenar o eliminar; los nuevos toman el siguiente secuencial libre.

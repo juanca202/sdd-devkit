@@ -54,6 +54,10 @@ por `additionalProperties: false`), o por claves obligatorias que entonces no ex
 valores de `${PLUGIN_ROOT}/skills/arch-init/assets/settings-template.json` — **sin tocar ningún valor
 que el usuario ya fijó**. El archivo nunca se reescribe entero.
 
+**Renombres con valor conservado** (no se pierden ajustes del usuario): `specification.testCases.mode` →
+`createMode` (mismo valor); `specification.testCases.askDetails` → `createDetailsMode` (`true` → `ask`,
+`false` → `never`); `specification.basePath` / `archivePath` → ver la familia 9.
+
 ## 3. Glosario en la ruta antigua
 
 **Detección:** existe `docs/specs/glossary.md` (ruta de versiones anteriores) y no `docs/glossary.md`.
@@ -158,9 +162,53 @@ en cada repositorio un `CLAUDE.md` con una sola línea (`@AGENTS.md`) como punte
 
 ## 8. Referencias internas a rutas movidas
 
-**Detección:** tras aplicar las familias 3, 4, 6 o 7, quedan en el repositorio citas a las rutas antiguas
+**Detección:** tras aplicar las familias 3, 4, 6, 7 o 9, quedan en el repositorio citas a las rutas antiguas
 (secciones Referencias de US/TK/WI, índices, prosa de documentos del proyecto).
 
 **Normalización:** reescribirlas según el mapeo viejo → nuevo de esta corrida. Es el **último paso** de
 toda migración que mueva rutas, no una familia opcional. Lo que cite esas rutas desde fuera del repo
 (tracker externo, wikis) solo puede reportarse en el mapeo del cierre.
+
+## 9. Layout de especificaciones anterior (`basePath` / `archivePath`)
+
+**Layout vigente** (`${PLUGIN_ROOT}/references/artifacts.md` § Resolución de las rutas de especificación):
+tres raíces en `.sdd-devkit/settings.json` → `specification.changesPath` (default `docs/specs/changes/`:
+`user-stories/`, `work-items/`, `requirements/`, `research/`), `specification.currentPath` (default
+`docs/specs/current/`: los `FT-XXX-…/` directamente) y `specification.archivedPath` (default
+`docs/specs/archived/`, espejo de `changesPath`).
+
+**Detección** (cualquiera de estas señales; en multi-repo, sobre el repo de especificaciones):
+
+- `settings.json` trae `specification.basePath` o `specification.archivePath` (claves que el schema
+  vigente rechaza), o le faltan `changesPath` / `currentPath` / `archivedPath`.
+- Existe alguna de las carpetas del layout anterior con contenido: `docs/specs/user-stories/`,
+  `docs/specs/work-items/`, `docs/specs/requirements/`, `docs/specs/research/`, `docs/specs/features/`
+  o `docs/archive/` (o sus equivalentes bajo un `basePath`/`archivePath` no default).
+
+**Normalización** — dos partes, cada una con su propia confirmación en el plan:
+
+1. **Claves.** En `settings.json`, sin reescribir el archivo entero: `basePath` → se elimina y su valor
+   pasa a ser la base de `changesPath` (`docs/specs/` → `docs/specs/changes/`; un valor no default
+   `X/` → `X/changes/`) y de `currentPath` (`X/current/`); `archivePath` → `archivedPath`, conservando
+   el valor si el usuario lo había personalizado (`docs/archive/` default → `docs/specs/archived/`).
+   Mostrar el antes/después de las tres claves. Esta parte es la familia 2 aplicada a un caso concreto,
+   y se hace **aunque el usuario decline mover las carpetas** — en ese caso las claves nuevas apuntan a
+   las rutas antiguas (`changesPath: "docs/specs/"`, `currentPath: "docs/specs/features/"`,
+   `archivedPath: "docs/archive/"`), que es un layout válido: el resto del catálogo lo resuelve por las
+   claves.
+2. **Carpetas.** Proponer, y aplicar solo si se confirma, con `git mv` y en este orden:
+   `docs/specs/user-stories/` → `<changesPath>/user-stories/`; `docs/specs/work-items/` →
+   `<changesPath>/work-items/`; `docs/specs/requirements/` → `<changesPath>/requirements/`;
+   `docs/specs/research/` → `<changesPath>/research/`; `docs/specs/features/*` → `<currentPath>/`
+   (los `FT-XXX-…/` quedan directamente bajo la raíz, sin subcarpeta `features/`); `docs/archive/*` →
+   `<archivedPath>/` (conservando `user-stories/`, `work-items/`, `research/`). Si el destino ya existe
+   con contenido, no fusionar por cuenta propia: mostrar ambos y preguntar. Las carpetas se mueven
+   **completas y tal cual** — `README.md`, `TK-XXX-*.md`, `test-cases/`, `research/`, `progress.md`,
+   `coverage.md`, `assets/` — sin renumerar ni editar nada dentro. Dejar `docs/specs/` sin las carpetas
+   antiguas vacías.
+
+Después, la familia 8 reescribe las referencias internas (`docs/specs/user-stories/…` →
+`docs/specs/changes/user-stories/…`, `docs/specs/features/…` → `docs/specs/current/…`, `docs/archive/…`
+→ `docs/specs/archived/…`, y los enlaces relativos entre artefactos que cambiaron de profundidad) y
+reporta el mapeo viejo → nuevo; los trackers externos que citaban rutas del repo solo pueden
+reportarse.

@@ -23,18 +23,33 @@ específico (una salida propia, una excepción de ruta).
 > el que se invoca el skill. Cuál es esa raíz depende de la familia: la documentación de **arquitectura**
 > (ADR, estándares, fitness functions, informe de `arch-audit`) cuelga de la **raíz de arquitectura** —
 > ver [Raíz de arquitectura](#raíz-de-arquitectura-adr-estándares-y-fitness-functions); los de
-> **especificación** (`docs/specs/…`) cuelgan de la raíz del repositorio principal según
-> `specification.basePath`, y **no** se ven afectados por la resolución de arquitectura.
+> **especificación** (`docs/specs/…`) cuelgan de la raíz del repositorio principal según las tres rutas
+> de `specification` en `.sdd-devkit/settings.json` (ver abajo), y **no** se ven afectados por la
+> resolución de arquitectura.
 
-> **Resolución de `docs/archive/`.** Es el valor por defecto de `specification.archivePath`
-> (`.sdd-devkit/settings.json`), y así aparece escrito —literal— en esta tabla, en
-> [`work-integrate/references/archive.md`](../skills/work-integrate/references/archive.md) y en el
-> resto del catálogo. **Antes de resolver cualquier ruta de archivado** (destino de un `git mv`,
-> fallback de lectura, o escaneo de IDs bajo el archivo), leer `specification.archivePath`: si el
-> repo declaró un valor distinto del default, sustituirlo por ese valor en lugar de
-> `docs/archive/`. Si no hay `settings.json`, o la clave falta, aplica el default. `basePath`
-> (`docs/specs/` en esta tabla) es puramente convencional hoy y no se sustituye en el resto del
-> catálogo.
+> **Resolución de las rutas de especificación.** `specification` en `.sdd-devkit/settings.json` declara
+> **tres raíces**, y cada ruta literal `docs/specs/…` de esta tabla y del resto del catálogo es el
+> **valor por defecto** de una de ellas:
+>
+> | Clave | Default (literal en el catálogo) | Qué cuelga de ella |
+> |-------|----------------------------------|--------------------|
+> | `specification.changesPath` | `docs/specs/changes/` | Lo que **cambia** el sistema: `user-stories/US-XXX-…/` (con `TK-XXX`, `test-cases/`, `research/`, `progress.md`), `work-items/WI-XXX-…/`, `requirements/SRS-XXX-…/`, `research/RS-XXX-…/` (investigaciones sueltas). |
+> | `specification.currentPath` | `docs/specs/current/` | El sistema **tal como está**: `FT-XXX-[slug]/` directamente bajo la raíz, sin subcarpeta. |
+> | `specification.archivedPath` | `docs/specs/archived/` | Trabajo **cerrado** movido por `work-integrate`/`pr-create`, espejando las subcarpetas de `changesPath` (`user-stories/`, `work-items/`, `research/`). |
+>
+> **Antes de leer, escribir, mover o escanear IDs bajo cualquiera de estas rutas**, leer las tres claves:
+> si el repo declaró un valor distinto del default, sustituir la raíz literal por ese valor conservando
+> la subcarpeta (`docs/specs/changes/user-stories/US-042-…` con `changesPath: "specs/"` es
+> `specs/user-stories/US-042-…`). Si no hay `settings.json`, o la clave falta, aplica el default. Las tres
+> son independientes: pueden apuntar a raíces distintas (incluso fuera de `docs/specs/`), pero
+> `archivedPath` siempre espeja la estructura de `changesPath`. Lo que **no** es configurable son los
+> nombres de las subcarpetas (`user-stories/`, `work-items/`, `requirements/`, `research/`, `test-cases/`)
+> ni el patrón `PREFIJO-XXX-[slug]/` de las carpetas de artefacto.
+>
+> Versiones anteriores del plugin usaban `basePath` (`docs/specs/`) y `archivePath` (`docs/archive/`),
+> con `user-stories/`, `work-items/`, `features/`, `requirements/` y `research/` directamente bajo
+> `docs/specs/`. Un repo con esas claves o ese layout se normaliza con `/plugin-migrate` (familia 9);
+> ningún otro skill lo traduce por cuenta propia.
 
 ## Layout del harness
 
@@ -47,16 +62,16 @@ específico (una salida propia, una excepción de ruta).
 | Estándar de dominio | `<raíz-arq>/docs/standards/[slug].md` (o `<raíz-arq>/docs/standards/[slug]/README.md`) | `arch-manage` · índice `<raíz-arq>/docs/standards/README.md`: lo crea `arch-init`, lo mantiene `arch-manage` |
 | Fitness functions | `<raíz-arq>/scripts/arch/verify.<ext>` + `<raíz-arq>/scripts/arch/checks/[slug-estándar].<ext>` | `arch-manage` |
 | Definition of Done | `docs/policies/definition-of-done.md` | **Ninguno — lo escribe y lo mantiene el equipo.** Los skills lo leen; ningún skill del plugin lo genera ni ofrece generarlo. |
-| Especificación de requisitos (SRS) | `docs/specs/requirements/SRS-XXX-[nombre-corto]/README.md` | `requirement-refine` |
-| Historia de usuario | `docs/specs/user-stories/US-XXX-[nombre-corto]/README.md` | `work-define` |
-| Tarea técnica de una US | `docs/specs/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` | `work-plan` |
-| Tarea de mantenimiento | `docs/specs/work-items/WI-XXX-[kebab-case]/README.md` | `work-plan` |
-| Feature ya implementada | `docs/specs/features/FT-XXX-[slug]/README.md` | `work-research` (flujo *Analizar legado*) |
+| Especificación de requisitos (SRS) | `docs/specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md` | `requirement-refine` |
+| Historia de usuario | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/README.md` | `work-define` |
+| Tarea técnica de una US | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` | `work-plan` |
+| Tarea de mantenimiento | `docs/specs/changes/work-items/WI-XXX-[kebab-case]/README.md` | `work-plan` |
+| Feature ya implementada | `docs/specs/current/FT-XXX-[slug]/README.md` | `work-research` (flujo *Analizar legado*) |
 | Casos de prueba | `test-cases/TC-XXX-[slug].md` **dentro de la carpeta del artefacto padre**, con índice `test-cases/README.md` | `test-define` |
 | Documentación técnica de capability | `docs/architecture/[capability]/` — `README.md` (índice), `models/MD-XXX-[slug].md`, `apis/API-XXX-[slug].md` (un archivo por **grupo** de endpoints: entidad o funcionalidad), `flows/FL-XXX-[slug].md`, `diagrams/DG-XXX-[slug].md`, apoyo en `assets/` | `design-define` |
 | Wireframes de pantalla | `docs/architecture/[capability]/wireframes/WF-XXX-[slug].md` + `WF-XXX-[slug].svg` (SVG hermano, enlazado) — con fila en la tabla índice «Wireframes» del `README.md` de la capability | `requirement-refine` (desde un SRS) · `work-define` (desde una US que toca UI y no hereda wireframes). Única carpeta de `docs/architecture/` que escriben skills distintos de `design-define`; plantilla en `design-define/assets/wireframe-template.md` |
 | Glosario | `docs/glossary.md` (opcional) | `design-define` |
-| Investigación | `research/RS-XXX-[slug]/README.md` **dentro de la carpeta del artefacto vinculado**; suelta: `docs/specs/research/RS-XXX-[slug]/README.md` | `work-research` |
+| Investigación | `research/RS-XXX-[slug]/README.md` **dentro de la carpeta del artefacto vinculado**; suelta: `docs/specs/changes/research/RS-XXX-[slug]/README.md` | `work-research` |
 | Progreso de un trabajo | `progress.md` dentro de la carpeta del trabajo (US / WI / FT) | `work-implement` |
 | Archivos de apoyo | `assets/` dentro de la carpeta del artefacto; enlazar con rutas relativas | — |
 | Reporte de trazabilidad | `coverage.md` dentro de la carpeta del artefacto | `coverage-verify` |
@@ -74,8 +89,8 @@ tabla de arriba. Un submódulo con su propio stack tiene sus propios ADR, sus pr
 runner de fitness functions, versionados junto a su código.
 
 > **Esto no afecta a las especificaciones.** `docs/specs/…` (US, WI, FT, TC, investigaciones) se
-> resuelve siempre contra `specification.basePath` de `.sdd-devkit/settings.json`, sobre el repositorio
-> principal; la documentación técnica (`docs/architecture/`) y el glosario (`docs/glossary.md`) cuelgan
+> resuelve siempre contra `specification.changesPath` / `currentPath` / `archivedPath` de
+> `.sdd-devkit/settings.json`, sobre el repositorio principal; la documentación técnica (`docs/architecture/`) y el glosario (`docs/glossary.md`) cuelgan
 > directamente de `docs/` del repositorio principal y tampoco se ven afectados. Un skill de arquitectura
 > que escriba en un submódulo **no** mueve ni duplica nada bajo `docs/specs/` ni bajo `docs/architecture/`.
 
@@ -127,13 +142,15 @@ runner de fitness functions, versionados junto a su código.
 | Prefijo | Artefacto | Alcance del secuencial |
 |---------|-----------|------------------------|
 | `ADR-XXX` | Architecture Decision Record | Global, sobre el `docs/adr/` **de su raíz de arquitectura** |
-| `SRS-XXX` | Especificación de requisitos de software | Global, sobre `docs/specs/requirements/` |
-| `US-XXX` | Historia de usuario | Global, sobre `docs/specs/user-stories/` **+ el archivo** |
+| `SRS-XXX` | Especificación de requisitos de software | Global, sobre `docs/specs/changes/requirements/` |
+| `US-XXX` | Historia de usuario | Global, sobre `docs/specs/changes/user-stories/` **+ el archivo** |
 | `TK-XXX` | Tarea técnica | Por historia de usuario padre |
-| `WI-XXX` | Tarea de mantenimiento | Global, sobre `docs/specs/work-items/` **+ el archivo** |
-| `FT-XXX` | Feature ya implementada | Global, sobre `docs/specs/features/` |
+| `WI-XXX` | Tarea de mantenimiento | Global, sobre `docs/specs/changes/work-items/` **+ el archivo** |
+| `FT-XXX` | Feature ya implementada | Global, sobre `docs/specs/current/` |
 | `TC-XXX` | Caso de prueba | Por artefacto padre, sobre su `test-cases/` |
-| `RS-XXX` | Informe de investigación | Por carpeta base de destino, **+ el archivo** cuando la base es `docs/specs/research/` |
+| `RS-XXX` | Informe de investigación | Por carpeta base de destino, **+ el archivo** cuando la base es `docs/specs/changes/research/` |
+
+Los alcances «global» de esta tabla se calculan sobre la raíz **resuelta** (`changesPath` para SRS/US/WI/RS, `currentPath` para FT, `archivedPath` para el archivo), no sobre el literal.
 | `CR-XXX` | Criterio de cumplimiento de un estándar | Por estándar (y por tanto por raíz de arquitectura); se referencia como `<estándar>/CR-XXX` |
 
 Reglas comunes:
@@ -153,22 +170,22 @@ Reglas comunes:
 
 ## Archivado
 
-`work-integrate` y `pr-create` pueden mover la carpeta de un trabajo cerrado bajo `docs/archive/`,
+`work-integrate` y `pr-create` pueden mover la carpeta de un trabajo cerrado bajo `docs/specs/archived/`,
 si el usuario lo confirma:
 
 | Origen | Destino de archivado |
 |--------|----------------------|
-| `docs/specs/user-stories/US-XXX-[nombre-corto]/` | `docs/archive/user-stories/US-XXX-[nombre-corto]/` |
-| `docs/specs/work-items/WI-XXX-[kebab-case]/` | `docs/archive/work-items/WI-XXX-[kebab-case]/` |
-| `docs/specs/research/RS-XXX-[slug]/` (investigación suelta huérfana) | `docs/archive/research/RS-XXX-[slug]/` |
+| `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/` | `docs/specs/archived/user-stories/US-XXX-[nombre-corto]/` |
+| `docs/specs/changes/work-items/WI-XXX-[kebab-case]/` | `docs/specs/archived/work-items/WI-XXX-[kebab-case]/` |
+| `docs/specs/changes/research/RS-XXX-[slug]/` (investigación suelta huérfana) | `docs/specs/archived/research/RS-XXX-[slug]/` |
 
 **Contrato para el resto del catálogo** — archivar **no** libera el identificador ni hace invisible el
 trabajo:
 
 1. **El ID sigue ocupado.** El siguiente secuencial libre se calcula sobre la ruta activa **y** sobre
-   `docs/archive/`.
+   `docs/specs/archived/`.
 2. **La carpeta se busca en ambas rutas.** Antes de reportar que un artefacto no existe, buscarlo bajo
-   `docs/archive/`. **No** recrear la carpeta en la ruta activa.
+   `docs/specs/archived/`. **No** recrear la carpeta en la ruta activa.
 3. **La estructura interna se conserva** intacta (`README.md`, `TK-XXX-*.md`, `test-cases/`,
    `research/`, `progress.md`, `assets/`), así que todo se resuelve relativo a la carpeta encontrada.
 4. **Solo `coverage-verify` escribe dentro de un artefacto archivado**, y solo su propio

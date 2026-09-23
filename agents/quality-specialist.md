@@ -72,7 +72,7 @@ Antes de planificar o escribir tests, ejecuta `git branch --show-current`.
 
 ### Si la rama coincide con `feature/US-XXX-[nombre-corto]`
 
-1. **Localiza la US:** descontar el prefijo `feature/` → carpeta `docs/specs/user-stories/US-XXX-[nombre-corto]/`. Si no está ahí, buscarla bajo `docs/archive/user-stories/`: al cerrar el trabajo, `work-integrate` y `pr-create` ofrecen mover la carpeta al archivo. Se lee igual; **no** se escribe dentro ni se recrea en la ruta activa. Ver [`../skills/work-integrate/references/archive.md`](../skills/work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+1. **Localiza la US:** descontar el prefijo `feature/` → carpeta `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/`. Si no está ahí, buscarla bajo `docs/specs/archived/user-stories/`: al cerrar el trabajo, `work-integrate` y `pr-create` ofrecen mover la carpeta al archivo. Se lee igual; **no** se escribe dentro ni se recrea en la ruta activa. Ver [`../skills/work-integrate/references/archive.md`](../skills/work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 2. **Lee** `README.md` de esa carpeta, sección **Criterios de aceptación**:
    - Reglas **BR-XX** (RFC 2119: DEBE/MUST, NO DEBE/MUST NOT, etc.).
    - Escenarios **SC-XX** (bloques Gherkin: DADO/CUANDO/ENTONCES o GIVEN/WHEN/THEN).
@@ -92,7 +92,7 @@ Antes de planificar o escribir tests, ejecuta `git branch --show-current`.
 
 Es una ejecución de **automatización de casos de prueba** de `work-implement` (tipos `TC-XXX` / `FT-XXX`; ver `skills/work-implement/references/test-cases.md`). Aquí **no derivas escenarios**: los casos ya están documentados.
 
-1. **Localiza el artefacto padre** descontando el prefijo `test/`: `test/FT-003-*` → `docs/specs/features/FT-003-*/`; `test/US-042-*` → `docs/specs/user-stories/US-042-*/`; `test/WI-018-*` → `docs/specs/work-items/WI-018-*/`. Para `US-`/`WI-`, si la carpeta no está en la ruta activa buscarla bajo `docs/archive/`: en una rama `test/` el trabajo funcional del padre suele estar ya cerrado y archivado. Se lee igual; **no** se escribe dentro ni se recrea en la ruta activa.
+1. **Localiza el artefacto padre** descontando el prefijo `test/`: `test/FT-003-*` → `docs/specs/current/FT-003-*/`; `test/US-042-*` → `docs/specs/changes/user-stories/US-042-*/`; `test/WI-018-*` → `docs/specs/changes/work-items/WI-018-*/`. Para `US-`/`WI-`, si la carpeta no está en la ruta activa buscarla bajo `docs/specs/archived/`: en una rama `test/` el trabajo funcional del padre suele estar ya cerrado y archivado. Se lee igual; **no** se escribe dentro ni se recrea en la ruta activa.
 2. **Lee el índice** `[carpeta del padre]/test-cases/README.md` (columnas `TC · Perspectiva · Tipo de prueba · Prioridad · Criterio de aceptación`) y cada `TC-XXX-{slug}.md` del alcance que te pasen.
 3. **Traduce cada TC a código 1:1**, sin ampliarlo ni reinterpretarlo:
    - `Precondiciones` + `Datos de prueba` → *arrange*; `Pasos de ejecución` → *act*; `Resultado esperado del paso` y `Resultado esperado final` → *assert* sobre comportamiento observable.
@@ -100,7 +100,8 @@ Es una ejecución de **automatización de casos de prueba** de `work-implement` 
    - **Incluye el ID del TC** en el nombre del bloque o del caso (p. ej. `TC-004: should reject login when password is invalid`), o en la anotación/tag equivalente del framework: sin él la prueba no es trazable para `coverage-verify`.
 4. **No inventes casos** que `test-define` no documentó, ni cubras un `AC-XXX` que se quedó sin TC: repórtalo como hueco al invocador.
 5. **El comportamiento ya está implementado**, así que lo esperado es que la prueba pase en verde a la primera. Si falla, **no toques el código de producción ni relajes la aserción**: verifica que la prueba sea fiel al TC y devuelve el fallo al invocador con la evidencia (qué se esperaba, qué ocurrió) para que él lo decida con el usuario.
-6. **Tu entregable es código de prueba, nunca funcionalidad.** Un `FT-XXX` no es un plan de implementación: registra código que ya existe. No escribas producción para «completar» lo que el feature describe ni para hacer pasar una prueba.
+6. **Con `implementation.scope: tests`** (repositorio solo de pruebas contra un sistema desplegado — `.sdd-devkit/settings.json`): los niveles válidos son solo `API Test`, `Visual Test` y `E2E` (un TC `Unit`/`Integration` lo decide el invocador, no tú); las URLs y credenciales salen **siempre** del módulo de configuración que lee el `.env` — nunca hardcodeadas ni leídas de `process.env`/`os.environ` en la prueba, y nunca impresas; las precondiciones se construyen por la interfaz pública del sistema, sin mocks del sistema bajo prueba. Detalle en `skills/work-implement/references/test-cases.md` § Modo pruebas.
+7. **Tu entregable es código de prueba, nunca funcionalidad.** Un `FT-XXX` no es un plan de implementación: registra código que ya existe. No escribas producción para «completar» lo que el feature describe ni para hacer pasar una prueba.
 
 ### Si no estás en rama `feature/US-*` ni `test/*`
 

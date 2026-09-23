@@ -5,9 +5,9 @@ Convención de placeholders: sustituir manualmente cada {{texto}}.
 Eliminar este bloque al publicar el documento final.
 
 Ubicación por tipo de artefacto:
-  US:   docs/specs/user-stories/US-XXX-{nombre}/test-cases/TC-XXX-{slug}.md
-  WI:   docs/specs/work-items/WI-XXX-{kebab-case}/test-cases/TC-XXX-{slug}.md
-  FT: docs/specs/features/FT-XXX-{slug}/test-cases/TC-XXX-{slug}.md
+  US:   docs/specs/changes/user-stories/US-XXX-{nombre}/test-cases/TC-XXX-{slug}.md
+  WI:   docs/specs/changes/work-items/WI-XXX-{kebab-case}/test-cases/TC-XXX-{slug}.md
+  FT: docs/specs/current/FT-XXX-{slug}/test-cases/TC-XXX-{slug}.md
   Otro artefacto de especificación (cualquier origen o formato):
         {carpeta-del-artefacto}/test-cases/TC-XXX-{slug}.md
 

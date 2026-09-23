@@ -172,7 +172,7 @@ En resumen:
 > invocación. En un repo sin submódulos ambas cosas coinciden.
 
 > **Las especificaciones no se ven afectadas.** `docs/specs/…` sigue resolviéndose contra
-> `specification.basePath` de `.sdd-devkit/settings.json`, sobre el repositorio principal. Elegir un
+> las rutas de `specification` (`changesPath`, `currentPath`, `archivedPath`) de `.sdd-devkit/settings.json`, sobre el repositorio principal. Elegir un
 > submódulo como raíz de arquitectura **no** mueve, duplica ni redirige nada bajo `docs/specs/`.
 
 > **Al commitear en un submódulo**, los documentos se commitean **dentro del submódulo** y después se
@@ -309,7 +309,7 @@ excepción, añadir un requisito a un dominio existente). El estándar es **vivo
 - Escribir la documentación de arquitectura en el `docs/` del repo principal cuando la decisión trata del código de un **submódulo** (o al revés). El ADR, el estándar y sus checks se versionan junto al código que gobiernan: se resuelve `<raíz-arq>` **antes** de tocar nada.
 - Dar por hecha la raíz cuando el workspace tiene submódulos: se **pregunta** (una vez por invocación o lote). Y al revés: preguntarla en un repo sin repositorios anidados, donde no hay nada que elegir.
 - Continuar la numeración `ADR-XXX` de una raíz en otra, o tratar como conflicto/duplicado un ADR que vive en otra raíz — cada repositorio lleva su propia serie independiente.
-- Redirigir, mover o duplicar artefactos de `docs/specs/` por haber elegido un submódulo como raíz de arquitectura: las especificaciones se resuelven siempre contra `specification.basePath`, sobre el repo principal.
+- Redirigir, mover o duplicar artefactos de `docs/specs/` por haber elegido un submódulo como raíz de arquitectura: las especificaciones se resuelven siempre contra las rutas de `specification` (`changesPath`, `currentPath`, `archivedPath`), sobre el repo principal.
 
 ---
 

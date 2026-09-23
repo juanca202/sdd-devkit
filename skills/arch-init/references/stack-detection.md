@@ -42,20 +42,21 @@ La ausencia de manifiestos por sí sola **no** distingue "sin código" de "solo 
 
 - **En modo multi-repo, el repositorio de especificaciones es siempre "solo specs"** — no se evalúa por señales ni se pregunta: es automático por definición (`references/multi-repo.md § 8`). Esta regla no aplica a los submódulos, que sí pasan por esta clasificación como cualquier repo único.
 - Para cualquier otro repositorio (único, o un submódulo), inferir de lo que el usuario ya dijo: si al describir el repositorio (Paso 1.0 § 2.3 de `multi-repo.md`, o la necesidad del Paso 2.1) señaló explícitamente que es un repositorio de documentación/especificaciones y no va a tener código propio, tratarlo como "solo specs" sin volver a preguntar.
+- **Un proyecto de pruebas contra un sistema externo no es "solo specs"**: tiene manifiestos de un stack de pruebas (runner, clientes de API, page objects) y `.env.example` con `BASE_URL`/`API_BASE_URL`, pero ningún código de aplicación. Se clasifica por su código de pruebas ("sin código" si arranca vacío, "con código base" si parte del proyecto base) y `arch-init` escribe `implementation.scope: "tests"` — ver la nota del Paso 1.2 en `SKILL.md`.
 - Si no hay evidencia en ninguna dirección y el repositorio no tiene manifiestos ni código, **no asumir "sin código" por defecto**: preguntar explícitamente (ver "Si la señal es ambigua" más abajo) — la diferencia cambia si el Paso 2, el Paso 4 y los índices de arquitectura aplican o no.
 
 ### Señales de "con código base"
 
 - Hay al menos un manifiesto de § 1 (el stack ya está decidido), pero el código fuente que trae —excluyendo config, lockfiles, `node_modules`/`vendor`/`.venv`, `dist`/`build`, `.git`— se reduce a lo que genera el scaffold del framework por defecto (p. ej. `App.tsx`/`App.jsx` de ejemplo, endpoint "hello world", controlador de muestra).
 - El historial de git (si existe) tiene solo el commit inicial o commits de scaffold (`chore: initial commit`, `feat: project setup`, etc.), sin commits de funcionalidades de negocio.
-- `docs/specs/` no existe o está vacío (sin `user-stories/`, `work-items/` con contenido).
+- `docs/specs/` no existe o está vacío (sin `changes/user-stories/`, `changes/work-items/` ni `current/` con contenido).
 - El `README.md`, si existe, describe el stack/setup pero no funcionalidades específicas del dominio.
 
 ### Señales de "con implementación"
 
 - Hay módulos, rutas/endpoints, modelos de dominio o componentes con nombres propios del negocio (no genéricos de ejemplo).
 - Existen tests que verifican lógica de negocio (no solo el test de ejemplo del scaffold).
-- `docs/specs/user-stories/`, `docs/specs/work-items/` o sus equivalentes bajo `docs/archive/` ya tienen contenido (un repo cuyo trabajo esté todo archivado **no** es greenfield).
+- `docs/specs/changes/user-stories/`, `docs/specs/changes/work-items/` o sus equivalentes bajo `docs/specs/archived/` ya tienen contenido (un repo cuyo trabajo esté todo archivado **no** es greenfield).
 - El historial de git tiene múltiples commits de features a lo largo del tiempo.
 
 ### Si la señal es ambigua

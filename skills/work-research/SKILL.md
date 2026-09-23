@@ -45,16 +45,16 @@ Toda investigación genera **una carpeta** `research/RS-XXX-{slug}/` con un `REA
 
 | Caso                                    | Ubicación                                                                                                                                           |
 | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Artefacto vinculado `US-XXX` / `TK-XXX` | `docs/specs/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/`                                                                                   |
-| Artefacto vinculado `WI-XXX`            | `docs/specs/work-items/WI-XXX-{kebab-case}/research/RS-XXX-{slug}/`                                                                                 |
-| Artefacto vinculado `FT-XXX`            | `docs/specs/features/FT-XXX-{slug}/research/RS-XXX-{slug}/`                                                                                         |
-| Sin artefacto vinculado                 | `docs/specs/research/RS-XXX-{slug}/` (en la migración, en el **proyecto destino**; en el análisis de legado, en el proyecto que contiene el código) |
+| Artefacto vinculado `US-XXX` / `TK-XXX` | `docs/specs/changes/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/`                                                                                   |
+| Artefacto vinculado `WI-XXX`            | `docs/specs/changes/work-items/WI-XXX-{kebab-case}/research/RS-XXX-{slug}/`                                                                                 |
+| Artefacto vinculado `FT-XXX`            | `docs/specs/current/FT-XXX-{slug}/research/RS-XXX-{slug}/`                                                                                         |
+| Sin artefacto vinculado                 | `docs/specs/changes/research/RS-XXX-{slug}/` (en la migración, en el **proyecto destino**; en el análisis de legado, en el proyecto que contiene el código) |
 
-> **Artefacto archivado.** Si la carpeta de un `US-XXX`/`TK-XXX`/`WI-XXX`/`RS-XXX` no aparece en su ruta activa, buscarla bajo `docs/archive/` (`archive/user-stories/`, `archive/work-items/`, `archive/research/`) antes de darla por inexistente: `work-integrate` y `pr-create` pueden moverla ahí al cerrar el trabajo, si el usuario lo confirma. **Nunca** recrearla en la ruta activa. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo). Lo que se haga con el hallazgo depende de dónde escriba el flujo:
+> **Artefacto archivado.** Si la carpeta de un `US-XXX`/`TK-XXX`/`WI-XXX`/`RS-XXX` no aparece en su ruta activa, buscarla bajo `docs/specs/archived/` (`archive/user-stories/`, `archive/work-items/`, `archive/research/`) antes de darla por inexistente: `work-integrate` y `pr-create` pueden moverla ahí al cerrar el trabajo, si el usuario lo confirma. **Nunca** recrearla en la ruta activa. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo). Lo que se haga con el hallazgo depende de dónde escriba el flujo:
 >
 > - **Flujos que escribirían el `RS-XXX` dentro del `research/` del artefacto** — solo *Analizar decisiones pendientes*: **parar y avisar**. Un trabajo cerrado no tiene decisiones pendientes que resolver, y retomarlo exige desarchivarlo, decisión del usuario.
 > - **Flujos que lo leen como contexto y escriben fuera** (*Analizar issue*, que produce un dossier y un `WI-XXX` nuevo; *Investigación libre*): **continuar**. Leer un artefacto archivado es siempre legítimo — investigar un bug de algo ya entregado es el caso normal.
-> - ***Analizar test case*** **cambia de grupo según el padre:** con padre activo escribe en su `research/`; con padre **archivado** no escribe dentro pero **tampoco para** — lee el padre como contexto y guarda el `RS-XXX` en `docs/specs/research/`, la ruta que su propia tabla ya reserva para un TC sin padre local. Auditar el caso de prueba de un trabajo entregado es legítimo y frecuente; ver [`references/test-case/flow.md`](references/test-case/flow.md).
+> - ***Analizar test case*** **cambia de grupo según el padre:** con padre activo escribe en su `research/`; con padre **archivado** no escribe dentro pero **tampoco para** — lee el padre como contexto y guarda el `RS-XXX` en `docs/specs/changes/research/`, la ruta que su propia tabla ya reserva para un TC sin padre local. Auditar el caso de prueba de un trabajo entregado es legítimo y frecuente; ver [`references/test-case/flow.md`](references/test-case/flow.md).
 >
 > Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 
@@ -69,9 +69,9 @@ Toda investigación genera **una carpeta** `research/RS-XXX-{slug}/` con un `REA
 ### Salidas fuera de `research/`
 
 - **Analizar legado** crea además, por cada feature descubierto, una carpeta
-`docs/specs/features/FT-XXX-{slug}/` con su `README.md` (`[assets/legacy/feature-template.md](assets/legacy/feature-template.md)`) y sus casos de prueba vía `test-define`, en su propio subárbol y con numeración independiente. Condiciones y doctrina en `[references/legacy/flow.md](references/legacy/flow.md)`.
+`docs/specs/current/FT-XXX-{slug}/` con su `README.md` (`[assets/legacy/feature-template.md](assets/legacy/feature-template.md)`) y sus casos de prueba vía `test-define`, en su propio subárbol y con numeración independiente. Condiciones y doctrina en `[references/legacy/flow.md](references/legacy/flow.md)`.
 - **Analizar issue** es la **única excepción a la salida estandarizada: no crea un**
-`RS-XXX`**.** Su entregable es el `WI` de tipo `bug-fix` que crea `work-plan` en `docs/specs/work-items/WI-XXX-{kebab-case}/README.md`. Este skill produce el **dossier de bug** con `[assets/issue/diagnosis-template.md](assets/issue/diagnosis-template.md)`, lo presenta y lo pasa como insumo del *handoff*. Solo si el usuario lo pide explícitamente se guarda además un `RS-XXX` en `docs/specs/research/`.
+`RS-XXX`**.** Su entregable es el `WI` de tipo `bug-fix` que crea `work-plan` en `docs/specs/changes/work-items/WI-XXX-{kebab-case}/README.md`. Este skill produce el **dossier de bug** con `[assets/issue/diagnosis-template.md](assets/issue/diagnosis-template.md)`, lo presenta y lo pasa como insumo del *handoff*. Solo si el usuario lo pide explícitamente se guarda además un `RS-XXX` en `docs/specs/changes/research/`.
 
 ---
 
@@ -223,7 +223,7 @@ Qué leer y en qué orden lo define el archivo de referencia del flujo elegido. 
 
 - **Leer antes de investigar.** Nunca investigar sobre un artefacto sin haberlo abierto.
 - **No duplicar investigaciones previas.** Revisar el `research/` correspondiente —y, si
-la base es `docs/specs/research/`, también `docs/archive/research/`—; si ya hay un RS sobre el mismo tema, mostrarlo al usuario y partir de él.
+la base es `docs/specs/changes/research/`, también `docs/specs/archived/research/`—; si ya hay un RS sobre el mismo tema, mostrarlo al usuario y partir de él.
 - **Verificar contra el repo, no contra la memoria.** Stack, versiones y estructura se
 comprueban en los manifiestos y el código.
 - **Registrar lo que no existe.** «No hay ADR sobre esto», «no hay pruebas de este
@@ -320,13 +320,13 @@ es una hipótesis: se marca como tal y se verifica o se descarta.
    presentación, volver al Paso 4 y presentarlo de nuevo entero antes de escribir.
 1. Determinar la **carpeta base** —la que contendrá las carpetas `RS-XXX-`*— según
   haya artefacto vinculado o no (ver [Salida estandarizada](#salida-estandarizada)):
-   `<carpeta-del-artefacto>/research/` si lo hay, `docs/specs/research/` si no. La base
+   `<carpeta-del-artefacto>/research/` si lo hay, `docs/specs/changes/research/` si no. La base
    ya incluye el segmento `research/`: no anidarlo dos veces. Si el artefacto vinculado
    resultó estar archivado, aquí ya no se llega: la regla de artefacto archivado obligó a
    parar antes.
 2. Determinar el siguiente `RS-XXX` leyendo las carpetas `RS-XXX-*` existentes en esa
   base y tomando el mayor número + 1. Empezar en `001` si no hay ninguna.
-   - **Si la base es `docs/specs/research/`, escanear también `docs/archive/research/`**
+   - **Si la base es `docs/specs/changes/research/`, escanear también `docs/specs/archived/research/`**
      y tomar el mayor de las dos. `work-integrate` y `pr-create` archivan ahí las
      investigaciones sueltas que se quedan sin artefacto activo que las referencie; su
      número **sigue ocupado**, y mirar solo la ruta activa haría retroceder el contador y
@@ -359,7 +359,7 @@ es una hipótesis: se marca como tal y se verifica o se descarta.
 > Reglas comunes de identificadores y secuenciales: [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md). Lo específico de los RS:
 
 - **Secuencial** `XXX`**:** tres dígitos, por carpeta base de destino. Leer las carpetas
-`RS-XXX-*` existentes y tomar el siguiente número. Cuando la base es `docs/specs/research/`, el escaneo incluye `docs/archive/research/`: archivar no libera el número.
+`RS-XXX-*` existentes y tomar el siguiente número. Cuando la base es `docs/specs/changes/research/`, el escaneo incluye `docs/specs/archived/research/`: archivar no libera el número.
 - **Slug:** kebab-case, descriptivo del tema. Máximo 5 palabras.
 - **Un RS por pregunta de investigación.** Si la sesión produce varias, generar un RS
 por cada una con su propio secuencial. *Excepción:* una migración con **varios proyectos destino** escribe un RS en cada uno, con el **mismo** `{slug}` y un secuencial común (ver `[references/migrate/flow.md](references/migrate/flow.md)`) — sigue siendo una sola pregunta de investigación.

@@ -1,7 +1,7 @@
 ---
 name: coverage-verify
 description: >-
-  Verificar que el código cubre —alcanza— los criterios de aceptación del artefacto implementado: una historia de usuario (US-XXX), una tarea de mantenimiento (WI-XXX), un feature (FT-XXX) o cualquier documento cuyos criterios tengan identificador codificado (AC-001, 1.1, R-3…). La evidencia son las pruebas automatizadas del repositorio, los casos de prueba (TC-XXX), o ambos. Por cada criterio indica qué lo cubre, su estado (`COVERED` / `PARTIAL` / `UNCOVERED`) y el resultado de su ejecución, y genera un reporte (coverage.md) con veredicto. No corre la suite: delega en quality-check. Activar cuando el usuario pida verificar que el código cumple o cubre los criterios de aceptación, validar cobertura, generar una matriz o reporte de trazabilidad, comprobar si un trabajo o feature está cubierto por pruebas, o mencione "trazabilidad" o "matriz de cobertura". Cubre también trabajo archivado en docs/archive/, dejando el reporte junto al artefacto.
+  Verificar que el código cubre —alcanza— los criterios de aceptación del artefacto implementado: una historia de usuario (US-XXX), una tarea de mantenimiento (WI-XXX), un feature (FT-XXX) o cualquier documento cuyos criterios tengan identificador codificado (AC-001, 1.1, R-3…). La evidencia son las pruebas automatizadas del repositorio, los casos de prueba (TC-XXX), o ambos. Por cada criterio indica qué lo cubre, su estado (`COVERED` / `PARTIAL` / `UNCOVERED`) y el resultado de su ejecución, y genera un reporte (coverage.md) con veredicto. No corre la suite: delega en quality-check. Activar cuando el usuario pida verificar que el código cumple o cubre los criterios de aceptación, validar cobertura, generar una matriz o reporte de trazabilidad, comprobar si un trabajo o feature está cubierto por pruebas, o mencione "trazabilidad" o "matriz de cobertura". Cubre también trabajo archivado en docs/specs/archived/, dejando el reporte junto al artefacto.
 license: MIT
 ---
 
@@ -48,7 +48,7 @@ El tipo se determina por el identificador que indique el usuario o por la ruta d
 |------|---------------|---------------------------|------------------|
 | **Historia de usuario** | `US-XXX` | Sección **Criterios de aceptación** del `README.md` de la US (lista plana, habitualmente `AC-XXX`) | El identificador de cada criterio, en el orden en que aparecen |
 | **Tarea de mantenimiento** | `WI-XXX` | Sección **## Criterios de aceptación** del `README.md` del WI (`WI-XXX-[kebab]/README.md`) | El identificador de cada criterio, en el orden en que aparecen |
-| **Feature (funcionalidad ya implementada)** | `FT-XXX` | Sección **## Criterios de aceptación** del `README.md` del feature (`docs/specs/features/FT-XXX-[slug]/README.md`) | El identificador de cada criterio, en el orden en que aparecen |
+| **Feature (funcionalidad ya implementada)** | `FT-XXX` | Sección **## Criterios de aceptación** del `README.md` del feature (`docs/specs/current/FT-XXX-[slug]/README.md`) | El identificador de cada criterio, en el orden en que aparecen |
 | **Cualquier otro artefacto de especificación** | Ruta o nombre que indique el usuario | La sección de criterios del documento (puede llamarse «Criterios de aceptación», «Requisitos», «Acceptance Criteria»…) | El identificador de cada criterio, tal como aparece |
 
 > **El requisito no es el formato, es que exista identificador.** En todo el flujo, «criterio» se refiere al identificador **tal como está escrito en el artefacto** — `AC-012`, `1.3`, `R-3`, `CA-07` son todos válidos. **Nunca normalizar ni renombrar**: el vínculo de trazabilidad debe ser buscable literalmente tanto en el artefacto como en los TCs que produjo `test-define`. Si el trabajo **no tiene criterios**, o los tiene sin identificador, no hay nada que trazar → **bloquear** (ver «Cuándo bloquear»).
@@ -60,7 +60,7 @@ El tipo se determina por el identificador que indique el usuario o por la ruta d
 > cubierta por pruebas?* Un criterio `UNCOVERED` significa que ese comportamiento
 > **carece de pruebas** (un hueco a cerrar escribiendo tests), **no** que falte código
 > funcional. Sus casos de prueba documentados viven en
-> `docs/specs/features/FT-XXX-[slug]/test-cases/`, igual que en una US o un WI.
+> `docs/specs/current/FT-XXX-[slug]/test-cases/`, igual que en una US o un WI.
 
 ---
 
@@ -289,7 +289,7 @@ SPEC_FINGERPRINT=$( { git -C "$ROOT" ls-files -s              -- "$ARTEFACTO" "$
                     } | git hash-object --stdin )
 `
 
-donde `$ARTEFACTO` es la carpeta del trabajo (`docs/specs/user-stories/US-042-…/`) o, si el artefacto es un archivo suelto, su ruta. Se reutiliza el reporte **solo si coinciden los dos**.
+donde `$ARTEFACTO` es la carpeta del trabajo (`docs/specs/changes/user-stories/US-042-…/`) o, si el artefacto es un archivo suelto, su ruta. Se reutiliza el reporte **solo si coinciden los dos**.
 
 > **La exclusión del propio reporte no es opcional.** El `coverage.md` vive **dentro** de `$ARTEFACTO`: sin `$NO_REPORT`, escribirlo en el Paso 7 movería el `SPEC_FINGERPRINT`, la marca de pie guardaría el hash de *antes* de escribir, y ninguna corrida posterior coincidiría — la idempotencia no se dispararía **nunca**. La clave cubre las **entradas** del reporte, no su salida; es el mismo motivo por el que el `FINGERPRINT` excluye `**/coverage.md`.
 >
@@ -439,7 +439,7 @@ Lo propio de este skill:
 | Artefacto a trazar (entrada) | La carpeta de la `US-XXX` / `WI-XXX` / `FT-XXX`; para cualquier otro artefacto, la ruta que indique el usuario |
 | Casos de prueba documentados (entrada, los produce `test-define`) | `test-cases/` **dentro de la carpeta del artefacto**, con su índice `test-cases/README.md` |
 | Caché de corrida de pruebas (entrada, la produce `quality-check`) | `.sdd-devkit/quality-check-run.json` (ubicación fija, no por unidad) |
-| Reporte de trazabilidad (**salida**) | `coverage.md` **dentro de la carpeta del artefacto, allí donde se haya resuelto** — activa o bajo `docs/archive/`; para otro artefacto, junto a él (confirmar la ruta con el usuario antes de escribir) |
+| Reporte de trazabilidad (**salida**) | `coverage.md` **dentro de la carpeta del artefacto, allí donde se haya resuelto** — activa o bajo `docs/specs/archived/`; para otro artefacto, junto a él (confirmar la ruta con el usuario antes de escribir) |
 
 > **Un `US`/`WI` archivado se traza igual.** Todo se resuelve relativo a la carpeta encontrada: los criterios, el `test-cases/`, la clave `SPEC_FINGERPRINT` y el `coverage.md` de salida. `coverage-verify` es el **único** skill que escribe dentro de un artefacto archivado, y solo su propio informe: es un derivado del artefacto, no trabajo nuevo, y revalidar un trabajo ya integrado tiene que seguir siendo posible.
 

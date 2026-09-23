@@ -179,7 +179,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** investigar algo antes de especificarlo, planificarlo o implementarlo.
 
-**Produce:** un informe (`docs/specs/research/`), y a veces artefactos adicionales según lo que investigues.
+**Produce:** un informe (`docs/specs/changes/research/`), y a veces artefactos adicionales según lo que investigues.
 
 **Según lo que le pidas:**
 
@@ -220,7 +220,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** tienes un requerimiento en bruto (idea, ticket, correo, wireframes) y quieres estructurarlo antes de convertirlo en historias de usuario. Paso opcional: si el requerimiento ya está claro, puedes ir directo a `work-define`.
 
-**Produce:** una especificación de requisitos (`docs/specs/requirements/`) con alcance, requisitos priorizados, stack tecnológico, repositorios y equipo; si hay interfaz, wireframes `WF-XXX` por capability en `docs/architecture/[capability]/wireframes/`, enlazados desde el SRS.
+**Produce:** una especificación de requisitos (`docs/specs/changes/requirements/`) con alcance, requisitos priorizados, stack tecnológico, repositorios y equipo; si hay interfaz, wireframes `WF-XXX` por capability en `docs/architecture/[capability]/wireframes/`, enlazados desde el SRS.
 
 **Estados:** `Draft` (quedan cosas por resolver) · `Ready` (listo para convertir en historias con `work-define`).
 
@@ -244,7 +244,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** crear o actualizar una historia de usuario. Puede partir de una necesidad descrita por ti, o de una especificación ya resuelta con `requirement-refine`.
 
-**Produce:** una historia de usuario (`docs/specs/user-stories/`) con criterios de aceptación; si toca UI y no hereda wireframes, los genera por capability en `docs/architecture/[capability]/wireframes/` (`WF-XXX`).
+**Produce:** una historia de usuario (`docs/specs/changes/user-stories/`) con criterios de aceptación; si toca UI y no hereda wireframes, los genera por capability en `docs/architecture/[capability]/wireframes/` (`WF-XXX`).
 
 **Estados:** `Draft` (quedan cosas por resolver) · `Ready` (lista para planificar tareas o definir casos de prueba).
 
@@ -469,7 +469,7 @@ Si el repo tiene un runner de validaciones de arquitectura (`scripts/arch/verify
 
 **Antes de integrar, corre en orden:** `quality-check` → `code-review` → `coverage-verify`. Si tienes cambios sin commitear, los comitea primero automáticamente.
 
-**Después del merge**, marca el trabajo como `Done` en su `progress.md` y te pregunta si quieres archivar la historia o tarea (mover su carpeta a `docs/archive/`), todo en un commit de cierre propio sobre la rama base. Va después del merge a propósito: primero integras y pruebas, luego cierras. Puedes declinar el archivado sin que eso afecte a la integración, que ya está hecha.
+**Después del merge**, marca el trabajo como `Done` en su `progress.md` y te pregunta si quieres archivar la historia o tarea (mover su carpeta a `docs/specs/archived/`), todo en un commit de cierre propio sobre la rama base. Va después del merge a propósito: primero integras y pruebas, luego cierras. Puedes declinar el archivado sin que eso afecte a la integración, que ya está hecha.
 
 **Ejemplos de invocación:**
 

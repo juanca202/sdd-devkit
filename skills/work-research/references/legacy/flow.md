@@ -31,7 +31,7 @@ Validar cohesión de Features    │
 Descubrir Reglas de Negocio     ┘
     │
     ▼
-Crear Features (FT-XXX)        ← docs/specs/features/FT-XXX-{slug}/README.md
+Crear Features (FT-XXX)        ← docs/specs/current/FT-XXX-{slug}/README.md
     │                              (descripción funcional, reglas de negocio, criterios de aceptación, referencias)
     ▼
 Definir Casos de Prueba          ← handoff a test-define (dentro de la misma carpeta del FT)
@@ -50,7 +50,7 @@ los `AC-XXX` del feature.
 > técnicos → casos de uso → capabilities → features validados → reglas de negocio,
 > cobertura existente) como archivo adicional dentro de `research/RS-XXX-{slug}/`, más
 > el `README.md` (informe principal); y, por cada feature descubierto, una carpeta
-> `docs/specs/features/FT-XXX-{slug}/` con su `README.md`.
+> `docs/specs/current/FT-XXX-{slug}/` con su `README.md`.
 > **No escribe código de pruebas ni de aplicación.** El último paso —definir casos de
 > prueba— se ejecuta haciendo *handoff* a `test-define`; y con los TC definidos se
 > puede correr `coverage-verify` para verificar si el código existente ya está cubierto
@@ -64,10 +64,10 @@ los `AC-XXX` del feature.
 > `FT-XXX` es código funcional nuevo: si aparece una discrepancia real entre el
 > comportamiento documentado y el código, se decide con el usuario y se trata como bug.
 
-**Entregable:** un `RS-XXX` en `docs/specs/research/RS-XXX-{slug}/` con `README.md`
+**Entregable:** un `RS-XXX` en `docs/specs/changes/research/RS-XXX-{slug}/` con `README.md`
 (informe principal, [`assets/research-template.md`](../../assets/research-template.md))
 y `discovery.md` ([`assets/legacy/discovery-template.md`](../../assets/legacy/discovery-template.md)),
-más un `FT-XXX` por feature aceptado en `docs/specs/features/`.
+más un `FT-XXX` por feature aceptado en `docs/specs/current/`.
 
 **Pregunta de investigación:** «¿Qué hace hoy *<código en alcance>* y qué features y
 reglas de negocio implementa?». Confirmarla con el usuario antes de investigar.
@@ -101,7 +101,7 @@ ese feature esté en `Estado: Ready`.
 4. **Separación de artefactos.** Los features y las pruebas resultantes registran
    funcionalidad **ya implementada** (aquí, inferida desde código), no trabajo por
    construir definido por negocio. Por eso viven en su propio subárbol
-   `docs/specs/features/` —junto a `docs/specs/user-stories/` y `docs/specs/work-items/`,
+   `docs/specs/current/` —junto a `docs/specs/changes/user-stories/` y `docs/specs/changes/work-items/`,
    pero **no mezclados** con ellos— y llevan marca de procedencia.
 5. **Orientado a la testabilidad.** El fin último es cubrir el código con
    pruebas. Prioriza descubrir el comportamiento **verificable** (entradas → salidas,
@@ -112,7 +112,7 @@ ese feature esté en `Estado: Ready`.
 El `RS-XXX` del análisis de legado se guarda en el proyecto que contiene el código:
 
 ```text
-<proyecto>/docs/specs/research/
+<proyecto>/docs/specs/changes/research/
 └── RS-XXX-{slug}/
     ├── README.md        # informe principal (plantilla assets/research-template.md)
     └── discovery.md      # artefactos → CU → capabilities → features → BR
@@ -120,10 +120,10 @@ El `RS-XXX` del análisis de legado se guarda en el proyecto que contiene el có
 ```
 
 Los **features** creados a partir del discovery viven **fuera** de `research/`, en su
-propio subárbol `docs/specs/features/` (junto a `user-stories/` y `work-items/`):
+propio subárbol `docs/specs/current/` (junto a `user-stories/` y `work-items/`):
 
 ```text
-<proyecto>/docs/specs/features/
+<proyecto>/docs/specs/current/
 └── FT-XXX-{slug}/
     ├── README.md          # feature inferido (plantilla assets/legacy/feature-template.md)
     └── test-cases/
@@ -134,15 +134,15 @@ propio subárbol `docs/specs/features/` (junto a `user-stories/` y `work-items/`
 - `{slug}` del RS: descripción corta del código analizado en *kebab-case* sin
   acentos, p. ej. `motor-facturacion`, `modulo-inventario-legacy`.
 - `XXX` del RS: secuencial de tres dígitos sobre las carpetas `RS-XXX-*` de
-  `docs/specs/research/` **y de `docs/archive/research/`** (mayor + 1 entre las dos;
+  `docs/specs/changes/research/` **y de `docs/specs/archived/research/`** (mayor + 1 entre las dos;
   `001` si no hay ninguna). Archivar una investigación **no libera su número**: mirar solo
   la ruta activa haría retroceder el contador y reemitir un `RS-XXX` ya usado. Ver
   [`work-integrate/references/archive.md`](../../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 - `{slug}` del FT: descripción corta del feature en *kebab-case*, p. ej.
   `emision-factura`, `calculo-impuestos`.
 - `XXX` del FT: secuencial de tres dígitos sobre las carpetas `FT-XXX-*` de
-  `docs/specs/features/` (mayor + 1; `001` si no hay). Es independiente de la numeración
-  de `docs/specs/user-stories/` y `docs/specs/work-items/`.
+  `docs/specs/current/` (mayor + 1; `001` si no hay). Es independiente de la numeración
+  de `docs/specs/changes/user-stories/` y `docs/specs/changes/work-items/`.
 
 ## Entradas necesarias
 
@@ -327,11 +327,11 @@ paso" como el plan de creación de features + pruebas.
 ## Paso 2 — Crear los Features (`FT-XXX`)
 
 Solo con el discovery en **`Ready`** y confirmado por el usuario. Por cada Feature
-**aceptado** del mapa (Paso 1.9), crea una carpeta `docs/specs/features/FT-XXX-{slug}/`
+**aceptado** del mapa (Paso 1.9), crea una carpeta `docs/specs/current/FT-XXX-{slug}/`
 con un `README.md` a partir de `assets/legacy/feature-template.md`:
 
 1. **Numeración.** Calcula el siguiente `FT-XXX` leyendo **solo** las carpetas
-   `FT-XXX-*` de `docs/specs/features/` (mayor + 1; `001` si no hay). Independiente de
+   `FT-XXX-*` de `docs/specs/current/` (mayor + 1; `001` si no hay). Independiente de
    la numeración de `user-stories/` y `work-items/`.
 2. **Contenido del `README.md`:**
    - **Descripción funcional:** qué hace el feature (comportamiento observable ya
@@ -365,7 +365,7 @@ Por cada `FT-XXX` en **`Estado: Ready`**, invoca `test-define`:
 1. Genera los `TC-XXX` a partir de los `AC-XXX` del feature, siguiendo el flujo normal
    de `test-define` (perspectivas happy/error/límite como cobertura mínima).
 2. **Destino:** los TCs se guardan **dentro de la misma carpeta del feature**, en
-   `docs/specs/features/FT-XXX-{slug}/test-cases/`, con su índice `README.md`, igual que
+   `docs/specs/current/FT-XXX-{slug}/test-cases/`, con su índice `README.md`, igual que
    ocurre con una US o un WI.
 3. Los TCs describen el comportamiento **actual** del código (son la red de seguridad
    para cubrirlo). Cuando un TC valide un comportamiento marcado como posible bug
@@ -400,7 +400,7 @@ Al terminar, indica al usuario:
 
 - La carpeta `research/RS-XXX-{slug}/` creada, con `README.md` y `discovery.md`, y su
   estado (`Draft`/`Ready`) con una línea de por qué.
-- Los features creados en `docs/specs/features/` (IDs `FT-XXX` y títulos) y sus casos de
+- Los features creados en `docs/specs/current/` (IDs `FT-XXX` y títulos) y sus casos de
   prueba en cada `test-cases/`, recordando que son **inferidos desde código**
   (procedencia marcada) y viven en su propio subárbol, separados de las historias y
   work items.
@@ -418,7 +418,7 @@ Al terminar, indica al usuario:
 | Después de… | Skill siguiente | Qué se pasa |
 |-------------|-----------------|-------------|
 | El `discovery.md` en `Ready` | Este mismo flujo (Paso 2) | Crear un `FT-XXX` por cada feature con veredicto **Aceptado** |
-| Cada `FT-XXX` en `Ready` | `test-define` | Generar sus `TC-XXX` dentro de `docs/specs/features/FT-XXX-{slug}/test-cases/` |
+| Cada `FT-XXX` en `Ready` | `test-define` | Generar sus `TC-XXX` dentro de `docs/specs/current/FT-XXX-{slug}/test-cases/` |
 | Los `TC-XXX` definidos | `coverage-verify` | Verificar si el código existente está cubierto por esas pruebas y revelar los huecos |
 | Los huecos de cobertura | `work-implement` (tipo **feature**) | Automatizar en código los `TC-XXX` asociados a los `AC-XXX` del `FT-XXX` |
 | Un comportamiento que resulta ser un **bug** | Flujo **Analizar issue** de este mismo skill | No congelarlo como `AC-XXX`: abrir su diagnóstico y su corrección |
@@ -440,8 +440,8 @@ código ya escrito, así que cerrar un hueco de cobertura significa automatizar 
 - Crear historias de usuario (`US-XXX`) desde el código: este flujo **no** genera
   historias; cada feature descubierto se materializa como un `FT-XXX`.
 - Guardar los features o sus casos de prueba mezclados con los definidos por negocio
-  (en `docs/specs/user-stories/` o `docs/specs/work-items/`) en vez de en su propio
-  subárbol `docs/specs/features/`.
+  (en `docs/specs/changes/user-stories/` o `docs/specs/changes/work-items/`) en vez de en su propio
+  subárbol `docs/specs/current/`.
 - Redactar features o reglas de negocio con comportamiento **deseado** o inventado en
   lugar del comportamiento **real** que implementa el código.
 - Omitir la evidencia (archivo y símbolo) de un hallazgo.

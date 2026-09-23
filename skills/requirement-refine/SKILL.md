@@ -56,11 +56,11 @@ Lo propio de este skill:
 
 | Artefacto | Ruta |
 | --------- | ---- |
-| Especificación de requisitos (**salida**) | `docs/specs/requirements/SRS-XXX-[nombre-corto]/README.md` |
-| Requerimiento en bruto (**entrada, conservada tal cual**) | `docs/specs/requirements/SRS-XXX-[nombre-corto]/references/` |
+| Especificación de requisitos (**salida**) | `docs/specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md` |
+| Requerimiento en bruto (**entrada, conservada tal cual**) | `docs/specs/changes/requirements/SRS-XXX-[nombre-corto]/references/` |
 | Wireframes de pantalla (si el requerimiento tiene UI) | `docs/architecture/[capability]/wireframes/WF-XXX-[pantalla-slug].md` (documento) y `WF-XXX-[pantalla-slug].svg` (SVG hermano enlazado) — **por capability**, no en la carpeta del SRS: mismo principio que `models/` y `diagrams/` de `design-define`; con fila en la tabla índice «Wireframes» del `README.md` de la capability. Única escritura de este skill en `docs/architecture/` |
-| Otros archivos de apoyo | `docs/specs/requirements/SRS-XXX-[nombre-corto]/assets/` |
-| Investigación de stack delegada (si se investigó) | `docs/specs/requirements/SRS-XXX-[nombre-corto]/research/RS-XXX-[slug]/README.md` — la crea `/work-research`, este skill solo la referencia |
+| Otros archivos de apoyo | `docs/specs/changes/requirements/SRS-XXX-[nombre-corto]/assets/` |
+| Investigación de stack delegada (si se investigó) | `docs/specs/changes/requirements/SRS-XXX-[nombre-corto]/research/RS-XXX-[slug]/README.md` — la crea `/work-research`, este skill solo la referencia |
 | Glosario (opcional) | `docs/glossary.md` |
 
 > **`references/` vs. `assets/`.** `references/` guarda el **insumo tal como llegó** (el ticket, el correo, la transcripción de reunión, diseños, wireframes ya existentes, capturas o documentación técnica) para trazabilidad — nunca se edita ni se reescribe, solo se añade. `assets/` guarda lo que **este skill produce** como apoyo del documento (cualquier archivo derivado distinto de los wireframes); eso sí se actualiza cuando cambia. **Los wireframes no van en `assets/`:** son un elemento de la capability y viven en `docs/architecture/[capability]/wireframes/` (ver tabla), enlazados desde la sección 12 del SRS.
@@ -71,7 +71,7 @@ Lo propio de este skill:
 
 - Formato: `SRS-XXX-[nombre-corto]` con `SRS-XXX` en mayúsculas y número de 3 dígitos.
 - Nombre corto: minúsculas, kebab-case, sin artículos ni palabras vacías.
-- El secuencial es global sobre `docs/specs/requirements/`; este skill no tiene todavía contrato de archivado — no lo mueve `work-integrate` — así que la carpeta permanece en la ruta activa como referencia histórica del requerimiento que originó las historias.
+- El secuencial es global sobre `docs/specs/changes/requirements/`; este skill no tiene todavía contrato de archivado — no lo mueve `work-integrate` — así que la carpeta permanece en la ruta activa como referencia histórica del requerimiento que originó las historias.
 - Ejemplos: `SRS-001-portal-de-proveedores`, `SRS-004-migracion-facturacion-electronica`.
 
 ---

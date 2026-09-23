@@ -90,9 +90,9 @@ Cuando reflog y config no concluyen, o existen varios candidatos plausibles.
 - [ ] Nada movido, motivo anotado para el reporte; el `Done` se commitea igual
 
 *Solo si se archiva:*
-- [ ] Destino en `docs/archive/<user-stories|work-items>/` libre antes de mover
+- [ ] Destino en `docs/specs/archived/<user-stories|work-items>/` libre antes de mover
 - [ ] Carpeta del trabajo movida con **`git mv`** (renombrado detectado, no borrado + alta)
-- [ ] Investigaciones `RS-XXX` sueltas enlazadas: comprobadas contra `docs/specs/` excluyendo **`docs/archive/` y la propia carpeta del RS** (sin esa segunda exclusión el `README.md` del RS se cuenta a sí mismo y nunca se archivaría ninguna), y archivadas **solo** las que quedaron sin referencias activas
+- [ ] Investigaciones `RS-XXX` sueltas enlazadas: comprobadas contra `docs/specs/` excluyendo **`docs/specs/archived/` y la propia carpeta del RS** (sin esa segunda exclusión el `README.md` del RS se cuenta a sí mismo y nunca se archivaría ninguna), y archivadas **solo** las que quedaron sin referencias activas
 - [ ] Enlaces relativos salientes y entrantes reparados tras el cambio de profundidad
 
 - [ ] **Un solo commit de cierre en la rama base** (`chore(<ID>): cerrar trabajo[ y archivar]`) vía `git-commit`, con el `progress.md` en `Done` y el `git mv` si lo hubo — **separado del commit de merge**

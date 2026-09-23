@@ -1,6 +1,6 @@
 # Tipo de implementacion: Tarea de mantenimiento
 
-Flujo para **ejecutar en codigo** una tarea de mantenimiento `WI-XXX` bajo `docs/specs/work-items/`: bugs, refactor, deuda tecnica, actualizacion de dependencias, tareas operativas o de infraestructura. Esta referencia se carga desde `SKILL.md` cuando la seleccion de tipo resuelve a este caso. Asume ya resueltos el mecanismo de preguntas, el idioma, la validacion de repositorio y el ritmo de confirmacion (ver `SKILL.md`).
+Flujo para **ejecutar en codigo** una tarea de mantenimiento `WI-XXX` bajo `docs/specs/changes/work-items/`: bugs, refactor, deuda tecnica, actualizacion de dependencias, tareas operativas o de infraestructura. Esta referencia se carga desde `SKILL.md` cuando la seleccion de tipo resuelve a este caso. Asume ya resueltos el mecanismo de preguntas, el idioma, la validacion de repositorio y el ritmo de confirmacion (ver `SKILL.md`).
 
 > **Naturaleza del WI:** documento **unico y combinado** - el requerimiento, los criterios de aceptacion y el plan de implementacion conviven en `WI-XXX-[kebab-case]/README.md`, que mapea 1:1 con un work item del tracker externo, si el repo usa uno. **No se descompone en sub-tareas** (modelo plano). Un esfuerzo grande son varios `WI-` hermanos, nunca un WI con hijos.
 >
@@ -12,8 +12,8 @@ Flujo para **ejecutar en codigo** una tarea de mantenimiento `WI-XXX` bajo `docs
 
 | Artefacto | Ruta |
 | --------- | ---- |
-| Work item | `docs/specs/work-items/WI-XXX-[kebab-case]/README.md` |
-| Progreso | `docs/specs/work-items/WI-XXX-[kebab-case]/progress.md` |
+| Work item | `docs/specs/changes/work-items/WI-XXX-[kebab-case]/README.md` |
+| Progreso | `docs/specs/changes/work-items/WI-XXX-[kebab-case]/progress.md` |
 | ADR | `docs/adr/` |
 | Documentacion tecnica | `docs/architecture/` |
 | Glosario | `docs/glossary.md` |
@@ -74,11 +74,11 @@ Un WI de tipo **`bug-fix`** o **`security-update`** se implementa **directamente
 
 Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
-- **WI existente y en `Ready`:** la carpeta `WI-XXX-[kebab-case]/` existe en `docs/specs/work-items/` y su `README.md` tiene `Estado: Ready`. Un `WI` en `Draft` (stub o incompleto) **no** es ejecutable - devolver a `work-plan` para completarlo.
-- **WI no archivado:** si la carpeta no aparece en `docs/specs/work-items/`, buscarla en `docs/archive/work-items/` antes de darla por inexistente. Si esta ahi, el WI **ya se cerro e integro**: **parar** y avisar — «`WI-007` esta archivado; para retomarlo hay que desarchivarlo primero, y eso lo decide el usuario». **Excepcion:** en [modo correccion](../SKILL.md#modo-correccion-delegado-desde-quality-check) delegado por `quality-check`, un artefacto archivado es esperable —la correccion llega en la fase de cierre, con el archivado ya commiteado—: ahi se continua, pero **sin escribir dentro de la carpeta archivada** (la nota de retrabajo va en el informe de `quality-check`). Importa especialmente en este flujo porque el Paso 1 hace «leer **o crear**» el `progress.md`: sin esta comprobacion crearia una carpeta fantasma en la ruta activa con un identificador ya usado. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+- **WI existente y en `Ready`:** la carpeta `WI-XXX-[kebab-case]/` existe en `docs/specs/changes/work-items/` y su `README.md` tiene `Estado: Ready`. Un `WI` en `Draft` (stub o incompleto) **no** es ejecutable - devolver a `work-plan` para completarlo.
+- **WI no archivado:** si la carpeta no aparece en `docs/specs/changes/work-items/`, buscarla en `docs/specs/archived/work-items/` antes de darla por inexistente. Si esta ahi, el WI **ya se cerro e integro**: **parar** y avisar — «`WI-007` esta archivado; para retomarlo hay que desarchivarlo primero, y eso lo decide el usuario». **Excepcion:** en [modo correccion](../SKILL.md#modo-correccion-delegado-desde-quality-check) delegado por `quality-check`, un artefacto archivado es esperable —la correccion llega en la fase de cierre, con el archivado ya commiteado—: ahi se continua, pero **sin escribir dentro de la carpeta archivada** (la nota de retrabajo va en el informe de `quality-check`). Importa especialmente en este flujo porque el Paso 1 hace «leer **o crear**» el `progress.md`: sin esta comprobacion crearia una carpeta fantasma en la ruta activa con un identificador ya usado. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 - **Criterios de aceptacion presentes:** el WI tiene **Criterios de aceptacion** verificables. Si faltan, parar: el WI no estaba realmente `Ready`.
 - **Referencia de UI (si toca UI):** si el WI modifica UI, debe tener referencia de diseno en **Referencias** (Figma/wireframe). Sin ella, parar y avisar.
-- **Test cases presentes:** verificar si existe la carpeta `docs/specs/work-items/WI-XXX-[kebab-case]/test-cases/` (dentro de la carpeta del WI) con al menos un archivo `TC-XXX-*.md`. Si no existe o esta vacia, **preguntar al usuario** (herramienta estructurada) antes de continuar:
+- **Test cases presentes:** verificar si existe la carpeta `docs/specs/changes/work-items/WI-XXX-[kebab-case]/test-cases/` (dentro de la carpeta del WI) con al menos un archivo `TC-XXX-*.md`. Si no existe o esta vacia, **preguntar al usuario** (herramienta estructurada) antes de continuar:
 
   > "Este WI no tiene test cases definidos para la implementacion. ¿Como quieres continuar?"
   > Opciones: [Definir test cases primero] / [Si, continuar sin test cases] / [No, detener aqui]
@@ -87,7 +87,7 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
   - Si elige **continuar sin test cases**: continuar normalmente.
   - Si elige **detener**: parar y sugerir ejecutar `test-define` primero.
 
-- **README de test cases:** si la carpeta `test-cases/` existe, **leer su `README.md`** (`docs/specs/work-items/WI-XXX-[kebab-case]/test-cases/README.md`) para identificar que `TC-XXX` describen y cuales son **automatizables** (unit, integracion, e2e). Esta lectura alimenta el ciclo TDD del Paso 3 y las notas de cobertura en `progress.md`. Si el `README.md` no existe pero hay archivos `TC-XXX-*.md`, leer los propios test cases como fuente.
+- **README de test cases:** si la carpeta `test-cases/` existe, **leer su `README.md`** (`docs/specs/changes/work-items/WI-XXX-[kebab-case]/test-cases/README.md`) para identificar que `TC-XXX` describen y cuales son **automatizables** (unit, integracion, e2e). Esta lectura alimenta el ciclo TDD del Paso 3 y las notas de cobertura en `progress.md`. Si el `README.md` no existe pero hay archivos `TC-XXX-*.md`, leer los propios test cases como fuente.
 
 ---
 
@@ -99,7 +99,7 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
 2. Resolver la rama segun el `Tipo` del WI:
    - **`bug-fix` / `security-update`:** no crear rama. Resolver la rama de integracion con `references/git.md`; **sin worktrees**, hacer checkout de ella si no se esta ya ahi; **con worktrees**, no tocar el arbol principal: la unidad va en `wt/WI-XXX` derivada de esa rama (ver [Excepcion](#excepcion-bug-fix-y-security-update-no-crean-rama)).
    - **Resto de tipos:** situarse en la rama del WI — **sin worktrees**, `git checkout` (crear desde la rama base acordada si no existe); **con worktrees**, ver la nota de abajo.
-3. Leer o crear `progress.md` dentro de la carpeta del WI (`docs/specs/work-items/WI-XXX-[kebab-case]/progress.md`) desde `assets/progress-template.md`. El `progress.md` es específico de este WI — contiene únicamente las entradas del plan de implementación del `README.md`.
+3. Leer o crear `progress.md` dentro de la carpeta del WI (`docs/specs/changes/work-items/WI-XXX-[kebab-case]/progress.md`) desde `assets/progress-template.md`. El `progress.md` es específico de este WI — contiene únicamente las entradas del plan de implementación del `README.md`.
 
 > **Con worktrees (`workTree: always`, `ask` afirmativo o modo paralelo), este paso NO hace `git checkout` en el arbol principal.** Se cumple creando el worktree del artefacto (`git worktree add <workTreePath>/<artefacto> [-b <rama>] <rama-base>`) y el resto del flujo corre dentro de el. **El punto 1 (working tree limpio) sigue siendo sobre el arbol principal y va antes:** con cambios sin commitear se aplica `uncommittedChanges` (`commit` / `stash` / `ask`) igual que sin worktrees, y solo despues se crea el worktree. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
 

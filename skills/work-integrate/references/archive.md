@@ -2,7 +2,7 @@
 
 Procedimiento **compartido** por `work-integrate` (merge local) y `pr-create` (PR de
 implementación): cuando el trabajo ya está cerrado y verificado, su carpeta de
-especificación se mueve a `docs/archive/`. **Dónde y cuándo depende del skill:**
+especificación se mueve a `docs/specs/archived/`. **Dónde y cuándo depende del skill:**
 
 | Skill | Dónde se hace el `git mv` | Cuándo |
 |-------|---------------------------|--------|
@@ -50,7 +50,7 @@ nunca dentro del commit de merge.
 | Ramas `test/` sobre un `FT-XXX` | El feature sigue vivo: la automatización de sus `TC-XXX` cierra una ejecución, no el artefacto. |
 | Ramas `test/` sobre un `US-XXX`/`WI-XXX` | El trabajo funcional puede seguir abierto: el flujo solo verificó las unidades `TC-XXX` de esa ejecución, no el `progress.md` completo. Que el skill resuelva un `US-XXX` para `coverage-verify` **no** habilita el archivado. |
 | PR de **promoción** (`pr-create`) | No trae trabajo nuevo: cada `US`/`WI` que viaja en él ya se archivó al integrarse. |
-| Un trabajo cuya carpeta ya está bajo `docs/archive/` | Ya archivado. Se detecta, se informa y se continúa sin tocar nada — no es un error. |
+| Un trabajo cuya carpeta ya está bajo `docs/specs/archived/` | Ya archivado. Se detecta, se informa y se continúa sin tocar nada — no es un error. |
 | **Artefactos de un framework de terceros** (Speckit, OpenSpec, AgentOS…) | No son de SDD Devkit. Ver la regla de abajo. |
 
 > **El archivado alcanza solo a los artefactos de SDD Devkit.** Lo que se mueve es la carpeta del
@@ -105,11 +105,11 @@ huérfanas. El usuario no puede decidir sobre un movimiento que no ve.
 `
 Las puertas pasaron y US-042 está en Done. ¿Archivo el artefacto antes de integrar?
 
-  docs/specs/user-stories/US-042-exportacion-csv/
-  → docs/archive/user-stories/US-042-exportacion-csv/
+  docs/specs/changes/user-stories/US-042-exportacion-csv/
+  → docs/specs/archived/user-stories/US-042-exportacion-csv/
 
   Investigaciones sueltas sin referencias activas:
-    RS-003-formatos-csv → docs/archive/research/
+    RS-003-formatos-csv → docs/specs/archived/research/
 `
 
 La respuesta es **binaria**: se archiva todo lo mostrado, o no se archiva nada. Las
@@ -137,10 +137,10 @@ preguntar por cada investigación ni por cada enlace a reparar. Y en cualquier c
 ### Consecuencia: estar en la ruta activa ya no significa «abierto»
 
 Al ser opcional, un trabajo **cerrado e integrado** puede quedarse indefinidamente en
-`docs/specs/user-stories/` o `docs/specs/work-items/` porque nadie confirmó archivarlo. De
+`docs/specs/changes/user-stories/` o `docs/specs/changes/work-items/` porque nadie confirmó archivarlo. De
 ahí una asimetría que conviene tener presente al leer la [Regla 1](#regla-1--fallback-de-lectura):
 
-- Encontrar la carpeta **bajo `docs/archive/`** sigue siendo prueba suficiente de que
+- Encontrar la carpeta **bajo `docs/specs/archived/`** sigue siendo prueba suficiente de que
   el trabajo está cerrado. Esa dirección no cambia.
 - **No** encontrarla ahí ya **no** prueba lo contrario. Un `US-XXX` en la ruta activa puede
   estar abierto o cerrado-sin-archivar; quien necesite saberlo mira su `progress.md` y su
@@ -155,25 +155,27 @@ coste de no pararse ahí es bajo comparado con obligar a archivar.
 
 ## Destinos
 
-`docs/archive/` es el valor por defecto de `specification.archivePath`
+`docs/specs/archived/` es el valor por defecto de `specification.archivedPath`
 (`.sdd-devkit/settings.json`) — ver [`${PLUGIN_ROOT}/references/artifacts.md`](../../../references/artifacts.md).
 **Resolverlo primero**: si el repo declaró un valor distinto, sustituirlo por ese valor en la
-columna Destino y en el resto de esta sección.
+columna Destino y en el resto de esta sección; lo mismo con `docs/specs/changes/` en la columna
+Origen respecto a `specification.changesPath`. Las subcarpetas (`user-stories/`, `work-items/`,
+`research/`) no son configurables: el archivo espeja siempre la estructura de `changesPath`.
 
 | Artefacto | Origen | Destino |
 |-----------|--------|---------|
-| Historia de usuario | `docs/specs/user-stories/US-XXX-{nombre-corto}/` | `docs/archive/user-stories/US-XXX-{nombre-corto}/` |
-| Tarea de mantenimiento | `docs/specs/work-items/WI-XXX-{kebab-case}/` | `docs/archive/work-items/WI-XXX-{kebab-case}/` |
-| Investigación suelta enlazada | `docs/specs/research/RS-XXX-{slug}/` | `docs/archive/research/RS-XXX-{slug}/` |
+| Historia de usuario | `docs/specs/changes/user-stories/US-XXX-{nombre-corto}/` | `docs/specs/archived/user-stories/US-XXX-{nombre-corto}/` |
+| Tarea de mantenimiento | `docs/specs/changes/work-items/WI-XXX-{kebab-case}/` | `docs/specs/archived/work-items/WI-XXX-{kebab-case}/` |
+| Investigación suelta enlazada | `docs/specs/changes/research/RS-XXX-{slug}/` | `docs/specs/archived/research/RS-XXX-{slug}/` |
 
 La carpeta se mueve **completa y tal cual**: `README.md`, los `TK-XXX-*.md`, `progress.md`,
 `coverage.md`, `test-cases/` y el `research/` **interno** del artefacto. No se
 renombra, no se aplana, no se comprime, no se borra nada de dentro.
 
 > Las investigaciones que viven **dentro** del artefacto
-> (`docs/specs/user-stories/US-XXX-.../research/RS-XXX-{slug}/`) viajan con la carpeta:
+> (`docs/specs/changes/user-stories/US-XXX-.../research/RS-XXX-{slug}/`) viajan con la carpeta:
 > no requieren tratamiento aparte. La sección siguiente es **solo** para los `RS-XXX`
-> sueltos de `docs/specs/research/`.
+> sueltos de `docs/specs/changes/research/`.
 
 ---
 
@@ -181,13 +183,13 @@ renombra, no se aplana, no se comprime, no se borra nada de dentro.
 
 ### 1 — Mover la carpeta del trabajo
 
-Con `<archive>` = `specification.archivePath` resuelto (por defecto `docs/archive/`):
+Con `<changes>` = `specification.changesPath` resuelto (por defecto `docs/specs/changes/`) y `<archive>` = `specification.archivedPath` resuelto (por defecto `docs/specs/archived/`):
 
 `bash
 mkdir -p <archive>/<user-stories|work-items>
 test ! -e "<archive>/<subcarpeta>/<ID>-<slug>" \
   || { echo "el destino ya existe"; exit 1; }
-git mv "docs/specs/<subcarpeta>/<ID>-<slug>" "<archive>/<subcarpeta>/<ID>-<slug>"
+git mv "<changes>/<subcarpeta>/<ID>-<slug>" "<archive>/<subcarpeta>/<ID>-<slug>"
 `
 
 - **`git mv`, no `mv`**: deja el renombrado ya stageado y git lo detecta como *rename*,
@@ -200,15 +202,15 @@ git mv "docs/specs/<subcarpeta>/<ID>-<slug>" "<archive>/<subcarpeta>/<ID>-<slug>
 
 ### 2 — Archivar las investigaciones sueltas que quedan huérfanas
 
-Un `RS-XXX` de `docs/specs/research/` es **compartible**: puede estar enlazado desde varios
+Un `RS-XXX` de `docs/specs/changes/research/` es **compartible**: puede estar enlazado desde varios
 artefactos. Solo se archiva el que se queda sin ningún artefacto **activo** que lo
 referencie.
 
 1. **Recolectar candidatos:** buscar identificadores `RS-XXX` en los archivos del trabajo
    —ya en su ruta de archive— y quedarse con los que resuelven a una carpeta existente en
-   `docs/specs/research/`.
+   `docs/specs/changes/research/`.
 2. **Para cada candidato, contar referencias vivas:** buscar ese `RS-XXX` en `docs/specs/`
-   **excluyendo** `<archive>` y `docs/specs/research/<el propio RS>/`.
+   **excluyendo** `<archive>` y `docs/specs/changes/research/<el propio RS>/`.
 3. **Decidir:**
    - **0 referencias vivas** → huérfano: `git mv` a `<archive>/research/RS-XXX-{slug}/`,
      con el mismo guard de destino del paso 1.
@@ -221,14 +223,19 @@ referencie.
 
 ### 3 — Reparar los enlaces afectados
 
-El movimiento cambia la profundidad de la ruta en un nivel, así que los enlaces relativos
-se rompen en las dos direcciones. Revisar y corregir:
+`archivedPath` espeja la estructura de `changesPath`, así que con los defaults la carpeta
+conserva su **profundidad** (`docs/specs/changes/user-stories/US-…` → `docs/specs/archived/user-stories/US-…`)
+y los enlaces que salen de `docs/specs/` (`../../../../architecture/…`, `../../../../policies/…`,
+`../../../../glossary.md`) siguen funcionando. Lo que sí se rompe son los enlaces **entre artefactos**,
+porque el hermano ya no está en la misma raíz. Revisar y corregir:
 
-- **Salientes** — enlaces **dentro** de la carpeta movida que apuntan **fuera** de ella
-  (p. ej. `../../research/RS-001-...`, `../../../docs/policies/...`): añadir el nivel que
-  falta. Los enlaces internos a la propia carpeta no cambian.
+- **Salientes** — enlaces **dentro** de la carpeta movida hacia otros artefactos que **siguen
+  activos** (p. ej. `../../research/RS-001-...`, `../../requirements/SRS-002-...`, `../US-041-…`):
+  repuntarlos a través de `changesPath` (`../../../changes/research/RS-001-...`). Si el repo
+  declaró un `archivedPath` con distinta profundidad que `changesPath`, además ajustar los niveles
+  de **todos** los enlaces que salen de la carpeta. Los enlaces internos a la propia carpeta no cambian.
 - **Entrantes** — referencias desde artefactos que **siguen activos** hacia el trabajo
-  recién archivado: repuntarlas a `docs/archive/...`. Si un artefacto activo depende
+  recién archivado: repuntarlas a `docs/specs/archived/...`. Si un artefacto activo depende
   de forma sustantiva del archivado, mencionarlo en el reporte; no es motivo para revertir
   el archivado.
 
@@ -254,8 +261,8 @@ Al cerrar el flujo, incluir:
 
 `
 📦 Archivado
-   docs/specs/user-stories/US-042-exportacion-csv/
-   → docs/archive/user-stories/US-042-exportacion-csv/
+   docs/specs/changes/user-stories/US-042-exportacion-csv/
+   → docs/specs/archived/user-stories/US-042-exportacion-csv/
    Investigaciones sueltas:
      RS-003-formatos-csv → archivada (sin referencias activas)
      RS-007-limites-export → se queda (referenciada por US-051)
@@ -268,12 +275,12 @@ qué no se hizo y por qué, sin dramatizarlo:
 
 `
 📦 Archivado: omitido
-   US-042 se queda en docs/specs/user-stories/ (no confirmado por el usuario).
+   US-042 se queda en docs/specs/changes/user-stories/ (no confirmado por el usuario).
 `
 
 `
 📦 Archivado: omitido
-   US-042 se queda en docs/specs/user-stories/ (implementation.archiveMode: never).
+   US-042 se queda en docs/specs/changes/user-stories/ (implementation.archiveMode: never).
 `
 
 Y si no se pudo preguntar: «omitido — sin canal de respuesta para confirmar».
@@ -286,20 +293,20 @@ Archivar mueve carpetas que **otros skills resuelven por ruta**. Esta sección e
 única de las dos reglas que todos ellos aplican; cada skill la enuncia en su propio flujo,
 y aquí vive el porqué. Las dos son independientes y ninguna sustituye a la otra.
 
-> **`docs/archive/` en las dos reglas siguientes es el default de `specification.archivePath`**
+> **`docs/specs/archived/` en las dos reglas siguientes es el default de `specification.archivedPath`**
 > (ver [Destinos](#destinos)). Todo skill que aplique la Regla 1 o la Regla 2 resuelve primero
-> `specification.archivePath` y sustituye ese valor por `docs/archive/` si el repo declaró
+> `specification.archivedPath` y sustituye ese valor por `docs/specs/archived/` si el repo declaró
 > uno distinto — no vuelve a preguntarlo ni a asumir el literal.
 
 ### Regla 1 — Fallback de lectura
 
 **Quien busque la carpeta de un `US-XXX`, `WI-XXX` o `RS-XXX` y no la encuentre en la ruta
-activa, debe mirar en `docs/archive/` antes de darla por inexistente.**
+activa, debe mirar en `docs/specs/archived/` antes de darla por inexistente.**
 
 `
-docs/specs/user-stories/US-042-…/   →  docs/archive/user-stories/US-042-…/
-docs/specs/work-items/WI-007-…/     →  docs/archive/work-items/WI-007-…/
-docs/specs/research/RS-003-…/       →  docs/archive/research/RS-003-…/
+docs/specs/changes/user-stories/US-042-…/   →  docs/specs/archived/user-stories/US-042-…/
+docs/specs/changes/work-items/WI-007-…/     →  docs/specs/archived/work-items/WI-007-…/
+docs/specs/changes/research/RS-003-…/       →  docs/specs/archived/research/RS-003-…/
 `
 
 Lo que se encuentra ahí es un trabajo **cerrado**. **Leerlo es siempre legítimo**: sirve
@@ -318,7 +325,7 @@ Desarchivar es mover la carpeta de vuelta — decisión del usuario, no de ning�
 
 #### Las dos únicas excepciones a la prohibición de escribir
 
-No hay más; cualquier otra escritura dentro de `docs/archive/` es un defecto.
+No hay más; cualquier otra escritura dentro de `docs/specs/archived/` es un defecto.
 
 | Quién | Qué puede escribir | Por qué |
 |-------|--------------------|---------|
@@ -337,7 +344,7 @@ Se enuncia aquí porque es donde se busca.
 ### Regla 2 — Los IDs archivados siguen ocupados
 
 **Todo escaneo de «siguiente número libre» o «este ID está disponible» cubre la ruta activa
-y `docs/archive/`.** Un identificador no se libera al archivarse: `US-042` sigue
+y `docs/specs/archived/`.** Un identificador no se libera al archivarse: `US-042` sigue
 siendo `US-042` para siempre.
 
 Sin esto, el contador **retrocede** en cuanto se archiva el trabajo con el número más alto:
@@ -349,9 +356,9 @@ Aplica a **todos** los contadores, no solo a los globales:
 
 | Contador | Dónde se escanea | Skill |
 |----------|------------------|-------|
-| `US-XXX` | `docs/specs/user-stories/` **+** `docs/archive/user-stories/` | `work-define` |
-| `WI-XXX` | `docs/specs/work-items/` **+** `docs/archive/work-items/` | `work-plan` |
-| `RS-XXX` | `docs/specs/research/` **+** `docs/archive/research/`, y el `research/` del artefacto | `work-research` |
+| `US-XXX` | `docs/specs/changes/user-stories/` **+** `docs/specs/archived/user-stories/` | `work-define` |
+| `WI-XXX` | `docs/specs/changes/work-items/` **+** `docs/specs/archived/work-items/` | `work-plan` |
+| `RS-XXX` | `docs/specs/changes/research/` **+** `docs/specs/archived/research/`, y el `research/` del artefacto | `work-research` |
 | `TK-XXX` | El `US-XXX-…/` del padre | `work-plan` |
 | `TC-XXX` | El `test-cases/` del padre | `test-define` |
 
@@ -376,7 +383,7 @@ en `001`** y crear una carpeta fantasma. Las dos reglas van juntas justamente po
 - Preguntar **sin mostrar antes** qué carpeta y qué investigaciones se moverían.
 - Archivar por defecto cuando no hay quien responda: sin respuesta, no se mueve nada.
 - Usar `mv` en vez de `git mv`, perdiendo la detección de *rename*.
-- Sobrescribir un destino existente en `docs/archive/` en lugar de parar.
+- Sobrescribir un destino existente en `docs/specs/archived/` en lugar de parar.
 - Archivar un `RS-XXX` suelto sin comprobar que ningún artefacto activo lo referencia.
 - **Arrastrar artefactos de un framework de terceros** (Speckit, OpenSpec, AgentOS…) al archivado por
   estar dentro o al lado de la carpeta del trabajo. Solo se mueve lo que produjo SDD Devkit; lo ajeno se

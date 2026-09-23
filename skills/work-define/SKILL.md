@@ -54,7 +54,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md).
 
-Las reglas de `planning.md` son obligatorias y determinan, vía `specification.testCases.mode`, si al dejar la US en `Ready` se pregunta si definir los casos de prueba (`ask`, comportamiento por defecto), se invoca `/test-define` automáticamente sin preguntar (`always`), o nunca se sugiere ni se invoca (`never`). La otra clave del objeto, `askDetails`, **no la consume este skill**: la lee `test-define`. Ver [Flujo (resumen)](#flujo-resumen).
+Las reglas de `planning.md` son obligatorias y determinan, vía `specification.testCases.createMode`, si al dejar la US en `Ready` se pregunta si definir los casos de prueba (`ask`, comportamiento por defecto), se invoca `/test-define` automáticamente sin preguntar (`always`), o nunca se sugiere ni se invoca (`never`). La otra clave del objeto, `createDetailsMode`, **no la consume este skill**: la lee `test-define`. Ver [Flujo (resumen)](#flujo-resumen).
 
 No continúes hasta haber leído y aplicado `planning.md`.
 
@@ -68,13 +68,13 @@ Lo propio de este skill:
 
 | Artefacto | Ruta |
 | --------- | ---- |
-| Historia de usuario (**salida**) | `docs/specs/user-stories/US-XXX-[nombre-corto]/README.md` |
-| Archivos de apoyo | `docs/specs/user-stories/US-XXX-[nombre-corto]/assets/` |
+| Historia de usuario (**salida**) | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/README.md` |
+| Archivos de apoyo | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/assets/` |
 | Wireframes de pantalla (si la US toca UI y no hereda wireframes) | `docs/architecture/[capability]/wireframes/WF-XXX-[pantalla-slug].md` + `WF-XXX-[pantalla-slug].svg` — **por capability**, no en `assets/` de la US; mismo principio que `models/`/`diagrams/`; con fila en el índice «Wireframes» del `README.md` de la capability; plantilla [`${PLUGIN_ROOT}/skills/design-define/assets/wireframe-template.md`](../design-define/assets/wireframe-template.md). Única escritura de este skill en `docs/architecture/` |
 | Documentación técnica (solo lectura) | `docs/architecture/[capability]/` — `README.md`, `models/`, `flows/`, `diagrams/`; propiedad de `design-define`; este skill la referencia, nunca la crea ni la edita |
 | Glosario (opcional) | `docs/glossary.md` |
 
-> **Las US archivadas siguen contando.** El siguiente `US-XXX` libre se calcula sobre la ruta activa **y** sobre `docs/archive/user-stories/`, y el flujo *Actualizar* busca ahí la historia cuando no está en la activa.
+> **Las US archivadas siguen contando.** El siguiente `US-XXX` libre se calcula sobre la ruta activa **y** sobre `docs/specs/archived/user-stories/`, y el flujo *Actualizar* busca ahí la historia cuando no está en la activa.
 
 ### Convenciones del nombre de carpeta
 
@@ -99,7 +99,7 @@ Antes de crear o editar cualquier US, el agente debe tener clara la siguiente in
 | **Criterios de aceptación (AC-XXX)**            | Del contexto o descripción del usuario                                                   | Preguntar; sin al menos un `AC-XXX` INVEST no es valorable y la historia solo puede crearse en Draft |
 | **Referencias de diseño** (solo US de UI)       | Figma, prototipos u otros enlaces aportados por el usuario                               | Sin ellas la historia no puede declararse Ready                                       |
 | **Dependencias con otras US o sistemas**        | Indicadas por el usuario o inferibles del contexto                                       | Preguntar; afectan las dimensiones I y E de INVEST                                    |
-| **ID de la US**                                 | Proporcionado por el usuario                                                             | Inferir el siguiente libre revisando carpetas `US-`* en `docs/specs/user-stories/` **y en `docs/archive/user-stories/`** (archivar no libera el ID) |
+| **ID de la US**                                 | Proporcionado por el usuario                                                             | Inferir el siguiente libre revisando carpetas `US-`* en `docs/specs/changes/user-stories/` **y en `docs/specs/archived/user-stories/`** (archivar no libera el ID) |
 | **Repositorios afectados**                      | Proporcionados por el usuario o inferibles del repo, o heredados de un `SRS-XXX` de origen | Sin ellos la historia no puede declararse Ready                                       |
 | **`SRS-XXX` de origen** (opcional)               | Solo si el usuario pide descomponer un SRS de `/requirement-refine`; en ese caso, actor/valor/AC-XXX/repos/referencias de UI se heredan de él en vez de preguntarse desde cero | No aplica — la mayoría de las US no parten de un SRS; caso por defecto sigue siendo la necesidad descrita directamente |
 
@@ -116,7 +116,7 @@ El procedimiento completo —cómo preguntar al usuario, validación antes de cr
 - **Varias historias en una misma invocación:** si el agrupamiento de un SRS o la migración investigada produjeron varias US, o el usuario pide crear de una vez varias historias relacionadas, primero detectar dependencias entre ellas y ordenarlas — la infraestructura y las que no dependen de ninguna otra de la tanda van primero — y confirmar ese orden con el usuario antes de fijar IDs; con una sola historia, saltar directo a Crear. Ver [`references/flow.md`](references/flow.md#flujo-proponer-varias-historias-en-una-misma-invocación).
 - **Crear:** fijar ID y carpeta `US-XXX-[nombre-corto]/` → redactar el `README.md` con la plantilla (Descripción RFC 2119, Referencias, Criterios `AC-XXX` con categoría y enunciado RFC 2119, campo **Repositorios:** de la cabecera, Complejidad Fibonacci, INVEST, DoR con sus indicadores 🟢/🟡/🔴 en la cabecera, Observaciones) → si la US toca UI y no hereda wireframes (del SRS, de un diseño aportado o de la capability), inferir la **capability** (preguntar solo si es ambigua), generar los **wireframes `WF-XXX` de todas las pantallas de una vez** en `docs/architecture/[capability]/wireframes/` con su fila en el índice de la capability, presentar el lote y preguntar **una sola vez** si hay cambios, enlazándolos desde Referencias → si el requerimiento define modelos, APIs o flujos, **delegar la documentación técnica a `/design-define` mediante subagente** y agregar las referencias devueltas a la sección Referencias → glosario si aplica → cierre.
 - **Actualizar:** identificar y leer el `README.md` → aplicar cambios conservando **siempre** los ids `AC-XXX` existentes (son inmutables: los nuevos toman el siguiente libre) → revalidar (checklists e indicadores de cabecera) → confirmar. Ante conflicto `TK-XXX` ↔ US, **la US prevalece**.
-- **Cierre:** si queda **Draft**, cerrar lagunas con preguntas estructuradas (una por laguna, máx. tres por bloque); si queda **Ready**, resolver la definición de casos de prueba según `specification.testCases.mode` (`ask` pregunta, `always` invoca `/test-define` directo, `never` no la ofrece — ver [Política de planificación](#política-de-planificación)) y sugerir crear las `TK-XXX` con `/work-plan` (nunca crear TCs ni tareas directamente desde este skill). Si algún repositorio del campo **Repositorios:** de la cabecera no tiene el harness (`AGENTS.md`/`.sdd-devkit/settings.json`), agregar `/arch-init` como opción adicional en la misma pregunta.
+- **Cierre:** si queda **Draft**, cerrar lagunas con preguntas estructuradas (una por laguna, máx. tres por bloque); si queda **Ready**, resolver la definición de casos de prueba según `specification.testCases.createMode` (`ask` pregunta, `always` invoca `/test-define` directo, `never` no la ofrece — ver [Política de planificación](#política-de-planificación)) y sugerir crear las `TK-XXX` con `/work-plan` (nunca crear TCs ni tareas directamente desde este skill). Si algún repositorio del campo **Repositorios:** de la cabecera no tiene el harness (`AGENTS.md`/`.sdd-devkit/settings.json`), agregar `/arch-init` como opción adicional en la misma pregunta.
 
 Las modalidades **RFC 2119**, las **categorías de AC-XXX** (funcionales e ISO 25010) y las rúbricas **INVEST** y **DoR** detalladas están en [`references/quality-criteria.md`](references/quality-criteria.md).
 

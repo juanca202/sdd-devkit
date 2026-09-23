@@ -49,7 +49,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md).
 
-Las reglas de `implementation.md` son obligatorias y tienen prioridad para determinar el ritmo de confirmacion entre unidades (`confirmByUnit`), que hacer con cambios sin commitear al iniciar o reanudar (`uncommittedChanges`), el uso y la ubicacion de los worktrees (`workTree`, `workTreePath`), el maximo de subagentes concurrentes (`maxParallel`), si el cierre pasa al siguiente skill sin preguntar (`handoff`, ver [Regla de handoff](#regla-de-handoff-transversal)) y donde vive el codigo bajo prueba (`target`: `source` por defecto; `external` => **repositorio de pruebas contra un sistema desplegado**, solo tipos `TC-XXX`/`FT-XXX`, reglas propias en [`references/test-cases.md` § Modo externo](references/test-cases.md#modo-externo-implementationtarget-external)). Con `target` ausente, `implementation.md` describe una deteccion de respaldo por `.env` que pregunta una vez; con `source` nada cambia.
+Las reglas de `implementation.md` son obligatorias y tienen prioridad para determinar el ritmo de confirmacion entre unidades (`confirmByUnit`), que hacer con cambios sin commitear al iniciar o reanudar (`uncommittedChanges`), el uso y la ubicacion de los worktrees (`workTree`, `workTreePath`), el maximo de subagentes concurrentes (`maxParallel`), si el cierre pasa al siguiente skill sin preguntar (`handoff`, ver [Regla de handoff](#regla-de-handoff-transversal)) y donde vive el codigo bajo prueba (`scope`: `code` por defecto; `tests` => **repositorio de pruebas contra un sistema desplegado**, solo tipos `TC-XXX`/`FT-XXX`, reglas propias en [`references/test-cases.md` § Modo pruebas](references/test-cases.md#modo-pruebas-implementationscope-tests)). Con `scope` ausente, `implementation.md` describe una deteccion de respaldo por `.env` que pregunta una vez; con `code` nada cambia.
 
 No continues hasta haber leido y aplicado `implementation.md`.
 
@@ -77,12 +77,12 @@ La senal que distingue los tipos es **el artefacto que el usuario referencia** (
 
 | Tipo | Como se identifica | Que se implementa | Unidad de confirmacion | Flujo a leer |
 |------|--------------------|-------------------|------------------------|--------------|
-| **Tarea de historia de usuario** | El trabajo referencia una historia `US-XXX` o una tarea `TK-XXX` que cuelga de ella; el artefacto vive bajo `docs/specs/user-stories/` (o su equivalente archivado, ver la nota de abajo). | El plan tecnico de la TK (codigo de produccion + sus tests) | **Una `TK-XXX`** | `references/user-story-tasks.md` — **leer antes de implementar.** |
-| **Tarea de mantenimiento** | El trabajo referencia un `WI-XXX` (bug, refactor, deuda tecnica, dependencias, operativa) **sin historia asociada**; vive bajo `docs/specs/work-items/` (o su equivalente archivado, ver la nota de abajo). | El plan del WI (codigo de produccion + sus tests) | **El `WI-XXX` completo** | `references/work-items.md` — **leer antes de implementar.** |
+| **Tarea de historia de usuario** | El trabajo referencia una historia `US-XXX` o una tarea `TK-XXX` que cuelga de ella; el artefacto vive bajo `docs/specs/changes/user-stories/` (o su equivalente archivado, ver la nota de abajo). | El plan tecnico de la TK (codigo de produccion + sus tests) | **Una `TK-XXX`** | `references/user-story-tasks.md` — **leer antes de implementar.** |
+| **Tarea de mantenimiento** | El trabajo referencia un `WI-XXX` (bug, refactor, deuda tecnica, dependencias, operativa) **sin historia asociada**; vive bajo `docs/specs/changes/work-items/` (o su equivalente archivado, ver la nota de abajo). | El plan del WI (codigo de produccion + sus tests) | **El `WI-XXX` completo** | `references/work-items.md` — **leer antes de implementar.** |
 | **Caso de prueba** | El trabajo referencia uno o varios `TC-XXX`; viven en la carpeta `test-cases/` de un artefacto padre (`US-XXX`, `WI-XXX` o `FT-XXX`). | **Las pruebas automatizadas de esos `TC-XXX`** | **Un `TC-XXX`** | `references/test-cases.md` — **leer antes de implementar.** |
-| **Feature** | El trabajo referencia un `FT-XXX` — funcionalidad **ya implementada** registrada bajo `docs/specs/features/`. | **Las pruebas de todos los `TC-XXX` asociados a los `AC-XXX` que contiene el feature** — nunca funcionalidad nueva | **El `FT-XXX` completo** | `references/test-cases.md` — **leer antes de implementar.** |
+| **Feature** | El trabajo referencia un `FT-XXX` — funcionalidad **ya implementada** registrada bajo `docs/specs/current/`. | **Las pruebas de todos los `TC-XXX` asociados a los `AC-XXX` que contiene el feature** — nunca funcionalidad nueva | **El `FT-XXX` completo** | `references/test-cases.md` — **leer antes de implementar.** |
 
-> **Artefacto archivado.** Al cerrar un trabajo, `work-integrate` y `pr-create` pueden mover su carpeta a `docs/archive/user-stories/` o `docs/archive/work-items/`. Si el artefacto referenciado no aparece en su ruta activa, **buscarlo ahi antes de darlo por inexistente** — y **nunca** crear la carpeta en la ruta activa por no haberla encontrado: este skill hace «leer o crear» el `progress.md`, asi que el descuido produciria una carpeta fantasma con un identificador ya usado. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo). Que se haga con el hallazgo depende del modo:
+> **Artefacto archivado.** Al cerrar un trabajo, `work-integrate` y `pr-create` pueden mover su carpeta a `docs/specs/archived/user-stories/` o `docs/specs/archived/work-items/`. Si el artefacto referenciado no aparece en su ruta activa, **buscarlo ahi antes de darlo por inexistente** — y **nunca** crear la carpeta en la ruta activa por no haberla encontrado: este skill hace «leer o crear» el `progress.md`, asi que el descuido produciria una carpeta fantasma con un identificador ya usado. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo). Que se haga con el hallazgo depende del modo:
 >
 > - **En los cuatro tipos de implementacion** (US/TK, WI, TC, FT): **parar y avisar**. Implementar trabajo nuevo sobre un artefacto ya cerrado exige desarchivarlo primero —mover su carpeta de vuelta—, y eso lo decide el usuario.
 > - **En [modo correccion](#modo-correccion-delegado-desde-quality-check)**: un artefacto archivado es **esperable**, no un error — la correccion llega justo en la fase de cierre, cuando el archivado ya se commiteo. Continuar con la correccion, pero **sin escribir dentro de la carpeta archivada**: la nota de retrabajo va en el informe de `quality-check`, no en el `progress.md` archivado.
@@ -94,7 +94,7 @@ La senal que distingue los tipos es **el artefacto que el usuario referencia** (
 Reglas de seleccion:
 
 - **Identificar el artefacto -> leer su referencia -> seguir unicamente su flujo.**
-- **Con `target: external`** (politica de implementacion) solo se admiten los tipos **Caso de prueba** y **Feature**: un `TK-XXX`/`WI-XXX` referenciado en un repositorio de pruebas externo => **parar** e indicar que ese trabajo se implementa en el repositorio de la aplicacion, no aqui.
+- **Con `scope: tests`** (politica de implementacion) solo se admiten los tipos **Caso de prueba** y **Feature**: un `TK-XXX`/`WI-XXX` referenciado en un repositorio solo de pruebas => **parar** e indicar que ese trabajo se implementa en el repositorio de la aplicacion, no aqui.
 - Si la referencia del usuario es ambigua (p. ej. un numero sin prefijo, o no esta claro si hay historia asociada), **preguntar al usuario** antes de continuar; no asumir el tipo ni inventar artefactos.
 - Solo se implementa trabajo en **`Estado: Ready`** (la US/TK, el WI, el TC o el FT). Si esta en `Draft`, parar y devolver a la fase que lo produce (`work-plan` / `work-define` para US/TK/WI, `test-define` para un TC, el flujo «Analizar legado» de `work-research` para un FT).
 - **Codigo de produccion vs. pruebas.** Los tipos `TK-XXX` y `WI-XXX` implementan funcionalidad nueva con sus tests. Los tipos `TC-XXX` y `FT-XXX` **entregan pruebas**: el comportamiento ya existe, asi que las pruebas confirman lo documentado.
@@ -378,7 +378,7 @@ relevante y los archivos implicados.
   se inventan estados: los validos siguen siendo `Pending`, `In Progress`, `Done`, y una unidad ya en
   `Done` permanece en `Done`. **Si el artefacto es externo y no hay `progress.md`**, no crearlo: devolver
   esa misma nota en la respuesta a `quality-check`. **Si el artefacto esta archivado** (su carpeta vive bajo
-  `docs/archive/`), tampoco escribir dentro: mismo trato — la nota va en la respuesta a
+  `docs/specs/archived/`), tampoco escribir dentro: mismo trato — la nota va en la respuesta a
   `quality-check`, que la recoge en su informe.
 - **Sin commit automatico ni handoff:** al terminar, devolver el control a `quality-check`, que verifica el
   arreglo re-ejecutando el check, recalcula el fingerprint y reinicia su corrida. Este skill no re-ejecuta
@@ -401,7 +401,7 @@ completo en lugar del skill destino. `quality-check` no debe reintentar la deleg
 reportarlo al usuario en su informe y emitir el veredicto que aplique (`REJECTED`), dejando el cierre
 bloqueado hasta que el escalado se resuelva. Anotar tambien la decision como **nota** en `progress.md` —
 salvo que el artefacto sea externo o este archivado, en cuyo caso la nota viaja en la respuesta a
-`quality-check` y no se escribe dentro de `docs/archive/`.
+`quality-check` y no se escribe dentro de `docs/specs/archived/`.
 
 ---
 

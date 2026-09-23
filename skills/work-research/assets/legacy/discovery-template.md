@@ -4,7 +4,7 @@ Eliminar este bloque y sustituir todos los {{…}} al publicar el documento fina
 
 Este es el discovery.md del flujo «Analizar legado» de work-research.
 Vive junto al README.md del RS:
-  docs/specs/research/RS-XXX-{slug}/discovery.md
+  docs/specs/changes/research/RS-XXX-{slug}/discovery.md
 
 Reconstruye por ingeniería inversa, en cascada, lo que el código HACE:
   Artefactos técnicos → Casos de uso → Objetivos de usuario → Capabilities →
@@ -107,7 +107,7 @@ Reglas:
 ## 9. Mapa Feature → FT-XXX propuesto
 
 {{Puente hacia la creación de features. Solo Features con veredicto Aceptado.
-Cada fila se materializará como `docs/specs/features/FT-XXX-{slug}/`.}}
+Cada fila se materializará como `docs/specs/current/FT-XXX-{slug}/`.}}
 
 | Feature | Capability padre | FT propuesto (slug) | Casos de uso incluidos | Reglas de negocio (BR-XX) | Prioridad (según gap de cobertura) |
 | ------- | ---------------- | --------------------- | ---------------------- | ------------------------- | ---------------------------------- |

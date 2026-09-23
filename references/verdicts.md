@@ -99,7 +99,7 @@ Todo esto son **identificadores**, no contenido:
 - Las **marcas ocultas** de los artefactos y todas sus claves (`verdict`, `status`, `testType`,
   `fingerprint`, `spec`, `base`, `mode`, `generated`…).
 - Los **valores** de los campos de estado, aunque su etiqueta visible sí se traduzca:
-  `Draft` / `Ready` / `Obsolete` en un TC, `Pending` / `In Progress` / `Done` en `progress.md`,
+  `Draft` / `Ready` / `Obsolete` en un TC, `Pending` / `In Progress` / `Done` en `progress.md` y en `test-cases/automation.md`,
   `Unit` / `Integration` / `API Test` / `Visual Test` / `E2E` / `Manual` como tipo de prueba.
 - Los nombres de los modificadores de invocación y los identificadores de suite.
 - Los identificadores de artefactos y documentos (`US-XXX`, `TK-XXX`, `WI-XXX`, `TC-XXX`, `FT-XXX`, `ADR-XXX`,

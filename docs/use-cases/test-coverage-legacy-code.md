@@ -10,7 +10,7 @@ flowchart TD
     H -.->|"con más información"| B
     C -->|"Sí"| D["Features<br/>**FT-XXX** (AC-XXX del comportamiento real)"]
     D --> E["Casos de prueba<br/>**/test-define** (TC-XXX desde AC-XXX)"]
-    E --> G["Implementación de pruebas<br/>**/work-implement** (`docs/specs/features`)"]
+    E --> G["Implementación de pruebas<br/>**/work-implement** (`docs/specs/current`)"]
     G --> I["Creación de PR<br/>**/pr-create**"]
     I --> J(["Entregable"])
     NOTE["ℹ️ pr-create ejecuta internamente<br/>quality-check + code-review + coverage-verify"]
@@ -33,8 +33,8 @@ flowchart TD
 3. **Condición — ¿discovery en `Ready`?**
    - **No** (lagunas: evidencia `⚠️ Sin evidencia`, features sin veredicto Aceptado, posibles bugs sin decisión): el flujo no crea features todavía. Pasa a **análisis humano**, que resuelve las lagunas o decide si un comportamiento dudoso se preserva o se trata como bug. Con esa información, se reintenta el discovery.
    - **Sí**: se crean los **Features** (`FT-XXX`) aceptados, con sus `AC-XXX` redactando el comportamiento **real** del código (nunca el deseado).
-4. **Casos de prueba** (`test-define`): por cada `FT-XXX` en `Ready`, genera los `TC-XXX` a partir de sus `AC-XXX`, guardados dentro de la propia carpeta del feature (`docs/specs/features/FT-XXX-{slug}/test-cases/`).
-5. **Implementación de pruebas** (`work-implement`, tipo **feature**, sobre `docs/specs/features`): **automatiza los `TC-XXX` documentados** de los `FT-XXX` — nunca escribe funcionalidad nueva. El código de producción solo se toca de forma correctiva y con decisión explícita del usuario. Si al automatizar aparece una discrepancia real entre el `TC-XXX` y el código (un posible bug), se detiene y se escala a `test-define` o al diagnóstico vía `work-research`.
+4. **Casos de prueba** (`test-define`): por cada `FT-XXX` en `Ready`, genera los `TC-XXX` a partir de sus `AC-XXX`, guardados dentro de la propia carpeta del feature (`docs/specs/current/FT-XXX-{slug}/test-cases/`).
+5. **Implementación de pruebas** (`work-implement`, tipo **feature**, sobre `docs/specs/current`): **automatiza los `TC-XXX` documentados** de los `FT-XXX` — nunca escribe funcionalidad nueva. El código de producción solo se toca de forma correctiva y con decisión explícita del usuario. Si al automatizar aparece una discrepancia real entre el `TC-XXX` y el código (un posible bug), se detiene y se escala a `test-define` o al diagnóstico vía `work-research`.
 6. **Cierre**: creación de Pull/Merge Request (`pr-create`) hacia el entregable. `pr-create` ejecuta **internamente** `quality-check`, `code-review` (calidad de las pruebas escritas, no su ejecución) y `coverage-verify` (cobertura funcional: cada `AC-XXX` del feature ↔ sus `TC-XXX` ↔ artefactos de prueba) — no son pasos aparte de este flujo. **Aquí no hay archivado:** la rama es `test/` sobre un `FT-XXX`, y un feature no se archiva — la automatización cierra una ejecución, no el artefacto.
 
 ## Cuándo no aplica este caso

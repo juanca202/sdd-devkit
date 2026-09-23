@@ -42,13 +42,13 @@ En caso de duda entre A y B: preguntar al usuario antes de continuar. No combina
 
 | Artefacto | Ruta |
 |-----------|------|
-| Tarea | `docs/specs/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` |
+| Tarea | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` |
 | ADR | `docs/adr/` |
 | Documentación técnica | `docs/architecture/[capability]/` — `README.md`, `models/`, `diagrams/` (propiedad de `design-define`; aquí solo se referencia) |
 | Glosario | `docs/glossary.md` |
-| US padre ya archivada (fallback) | `docs/archive/user-stories/US-XXX-[nombre-corto]/` |
+| US padre ya archivada (fallback) | `docs/specs/archived/user-stories/US-XXX-[nombre-corto]/` |
 
-> **US padre archivada.** Si la carpeta de la US no está en `docs/specs/user-stories/`, buscarla bajo `docs/archive/user-stories/` antes de darla por inexistente. Si está ahí, la historia **ya se cerró e integró**: **parar y avisar** en vez de añadirle tareas — retomarla exige desarchivarla, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> **US padre archivada.** Si la carpeta de la US no está en `docs/specs/changes/user-stories/`, buscarla bajo `docs/specs/archived/user-stories/` antes de darla por inexistente. Si está ahí, la historia **ya se cerró e integró**: **parar y avisar** en vez de añadirle tareas — retomarla exige desarchivarla, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
 
 ---
 
@@ -148,13 +148,13 @@ Una TK completa puede alcanzar `Estado: Ready` si cumple todas las condiciones d
    - **Observaciones**: solo si hay pendientes reales. Si no hay nada, **omitir la sección** (o una línea *Sin pendientes documentados* si el equipo lo exige). Con pendientes reales: `Estado: Draft`.
 3. **Documentación técnica y glosario**: si la TK requiere crear o actualizar especificaciones en `architecture/`, **delegar a `/design-define` vía subagente** (nunca editarlas desde este skill) y enlazar las referencias devueltas; glossary sí puede actualizarse aquí con entradas breves (no sustituye ADR ni technical-doc).
 4. **Verificar el checklist** antes de asignar `Estado: Ready`.
-5. **Handoff:** con todas las TK del alcance en `Ready`, aplicar antes `specification.testCases.mode` sobre la US padre (ver [`${PLUGIN_ROOT}/references/planning.md`](../../../references/planning.md)); después, si el usuario quiere implementar, **invocar `/work-implement`** (no implementar directamente desde este skill). Si otras siguen en `Draft`, listar cuáles completar antes.
+5. **Handoff:** con todas las TK del alcance en `Ready`, aplicar antes `specification.testCases.createMode` sobre la US padre (ver [`${PLUGIN_ROOT}/references/planning.md`](../../../references/planning.md)); después, si el usuario quiere implementar, **invocar `/work-implement`** (no implementar directamente desde este skill). Si otras siguen en `Draft`, listar cuáles completar antes.
 
 ---
 
 ## Flujo: Actualizar una TK existente
 
-1. **Identificar el archivo** — por número, nombre o título, dentro de la carpeta de su US. Si esa carpeta no está en `docs/specs/user-stories/`, buscarla bajo `docs/archive/user-stories/`: si está archivada, la historia y sus tareas ya se cerraron e integraron — **parar y avisar**, editarlas exige desarchivar primero y eso lo decide el usuario.
+1. **Identificar el archivo** — por número, nombre o título, dentro de la carpeta de su US. Si esa carpeta no está en `docs/specs/changes/user-stories/`, buscarla bajo `docs/specs/archived/user-stories/`: si está archivada, la historia y sus tareas ya se cerraron e integraron — **parar y avisar**, editarlas exige desarchivar primero y eso lo decide el usuario.
 2. **Leer el contenido actual** completo antes de editar.
 3. **Leer el `README.md` de la US y las demás TKs** para detectar solapamientos con los cambios propuestos.
 4. **Aplicar los cambios** solicitados. Reglas invariantes:
@@ -251,7 +251,7 @@ Aplica siempre que se planifiquen o secuencien **varias TK dentro de la misma US
 
 **Validación:**
 - [ ] Carpeta de la US existe con `README.md`
-- [ ] ID `TK-XXX` libre en la carpeta de la US realmente resuelta (nunca en una ruta activa dada por vacía sin comprobar `docs/archive/user-stories/`)
+- [ ] ID `TK-XXX` libre en la carpeta de la US realmente resuelta (nunca en una ruta activa dada por vacía sin comprobar `docs/specs/archived/user-stories/`)
 - [ ] Sin solapamiento de alcance con TKs existentes
 - [ ] Rama de trabajo actual verificada; si es una rama de implementación distinta de la propia US padre, se advirtió al usuario y se preguntó `Continuar` / `Detenerme aquí` antes de crear
 
@@ -269,7 +269,7 @@ Aplica siempre que se planifiquen o secuencien **varias TK dentro de la misma US
 - [ ] Nombre de archivo en kebab-case, secuencial por historia
 - [ ] Sin código de aplicación en el archivo
 - [ ] Sin párrafos instructivos de plantilla en el TK publicado
-- [ ] `specification.testCases.mode` aplicado sobre la **US padre** al cerrar: invocado, ofrecido o no mencionado según la política — y saltado si la US ya tenía `test-cases/` con algún `TC-XXX`
+- [ ] `specification.testCases.createMode` aplicado sobre la **US padre** al cerrar: invocado, ofrecido o no mencionado según la política — y saltado si la US ya tenía `test-cases/` con algún `TC-XXX`
 
 ---
 
@@ -349,7 +349,7 @@ Posición: **planificación** — entre `work-define` e `work-implement`.
 | **Entrada** | US con `Estado: Ready` y **Criterios de aceptación** (`AC-XXX`) en su `README.md`. Si la US está en Draft o no tiene `AC-XXX`: **bloquear** y devolver handoff a **`work-define`**. |
 | **Salida (modo B)** | Según la opción elegida en el paso 6: **Crear los planes** → `TK-XXX-*.md` completas (`Ready` las que cumplen el checklist, `Draft` las que conservan pendientes); **Crear stubs** → `TK-XXX-*.md` en `Draft`. En ambos casos, cobertura `AC-XXX` reportada al usuario. |
 | **Salida para implementar** | Cada TK del alcance acordado en **`Estado: Ready`**. Stubs en Draft **no** habilitan `work-implement`. |
-| **Siguiente paso** | Según `specification.testCases.mode`: **`/test-define`** sobre la US si corresponde y aún no tiene `TC-XXX`, y **`/work-implement`** — solo cuando US Ready **y** las TK a ejecutar están Ready. La implementación nunca se hace directamente desde `work-plan`. |
+| **Siguiente paso** | Según `specification.testCases.createMode`: **`/test-define`** sobre la US si corresponde y aún no tiene `TC-XXX`, y **`/work-implement`** — solo cuando US Ready **y** las TK a ejecutar están Ready. La implementación nunca se hace directamente desde `work-plan`. |
 | **Regreso desde define** | Cambio funcional en la US → releer `README.md` y actualizar TKs afectadas antes de continuar. |
 | **Regreso desde implement** | TK fuera de alcance o ambigüedad técnica → ajustar el TK aquí; no modificar el `README.md` de la US. Si el conflicto es funcional, escalar a **`work-define`**. |
 

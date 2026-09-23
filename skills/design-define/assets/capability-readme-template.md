@@ -67,7 +67,7 @@ el README lleva solo Propósito, Wireframes y Observaciones; design-define añad
 
 | Id | Pantalla | Tipo de solución | Origen | Estado de revisión |
 | -- | -------- | ---------------- | ------ | ------------------ |
-| [WF-001](wireframes/WF-001-{{slug}}.md) | {{nombre de la pantalla}} | {{Aplicación web / App nativa / App híbrida / Escritorio}} | {{[SRS-XXX](../../specs/requirements/SRS-XXX-[nombre-corto]/README.md) o [US-XXX](../../specs/user-stories/US-XXX-[nombre-corto]/README.md)}} | {{Pendiente / Revisado con cambios / Aprobado}} |
+| [WF-001](wireframes/WF-001-{{slug}}.md) | {{nombre de la pantalla}} | {{Aplicación web / App nativa / App híbrida / Escritorio}} | {{[SRS-XXX](../../specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md) o [US-XXX](../../specs/changes/user-stories/US-XXX-[nombre-corto]/README.md)}} | {{Pendiente / Revisado con cambios / Aprobado}} |
 
 ## Observaciones
 

@@ -83,7 +83,7 @@ operación #<método-ruta> cuando se cita un endpoint concreto, p. ej. apis/API-
 flows/FL-XXX-{slug}.md o diagrams/DG-XXX-{slug}.md.
 -->
 - **Diseño / prototipo:** {{enlace markdown al diseño o prototipo}}
-- **Wireframe:** {{[WF-XXX: pantalla](../../../architecture/[capability]/wireframes/WF-XXX-{slug}.md), uno por pantalla; omitir si la US no tiene UI}}
+- **Wireframe:** {{[WF-XXX: pantalla](../../../../architecture/[capability]/wireframes/WF-XXX-{slug}.md), uno por pantalla; omitir si la US no tiene UI}}
 - **Archivo local:** {{enlace markdown al archivo en assets/}}
 - {{añadir entradas adicionales o indicar «Ninguna por ahora»}}
 

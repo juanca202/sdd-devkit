@@ -19,7 +19,7 @@ responsabilidad de estos skills; eso lo define diseño visual más adelante.
 
 <!-- wireframe:review-status={{pending|revised|approved}} -->
 <!-- Marca oculta; claves y valores en inglés siempre, igual criterio que srs:status. -->
-**Origen:** [{{SRS-XXX: título | US-XXX: título}}]({{ruta relativa al README.md del artefacto de origen — p. ej. ../../../specs/requirements/SRS-XXX-[nombre-corto]/README.md o ../../../specs/user-stories/US-XXX-[nombre-corto]/README.md}})
+**Origen:** [{{SRS-XXX: título | US-XXX: título}}]({{ruta relativa al README.md del artefacto de origen — p. ej. ../../../specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md o ../../../specs/changes/user-stories/US-XXX-[nombre-corto]/README.md}})
 **Tipo de solución:** {{Aplicación web / App nativa (iOS) / App nativa (Android) / App híbrida / Aplicación de escritorio}} — {{responsiva | no responsiva | no aplica}}
 **Estado de revisión:** {{Pendiente | Revisado con cambios | Aprobado}}
 

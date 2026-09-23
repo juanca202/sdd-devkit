@@ -26,8 +26,8 @@ Antes de crear archivos, verificar las siguientes condiciones. Si alguna falla, 
 
 **¿Qué verificar?**
 
-- **Duplicado de ID:** si el usuario proporciona `US-XXX`, confirmar que esa carpeta no existe **ni en `docs/specs/user-stories/` ni en `docs/archive/user-stories/`**. Un ID archivado sigue ocupado: reutilizarlo dejaría dos historias distintas bajo el mismo identificador y volvería ambiguo todo lo que las referencia (ramas, commits, work items del tracker). Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
-- **Solapamiento de alcance:** revisar los títulos y descripciones de otras US —las de `docs/specs/user-stories/` **y las de `docs/archive/user-stories/`**— para detectar si el actor + valor + alcance ya está cubierto por una historia existente. Una US archivada es trabajo **ya entregado**: si el alcance coincide, redefinirlo es duplicarlo, y hay que decírselo al usuario.
+- **Duplicado de ID:** si el usuario proporciona `US-XXX`, confirmar que esa carpeta no existe **ni en `docs/specs/changes/user-stories/` ni en `docs/specs/archived/user-stories/`**. Un ID archivado sigue ocupado: reutilizarlo dejaría dos historias distintas bajo el mismo identificador y volvería ambiguo todo lo que las referencia (ramas, commits, work items del tracker). Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+- **Solapamiento de alcance:** revisar los títulos y descripciones de otras US —las de `docs/specs/changes/user-stories/` **y las de `docs/specs/archived/user-stories/`**— para detectar si el actor + valor + alcance ya está cubierto por una historia existente. Una US archivada es trabajo **ya entregado**: si el alcance coincide, redefinirlo es duplicarlo, y hay que decírselo al usuario.
 - **INVEST parcialmente valorable:** si la información recibida no permite valorar todas las dimensiones, la historia **sí puede crearse** pero con `Estado: Draft` y las lagunas documentadas en Observaciones. Solo es un bloqueante si el actor o el valor de negocio son completamente desconocidos.
 - **Rama de trabajo actual:** determinar la rama git activa (`git branch --show-current`). Si coincide con el patrón de rama de implementación de una US, un WI o una automatización de pruebas (`feature/US-XXX-*`, `feature/WI-XXX-*`, `fix/WI-XXX-*`, `chore/WI-XXX-*`, `refactor/WI-XXX-*`, `test/*`), crear la historia nueva ahí la mezclaría con ese trabajo en curso. No bloquea automáticamente — ver manejo específico abajo.
 
@@ -36,7 +36,7 @@ Antes de crear archivos, verificar las siguientes condiciones. Si alguna falla, 
 ```
 ⚠️ No es posible crear la historia todavía:
 - <razón concreta>
-- [US-XXX: Título](docs/specs/user-stories/US-XXX-nombre/README.md) — <razón del solapamiento, si aplica>
+- [US-XXX: Título](docs/specs/changes/user-stories/US-XXX-nombre/README.md) — <razón del solapamiento, si aplica>
 ```
 
 Sugerir al usuario: (a) ajustar el alcance, (b) actualizar la US existente, o (c) proporcionar la información faltante.
@@ -99,7 +99,7 @@ Aplica cuando una sola invocación va a producir **más de una** US: la descompo
 ## Flujo: Crear una historia nueva
 
 1. **Fijar el ID y nombre de carpeta**
-  - Usar el `US-XXX` indicado por el usuario o inferir el siguiente libre listando carpetas `US-*` **en `docs/specs/user-stories/` y en `docs/archive/user-stories/`**, tomando el mayor de las dos: archivar no libera el número.
+  - Usar el `US-XXX` indicado por el usuario o inferir el siguiente libre listando carpetas `US-*` **en `docs/specs/changes/user-stories/` y en `docs/specs/archived/user-stories/`**, tomando el mayor de las dos: archivar no libera el número.
   - Proponer el `nombre-corto` en kebab-case; validar con el usuario si hay ambigüedad.
   - Crear la carpeta `US-XXX-[nombre-corto]/` y `assets/` si habrá archivos vinculados.
 2. **Escribir el** `README.md` usando `assets/user-story-template.md` como molde:
@@ -134,12 +134,12 @@ Aplica cuando una sola invocación va a producir **más de una** US: la descompo
     - Una pregunta por laguna, con opciones cuando la respuesta admita categorías (formato, prioridad, dependencias enumerables, story points Fibonacci); entrada libre solo para campos narrativos (refinamiento del valor, reglas nuevas, criterios verificables).
     - Respetar el máximo de tres preguntas por bloque; si hay más lagunas, encadenar tandas hasta agotarlas o hasta que el usuario indique que prefiere mantener el resto como Draft.
     - Tras recibir respuestas, actualizar las secciones afectadas del `README.md`, revalidar los checklists de INVEST y DoR, recalcular los indicadores de la cabecera, y promover a `Estado: Ready` solo si quedan completos. Si alguna laguna sigue abierta, mantener `Draft` y reflejar el residual en Observaciones.
-  - Si la US queda en **Ready**, resolver los casos de prueba según `specification.testCases.mode` (ver [`${PLUGIN_ROOT}/references/planning.md`](../../../references/planning.md)) y sugerir planificar tareas:
+  - Si la US queda en **Ready**, resolver los casos de prueba según `specification.testCases.createMode` (ver [`${PLUGIN_ROOT}/references/planning.md`](../../../references/planning.md)) y sugerir planificar tareas:
     - **`ask`** (o sin `settings.json`, comportamiento por defecto): sugerir explícitamente al usuario dos próximos pasos posibles: **[Definir casos de prueba]** o **[Planificar tareas]**. Si el usuario acepta definir los casos de prueba: **invocar** `/test-define` pasando el contexto de la US; no crear los `TC-XXX` directamente desde este skill. Su formato y reglas residen en ese skill.
     - **`always`**: **invocar** `/test-define` directamente, sin preguntar, pasando el contexto de la US. Ofrecer igual el paso de planificar tareas.
     - **`never`**: no sugerir ni invocar `/test-define`. Ofrecer solo el paso de planificar tareas.
     - En cualquiera de los tres casos, si el usuario pide crear las tareas en continuidad o en el mismo turno: **invocar** `/work-plan` **obligatoriamente**; no crear tareas directamente desde este skill. El conocimiento y las reglas de formato de los `TK-XXX` residen en ese skill.
-    - **Repositorios sin harness:** por cada repositorio del campo **Repositorios:** de la cabecera, verificar si tiene `AGENTS.md` y `.sdd-devkit/settings.json` en su raíz — un repositorio nuevo (sin código todavía) nunca los tiene; uno existente se verifica si es accesible localmente, y si no lo es, preguntar directamente al usuario. Si **alguno** carece del harness, agregar **`/arch-init`** como opción adicional en la misma pregunta de próximos pasos (junto a `/test-define`/`/work-plan`, cualquiera sea la rama de `testCases.mode` aplicada) — no es excluyente ni bloquea el handoff habitual, es una sugerencia más.
+    - **Repositorios sin harness:** por cada repositorio del campo **Repositorios:** de la cabecera, verificar si tiene `AGENTS.md` y `.sdd-devkit/settings.json` en su raíz — un repositorio nuevo (sin código todavía) nunca los tiene; uno existente se verifica si es accesible localmente, y si no lo es, preguntar directamente al usuario. Si **alguno** carece del harness, agregar **`/arch-init`** como opción adicional en la misma pregunta de próximos pasos (junto a `/test-define`/`/work-plan`, cualquiera sea la rama de `testCases.createMode` aplicada) — no es excluyente ni bloquea el handoff habitual, es una sugerencia más.
 
 ---
 
@@ -147,7 +147,7 @@ Aplica cuando una sola invocación va a producir **más de una** US: la descompo
 
 ## Flujo: Actualizar una historia existente
 
-1. **Identificar el archivo** — por ID, nombre-corto o título. Si no aparece en `docs/specs/user-stories/`, buscarlo bajo `docs/archive/user-stories/` antes de darlo por inexistente. **Si está archivado, parar y avisar:** la historia ya se cerró e integró, y modificarla exige desarchivarla primero —mover su carpeta de vuelta—, decisión que es del usuario. **Nunca** crear una carpeta nueva en la ruta activa por no haber encontrado la historia.
+1. **Identificar el archivo** — por ID, nombre-corto o título. Si no aparece en `docs/specs/changes/user-stories/`, buscarlo bajo `docs/specs/archived/user-stories/` antes de darlo por inexistente. **Si está archivado, parar y avisar:** la historia ya se cerró e integró, y modificarla exige desarchivarla primero —mover su carpeta de vuelta—, decisión que es del usuario. **Nunca** crear una carpeta nueva en la ruta activa por no haber encontrado la historia.
 2. **Leer el** `README.md` **actual** completo antes de editar.
 3. **Aplicar los cambios** solicitados por el usuario. Reglas invariantes:
   - Si el cambio afecta criterios de aceptación: **mantener siempre los ids `AC-XXX` existentes**, también al reordenar o eliminar (ver la regla de inmutabilidad arriba); los nuevos toman el siguiente secuencial libre. Conservar o corregir la categoría entre paréntesis.
@@ -285,7 +285,7 @@ Posición: **inicio** del pipeline `work-define` → `work-plan` → `work-imple
 | **Origen: requirement-refine** | Si el lote proviene de un `SRS-XXX`, cada US enlaza su SRS de origen en la línea `Requerimiento:` de su cabecera, y al terminar de crear las US se actualiza la tabla **Historias de usuario derivadas** (sección 16) del `README.md` del SRS con cada `US-XXX`, su título y los `FR-XXX` que cubre — es la única escritura de este skill sobre un SRS; el resto del documento queda de solo lectura. |
 | **Salida mínima (creación)** | Carpeta `US-XXX-[nombre-corto]/README.md` con actor y valor de negocio; puede quedar en `Estado: Draft` con lagunas en Observaciones.                                                                                                                                                        |
 | **Salida para continuar**    | `Estado: Ready` en el `README.md`; INVEST y DoR completos; al menos un `AC-XXX`; Observaciones sin pendientes abiertos.                                                                                                                                                                      |
-| **Siguiente paso**           | Con la US en `Ready`: `test-define` — según `specification.testCases.mode`, invocar `/test-define` directo (`always`), solo si el usuario acepta (`ask`, por defecto) o no ofrecerlo (`never`) — no crear `TC-XXX` desde este skill; y `work-plan` — invocar `/work-plan` para las tareas (o continuidad explícita del usuario), sin condicionar a `specification.testCases.mode`. No crear `TK-XXX` desde este skill. |
+| **Siguiente paso**           | Con la US en `Ready`: `test-define` — según `specification.testCases.createMode`, invocar `/test-define` directo (`always`), solo si el usuario acepta (`ask`, por defecto) o no ofrecerlo (`never`) — no crear `TC-XXX` desde este skill; y `work-plan` — invocar `/work-plan` para las tareas (o continuidad explícita del usuario), sin condicionar a `specification.testCases.createMode`. No crear `TK-XXX` desde este skill. |
 | **Repositorios sin harness**  | Si algún repositorio del campo **Repositorios:** de la cabecera (nuevo, o existente sin `AGENTS.md`/`.sdd-devkit/settings.json`) todavía no tiene el harness inicializado, ofrecer también **`/arch-init`** junto a `/test-define`/`/work-plan` en la misma pregunta de cierre — opción adicional, no bloquea ni reemplaza el handoff habitual. |
 | **Si queda en Draft**        | No handoff a plan ni implement. Cerrar lagunas con preguntas estructuradas o mantener Draft documentado.                                                                                                                                                                                     |
 | **Regreso a requirement-refine** | Si al descomponer un `SRS-XXX` aparece una laguna funcional que el SRS no cubría, el usuario decide dónde cerrarla: actualizar el SRS (volviendo a `/requirement-refine`) o resolverla directamente en la US con las preguntas de este skill — este skill no impone cuál, pero nunca la resuelve inventando; si se cierra solo en la US, anotarlo en sus Observaciones para que el SRS no parezca la fuente completa. |

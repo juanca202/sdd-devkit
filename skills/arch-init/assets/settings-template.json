@@ -14,7 +14,8 @@
     "workTree": "ask",
     "maxParallel": 3,
     "archiveMode": "ask",
-    "handoff": "ask"
+    "handoff": "ask",
+    "target": "source"
   },
   "verification": {
     "qualityCheck": {

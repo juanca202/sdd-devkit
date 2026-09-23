@@ -139,6 +139,14 @@
             "always",
             "ask"
           ]
+        },
+        "target": {
+          "type": "string",
+          "description": "Dónde vive el código bajo prueba. source (por defecto si se omite): en este repositorio, flujo habitual. external: este repositorio contiene solo pruebas contra un sistema desplegado cuyo código no está aquí; work-implement aplica el modo externo (solo tipos TC/FT, sin corrección de código de producción, URLs y credenciales desde .env, registro en test-cases/automation.md en lugar de progress.md).",
+          "enum": [
+            "source",
+            "external"
+          ]
         }
       }
     },

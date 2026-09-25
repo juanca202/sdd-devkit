@@ -99,14 +99,14 @@ Resolver la intención por este orden, quedándose con la primera fuente disponi
 
 | Fuente | Cómo obtenerla |
 |--------|----------------|
-| **Artefacto del plugin** | `US-XXX` / `WI-XXX` / `FT-XXX` derivado del prefijo de rama + ID (`feature/US-042-…`, `fix/WI-007-…`, `test/FT-003-…`); leer su `README.md` y sus criterios de aceptación. Si la carpeta no está en la ruta activa, buscarla bajo `docs/specs/archived/` antes de descartarla (ver la regla siguiente). |
+| **Artefacto del plugin** | `US-XXX` / `WI-XXX` / `FT-XXX` derivado del prefijo de rama + ID (`feature/US-042-…`, `fix/WI-007-…`, `test/FT-003-…`); leer su `README.md` y sus criterios de aceptación. Si la carpeta no está en la ruta activa, buscarla bajo `<archivedPath>/` antes de descartarla (ver la regla siguiente). |
 | **Cualquier otro documento de especificación** | La ruta o nombre que indique el usuario, o el que la rama/PR referencie: un spec suelto en el repo, un documento de otra herramienta o formato. Leerlo completo antes de revisar. |
 | **Ticket de un tracker externo** | El ID en la rama, el commit o el título del PR (`PROJ-1234`). Si el contenido no es accesible desde aquí, **pedírselo al usuario**; no inventarlo. |
 | **Sin documento** | Deducirla de la rama, los mensajes de commit y la descripción del PR. Es una base más débil: decirlo en el informe. |
 
 Reglas:
 
-- **Un artefacto archivado sigue siendo la fuente de intención.** `work-integrate` y `pr-create` pueden mover la carpeta de un trabajo cerrado a `docs/specs/archived/user-stories/` o `docs/specs/archived/work-items/`. Ocurre de forma rutinaria al revisar una rama cuyo archivado ya se commiteó, así que **buscar ahí antes de bajar a la siguiente fuente**: dar por «sin documento» un artefacto que sí existe degradaría la dimensión 1 a `INCOMPLETE` sin motivo. Solo se lee. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+- **Un artefacto archivado sigue siendo la fuente de intención.** La carpeta de un trabajo puede estar bajo `<archivedPath>/user-stories/` o `<archivedPath>/work-items/` si el usuario la archivó con el modificador `archive` del skill que la produjo. Ocurre de forma rutinaria al revisar una rama cuyo archivado ya se commiteó, así que **buscar ahí antes de bajar a la siguiente fuente**: dar por «sin documento» un artefacto que sí existe degradaría la dimensión 1 a `INCOMPLETE` sin motivo. Solo se lee. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo).
 - **La ausencia de artefacto no bloquea la revisión.** Las dimensiones 2 y 3 (arquitectura/diseño y feedback) se evalúan igual sobre cualquier diff, en cualquier repo, sin `docs/specs/` ni convención de ramas.
 - **Sí condiciona la dimensión 1.** Si la intención no es determinable y el usuario no la aporta, no inventarla ni inferirla del propio código —eso es circular, el código siempre "cumple" consigo mismo—: marcar esa dimensión como `NOT_ASSESSED` y emitir **`INCOMPLETE`**.
 - **Los criterios se citan verbatim.** Sea cual sea el formato del identificador (`AC-012`, `1.3`, `R-3`, `CA-07`), se usa **tal como está escrito** en el artefacto, sin normalizar — mismo contrato que `test-define` y `coverage-verify`.
@@ -244,7 +244,7 @@ Usar este skill **solo cuando se le invoca explícitamente** (ni de forma proact
 |---|---|---|---|
 | Pregunta que responde | ¿El código corre y cumple las reglas? | ¿Resuelve el problema correcto y está bien diseñado? | ¿Cada criterio de aceptación está probado? |
 | Qué hace | Ejecuta tipado, linter, validaciones de arquitectura, unit, coverage, build, e2e, sonar y las suites del estándar de testing | Analiza el diff en intención, arquitectura/diseño y feedback | Cruza criterios ↔ casos de prueba ↔ artefactos de prueba |
-| Artefactos | `docs/audits/quality-check.md`, `.sdd-devkit/quality-check-run.json` | `docs/audits/code-review.md` | `coverage.md` del trabajo |
+| Artefactos | `docs/audits/quality-check.md`, `.sdd-devkit/quality-check-run.json` | `docs/audits/code-review.md` | `criteria-coverage.md` del trabajo |
 | Veredicto | Propio, solo del plano automatizado | Propio, solo del plano cualitativo | Propio, solo de la cobertura funcional |
 
 Este skill **no ejecuta pruebas ni checks** y **no consume** `quality-check-run.json`: si el usuario pide correr algo, redirigirlo a `quality-check`. El orden recomendado en el cierre es `quality-check` → `code-review` → `coverage-verify` (revisar diseño sobre un código que ni compila suele ser trabajo perdido; y `coverage-verify` va tras `quality-check` para reutilizar su corrida de pruebas), pero es una recomendación del orquestador, no una dependencia dura.
@@ -255,7 +255,7 @@ Es un proceso **posterior a la implementación**: no forma parte de `work-implem
 
 ### Fingerprint canónico de la tubería
 
-Las **tres** puertas del cierre usan el **mismo** fingerprint canónico como clave de frescura, con el mismo nombre de variable (`FINGERPRINT`) y la misma receta —que vive en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify)—, cada una sobre su propio artefacto: `quality-check-run.json` en `quality-check`, `coverage.md` en `coverage-verify` y `docs/audits/code-review.md` aquí. Este skill le añade un segundo componente, el commit de la **rama base**, porque su unidad de trabajo es un diff con dos lados (ver [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia)); el `FINGERPRINT` en sí **no** cambia de definición.
+Las **tres** puertas del cierre usan el **mismo** fingerprint canónico como clave de frescura, con el mismo nombre de variable (`FINGERPRINT`) y la misma receta —que vive en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify)—, cada una sobre su propio artefacto: `quality-check-run.json` en `quality-check`, `criteria-coverage.md` en `coverage-verify` y `docs/audits/code-review.md` aquí. Este skill le añade un segundo componente, el commit de la **rama base**, porque su unidad de trabajo es un diff con dos lados (ver [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia)); el `FINGERPRINT` en sí **no** cambia de definición.
 
 Que la receta excluya **toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`** es lo que permite que escribir `code-review.md` no desplace la clave de frescura de ninguna de las tres. La contrapartida —que ni los criterios de aceptación de `docs/specs/` ni ningún otro `.md` del diff cuenten para la frescura de este informe— está en [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia).
 

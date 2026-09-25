@@ -9,12 +9,12 @@ Referencias del skill **work-integrate**. Cubren los dos tipos de trabajo (`US-X
 **Ejemplo 1 — Historia de usuario (camino feliz)**
 
 - *Entrada:* Rama `feature/US-042-exportacion-csv`, working tree limpio, `progress.md` con tres TK todas en `Done`, reflog indica `Created from develop`.
-- *Salida:* `quality-check` → `APPROVED` (persiste `.sdd-devkit/quality-check-run.json`); `code-review` → `APPROVED`; `coverage-verify` → `APPROVED` (reutiliza ese `quality-check-run.json`, sin re-ejecutar pruebas); se **pregunta si archivar**, mostrando `docs/specs/changes/user-stories/US-042-exportacion-csv/` → `docs/specs/archived/user-stories/` más `RS-003-formatos-csv` (suelta, sin referencias activas) → el usuario confirma → `git mv` de ambas y `git-commit` recoge el renombrado junto con los artefactos de las puertas; `git checkout develop` → `git merge --no-ff --no-commit feature/US-042-exportacion-csv` → `git rm` de `docs/audits/quality-check.md` y `docs/audits/code-review.md` → `git commit -m "Merge US-042: exportacion-csv"` → reporte: «Merged 7 commits de `feature/US-042-exportacion-csv` → `develop`. Commit de merge: `a1b2c3d`. HEAD en `develop`, working tree limpio. Los informes de las puertas quedaron en la rama del trabajo, no se integraron. La rama no fue borrada ni se hizo push.»
+- *Salida:* `quality-check` → `APPROVED` (persiste `.sdd-devkit/quality-check-run.json`); `code-review` → `APPROVED`; `coverage-verify` → `APPROVED` (reutiliza ese `quality-check-run.json`, sin re-ejecutar pruebas); `git checkout develop` → `git merge --no-ff --no-commit feature/US-042-exportacion-csv` → `git rm` de `docs/audits/quality-check.md` y `docs/audits/code-review.md` → `git commit -m "Merge US-042: exportacion-csv"` → reporte: «Merged 7 commits de `feature/US-042-exportacion-csv` → `develop`. Commit de merge: `a1b2c3d`. HEAD en `develop`, working tree limpio. Los informes de las puertas quedaron en la rama del trabajo, no se integraron. La rama no fue borrada ni se hizo push.»
 
 **Ejemplo 2 — Work item (progress.md por carpeta del WI)**
 
-- *Entrada:* Rama `fix/WI-007-fuga-memoria`, working tree limpio, `docs/specs/changes/work-items/WI-007-fuga-memoria/progress.md` con todas las unidades del WI en `Done`, reflog indica `Created from main`.
-- *Salida:* Puertas aprobadas → se pregunta si archivar y el usuario confirma → `docs/specs/archived/work-items/WI-007-fuga-memoria/` (el `RS-011` que enlaza se queda: `US-051`, aún activa, también lo referencia) → `git checkout main` → `git merge --no-ff --no-commit fix/WI-007-fuga-memoria` → `git rm` de los dos informes de `docs/audits/` → `git commit -m "Merge WI-007: fuga-memoria"` → reporte con commits integrados y hash de merge.
+- *Entrada:* Rama `fix/WI-007-fuga-memoria`, working tree limpio, `<changesPath>/work-items/WI-007-fuga-memoria/progress.md` con todas las unidades del WI en `Done`, reflog indica `Created from main`.
+- *Salida:* Puertas aprobadas → `git checkout main` → `git merge --no-ff --no-commit fix/WI-007-fuga-memoria` → `git rm` de los dos informes de `docs/audits/` → `git commit -m "Merge WI-007: fuga-memoria"` → reporte con commits integrados y hash de merge.
 
 **Ejemplo 3 — Unidad pendiente**
 
@@ -53,15 +53,10 @@ Referencias del skill **work-integrate**. Cubren los dos tipos de trabajo (`US-X
 - *Entrada:* Rama `feature/US-088-...`, working tree limpio, todas las TK en `Done`, `quality-check` y `code-review` → `APPROVED`.
 - *Comportamiento:* `coverage-verify` devuelve `REJECTED` (criterio `AC-003` sin prueba que lo cubra). Sin operaciones git: se reporta el criterio faltante y se pide cubrirlo (vía `work-implement`) antes de reintentar el submit. No se mergea.
 
-**Ejemplo 9 — El usuario declina el archivado**
+**Ejemplo 9 — El usuario pide archivar al cerrar**
 
-- *Entrada:* Rama `feature/US-061-…`, todo en `Done`, las tres puertas en `APPROVED`, delta contra `develop` = 4.
-- *Comportamiento:* El merge (paso 10) ya está hecho. El paso 11 marca el `progress.md` de la US en `Done`, muestra `docs/specs/changes/user-stories/US-061-…/` → `docs/specs/archived/user-stories/` y pregunta. El usuario responde **No archivar** (prefiere dejarlo visible hasta cerrar el épico). No se ejecuta ningún `git mv`: el commit de cierre en la rama base lleva solo el `progress.md` en `Done`. El reporte final incluye «📦 Archivado: omitido — `US-061` se queda en `docs/specs/changes/user-stories/` (no confirmado por el usuario).» **El merge no dependía de esto, y no se vuelve a preguntar.**
-
-**Ejemplo 10 — Cierre desatendido, sin nadie que confirme**
-
-- *Entrada:* La misma situación, en una ejecución programada sin canal de respuesta.
-- *Comportamiento:* No se puede preguntar, así que **no se archiva** — ante la ausencia de respuesta se toma la opción que no mueve nada. El merge se completa igual y el reporte lo dice: «📦 Archivado: omitido — sin canal de respuesta para confirmar.» El archivado queda pendiente para una corrida interactiva.
+- *Entrada:* Rama `feature/US-061-…`, todo en `Done`, las tres puertas en `APPROVED`; al final el usuario dice «y archívala».
+- *Comportamiento:* El merge y el commit de cierre se completan igual. El skill **no mueve nada**: informa que el archivado es del skill que produjo el artefacto y sugiere `/work-define US-061 archive`, que mostrará el parte de estado y pedirá confirmación.
 
 ---
 
@@ -71,13 +66,8 @@ Referencias del skill **work-integrate**. Cubren los dos tipos de trabajo (`US-X
 - **Correr este skill sobre una rama que ya se integró por un PR en la plataforma.** El delta contra la base es `0`, git responde *Already up to date*, y seguir adelante crea un commit que no es un merge y que solo borra los dos informes. El paso 7 lo corta antes de commitear nada: nada se mueve ni se commitea en una rama que solo había que dejar en paz.
 - Encadenar `pr-create` (PR de implementación) **y** este skill sobre el mismo trabajo: son rutas de integración alternativas, no fases sucesivas.
 - Hacer merge sin verificar `progress.md` o ignorando unidades no `Done`.
-- **Archivar antes de que pasen las tres puertas**, o antes de que `coverage-verify` escriba su `coverage.md` dentro de la carpeta del trabajo.
-- **Archivar después del merge**, dejando el movimiento en la rama base como un cambio suelto en vez de integrarlo con el resto del trabajo.
-- **Archivar en una rama `test/`** —incluidas `test/US-XXX` y `test/WI-XXX`—: la ejecución cierra unos `TC-XXX`, no el artefacto, y el paso 4 ni siquiera verificó las unidades funcionales del `progress.md`.
-- **Archivar sin preguntar**, o dar por supuesta la confirmación porque las puertas pasaron: el archivado se confirma explícitamente, mostrando antes qué se movería.
-- **Tratar un «no archivar» como un bloqueo del merge**: el trabajo se integra igual y la omisión se anota en el reporte.
-- **Archivar un `RS-XXX` suelto** sin comprobar antes que ningún artefacto activo lo referencia; o usar `mv` en vez de `git mv` y perder la detección de *rename*.
-- Buscar el `progress.md` de un WI en un archivo compartido `docs/specs/changes/work-items/progress.md`; cada WI tiene su propio `progress.md` dentro de su carpeta `WI-XXX-[kebab-case]/`.
+- **Archivar u ofrecer archivar desde este skill**: el archivado no forma parte del cierre; lo pide el usuario, tras su revisión, al skill que produjo el artefacto.
+- Buscar el `progress.md` de un WI en un archivo compartido `<changesPath>/work-items/progress.md`; cada WI tiene su propio `progress.md` dentro de su carpeta `WI-XXX-[kebab-case]/`.
 - Hacer merge sin haber ejecutado las **tres** puertas de cierre (`quality-check`, `code-review`, `coverage-verify`). En particular, `quality-check` y `code-review` son independientes: un `REJECTED` o `INCOMPLETE` en cualquiera de los dos bloquea el merge, que solo procede con `APPROVED` en ambos.
 - Unificar ambas puertas en una sola invocación o dar por hecha una a partir del veredicto de la otra — son skills independientes con veredictos propios.
 - Hacer merge sin haber ejecutado `coverage-verify`, con veredicto `REJECTED`, o corriéndolo **antes** de `quality-check` (perdería la reutilización de `quality-check-run.json`) — va después de `quality-check` y solo procede con `APPROVED` / `APPROVED_WITH_NOTES`.

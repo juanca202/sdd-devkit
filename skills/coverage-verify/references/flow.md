@@ -10,7 +10,7 @@ Referencia detallada del skill `coverage-verify`. El `SKILL.md` mantiene el resu
 
 Antes de trabajar, evitar regenerar si nada cambió (ver [Reutilización del reporte](../SKILL.md#reutilización-del-reporte-idempotencia)).
 
-1. Resolver la ubicación del trabajo, su carpeta (`$ARTEFACTO`) y su `coverage.md` (`…/US-XXX-*/coverage.md`, `…/WI-XXX-*/coverage.md`, `docs/specs/current/FT-XXX-*/coverage.md` o, para cualquier otro artefacto, `coverage.md` junto al artefacto).
+1. Resolver la ubicación del trabajo, su carpeta (`$ARTEFACTO`) y su `criteria-coverage.md` (`…/US-XXX-*/criteria-coverage.md`, `…/WI-XXX-*/criteria-coverage.md`, `<currentPath>/FT-XXX-*/criteria-coverage.md` o, para cualquier otro artefacto, `criteria-coverage.md` junto al artefacto).
 2. **Calcular las dos claves. Siempre**, exista o no reporte previo: el Paso 7 las necesita para grabar la marca de pie, también en la primera validación.
    `bash
    ROOT=$( git rev-parse --show-toplevel )
@@ -24,7 +24,7 @@ Antes de trabajar, evitar regenerar si nada cambió (ver [Reutilización del rep
                     git -C "$ROOT" status --porcelain -uall -- "${EXC[@]}"; \
                     git -C "$ROOT" diff                     -- "${EXC[@]}"; \
                   } | git hash-object --stdin )
-   NO_REPORT=":(exclude)${ARTEFACTO%/}/coverage.md"
+   NO_REPORT=":(exclude)${ARTEFACTO%/}/criteria-coverage.md"
    SPEC_FINGERPRINT=$( { git -C "$ROOT" ls-files -s              -- "$ARTEFACTO" "$NO_REPORT"; \
                          git -C "$ROOT" status --porcelain -uall -- "$ARTEFACTO" "$NO_REPORT"; \
                          git -C "$ROOT" diff                     -- "$ARTEFACTO" "$NO_REPORT"; \
@@ -32,10 +32,10 @@ Antes de trabajar, evitar regenerar si nada cambió (ver [Reutilización del rep
    `
    El primero cubre **código y tests** (excluye toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`; es **copia literal** de la receta canónica de [`quality-check`](../../quality-check/references/execution.md#fingerprint-canónico), que es la única fuente de verdad — si cambia allí, cambia aquí). El segundo cubre **los criterios y los `TC-XXX`** de este artefacto, que el primero deja fuera por vivir bajo `docs/specs/`.
 
-   > **`$NO_REPORT` es lo que hace que la idempotencia funcione.** El `coverage.md` vive **dentro** de `$ARTEFACTO`, así que sin excluirlo el Paso 7 desplazaría el `SPEC_FINGERPRINT` **al escribir el propio reporte**: el hash grabado en la marca de pie sería el de *antes* de escribir, nunca coincidiría en la corrida siguiente, y el Paso 0 regeneraría siempre. La clave cubre las **entradas** del reporte (criterios y `TC-XXX`), no su salida — el mismo motivo por el que el `FINGERPRINT` lo excluye.
+   > **`$NO_REPORT` es lo que hace que la idempotencia funcione.** El `criteria-coverage.md` vive **dentro** de `$ARTEFACTO`, así que sin excluirlo el Paso 7 desplazaría el `SPEC_FINGERPRINT` **al escribir el propio reporte**: el hash grabado en la marca de pie sería el de *antes* de escribir, nunca coincidiría en la corrida siguiente, y el Paso 0 regeneraría siempre. La clave cubre las **entradas** del reporte (criterios y `TC-XXX`), no su salida — el mismo motivo por el que el `FINGERPRINT` lo excluye.
    >
-   > **La exclusión es una ruta literal, no un glob — y la diferencia no es estética.** Un `':(exclude,glob)**/coverage.md'` **no** funciona aquí: combinado con el pathspec positivo `"$ARTEFACTO"`, git excluye **todo** y las tres órdenes devuelven vacío. La clave pasaría a ser el hash del blob vacío — constante —, con lo que la idempotencia se dispararía **siempre** y editar un criterio nunca invalidaría el reporte: peor que no excluir nada. (El `EXC` del `FINGERPRINT` sí usa globs porque ahí **no hay pathspec positivo**: solo exclusiones sobre todo el árbol.) Por eso `NO_REPORT` se construye interpolando `$ARTEFACTO`. Si el artefacto es un **archivo suelto**, el reporte va a su lado y no dentro, así que la exclusión no casa con nada y es inocua.
-3. Si el `coverage.md` **no existe** → no hay caché; continuar en el Paso 1.
+   > **La exclusión es una ruta literal, no un glob — y la diferencia no es estética.** Un `':(exclude,glob)**/criteria-coverage.md'` **no** funciona aquí: combinado con el pathspec positivo `"$ARTEFACTO"`, git excluye **todo** y las tres órdenes devuelven vacío. La clave pasaría a ser el hash del blob vacío — constante —, con lo que la idempotencia se dispararía **siempre** y editar un criterio nunca invalidaría el reporte: peor que no excluir nada. (El `EXC` del `FINGERPRINT` sí usa globs porque ahí **no hay pathspec positivo**: solo exclusiones sobre todo el árbol.) Por eso `NO_REPORT` se construye interpolando `$ARTEFACTO`. Si el artefacto es un **archivo suelto**, el reporte va a su lado y no dentro, así que la exclusión no casa con nada y es inocua.
+3. Si el `criteria-coverage.md` **no existe** → no hay caché; continuar en el Paso 1.
 4. Si **existe**, leer su marca de pie `<!-- coverage-verify:verdict=<canónico> · fingerprint=<hash> · spec=<hash> · generated=YYYY-MM-DD -->` y decidir:
    - **Coinciden los dos hashes**, el reporte **no** registra ejecución fallida, y el usuario **no** pasó `revalidate` → **no regenerar**: devolver el veredicto y el resumen del reporte existente, indicando que no hubo cambios desde `{{generated}}`. No reescribir el archivo ni delegar en `quality-check`. Fin.
    - **Difiere alguno**, falta la marca o el campo `spec=`, el reporte trae filas en `NOT_RUN` por una delegación que no se pudo hacer, o el usuario pide `revalidate` → continuar el flujo completo (Pasos 1-7).
@@ -45,12 +45,12 @@ Antes de trabajar, evitar regenerar si nada cambió (ver [Reutilización del rep
 ### Paso 1 — Localizar y leer el trabajo
 
 1. Resolver el tipo y la ubicación del trabajo:
-   - **US:** `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/README.md`.
-   - **WI:** `docs/specs/changes/work-items/WI-XXX-[kebab]/README.md`.
-   - **FT:** `docs/specs/current/FT-XXX-[slug]/README.md` (registro de funcionalidad ya implementada —inferida de código legacy o documentada como existente—; su cobertura responde si esa funcionalidad ya existente tiene pruebas).
+   - **US:** `<changesPath>/user-stories/US-XXX-[nombre-corto]/README.md`.
+   - **WI:** `<changesPath>/work-items/WI-XXX-[kebab]/README.md`.
+   - **FT:** `<currentPath>/FT-XXX-[slug]/README.md` (registro de funcionalidad ya implementada —inferida de código legacy o documentada como existente—; su cobertura responde si esa funcionalidad ya existente tiene pruebas).
    - **Cualquier otro artefacto:** la ruta que indique el usuario (buscarla en el repo si solo da un nombre). Si hay varios candidatos o la ruta no es clara, **preguntar**; no adivinar.
 
-   > **Si no está en la ruta activa, buscar en `docs/specs/archived/`** (`archive/user-stories/`, `archive/work-items/`) antes de darlo por inexistente: el trabajo pudo cerrarse e integrarse ya. Un artefacto archivado se traza igual —solo se lee— y el `coverage.md` del Paso 7 se escribe **junto a él**, en su ruta de archive, no en la activa. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+   > **Si no está en la ruta activa, buscar en `<archivedPath>/`** (`user-stories/`, `work-items/`) antes de darlo por inexistente: el usuario pudo archivarlo con el modificador `archive` del skill que lo produjo. Un artefacto archivado se traza igual —solo se lee— y el `criteria-coverage.md` del Paso 7 se escribe **junto a él**, en su ruta de archive, no en la activa. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 2. Leer el documento y extraer **todos los criterios de aceptación** con su texto y su **identificador verbatim** — el formato es el que use el artefacto (`AC-012`, `AC-1`, `1.3`, `R-3`, `CA-07`…). **Nunca normalizarlo**: el identificador debe poder buscarse literalmente en el artefacto y en los TCs. Si algún criterio no tiene identificador, bloquear (ver «Cuándo bloquear» en `SKILL.md`).
 3. Si no existe la sección de criterios o no hay criterios explícitos, **parar** y reportar (ver «Cuándo bloquear» en `SKILL.md`). No continuar con supuestos.
@@ -148,7 +148,7 @@ ejecución) y los mapea a los criterios.
 
 ### Paso 5 — Redactar el reporte
 
-Usar la plantilla `assets/coverage-template.md` (leerla antes de redactar). Sustituir cada `{{…}}` por datos verificables; el reporte publicado no debe conservar placeholders ni **ninguno** de los bloques de comentario de instrucciones (pero **sí** conserva la marca de pie con el fingerprint, ver Paso 7).
+Usar la plantilla `assets/criteria-coverage-template.md` (leerla antes de redactar). Sustituir cada `{{…}}` por datos verificables; el reporte publicado no debe conservar placeholders ni **ninguno** de los bloques de comentario de instrucciones (pero **sí** conserva la marca de pie con el fingerprint, ver Paso 7).
 
 La plantilla tiene cinco partes más la marca de pie del fingerprint (Paso 7). Ninguna es opcional salvo «Observaciones y pendientes»:
 
@@ -201,12 +201,12 @@ Aplicar la tabla de «Veredicto» (en `SKILL.md`) sobre el conjunto de criterios
 ### Paso 7 — Entregar y guardar el reporte
 
 1. Guardar el reporte **dentro de la carpeta del artefacto tal como se resolvió en el Paso 1** —activa o archivada— (sobrescribir si ya existe, salvo que el usuario pida conservar histórico):
-   - **US:** `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/coverage.md`, o `docs/specs/archived/user-stories/US-XXX-[nombre-corto]/coverage.md` si la US está archivada.
-   - **WI:** `docs/specs/changes/work-items/WI-XXX-[kebab]/coverage.md` (dentro de la carpeta del WI), o su equivalente bajo `docs/specs/archived/work-items/`.
-   - **FT:** `docs/specs/current/FT-XXX-[slug]/coverage.md` (dentro de la carpeta del feature; los features no se archivan).
-   - **Cualquier otro artefacto:** `coverage.md` **junto al artefacto** (en su carpeta, o al lado del archivo si es suelto). Confirmar la ruta con el usuario antes de escribir; si el artefacto es de solo lectura o externo al repo, no escribir y entregar el reporte en el chat.
+   - **US:** `<changesPath>/user-stories/US-XXX-[nombre-corto]/criteria-coverage.md`, o `<archivedPath>/user-stories/US-XXX-[nombre-corto]/criteria-coverage.md` si la US está archivada.
+   - **WI:** `<changesPath>/work-items/WI-XXX-[kebab]/criteria-coverage.md` (dentro de la carpeta del WI), o su equivalente bajo `<archivedPath>/work-items/`.
+   - **FT:** `<currentPath>/FT-XXX-[slug]/criteria-coverage.md` (dentro de la carpeta del feature; los features no se archivan).
+   - **Cualquier otro artefacto:** `criteria-coverage.md` **junto al artefacto** (en su carpeta, o al lado del archivo si es suelto). Confirmar la ruta con el usuario antes de escribir; si el artefacto es de solo lectura o externo al repo, no escribir y entregar el reporte en el chat.
 
-   > Escribir dentro de una carpeta archivada es la **excepción declarada** de este skill: el `coverage.md` es un derivado del artefacto, no trabajo nuevo, y revalidar un trabajo ya integrado tiene que seguir siendo posible. Ningún otro skill del catálogo escribe ahí.
+   > Escribir dentro de una carpeta archivada es la **excepción declarada** de este skill: el `criteria-coverage.md` es un derivado del artefacto, no trabajo nuevo, y revalidar un trabajo ya integrado tiene que seguir siendo posible. Ningún otro skill del catálogo escribe ahí.
 
 2. **Grabar las dos claves** para la próxima comprobación de frescura (Paso 0): escribir al pie del reporte
    la marca `<!-- coverage-verify:verdict=<VEREDICTO CANÓNICO> · fingerprint=<FINGERPRINT> · spec=<SPEC_FINGERPRINT> · generated=YYYY-MM-DD -->`
@@ -263,7 +263,7 @@ Reglas:
 
 ## Checklist
 
-- [ ] Frescura comprobada (Paso 0): `FINGERPRINT` y `SPEC_FINGERPRINT` calculados; si ambos coinciden con los del `coverage.md` existente, el reporte no traía filas `NOT_RUN` y no se pidió `revalidate`, se devolvió sin regenerar
+- [ ] Frescura comprobada (Paso 0): `FINGERPRINT` y `SPEC_FINGERPRINT` calculados; si ambos coinciden con los del `criteria-coverage.md` existente, el reporte no traía filas `NOT_RUN` y no se pidió `revalidate`, se devolvió sin regenerar
 - [ ] Idioma resuelto según la sección «Resolución de idioma» de `SKILL.md`
 - [ ] Tipo de trabajo determinado y documento de criterios leído; criterios extraídos con su identificador **verbatim**, sin normalizar
 - [ ] Casos de prueba y artefactos (unit / integración / e2e) inventariados con su ruta y criterio
@@ -271,8 +271,8 @@ Reglas:
 - [ ] Matriz expandida a una fila por criterio × TC × **tipo declarado** (un TC con `Unit, E2E` ocupa dos filas), sin omitir las filas `UNCOVERED`
 - [ ] Resultados de pruebas obtenidos de `quality-check` (caché fresca `quality-check-run.json` o delegación `tests-only`); sin ejecutar la suite en `coverage-verify` ni inventar resultados
 - [ ] `Ejecución` y `Resultado` rellenados fila a fila (`Ejecución` sin la suite entre paréntesis); ninguna fila con `Evidencia = —` reporta `PASS`/`FAIL`
-- [ ] Cabecera completa (Fecha · Rama · Commit · Trabajo · Veredicto) y las dos tablas construidas desde `assets/coverage-template.md`
+- [ ] Cabecera completa (Fecha · Rama · Commit · Trabajo · Veredicto) y las dos tablas construidas desde `assets/criteria-coverage-template.md`
 - [ ] Resumen con la tabla de indicadores (4 columnas, 1 fila de cifras) cuadrada —cubiertos + parciales + no cubiertos = total de criterios— y la línea **Pruebas** con la procedencia y el resultado por suite (sin agregado inventado)
 - [ ] Caveats globales (suite `coverage` en `FAIL`, árbol sucio, suites ausentes, ejecución no delegable) en «Observaciones y pendientes»; sección omitida si no hay ninguno
 - [ ] Veredicto emitido respondiendo si **todos** los criterios quedan cubiertos
-- [ ] `coverage.md` guardado en la ubicación del tipo, sin bloques de comentario de la plantilla y con la marca de pie de **ambas** claves; ningún otro artefacto modificado
+- [ ] `criteria-coverage.md` guardado en la ubicación del tipo, sin bloques de comentario de la plantilla y con la marca de pie de **ambas** claves; ningún otro artefacto modificado

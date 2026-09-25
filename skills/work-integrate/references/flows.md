@@ -68,12 +68,10 @@ Cuando reflog y config no concluyen, o existen varios candidatos plausibles.
 - [ ] Sin commits sin commitear ni stash sin aplicar relevante al alcance
 
 **Delta (paso 7 — antes de commitear nada):**
-- [ ] Delta `<base>..HEAD` > 0 verificado (si es 0, la rama ya está integrada: parar **sin archivar ni commitear**)
+- [ ] Delta `<base>..HEAD` > 0 verificado (si es 0, la rama ya está integrada: parar **sin commitear**)
 
 **Cierre del árbol (paso 8):**
-- [ ] **Working tree limpio de nuevo tras las puertas** (correcciones y artefactos de las puertas, ya commiteados vía `git-commit`). **Nada archivado ni marcado `Done` todavía.**
-
-**Ejecución (pasos 9-10):**
+- [ ] **Working tree limpio de nuevo tras las puertas** (correcciones y artefactos de las puertas, ya commiteados vía `git-commit`). **Nada movido**:**
 - [ ] `git checkout <base>` exitoso
 - [ ] `git merge --no-ff --no-commit` exitoso: sin conflictos, **o** con un conflicto exclusivamente `modify/delete` sobre los dos informes, resuelto por el lado del borrado
 - [ ] `MERGE_HEAD` presente antes de tocar el índice (descarta el caso *Already up to date*)
@@ -83,25 +81,15 @@ Cuando reflog y config no concluyen, o existen varios candidatos plausibles.
 
 **Cierre del trabajo en la rama base (paso 11 — después del merge; solo `US-XXX`/`WI-XXX` en rama funcional, nunca en `test/`):**
 - [ ] `progress.md` del trabajo con el **estado del trabajo** en `Done` (encabezado `**Estado:**` y marca `<!-- work:… status=Done -->`) y `Ultima actualizacion` puesta al día
-- [ ] Decidido si el archivado **aplica**; si no (rama `test/`, carpeta ya archivada), saltado sin preguntar
-- [ ] Si aplica: `archiveMode` resuelto; con `ask`, **confirmación pedida al usuario** mostrando antes carpeta origen → destino y las investigaciones sueltas que se moverían
+- [ ] **Nada archivado**: el archivado no forma parte del cierre; si el usuario lo pide, remitir a `/work-define US-XXX archive` o `/work-plan WI-XXX archive` (ver `${PLUGIN_ROOT}/references/archive.md`)
 
-*Si no se archiva (el usuario dijo que no, sesión desatendida, o `never`):*
-- [ ] Nada movido, motivo anotado para el reporte; el `Done` se commitea igual
-
-*Solo si se archiva:*
-- [ ] Destino en `docs/specs/archived/<user-stories|work-items>/` libre antes de mover
-- [ ] Carpeta del trabajo movida con **`git mv`** (renombrado detectado, no borrado + alta)
-- [ ] Investigaciones `RS-XXX` sueltas enlazadas: comprobadas contra `docs/specs/` excluyendo **`docs/specs/archived/` y la propia carpeta del RS** (sin esa segunda exclusión el `README.md` del RS se cuenta a sí mismo y nunca se archivaría ninguna), y archivadas **solo** las que quedaron sin referencias activas
-- [ ] Enlaces relativos salientes y entrantes reparados tras el cambio de profundidad
-
-- [ ] **Un solo commit de cierre en la rama base** (`chore(<ID>): cerrar trabajo[ y archivar]`) vía `git-commit`, con el `progress.md` en `Done` y el `git mv` si lo hubo — **separado del commit de merge**
+- [ ] **Un solo commit de cierre en la rama base** (`chore(<ID>): cerrar trabajo`) vía `git-commit`, con el `progress.md` en `Done` — **separado del commit de merge**
 - [ ] Hash del commit de cierre capturado para el reporte
 
 **Cierre:**
 - [ ] Reporte al usuario con rama origen, rama destino, commits integrados y hash de merge
 - [ ] Hash del commit de cierre (paso 11) en el reporte
-- [ ] Si el paso 11 movió algo: bloque de archivado en el reporte (origen → destino, y qué pasó con las investigaciones sueltas). Si no archivó —el usuario lo declinó, no había con quién confirmar, rama `test/`, o ya estaba archivado—, dicho en una línea con el motivo.
+- [ ] Recordatorio en el reporte de que el artefacto sigue en su ruta activa y de cómo archivarlo tras la revisión (`/work-define US-XXX archive` / `/work-plan WI-XXX archive`)
 - [ ] Sin push ejecutado
 - [ ] Sin borrado de rama ejecutado
-- [ ] El **contenido** de `progress.md` no fue modificado por el skill (a lo sumo se movió con su carpeta, si se archivó)
+- [ ] El **contenido** de `progress.md` no fue modificado por el skill (salvo el estado del trabajo a `Done` en el paso 11)

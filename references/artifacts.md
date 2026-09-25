@@ -14,6 +14,12 @@ específico (una salida propia, una excepción de ruta).
 > verifica, pero no deriva una implementación por sí misma.
 
 > **Notación de placeholders.** `[nombre-corto]`, `[kebab-case]`, `[slug]`, `[capability]`, `XXX`.
+> **Notación de rutas configurables.** `<changesPath>`, `<currentPath>` y `<archivedPath>` son las tres claves de
+> `specification` en `.sdd-devkit/settings.json` **ya resueltas** (por defecto `docs/specs/changes/`, `docs/specs/current/` y
+> `docs/specs/archived/`; ver la tabla de abajo). Cuando el catálogo escribe `<archivedPath>/user-stories/US-042-…` quiere decir
+> «la ruta que declare el repo, o el default si no hay `settings.json` o falta la clave» — nunca el literal a ciegas. Las rutas
+> `docs/specs/changes/…` y `docs/specs/current/…` que aparecen literales en el catálogo son igualmente el **valor por defecto** de
+> su clave y se resuelven del mismo modo.
 > En documentos antiguos aparece la forma equivalente `{slug}` / `{nombre}`; significan lo mismo.
 > `XXX` es un secuencial de **tres dígitos** (`001`, `002`, …). **Excepción:** cuando el artefacto se crea
 > en un tracker externo, `XXX` es el `id` que asigna ese sistema, **sin padding de ceros** — ver
@@ -73,8 +79,9 @@ específico (una salida propia, una excepción de ruta).
 | Glosario | `docs/glossary.md` (opcional) | `design-define` |
 | Investigación | `research/RS-XXX-[slug]/README.md` **dentro de la carpeta del artefacto vinculado**; suelta: `docs/specs/changes/research/RS-XXX-[slug]/README.md` | `work-research` |
 | Progreso de un trabajo | `progress.md` dentro de la carpeta del trabajo (US / WI / FT) | `work-implement` |
+| Registro de automatización de pruebas (solo `implementation.scope: tests`) | `test-cases-automation.md` dentro de la carpeta del artefacto padre (US / WI / FT), **junto a** `test-cases/`, no dentro; sustituye a `progress.md` en repositorios solo de pruebas | `work-implement` (tipos TC / FT) |
 | Archivos de apoyo | `assets/` dentro de la carpeta del artefacto; enlazar con rutas relativas | — |
-| Reporte de trazabilidad | `coverage.md` dentro de la carpeta del artefacto | `coverage-verify` |
+| Reporte de trazabilidad | `criteria-coverage.md` dentro de la carpeta del artefacto | `coverage-verify` |
 | Informe de calidad | `docs/audits/quality-check.md` (+ histórico `docs/audits/quality-check-<YYYYMMDD-HHMMSS>.md`) | `quality-check` |
 | Informe de code review | `docs/audits/code-review.md` (+ histórico `docs/audits/code-review-<YYYYMMDD-HHMMSS>.md`) | `code-review` |
 | Informe de auditoría de arquitectura | `<raíz-arq>/docs/audits/arch-audit-YYYY-MM-DD.md` (con sufijo `-HHMM` si ya hay uno de ese día) | `arch-audit` |
@@ -170,25 +177,28 @@ Reglas comunes:
 
 ## Archivado
 
-`work-integrate` y `pr-create` pueden mover la carpeta de un trabajo cerrado bajo `docs/specs/archived/`,
-si el usuario lo confirma:
+El archivado lo hace **el skill que produce el artefacto**, a petición explícita del usuario con el modificador
+`archive` (`/work-define US-042 archive`, `/work-plan archive`, `/requirement-refine SRS-003 archive`,
+`/work-research RS-003 archive`); `work-integrate` y `pr-create` **no archivan**. El estado del artefacto no lo
+restringe, pero se valida y se informa antes de pedir confirmación. Destino: `<archivedPath>` espejando la
+subcarpeta de `<changesPath>`:
 
 | Origen | Destino de archivado |
 |--------|----------------------|
-| `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/` | `docs/specs/archived/user-stories/US-XXX-[nombre-corto]/` |
-| `docs/specs/changes/work-items/WI-XXX-[kebab-case]/` | `docs/specs/archived/work-items/WI-XXX-[kebab-case]/` |
-| `docs/specs/changes/research/RS-XXX-[slug]/` (investigación suelta huérfana) | `docs/specs/archived/research/RS-XXX-[slug]/` |
+| `<changesPath>/requirements/SRS-XXX-[nombre-corto]/` | `<archivedPath>/requirements/SRS-XXX-[nombre-corto]/` |
+| `<changesPath>/user-stories/US-XXX-[nombre-corto]/` | `<archivedPath>/user-stories/US-XXX-[nombre-corto]/` |
+| `<changesPath>/work-items/WI-XXX-[kebab-case]/` | `<archivedPath>/work-items/WI-XXX-[kebab-case]/` |
+| `<changesPath>/research/RS-XXX-[slug]/` (investigación suelta huérfana) | `<archivedPath>/research/RS-XXX-[slug]/` |
 
 **Contrato para el resto del catálogo** — archivar **no** libera el identificador ni hace invisible el
 trabajo:
 
-1. **El ID sigue ocupado.** El siguiente secuencial libre se calcula sobre la ruta activa **y** sobre
-   `docs/specs/archived/`.
+1. **El ID sigue ocupado.** El siguiente secuencial libre se calcula sobre `<changesPath>` **y** `<archivedPath>`.
 2. **La carpeta se busca en ambas rutas.** Antes de reportar que un artefacto no existe, buscarlo bajo
-   `docs/specs/archived/`. **No** recrear la carpeta en la ruta activa.
+   `<archivedPath>`. **No** recrear la carpeta en la ruta activa.
 3. **La estructura interna se conserva** intacta (`README.md`, `TK-XXX-*.md`, `test-cases/`,
    `research/`, `progress.md`, `assets/`), así que todo se resuelve relativo a la carpeta encontrada.
 4. **Solo `coverage-verify` escribe dentro de un artefacto archivado**, y solo su propio
-   `coverage.md`: es un derivado del artefacto, no trabajo nuevo.
+   `criteria-coverage.md`: es un derivado del artefacto, no trabajo nuevo.
 
-Detalle del flujo de archivado: [`skills/work-integrate/references/archive.md`](../skills/work-integrate/references/archive.md).
+Procedimiento completo, validación de estado, confirmación y reporte: [`archive.md`](archive.md).

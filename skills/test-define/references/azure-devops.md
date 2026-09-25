@@ -49,6 +49,52 @@ Suite resuelto**, nunca como work item aislado:
 Tras la llamada, extraer el `id` numérico y usarlo como número del TC: `TC-<ado_id>-[slug].md`.
 Verificar que no exista ya `TC-<ado_id>-*.md` en el `test-cases/` del artefacto antes de crear.
 
+## Lectura (`sync`)
+
+Solo con el modificador explícito `sync` de `SKILL.md`, que crea los TC locales que falten y actualiza los que existan. **Dirección única ADO → repo**: aquí no se crea ni se
+modifica ningún work item, plan ni suite. Degradación sin MCP: pedir el contenido pegado (título, pasos,
+parámetros) e indicar el `id`.
+
+### Resolver qué Test Cases entran
+
+| Entrada | Cómo se resuelven los Test Cases |
+|---------|----------------------------------|
+| `#id` de un `Test Case` | Ese. Su padre se obtiene de la relación «Tests» (el work item que prueba) o, si falta, del Test Suite que lo contiene: la suite lleva el título del padre (`US-4821: …`), del que se extrae el `id`. |
+| `#id` de `User Story` / `PBI` / `Task` / `Bug` / `Feature` documentado como FT | Los work items de tipo `Test Case` con relación «Tested By» hacia él **más** los que cuelgan del Test Suite con su título dentro del Test Plan del proyecto (unión, sin duplicar). |
+
+El padre **local** es la US/WI/FT cuya cabecera tenga `Work Item (ADO): [#<id-del-padre>]`. Sin él, parar y
+sugerir `/work-define sync #<id>`.
+
+### Mapeo de campos a la plantilla de TC
+
+| Campo de ADO | Campo de `test-case-template.md` | Regla |
+|--------------|----------------------------------|-------|
+| `id` | Número (`TC-<id>-[slug].md`) y `Work Item (ADO): [#<id>](<url>)` | Sin padding. |
+| `System.Title` | Título `# TC-<id> — …` | Si ya es GWT (Dado/Cuando/Entonces o Given/When/Then) se conserva; si no, se conserva **tal cual** y se anota en Observaciones que no sigue GWT — no se reescribe el escenario. Slug kebab-case ≤ 5 palabras. |
+| `Microsoft.VSTS.TCM.Steps` (XML: `<step>` con `action` y `expectedresult`) | **Pasos de ejecución** | Una fila por `<step>`, en orden, HTML normalizado. `Actor`: el que indique el texto; si no lo indica, `usuario` y nota en Observaciones. Un `shared step` se expande en sus pasos citando el id del shared step. |
+| `Microsoft.VSTS.TCM.Parameters` + `Microsoft.VSTS.TCM.LocalDataSource` | **Datos de prueba** | Un campo por parámetro; una fila por juego de valores (o `N/A`). Los `@param` de los pasos se dejan como referencia al campo. |
+| `System.Description` | **Precondiciones** si el texto lo es (o lleva ese encabezado); el resto a **Observaciones** | HTML → markdown. |
+| `Microsoft.VSTS.Common.Priority` | `Prioridad` | `1` → Alta · `2` → Media · `3`/`4` → Baja. |
+| `System.State` | `Estado` | `Design` → `Draft` · `Ready` → `Ready` **solo si** criterio, perspectiva y tipo quedaron resueltos (si no, `Draft` con laguna) · `Closed` → `Obsolete` previa confirmación (al actualizar, ofrecerlo; nunca borrar el archivo). |
+| `Microsoft.VSTS.TCM.AutomationStatus`, `System.Tags`, título | `Tipo de prueba` y `Perspectiva` | Solo si lo dicen de forma explícita (etiquetas `api`, `e2e`, `ui`, `manual`, `happy`, `error`, `limite`/`boundary`, o el título). Si no, se preguntan en la tanda única del flujo; con `createDetailsMode: never`, `Draft` con laguna. `AutomationStatus = Automated` **no** fija el tipo. |
+| Descripción, título o etiquetas que citen un identificador de criterio (`AC-003`, `CA-2`, `1.1`) | `Criterio de aceptación` y `criterion=` de la marca | Solo si el identificador **existe verbatim** en la sección de criterios del padre local; si no existe o no se cita, se pregunta en la tanda única (o queda `—` y `Draft`). |
+| Relación «Tests» / suite | `Artefacto padre` y `parent=` | El padre local resuelto arriba. |
+| Comentarios y adjuntos | **Observaciones** | Citar como fuente; no copiar como especificación. |
+
+### Actualizar — qué compara
+
+Título, pasos (por posición y texto), datos de prueba, precondiciones, prioridad y estado. Diff en una
+sola tanda; se aplica lo confirmado con las reglas del flujo de actualización (identificador y archivo
+intactos; `Obsolete` en vez de borrar). Si cambia el resultado esperado de un TC que ya está automatizado
+(hay prueba con su ID en el repo), avisar de que la prueba queda desalineada y remitir a `work-implement`.
+
+### Anti-patrones de lectura
+
+- Crear la carpeta del padre o un `README.md` de US desde `test-define` para poder sincronizar un TC.
+- Trazar un TC a un criterio que no cita explícitamente, o inventar perspectiva/tipo para dejarlo `Ready`.
+- Resumir, reordenar o fusionar pasos del campo `Steps`.
+- Escribir en ADO (estado, título, suite) desde `sync`.
+
 ## Anti-patrones específicos
 
 - Crear el Test Case como work item aislado sin resolver ni asignar su Test Plan y Test Suite.

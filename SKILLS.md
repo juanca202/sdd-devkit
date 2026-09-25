@@ -179,7 +179,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** investigar algo antes de especificarlo, planificarlo o implementarlo.
 
-**Produce:** un informe (`docs/specs/changes/research/`), y a veces artefactos adicionales según lo que investigues.
+**Produce:** un informe (`<changesPath>/research/`), y a veces artefactos adicionales según lo que investigues.
 
 **Según lo que le pidas:**
 
@@ -204,6 +204,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 /work-research migrar ../legacy-app → este repo
 /work-research analiza el módulo src/billing (legacy)
 /work-research ¿monolito o microservicios para el catálogo?
+/work-research RS-003 archive
 ```
 
 - «¿Es viable usar Temporal para orquestación?»
@@ -220,7 +221,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** tienes un requerimiento en bruto (idea, ticket, correo, wireframes) y quieres estructurarlo antes de convertirlo en historias de usuario. Paso opcional: si el requerimiento ya está claro, puedes ir directo a `work-define`.
 
-**Produce:** una especificación de requisitos (`docs/specs/changes/requirements/`) con alcance, requisitos priorizados, stack tecnológico, repositorios y equipo; si hay interfaz, wireframes `WF-XXX` por capability en `docs/architecture/[capability]/wireframes/`, enlazados desde el SRS.
+**Produce:** una especificación de requisitos (`<changesPath>/requirements/`) con alcance, requisitos priorizados, stack tecnológico, repositorios y equipo; si hay interfaz, wireframes `WF-XXX` por capability en `docs/architecture/[capability]/wireframes/`, enlazados desde el SRS.
 
 **Estados:** `Draft` (quedan cosas por resolver) · `Ready` (listo para convertir en historias con `work-define`).
 
@@ -231,6 +232,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 /requirement-refine portal de proveedores para subir facturas
 /requirement-refine actualiza SRS-002: cambia el stack a Auth0
 /requirement-refine estructura este requerimiento: <pegar ticket>
+/requirement-refine SRS-003 archive
 ```
 
 - «Refina este requerimiento antes de armar las historias»
@@ -242,9 +244,9 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 ### work-define
 
-**Cuándo:** crear o actualizar una historia de usuario. Puede partir de una necesidad descrita por ti, o de una especificación ya resuelta con `requirement-refine`.
+**Cuándo:** crear o actualizar una historia de usuario. Puede partir de una necesidad descrita por ti, o de una especificación ya resuelta con `requirement-refine`. Con el gestor de proyectos vinculado, también **sincroniza** una historia que ya existe allí (`sync #id`): la crea localmente si falta o la actualiza si existe — solo con ese modificador explícito; un `#id` suelto no sincroniza nada, pregunta.
 
-**Produce:** una historia de usuario (`docs/specs/changes/user-stories/`) con criterios de aceptación; si toca UI y no hereda wireframes, los genera por capability en `docs/architecture/[capability]/wireframes/` (`WF-XXX`).
+**Produce:** una historia de usuario (`<changesPath>/user-stories/`) con criterios de aceptación; si toca UI y no hereda wireframes, los genera por capability en `docs/architecture/[capability]/wireframes/` (`WF-XXX`).
 
 **Estados:** `Draft` (quedan cosas por resolver) · `Ready` (lista para planificar tareas o definir casos de prueba).
 
@@ -256,10 +258,16 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 /work-define actualiza US-003: añade criterio de timeout 3s
 /work-define a partir de RS-002
 /work-define arma las historias de SRS-003
+/work-define sync #4821
+/work-define sync #4821 #4822 #4830
+/work-define sync US-4821
+/work-define US-042 archive
+/work-define archive
 ```
 
 - «Crea una historia de usuario para el checkout con tarjeta»
 - «Refina US-011: faltan criterios de accesibilidad»
+- «Sincroniza la historia #4821 de Azure DevOps» · «Trae los cambios de la US-4821 desde ADO»
 
 ---
 
@@ -305,6 +313,9 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 /test-define WI-003
 /test-define FT-002
 /test-define US-005 solo criterios AC-001 y AC-003
+/test-define sync #4821
+/test-define sync #4830 #4831
+/test-define sync US-4821
 ```
 
 - «Crea casos de prueba para US-009»
@@ -326,6 +337,7 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 | ------------------------------------- | ------------------------------------------------- |
 | Hay una historia de usuario asociada | Tareas técnicas dentro de esa historia            |
 | No hay historia (bug, deuda, mantenimiento) | Una tarea de mantenimiento independiente     |
+| Hay un hallazgo que reportar (prueba en rojo, defecto observado) | Un work item de tipo `bug`: solo qué está mal, con evidencia; sin plan de corrección (único tipo posible en un repo con `implementation.scope: tests`) |
 
 **Ejemplos de invocación:**
 
@@ -334,6 +346,9 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 /work-plan US-007
 /work-plan planifica tareas para US-004 agrupadas por repo
 /work-plan WI: actualizar Spring Boot a 3.3
+/work-plan bug: la API devuelve 200 en vez de 422 con tarjeta vencida (TC-4830)
+/work-plan WI-007 archive
+/work-plan archive
 ```
 
 - «Planifica US-007»
@@ -441,7 +456,7 @@ Si el repo tiene un runner de validaciones de arquitectura (`scripts/arch/verify
 
 **Cuándo:** verificar que el código implementado cubre —alcanza— los criterios de aceptación de una historia, tarea o funcionalidad, con pruebas automatizadas, casos de prueba o ambos.
 
-**Produce:** una matriz de cobertura (`coverage.md`) con el estado de cada criterio: cubierto, parcial o sin cubrir, y un veredicto general.
+**Produce:** una matriz de cobertura (`criteria-coverage.md`) con el estado de cada criterio: cubierto, parcial o sin cubrir, y un veredicto general.
 
 **Ejemplos de invocación:**
 
@@ -469,7 +484,7 @@ Si el repo tiene un runner de validaciones de arquitectura (`scripts/arch/verify
 
 **Antes de integrar, corre en orden:** `quality-check` → `code-review` → `coverage-verify`. Si tienes cambios sin commitear, los comitea primero automáticamente.
 
-**Después del merge**, marca el trabajo como `Done` en su `progress.md` y te pregunta si quieres archivar la historia o tarea (mover su carpeta a `docs/specs/archived/`), todo en un commit de cierre propio sobre la rama base. Va después del merge a propósito: primero integras y pruebas, luego cierras. Puedes declinar el archivado sin que eso afecte a la integración, que ya está hecha.
+**Después del merge**, marca el trabajo como `Done` en su `progress.md` en un commit de cierre propio sobre la rama base. Va después del merge a propósito: primero integras y pruebas, luego cierras. No archiva la historia o tarea: eso lo pides tú, tras revisarla, con `/work-define US-XXX archive` o `/work-plan WI-XXX archive`.
 
 **Ejemplos de invocación:**
 
@@ -496,7 +511,7 @@ Si el repo tiene un runner de validaciones de arquitectura (`scripts/arch/verify
 
 **Antes de crear el PR, corre:** `quality-check`, `code-review` y `coverage-verify` — salvo que sea una promoción entre ramas de despliegue (por ejemplo `develop` → `main`), donde cada trabajo ya pasó esas puertas al integrarse y solo corre `quality-check`.
 
-**Al terminar**, si corresponde, te pregunta si quieres archivar la historia o tarea ya cerrada. Puedes declinar sin que eso bloquee la creación del PR.
+**No archiva** la historia o tarea: el archivado se pide, tras la revisión del PR, con `/work-define US-XXX archive` o `/work-plan WI-XXX archive`.
 
 **Ejemplos de invocación:**
 

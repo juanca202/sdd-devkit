@@ -4,7 +4,7 @@ Sustituir cada {{…}} a mano (no es un motor). Al publicar: borrar este bloque 
 Repositorios: nombres git separados por coma. work-plan agrupa las TK por este campo.
 INVEST / DoR: derivados de las tablas de Validación, nunca aparte. 🟢 Cumple · 🟡 Parcial · 🔴 No cumple. `/ total` = filas evaluadas (INVEST: 6; DoR: 6 menos No aplica, que no cuentan). Omitir colores a 0. Recalcular al tocar las tablas.
 Requerimiento: solo si la US nació descomponiendo un `SRS-XXX` de requirement-refine — enlace a su README.md; es la trazabilidad inversa de su tabla «Historias de usuario derivadas». Omitir la línea si no proviene de un SRS.
-Work Item: omitir la línea si no hay. {{Sistema}} = nombre corto (p. ej. ADO). Ningún skill crea ni pobla este campo para una US (sí para TK/WI/TC con tracker vinculado). Si se pone a mano: Criterios de aceptación → campo dedicado del sistema si lo expone; el resto del documento (cabecera incluida Repositorios, y todas las secciones) → descripción del work item, por secciones, para reconstruir la US si se pierde el .md. No omitir secciones.
+Work Item: omitir la línea si no hay. {{Sistema}} = nombre corto (p. ej. ADO). Lo pobla work-define solo al sincronizar desde el tracker (`sync`); una US redactada aquí no lo lleva salvo que el usuario lo aporte a mano (sí lo poblan siempre TK/WI/TC con tracker vinculado). Si se pone a mano: Criterios de aceptación → campo dedicado del sistema si lo expone; el resto del documento (cabecera incluida Repositorios, y todas las secciones) → descripción del work item, por secciones, para reconstruir la US si se pierde el .md. No omitir secciones.
 -->
 # US-XXX: {{título corto de la historia de usuario}}
 

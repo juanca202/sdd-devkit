@@ -46,7 +46,7 @@ Nivel de fidelidad — mockup visual, no solo cajas estructurales:
   - Etiquetas de texto dentro de cada componente indicando qué es (p. ej. "Botón: Guardar",
     "Campo: Correo electrónico") para que el propósito quede claro sin ambigüedad.
 
-El viewBox se ajusta al **tipo de solución** declarado en la cabecera (en un SRS, definido en su sección 12;
+El viewBox se ajusta al **tipo de solución** declarado en la cabecera (en un SRS, definido en su sección 11;
 ver flow.md de requirement-refine, paso 4):
   - App nativa / responsivo en modo móvil: retrato angosto, p. ej. `viewBox="0 0 375 812"`.
   - Aplicación web / escritorio: horizontal ancho, p. ej. `viewBox="0 0 1280 800"`.

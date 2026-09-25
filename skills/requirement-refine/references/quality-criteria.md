@@ -32,7 +32,7 @@ Idoneidad funcional · Eficiencia de rendimiento · Compatibilidad · Usabilidad
 
 **Disponibilidad** no es una categoría aparte: ISO/IEC 25010 la trata como subcaracterística de **Fiabilidad** — un `NFR-XXX` sobre tiempo de actividad, recuperación o tolerancia a fallos va bajo esa categoría.
 
-**Seguridad no se dispersa.** Cualquier requisito de seguridad —autenticación, autorización, cifrado, protección de datos, auditoría de accesos— se redacta como `NFR-XXX` de categoría **Seguridad**, aunque haya salido de una conversación sobre restricciones (sección 2.3), interfaces (sección 9) o cumplimiento normativo (sección 11). Esas otras secciones pueden **mencionar** que existe una implicación de seguridad y enlazar el `NFR-XXX` correspondiente, pero el enunciado verificable vive en uno solo lugar.
+**Seguridad no se dispersa.** Cualquier requisito de seguridad —autenticación, autorización, cifrado, protección de datos, auditoría de accesos— se redacta como `NFR-XXX` de categoría **Seguridad**, aunque haya salido de una conversación sobre restricciones (sección 2.3), interfaces (sección 8) o cumplimiento normativo (sección 10). Esas otras secciones pueden **mencionar** que existe una implicación de seguridad y enlazar el `NFR-XXX` correspondiente, pero el enunciado verificable vive en uno solo lugar.
 
 ---
 
@@ -77,7 +77,7 @@ Los cuatro métodos canónicos de ISO/IEC/IEEE 29148 para declarar cómo se comp
 
 **Cómo se asigna:** igual que la inferencia de UI (ver `flow.md`, paso 4) — el agente **propone** el método según la naturaleza del requisito, presenta la tabla completa a la vez y pregunta **una sola vez** si algo necesita ajustarse, en vez de preguntar método por método.
 
-**Criterio de verificación:** además del método, cada fila declara la condición observable que demuestra el cumplimiento (p. ej. «se sube una factura válida y aparece en el listado en menos de 2 s»). Un requisito al que no se le puede escribir un criterio de verificación concreto no está listo — es la señal de [verificabilidad](#verificabilidad) insuficiente y debe volver a la sección 6/7 para precisarse antes de continuar.
+**Criterio de verificación:** además del método, cada fila declara la condición observable que demuestra el cumplimiento (p. ej. «se sube una factura válida y aparece en el listado en menos de 2 s»). Un requisito al que no se le puede escribir un criterio de verificación concreto no está listo — es la señal de [verificabilidad](#verificabilidad) insuficiente y debe volver a la sección 5/7 para precisarse antes de continuar.
 
 ---
 
@@ -89,7 +89,7 @@ Un requisito es verificable cuando puede escribirse una condición objetiva que 
 - No admite una palabra clave RFC 2119 sin ambigüedad (si hace falta «y/o» para describirlo, probablemente son dos requisitos).
 - No se le puede asignar ninguno de los cuatro [métodos de verificación](#métodos-de-verificación) con un criterio concreto.
 
-Si aparece cualquiera de estas señales al redactar la sección 13, no forzar un método: volver a la tanda de preguntas del paso 3 y precisar el enunciado antes de continuar.
+Si aparece cualquiera de estas señales al redactar la sección 12, no forzar un método: volver a la tanda de preguntas del paso 3 y precisar el enunciado antes de continuar.
 
 ---
 
@@ -120,10 +120,10 @@ Tabla con los trece criterios de la plantilla. Para cada uno: `Cumple` / `No cum
 | Requisitos de datos formalizados (`No aplica` si el requerimiento no maneja datos propios) | Las entidades de datos relevantes están identificadas con retención/privacidad y volumen, o la sección se marcó «No aplica». |
 | Cumplimiento normativo trazado (`No aplica` si no hay normativa identificada) | Cada normativa aplicable enlaza al `FR-XXX`/`NFR-XXX` que la satisface; ninguna fila queda sin ese enlace. |
 | Diseño de interfaz revisado (`No aplica` si `srs:ui-required=false`) | Si `srs:ui-required=true`: el **tipo de solución** y si debe ser **responsiva** están definidos, y cada fila de la tabla de pantallas está en `Aprobado`, con sus observaciones ya reflejadas en los `FR-XXX` afectados. Ninguna pantalla puede quedar `Pendiente` o `Revisado con cambios` sin resolver. |
-| Verificación y trazabilidad completas | Todo `FR-XXX`/`NFR-XXX` tiene fila en la sección 13 con origen, método de verificación y criterio de verificación concretos — ver [Verificabilidad](#verificabilidad). |
-| Riesgos identificados | La sección 14 existe con al menos una fila, o se dejó explícitamente «Ninguno identificado» — no se omite sin más. |
+| Verificación y trazabilidad completas | Todo `FR-XXX`/`NFR-XXX` tiene fila en la sección 12 con origen, método de verificación y criterio de verificación concretos — ver [Verificabilidad](#verificabilidad). |
+| Riesgos identificados | La sección 13 existe con al menos una fila, o se dejó explícitamente «Ninguno identificado» — no se omite sin más. |
 | Alcance y fuera de alcance claros | La sección 1.2 delimita qué cubre el requerimiento y qué queda explícitamente fuera. |
 | Sin aclaraciones pendientes | Observaciones vacías o «Ninguna»; nada pendiente con usuario/producto. |
-| Validación final (Ola 3) superada | El análisis de gaps, la revisión cruzada PO+UX+ARCH y la **validación con subagente sin contexto de sesión** (ver [`interview.md`](interview.md#ola-3-en-detalle-paso-12-de-flowmd)) se ejecutaron sobre el documento redactado, sin hallazgos pendientes: lo no resuelto vive en Observaciones y bloquea Ready vía el criterio anterior. |
+| Validación final (Ola 3) superada | El análisis de gaps, la revisión cruzada PO+UX+ARCH y la **validación con subagente sin contexto de sesión** (ver [`interview.md`](interview.md#ola-3-en-detalle-paso-11-de-flowmd)) se ejecutaron sobre el documento redactado, sin hallazgos pendientes: lo no resuelto vive en Observaciones y bloquea Ready vía el criterio anterior. |
 
 El estado **Ready** requiere todos los criterios sin excepción (los marcados `No aplica` cuentan como satisfechos cuando la condición de exclusión aplica y está declarada). Si falta cualquiera, el SRS permanece en `Estado: Draft` con las lagunas documentadas en Observaciones — nunca se declara Ready «con reservas».

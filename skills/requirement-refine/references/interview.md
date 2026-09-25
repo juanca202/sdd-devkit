@@ -94,7 +94,7 @@ Regla transversal de redacción, verificada de nuevo en la Ola 3:
 
 ---
 
-## Ola 3 en detalle (paso 12 de `flow.md`)
+## Ola 3 en detalle (paso 11 de `flow.md`)
 
 Con el `README.md` ya redactado:
 

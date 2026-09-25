@@ -19,7 +19,7 @@ Antes de generar el archivo local, crear el work item vía MCP:
 |-------|-------|
 | **Título** | El nombre descriptivo de la tarea (el mismo que iría en el nombre de archivo). |
 | **Tipo de work item — `TK-`** | `Task` (o el tipo equivalente configurado en el proyecto). |
-| **Tipo de work item — `WI-`** | Según el `Tipo` del WI: `bug-fix` → `Bug`; el resto (`refactor`, `dependency-update`, `optimization`, `security-update`, `test-improvement`, `documentation-update`, `operational-change`) → `Task`. Ante duda, confirmar con el usuario. |
+| **Tipo de work item — `WI-`** | Según el `Tipo` del WI: **solo `bug` → `Bug`** (el reporte del defecto: lleva en Descripción sus secciones Comportamiento esperado / observado, Pasos para reproducir —también en `Microsoft.VSTS.TCM.ReproSteps` si el proyecto lo expone—, Evidencia e Impacto). **Todos los demás tipos, `bug-fix` incluido**, → `Task`: un `bug-fix` es trabajo de corrección, y si cita `Origen: WI-XXX (bug)` se vincula al `Bug` de ese bug con la relación `Related` (o `Child`, si el proceso lo admite), sin crear un segundo `Bug`. Ante duda, confirmar con el usuario. |
 | **Criterios de aceptación** | Solo si el artefacto tiene esa sección (un `WI-XXX` puede tenerla, un `TK-XXX` no). Campo dedicado `Microsoft.VSTS.Common.AcceptanceCriteria` si existe; si no, dentro de Descripción. |
 | **Descripción** | El documento completo, serializado con los mismos encabezados que el `.md`. `TK-XXX`: Descripción, Dependencias, Referencias, Plan de implementación (`IT-XX`), Observaciones. `WI-XXX`: Descripción, Contexto, Fuera de alcance, Reglas de negocio, Dependencias, Referencias, Plan de implementación, Observaciones. |
 | **Iteración / Area Path** | Omitir: no son configurables (ver la base común). ADO aplica los valores por defecto del proyecto. |
@@ -30,10 +30,10 @@ tipo de plan en curso: `TK-<ado_id>-[nombre-descriptivo].md` o `WI-<ado_id>-[nom
 
 ## Alcance del check de ID disponible
 
-- **`WI-`**: el escaneo cubre `docs/specs/changes/work-items/` **y** `docs/specs/archived/work-items/`. Un WI
+- **`WI-`**: el escaneo cubre `<changesPath>/work-items/` **y** `<archivedPath>/work-items/`. Un WI
   archivado conserva su ID de ADO, y saltárselo produciría dos carpetas locales para un mismo work item
-  del tracker. (`docs/specs/archived/` resuelto desde `specification.archivedPath` — ver
-  [`../../work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).)
+  del tracker. (`<archivedPath>/` resuelto desde `specification.archivedPath` — ver
+  [`${PLUGIN_ROOT}/references/archive.md`](../../../references/archive.md#contrato-para-el-resto-del-catálogo).)
 - **`TK-`**: **no** se escanea el archivo. El `TK-` es por historia, y si la US padre estuviera
   archivada el flujo ya habría parado antes de llegar aquí (Regla 1) — lo que se comprueba es la carpeta
   de la US **realmente resuelta**.

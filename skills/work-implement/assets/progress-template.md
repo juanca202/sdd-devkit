@@ -21,12 +21,12 @@ Ver ../../references/verdicts.md.
 <!--
 Valores del identificador: `US-XXX-{{slug}}` (historia), `WI-XXX-{{slug}}` (tarea de mantenimiento) o `FT-XXX-{{slug}}` (feature).
 Ubicacion y alcance por tipo (cada trabajo tiene su propio `progress.md` dentro de su carpeta):
-- Historia de usuario (`US-XXX`): un `progress.md` por carpeta de la US (`docs/specs/changes/user-stories/US-XXX-{{nombre-corto}}/progress.md`); el encabezado lleva su `US-XXX` y las unidades son sus `TK-XXX`.
-- Tarea de mantenimiento (`WI-XXX`): un `progress.md` por carpeta del WI (`docs/specs/changes/work-items/WI-XXX-{{slug}}/progress.md`), específico de ese WI; el encabezado lleva su `WI-XXX` y la unidad es el `WI-XXX` completo (una sola entrada, sin sub-tareas).
-- Feature (`FT-XXX`): un `progress.md` por carpeta del feature (`docs/specs/current/FT-XXX-{{slug}}/progress.md`); el encabezado lleva su `FT-XXX` y la unidad es el `FT-XXX` completo (una sola entrada que cubre todos sus `TC-XXX`).
+- Historia de usuario (`US-XXX`): un `progress.md` por carpeta de la US (`<changesPath>/user-stories/US-XXX-{{nombre-corto}}/progress.md`); el encabezado lleva su `US-XXX` y las unidades son sus `TK-XXX`.
+- Tarea de mantenimiento (`WI-XXX`): un `progress.md` por carpeta del WI (`<changesPath>/work-items/WI-XXX-{{slug}}/progress.md`), específico de ese WI; el encabezado lleva su `WI-XXX` y la unidad es el `WI-XXX` completo (una sola entrada, sin sub-tareas).
+- Feature (`FT-XXX`): un `progress.md` por carpeta del feature (`<currentPath>/FT-XXX-{{slug}}/progress.md`); el encabezado lleva su `FT-XXX` y la unidad es el `FT-XXX` completo (una sola entrada que cubre todos sus `TC-XXX`).
 - Casos de prueba (`TC-XXX`) sueltos: el `progress.md` vive en la carpeta del **artefacto padre** que los contiene (US, WI o FT); el encabezado lleva el ID de ese padre y hay **una unidad por cada `TC-XXX`** del alcance.
 
-Transversal: si el trabajo ya se archivo, su carpeta vive bajo `docs/specs/archived/` y su `progress.md` con ella. Ahi **solo se lee**: nunca se crea ni se edita, y nunca se recrea la carpeta en la ruta activa. Ver `skills/work-integrate/references/archive.md`.
+Transversal: si el trabajo ya se archivo, su carpeta vive bajo `<archivedPath>/` y su `progress.md` con ella. Ahi **solo se lee**: nunca se crea ni se edita, y nunca se recrea la carpeta en la ruta activa. Ver `references/archive.md`.
 -->
 ## Unidades
 

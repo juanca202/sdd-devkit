@@ -127,7 +127,7 @@ test('la clave se mueve solo cuando cambia el código', { skip: !hasTools && 'gi
     ['docs/nuevo.md sin trackear', () => write('docs/nuevo.md', 'x\n')],
     ['packages/api/docs/a.md (docs anidado)', () => write('packages/api/docs/a.md', 'x\n')],
     ['src/nuevo.md sin trackear', () => write('src/nuevo.md', 'x\n')],
-    ['coverage.md junto a un artefacto externo', () => write('specs/US-1/coverage.md', 'x\n')],
+    ['criteria-coverage.md junto a un artefacto externo', () => write('specs/US-1/criteria-coverage.md', 'x\n')],
     ['.gitignore editado', () => write('.gitignore', 'node_modules\ndist\n')],
     ['.sdd-devkit/quality-check-run.json escrito', () => write('.sdd-devkit/quality-check-run.json', '{}\n')],
     ['.github/wf.yml (carpeta oculta)', () => write('.github/wf.yml', 'x\n')],

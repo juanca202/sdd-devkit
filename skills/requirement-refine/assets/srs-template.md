@@ -2,7 +2,7 @@
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 Estructura alineada a ISO/IEC/IEEE 29148:2018 (outline de Software Requirements Specification), con las
-secciones propias del harness (Stack tecnológico, Repositorios, Equipo de desarrollo, Diseño de interfaz)
+secciones propias del harness (Stack tecnológico, Repositorios, Diseño de interfaz)
 insertadas donde corresponde al flujo de este skill. Ver references/flow.md para el procedimiento
 completo y references/quality-criteria.md para los criterios normativos de cada campo.
 -->
@@ -43,7 +43,7 @@ de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md
 
 <!--
 Documentos o estándares EXTERNOS a los que este SRS remite (guías de estilo, contratos, normativa,
-otras especificaciones) — no confundir con la sección 15 (Enlaces y archivos de apoyo), que enlaza los
+otras especificaciones) — no confundir con la sección 14 (Enlaces y archivos de apoyo), que enlaza los
 archivos propios de esta carpeta (requerimiento original, investigación) y los wireframes de la capability.
 Sección opcional. Eliminar si no aplica.
 -->
@@ -63,9 +63,9 @@ Sección opcional. Eliminar si no aplica.
 
 ### 2.3 Restricciones del producto
 
-<!-- Sección opcional. Restricciones de negocio, de interfaces, de plataforma, de plazo o de cumplimiento normativo que limitan las opciones de implementación. Las restricciones normativas se detallan en la sección 11 (Cumplimiento normativo); aquí solo se nombran. Eliminar si no aplica. -->
+<!-- Sección opcional. Restricciones de negocio, de interfaces, de plataforma, de plazo o de cumplimiento normativo que limitan las opciones de implementación. Las restricciones normativas se detallan en la sección 10 (Cumplimiento normativo); aquí solo se nombran. Eliminar si no aplica. -->
 
-- {{restricción; p. ej. presupuesto, fecha límite, compatibilidad con sistema legado, normativa aplicable (ver sección 11)}}
+- {{restricción; p. ej. presupuesto, fecha límite, compatibilidad con sistema legado, normativa aplicable (ver sección 10)}}
 
 ### 2.4 Características de los usuarios
 
@@ -84,7 +84,7 @@ de pagos, almacenamiento de archivos, búsqueda, multi-tenancy, etc.). El agente
 una ya existe/se reutiliza (proyecto base, servicio compartido, plataforma ya en uso) o si está en el
 alcance de este SRS construirla — solo pregunta si la inferencia queda ambigua (ver flow.md, paso 3).
 Una capacidad marcada "Ya existe / se reutiliza" NO tiene FR-XXX propio; una marcada "En el alcance de
-este SRS" sí debe tener su FR-XXX correspondiente en la sección 6. Eliminar la tabla si no aplica.
+este SRS" sí debe tener su FR-XXX correspondiente en la sección 5. Eliminar la tabla si no aplica.
 -->
 | Capacidad | Supuesto | Origen |
 | --------- | -------- | ------ |
@@ -131,20 +131,7 @@ respuesta a la pregunta inicial del flujo (investigar vs. ya decidido).
 | ----------- | ---- | -------------- | ----- |
 | {{nombre del repositorio; p. ej. frontend-web, api-catalogo}} | {{Nuevo / Existente (con cambios)}} | {{si es Nuevo: enlace o nombre del starter/scaffold, o «Ninguno — desde cero». Si es Existente: «No aplica»}} | {{observaciones: rama base, convenciones a seguir, módulo o área del repo existente que se modifica}} |
 
-## 5. Equipo de desarrollo
-
-<!--
-Sección opcional — incluir solo si el usuario indicó que el equipo ya está definido. Si respondió que
-todavía no se conoce, dejar la tabla vacía (o eliminarla) y anotarlo en Observaciones si es relevante
-para el seguimiento; no es requisito para Estado: Ready.
--->
-**¿Equipo de desarrollo definido?** {{Sí | No}}
-
-| Nombre | Email | Responsabilidad |
-| ------ | ----- | ----------------- |
-| {{nombre completo}} | {{email}} | {{responsabilidad; p. ej. Tech Lead, Backend, Frontend, QA, Diseño}} |
-
-## 6. Requisitos funcionales
+## 5. Requisitos funcionales
 
 <!--
 Id secuencial FR-001, FR-002, … Cada fila indica su categoría, prioridad y el enunciado con palabra
@@ -156,7 +143,7 @@ por el agente, aún sin confirmación explícita) · Aprobado (el usuario ya lo 
 quality-criteria.md#estado-por-requisito.
 Estos FR-XXX son de alto nivel: se descomponen en AC-XXX de una o más US al pasar por /work-define; no se
 renumeran aunque una US termine cubriendo solo una parte de un FR. Su origen, dependencias y método de
-verificación NO van en esta tabla — viven en la sección 13 (Verificación y trazabilidad), para no
+verificación NO van en esta tabla — viven en la sección 12 (Verificación y trazabilidad), para no
 duplicar el identificador en dos lugares con datos que se puedan desincronizar.
 -->
 | ID | Categoría | Prioridad | Estado | Enunciado |
@@ -164,7 +151,7 @@ duplicar el identificador en dos lugares con datos que se puedan desincronizar.
 | FR-001 | {{categoría}} | {{Esencial / Alta / Media / Baja}} | {{Propuesto / Aprobado}} | {{enunciado con palabra clave RFC 2119 en MAYÚSCULAS; p. ej. «El sistema DEBE…»}} |
 | FR-002 | {{…}} | {{…}} | {{…}} | {{…}} |
 
-## 7. Requisitos no funcionales
+## 6. Requisitos no funcionales
 
 <!--
 Misma mecánica que Requisitos funcionales, id NFR-001, NFR-002, … Categorías ISO/IEC 25010, mismo
@@ -182,7 +169,7 @@ NFR-XXX (categoría Seguridad) y desde ahí se referencia, no al revés.
 | NFR-001 | {{característica ISO 25010}} | {{Esencial / Alta / Media / Baja}} | {{Propuesto / Aprobado}} | {{enunciado con palabra clave RFC 2119 en MAYÚSCULAS}} |
 | NFR-002 | {{…}} | {{…}} | {{…}} | {{…}} |
 
-## 8. Reglas de negocio
+## 7. Reglas de negocio
 
 <!--
 Sección opcional. Incluir solo si el dominio impone restricciones, obligaciones o prohibiciones que
@@ -191,7 +178,7 @@ Cada regla lleva id secuencial BR-01, BR-02, … con enunciado RFC 2119 en MAYÚ
 -->
 - **BR-01:** {{enunciado con palabra clave RFC 2119 en MAYÚSCULAS}} → relacionado con {{FR-XXX}}
 
-## 9. Interfaces externas
+## 8. Interfaces externas
 
 <!--
 Desglose por tipo, por convención de ISO/IEC/IEEE 29148. Cada subsección es opcional; eliminar la que
@@ -201,7 +188,7 @@ no aplique en vez de dejarla vacía. Es existencia y propósito de la interfaz, 
 
 ### 9.1 Interfaces de usuario
 
-<!-- Canales de interacción humana: web, móvil, CLI, voz, kiosco, etc. Si hay UI propia, el detalle de pantallas vive en la sección 12 (Diseño de interfaz); aquí solo el canal y sus lineamientos generales. -->
+<!-- Canales de interacción humana: web, móvil, CLI, voz, kiosco, etc. Si hay UI propia, el detalle de pantallas vive en la sección 11 (Diseño de interfaz); aquí solo el canal y sus lineamientos generales. -->
 - {{canal}}: {{lineamientos generales — guía de estilo a seguir, accesibilidad requerida, dispositivos soportados}}
 
 ### 9.2 Interfaces de hardware
@@ -219,7 +206,7 @@ no aplique en vez de dejarla vacía. Es existencia y propósito de la interfaz, 
 <!-- Sección opcional. Protocolos de red o formatos de mensajería (REST, GraphQL, gRPC, colas, webhooks, sockets). «No aplica» si no hay requisitos de comunicación propios más allá del stack ya elegido. -->
 - {{protocolo o mecanismo}}: {{propósito, con quién se comunica}}
 
-## 10. Requisitos de datos
+## 9. Requisitos de datos
 
 <!--
 Sección opcional — incluir si el requerimiento crea, modifica o retiene datos propios. Formaliza la
@@ -231,7 +218,7 @@ de solo lectura).
 | ------------------ | ------------ | ------------------------ | ------------------- |
 | {{nombre de la entidad; p. ej. Factura, Perfil de proveedor}} | {{qué representa}} | {{cuánto tiempo se conserva; si contiene datos personales o sensibles}} | {{orden de magnitud esperado, si se conoce}} |
 
-## 11. Cumplimiento normativo
+## 10. Cumplimiento normativo
 
 <!--
 Sección opcional — incluir si aplica alguna normativa, regulación o estándar externo (protección de
@@ -243,7 +230,7 @@ todavía, es una laguna, no se deja la celda vacía sin más.
 | ----------------------- | ------------------------ | ----------------- |
 | {{nombre y, si aplica, artículo o cláusula}} | {{FR-XXX / NFR-XXX}} | {{mecanismo por el cual se satisface}} |
 
-## 12. Diseño de interfaz (wireframes)
+## 11. Diseño de interfaz (wireframes)
 
 <!--
 Sección opcional — incluir solo si el requerimiento involucra una interfaz de usuario propia. srs:ui-required
@@ -274,7 +261,7 @@ wireframes, incluido el `viewBox` de cada SVG (retrato para móvil, ancho para w
 | -------- | ---------- | --------- | --------------------- | -------------------------------- |
 | {{nombre de la pantalla}} | {{capability}} | {{[WF-XXX](../../../../architecture/[capability]/wireframes/WF-XXX-[pantalla-slug].md)}} | {{Pendiente / Revisado con cambios / Aprobado}} | {{resumen de los cambios pedidos y en qué FR-XXX quedaron reflejados; «Ninguna» si se aprobó sin cambios}} |
 
-## 13. Verificación y trazabilidad
+## 12. Verificación y trazabilidad
 
 <!--
 Una fila por cada FR-XXX/NFR-XXX (incluidos los que salieron de la revisión de wireframes). Método de
@@ -283,29 +270,29 @@ El agente PROPONE el método según la naturaleza del requisito y solo pregunta 
 mecanismo que la inferencia de UI. Origen es de dónde salió el requisito (el requerimiento en bruto por
 defecto; una referencia a un archivo específico de references/ si vino de una vuelta posterior). "Depende
 de" es opcional — vacío o «Ninguna» si no hay dependencia entre requisitos.
-Esta tabla NO registra qué US-XXX cubre cada requisito — eso vive en la sección 16 (Historias de usuario
+Esta tabla NO registra qué US-XXX cubre cada requisito — eso vive en la sección 15 (Historias de usuario
 derivadas), que se completa después del handoff y por eso no puede ir aquí.
 -->
 | ID | Origen | Depende de | Método de verificación | Criterio de verificación |
 | -- | ------ | ----------- | -------------------------- | --------------------------- |
 | FR-001 | {{`references/raw-requirement.md` u otro archivo puntual}} | {{FR-XXX / «Ninguna»}} | {{Inspección / Análisis / Demostración / Prueba}} | {{condición observable que demuestra que el requisito se cumple}} |
 
-## 14. Riesgos
+## 13. Riesgos
 
 <!-- Sección opcional. Riesgos identificados sobre los requisitos, supuestos o restricciones ya cerrados — no se espera a que el stack esté resuelto para abrir esta sección, pero puede ampliarse después con riesgos técnicos una vez resuelto (sección 3). Eliminar si no se identificó ninguno. -->
 | ID | Riesgo | Probabilidad | Impacto | Mitigación | Relacionado con |
 | -- | ------ | -------------- | ------- | ----------- | ------------------ |
 | R-01 | {{descripción del riesgo}} | {{Alta / Media / Baja}} | {{Alto / Medio / Bajo}} | {{cómo se reduce o gestiona}} | {{FR-XXX / NFR-XXX / Stack / Supuesto}} |
 
-## 15. Enlaces y archivos de apoyo
+## 14. Enlaces y archivos de apoyo
 
 <!-- Archivos propios de esta carpeta del SRS — no confundir con la sección 1.4 (referencias a documentos o estándares externos). Solo enlaces a recursos ya almacenados; nunca pegar archivos, imágenes ni descripciones directamente aquí. -->
 - **Requerimiento original:** {{enlace markdown a `references/[archivo]`, dentro de esta misma carpeta}}
 - **Investigación de stack:** {{enlace a `research/RS-XXX-{slug}/README.md`, si se investigó}}
-- **Wireframes:** {{enlace a `../../../../architecture/[capability]/wireframes/` por cada capability involucrada, si el requerimiento tiene UI — el detalle por pantalla está en la sección 12}}
+- **Wireframes:** {{enlace a `../../../../architecture/[capability]/wireframes/` por cada capability involucrada, si el requerimiento tiene UI — el detalle por pantalla está en la sección 11}}
 - {{añadir entradas adicionales o indicar «Ninguna por ahora»}}
 
-## 16. Historias de usuario derivadas
+## 15. Historias de usuario derivadas
 
 <!-- Se completa después del handoff a /work-define, a medida que el requerimiento se descompone. Vacía al crear el SRS. -->
 | US-XXX | Título | FR-XXX cubiertos |

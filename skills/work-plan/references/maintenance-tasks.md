@@ -39,14 +39,14 @@ No existe aquí el modo «stubs desde una historia»: no hay US que descomponer.
 
 | Artefacto | Ruta |
 |-----------|------|
-| Work item | `docs/specs/changes/work-items/WI-XXX-[kebab-case]/README.md` |
-| Progreso | `docs/specs/changes/work-items/WI-XXX-[kebab-case]/progress.md` |
+| Work item | `<changesPath>/work-items/WI-XXX-[kebab-case]/README.md` |
+| Progreso | `<changesPath>/work-items/WI-XXX-[kebab-case]/progress.md` |
 | ADR | `docs/adr/` |
 | Documentación técnica | `docs/architecture/[capability]/` — `README.md`, `models/`, `diagrams/` (propiedad de `design-define`; aquí solo se referencia) |
 | Glosario | `docs/glossary.md` |
-| WI ya archivado (fallback) | `docs/specs/archived/work-items/WI-XXX-[kebab-case]/`, con la misma estructura interna |
+| WI ya archivado (fallback) | `<archivedPath>/work-items/WI-XXX-[kebab-case]/`, con la misma estructura interna |
 
-> **Los WI archivados siguen contando.** `work-integrate` y `pr-create` pueden mover la carpeta de un WI cerrado a `docs/specs/archived/work-items/`, si el usuario confirma el archivado. Ese WI **no desaparece** a efectos de este skill: su ID sigue ocupado, su alcance sigue siendo alcance ya cubierto, y su carpeta se busca ahí cuando no está en la ruta activa. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> **Los WI archivados siguen contando.** Un WI puede estar bajo `<archivedPath>/work-items/` si el usuario lo archivó con `/work-plan WI-XXX archive`. Ese WI **no desaparece** a efectos de este skill: su ID sigue ocupado, su alcance sigue siendo alcance ya cubierto, y su carpeta se busca ahí cuando no está en la ruta activa. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 ---
 
@@ -54,7 +54,7 @@ No existe aquí el modo «stubs desde una historia»: no hay US que descomponer.
 
 - Formato de carpeta: `WI-<número>-[nombre-descriptivo]/` con `WI-<número>` en mayúsculas. Dentro, siempre un `README.md` como documento principal del WI.
 - **Sin tracker externo vinculado**: `<número>` es un secuencial **global de todos los WI del repo** (no hay historia padre que reinicie la cuenta); tres dígitos con cero a la izquierda → `WI-001`, `WI-002`, …
-  - **El secuencial se calcula sobre `docs/specs/changes/work-items/` *y* `docs/specs/archived/work-items/`.** Un ID no se libera al archivarse. Si el WI con el número más alto ya está archivado y solo se mira la ruta activa, el contador retrocede y se reemite un `WI-XXX` que ya existe — con dos artefactos distintos bajo el mismo identificador y todo lo que los referencia (ramas, commits, work items del tracker) vuelto ambiguo.
+  - **El secuencial se calcula sobre `<changesPath>/work-items/` *y* `<archivedPath>/work-items/`.** Un ID no se libera al archivarse. Si el WI con el número más alto ya está archivado y solo se mira la ruta activa, el contador retrocede y se reemite un `WI-XXX` que ya existe — con dos artefactos distintos bajo el mismo identificador y todo lo que los referencia (ramas, commits, work items del tracker) vuelto ambiguo.
 - **Con la integración activa**: `<número>` es el identificador que asigna ese proveedor al work item creado; su formato exacto (numérico, con o sin padding, etc.) lo define el archivo de referencia del proveedor — ver la sección «Resolución de la integración con el gestor de proyectos» en `SKILL.md`.
 - Nombre descriptivo: minúsculas, kebab-case, corto y descriptivo.
 - El nombre completo de la carpeta (`WI-<número>-[nombre-descriptivo]/`) y, si hay un tracker externo vinculado, el título usado al crear el work item deben respetar cualquier límite de longitud propio de ese sistema (ver su archivo de referencia).
@@ -75,12 +75,14 @@ Antes de crear o editar cualquier WI, tener clara esta información. **No invent
 | **Repositorio** | Nombre del repositorio git al que afecta el work item; inferir del repo (git remote / carpeta) o indicado por el usuario | Stub: puede quedar `Por definir`. WI completo: obligatorio; sin él el estado no puede ser `Ready` |
 | **Contexto técnico** (WI completo) | ADRs existentes, documentación técnica, descripción del usuario | Si falta decisión técnica relevante: sugerir ADR al usuario, no crearlo. Si un modelo, API o flujo mencionado no tiene especificación en `architecture/` y el usuario pide detallarlo: delegar a `/design-define` vía subagente y enlazar la referencia devuelta |
 | **Referencia de UI** (solo si toca UI) | Figma, wireframe o imagen de alta fidelidad aportados por el usuario | Obligatoria para `Ready`; sin ella el WI de UI no puede salir de `Draft` |
-| **Tipo** | Del usuario o inferido del requerimiento (bug-fix / refactor / dependency-update / optimization / security-update / test-improvement / documentation-update / operational-change) | Si es ambiguo, preguntar; si hay un tracker externo vinculado, condiciona el tipo de work item que se crea allí (mapeo exacto en su archivo de referencia) |
+| **Tipo** | Del usuario o inferido del requerimiento (bug / bug-fix / refactor / dependency-update / optimization / security-update / test-improvement / documentation-update / operational-change). `bug` = registrar un defecto (qué está mal); `bug-fix` = planificar su corrección | Si es ambiguo, preguntar; si hay un tracker externo vinculado, condiciona el tipo de work item que se crea allí (mapeo exacto en su archivo de referencia) |
 | **Vinculación con el gestor de proyectos** | Ver sección «Resolución de la integración con el gestor de proyectos» de `SKILL.md` | Si la integración está activa, seguir el archivo de referencia del proveedor antes de crear archivos |
+
+> **Repositorio con `implementation.scope: tests`** (política de implementación, `${PLUGIN_ROOT}/references/implementation.md`): en un repositorio solo de pruebas **no existe código de aplicación que planificar**, así que el único tipo de WI que `work-plan` crea allí es **`bug`** — el reporte de un hallazgo. Si el usuario pide un `bug-fix`, un refactor o cualquier otro tipo, parar e indicar que el plan de remediación pertenece al repositorio de la aplicación: allí se crea el `bug-fix` (vía «Analizar issue» de `work-research` o directamente con `work-plan`) citando el `WI-XXX` de tipo `bug` de este repo, o el work item que la integración con el tracker haya creado. Un `bug` en modo pruebas usa como `Repositorio` el nombre del **sistema bajo prueba** que declara `AGENTS.md`.
 
 > **Entrada desde `work-research`.** Cuando el WI nace de un **dossier de bug** (flujo «Analizar issue»), ese documento ya trae el problema, la evidencia y los criterios propuestos, y define un mapeo sección a sección hacia el `README.md` del WI (ver `work-research/references/issue/flow.md`). En ese caso: leerlo completo, aplicar ese mapeo, y limitar la entrevista a lo que el dossier deje abierto. **Los `AC-XXX` sí se reescriben aquí**: el dossier los propone en prosa y es este skill el que les da formato verificable e identificador — es lo que el propio dossier declara.
 >
-> Leer siempre **todos** los `WI-*/README.md` existentes en `docs/specs/changes/work-items/` **y en `docs/specs/archived/work-items/`** antes de crear o editar. Detectar solapamientos y resolverlos con el usuario antes de continuar: un WI archivado sigue contando como alcance cubierto.
+> Leer siempre **todos** los `WI-*/README.md` existentes en `<changesPath>/work-items/` **y en `<archivedPath>/work-items/`** antes de crear o editar. Detectar solapamientos y resolverlos con el usuario antes de continuar: un WI archivado sigue contando como alcance cubierto.
 
 ---
 
@@ -89,8 +91,8 @@ Antes de crear o editar cualquier WI, tener clara esta información. **No invent
 Antes de crear archivos, verificar estas condiciones. Si alguna falla, **no crear** — informar al usuario y resolver primero.
 
 **¿Qué verificar?**
-- **ID disponible:** el número `WI-XXX` propuesto no existe ya como carpeta **ni en `docs/specs/changes/work-items/` ni en `docs/specs/archived/work-items/`** — archivar un WI no libera su identificador. (Aplica también con el identificador de un tracker externo: verificar que no exista ya un `WI-<id>-*/` con ese identificador en ninguna de las dos rutas — ver el archivo de referencia del sistema.)
-- **Solapamiento de alcance:** leer los `WI-*/README.md` existentes —los de `docs/specs/changes/work-items/` **y los de `docs/specs/archived/work-items/`**— y comparar su descripción con la del nuevo. Un WI archivado es trabajo **ya hecho**: si el alcance coincide, replanificarlo es duplicarlo, y hay que decírselo al usuario. Si alguno ya cubre el mismo alcance: informar el conflicto y preguntar si prefiere actualizar el existente o ajustar el alcance del nuevo.
+- **ID disponible:** el número `WI-XXX` propuesto no existe ya como carpeta **ni en `<changesPath>/work-items/` ni en `<archivedPath>/work-items/`** — archivar un WI no libera su identificador. (Aplica también con el identificador de un tracker externo: verificar que no exista ya un `WI-<id>-*/` con ese identificador en ninguna de las dos rutas — ver el archivo de referencia del sistema.)
+- **Solapamiento de alcance:** leer los `WI-*/README.md` existentes —los de `<changesPath>/work-items/` **y los de `<archivedPath>/work-items/`**— y comparar su descripción con la del nuevo. Un WI archivado es trabajo **ya hecho**: si el alcance coincide, replanificarlo es duplicarlo, y hay que decírselo al usuario. Si alguno ya cubre el mismo alcance: informar el conflicto y preguntar si prefiere actualizar el existente o ajustar el alcance del nuevo.
 - **Repositorio definido (solo WI completo):** si el repositorio sigue siendo `Por definir` tras preguntar, publicar como stub en Draft, no como WI completo.
 - **Rama de trabajo actual:** determinar la rama git activa (`git branch --show-current`). Si coincide con el patrón de rama de implementación de una US, un WI o una automatización de pruebas (`feature/US-XXX-*`, `feature/WI-XXX-*`, `fix/WI-XXX-*`, `chore/WI-XXX-*`, `refactor/WI-XXX-*`, `test/*`), crear el work item nuevo ahí lo mezclaría con ese trabajo en curso. No bloquea automáticamente — ver manejo específico abajo.
 
@@ -116,7 +118,7 @@ Preguntar `Continuar en esta rama` / `Detenerme aquí`. Si el usuario elige **De
 
 Un stub reserva el ID. No requiere requerimiento detallado ni contexto técnico completo.
 
-1. **Resolver el ID:** si el repo tiene un tracker externo vinculado (ver `SKILL.md`), seguir su archivo de referencia (crea el work item primero y usa su identificador). En cualquier otro caso, inferir el siguiente secuencial libre listando carpetas `WI-*/` **tanto en `docs/specs/changes/work-items/` como en `docs/specs/archived/work-items/`** — los IDs archivados siguen ocupados.
+1. **Resolver el ID:** si el repo tiene un tracker externo vinculado (ver `SKILL.md`), seguir su archivo de referencia (crea el work item primero y usa su identificador). En cualquier otro caso, inferir el siguiente secuencial libre listando carpetas `WI-*/` **tanto en `<changesPath>/work-items/` como en `<archivedPath>/work-items/`** — los IDs archivados siguen ocupados.
 2. Crear la carpeta `WI-<número>-[nombre-descriptivo]/` y dentro el archivo `README.md` con:
    - `Estado: Draft`
    - `Tipo`: el conocido o el más probable (confirmar si hay duda).
@@ -135,9 +137,9 @@ Un stub reserva el ID. No requiere requerimiento detallado ni contexto técnico 
 
 Un WI completo puede alcanzar `Estado: Ready` si cumple todas las condiciones del checklist.
 
-1. **Resolver el ID:** si el repo tiene un tracker externo vinculado, seguir su archivo de referencia. En cualquier otro caso, inferir el siguiente secuencial libre listando carpetas `WI-*/` **tanto en `docs/specs/changes/work-items/` como en `docs/specs/archived/work-items/`** — los IDs archivados siguen ocupados. Crear la carpeta `WI-<número>-[nombre-descriptivo]/` antes de escribir el `README.md`.
+1. **Resolver el ID:** si el repo tiene un tracker externo vinculado, seguir su archivo de referencia. En cualquier otro caso, inferir el siguiente secuencial libre listando carpetas `WI-*/` **tanto en `<changesPath>/work-items/` como en `<archivedPath>/work-items/`** — los IDs archivados siguen ocupados. Crear la carpeta `WI-<número>-[nombre-descriptivo]/` antes de escribir el `README.md`.
 2. **Redactar el WI** siguiendo `assets/work-item-template.md`:
-   - **Metadatos**: `Tipo`; `Repositorio` con el nombre del repositorio git afectado; `Asignado a` indicado por el usuario, inferido con `git config user.name`, u omitido; `Work Item (<sistema>)` con el enlace al work item solo si se creó vía el tracker vinculado (etiqueta y formato en su archivo de referencia).
+   - **Metadatos**: `Tipo`; `Origen` solo en un `bug-fix` que corrige un `WI` de tipo `bug` ya registrado (enlace al bug; al crearlo, poner la `Resolución:` de ese bug en `En corrección (WI-YYY)`); `Repositorio` con el nombre del repositorio git afectado; `Asignado a` indicado por el usuario, inferido con `git config user.name`, u omitido; `Work Item (<sistema>)` con el enlace al work item solo si se creó vía el tracker vinculado (etiqueta y formato en su archivo de referencia).
    - **Descripción**: qué problema/necesidad motiva el trabajo — claro y concreto; sin diseño técnico.
    - **Reglas de negocio** (opcional — incluir solo si el dominio impone restricciones, obligaciones o prohibiciones explícitas; omitir si no aplica): cada regla lleva id secuencial `BR-01`, `BR-02`, … con enunciado RFC 2119 en MAYÚSCULAS. **Cada `BR-XX` declarada debe quedar verificada por al menos un `AC-XXX`** de la sección Criterios de aceptación (anotar `→ verificado por AC-XXX` junto a la regla); si al redactar los criterios alguna `BR-XX` queda sin ningún `AC-XXX` que la verifique, es una laguna — cerrarla con una pregunta o registrarla en Observaciones, nunca dejarla sin verificar.
    - **Criterios de aceptación**: cómo se verifica que quedó hecho; lista verificable. Tono imperativo; sin «podría», «quizá».
@@ -152,11 +154,25 @@ Un WI completo puede alcanzar `Estado: Ready` si cumple todas las condiciones de
 
 ---
 
+## Variante: `Tipo: bug` (registro de un hallazgo)
+
+Un WI de tipo `bug` **registra** un comportamiento incorrecto; **no** planifica su corrección. Es la salida natural de un hallazgo: una prueba automatizada que falla siendo fiel a su `TC-XXX` (`work-implement`, tipos TC/FT), una ejecución manual de casos de prueba, un criterio `UNCOVERED` por prueba en rojo en `coverage-verify`, o un defecto observado en producción. Sigue el flujo «Crear WI completo» con estas diferencias:
+
+1. **Secciones.** Se rellenan Descripción (qué está mal), **Comportamiento esperado / observado**, **Pasos para reproducir**, **Evidencia** e **Impacto** de la plantilla; se **eliminan** Archivos afectados y Plan de implementación. Criterios de aceptación es opcional: si se incluye, enuncia el comportamiento correcto, nunca la solución. Ningún texto del WI propone cómo arreglarlo: si el usuario ya sabe la causa, va en Contexto como hipótesis, no como plan.
+2. **Evidencia obligatoria.** Al menos una fila con referencia verificable (`TC-XXX`, prueba automatizada con su ID, log o captura en `assets/`, `criteria-coverage.md`). Sin evidencia el bug queda en `Draft`. Nunca incluir credenciales, tokens ni valores del `.env`; los ambientes se citan por nombre.
+3. **Origen y trazabilidad.** `Origen del hallazgo` indica de dónde viene; si nace de un `TC-XXX`, enlazarlo en Evidencia y anotar el bug en la línea `Hallazgos` de `test-cases-automation.md` (modo pruebas) o en `Cobertura de test cases` de `progress.md`, según corresponda — eso lo hace el skill que detectó el hallazgo al recibir el `WI-XXX` creado.
+4. **`Resolución`** arranca en `Abierto`. Pasa a `En corrección (WI-YYY)` cuando se crea el `bug-fix` que lo cita (lo actualiza `work-plan` al crear ese `bug-fix`), a `Corregido (WI-YYY)` cuando ese `bug-fix` se integra (lo actualiza `work-integrate` / `pr-create` al cerrarlo), o a `Descartado — motivo` por decisión del usuario.
+5. **Ready** exige: Descripción, Esperado/Observado, Pasos para reproducir, al menos una Evidencia, Severidad y Repositorio (o sistema bajo prueba). No exige Plan, Dependencias ni Archivos afectados.
+6. **Handoffs.** Un `bug` **no va a `work-implement`** (no tiene nada que implementar) ni dispara `test-define` (`createMode` no aplica: el TC que lo detectó ya existe). Al cerrar, ofrecer: **[Planificar la corrección]** → `work-research` «Analizar issue» sobre este WI (diagnóstico y `bug-fix` con plan) o, si la causa ya es conocida, `work-plan` para un `WI` de tipo `bug-fix` que cite este bug en su cabecera (`Origen: WI-XXX (bug)`); **[Solo registrar]** → terminar. **Con `implementation.scope: tests` la única opción es registrar**: la corrección se planifica en el repositorio de la aplicación (ver la nota de «Información requerida»).
+7. **Tracker.** Con la integración activa, `bug` es el **único** tipo de WI que se crea como work item `Bug` (ver `references/<proveedor>.md`); todos los demás, `bug-fix` incluido, son `Task`. La descripción lleva las secciones de esperado/observado, pasos y evidencia con los mismos encabezados.
+
+---
+
 ## Flujo: Actualizar un WI existente
 
-1. **Identificar el archivo** — por número, nombre o título. Si no aparece en `docs/specs/changes/work-items/`, buscarlo bajo `docs/specs/archived/work-items/` antes de darlo por inexistente. **Si está archivado, parar y avisar:** el WI ya se cerró e integró, y editarlo exige desarchivarlo primero —mover su carpeta de vuelta—, decisión que es del usuario. **Nunca** crear una carpeta nueva en la ruta activa por no haber encontrado el WI.
+1. **Identificar el archivo** — por número, nombre o título. Si no aparece en `<changesPath>/work-items/`, buscarlo bajo `<archivedPath>/work-items/` antes de darlo por inexistente. **Si está archivado, parar y avisar:** el WI ya se cerró e integró, y editarlo exige desarchivarlo primero —mover su carpeta de vuelta—, decisión que es del usuario. **Nunca** crear una carpeta nueva en la ruta activa por no haber encontrado el WI.
 2. **Leer el contenido actual** completo antes de editar.
-3. **Leer los demás `WI-*/README.md`** —los activos **y los de `docs/specs/archived/work-items/`**— para detectar solapamientos con los cambios propuestos.
+3. **Leer los demás `WI-*/README.md`** —los activos **y los de `<archivedPath>/work-items/`**— para detectar solapamientos con los cambios propuestos.
 4. **Aplicar los cambios** solicitados. Reglas invariantes:
    - Si el usuario cambia el estado a **Ready**: verificar todas las condiciones del checklist antes de guardar.
    - Si se añaden pasos al Plan: mantener tono imperativo y verificable; sin supuestos no acordados.
@@ -170,7 +186,7 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 
 **Pasos:**
 
-1. **Leer** todos los `WI-*/README.md` existentes en `docs/specs/changes/work-items/` **y en `docs/specs/archived/work-items/`**: los archivados son alcance ya cubierto y sus IDs siguen ocupados.
+1. **Leer** todos los `WI-*/README.md` existentes en `<changesPath>/work-items/` **y en `<archivedPath>/work-items/`**: los archivados son alcance ya cubierto y sus IDs siguen ocupados.
 2. **Identificar repositorios / alcances independientes** a partir de la descripción del esfuerzo. **No inventar** alcances no soportados por el pedido; lo no claro queda `Por definir` o se pregunta.
 3. **Presentar la propuesta** al usuario, un ítem por `WI-` tentativo: `WI-XXX` (siguiente libre **contando activos y archivados**), nombre de archivo, tipo, repositorio (o `Por definir`) y objetivo breve. **No crear archivos en este turno** — dejarlo explícito al final del mensaje.
 4. **Confirmar con el usuario** mediante la herramienta de preguntas estructuradas. Opciones: [Confirmar] / [Cancelar] — **sin** una opción de "ajustar alcance": el ajuste llega por respuesta libre, que ya explica qué cambiar. Si el usuario pide un ajuste, revisar y repetir pasos 3–4. **No continuar sin confirmación explícita.**
@@ -189,7 +205,7 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 ## Checklist antes de redactar
 
 **Información:**
-- [ ] Todos los `WI-*/README.md` de `docs/specs/changes/work-items/` **y de `docs/specs/archived/work-items/`** leídos; solapamientos resueltos (un WI archivado es trabajo ya hecho: replanificarlo es duplicarlo)
+- [ ] Todos los `WI-*/README.md` de `<changesPath>/work-items/` **y de `<archivedPath>/work-items/`** leídos; solapamientos resueltos (un WI archivado es trabajo ya hecho: replanificarlo es duplicarlo)
 - [ ] Modo de invocación identificado (A o B)
 - [ ] Modo A: intención clara: stub vs WI completo
 - [ ] Modo B: propuesta presentada al usuario sin archivos creados; confirmación recibida antes del primer `WI-*/README.md`
@@ -197,11 +213,12 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - [ ] **Vinculación con tracker externo**: verificada (ver `SKILL.md`); si está vinculado, seguido su archivo de referencia y el identificador externo extraído antes de crear el archivo local
 
 **Validación:**
-- [ ] ID `WI-XXX` libre en `docs/specs/changes/work-items/` **y en `docs/specs/archived/work-items/`**
+- [ ] ID `WI-XXX` libre en `<changesPath>/work-items/` **y en `<archivedPath>/work-items/`**
 - [ ] Sin solapamiento de alcance con WI existentes
 - [ ] Rama de trabajo actual verificada; si es una rama de implementación de otra US o WI, se advirtió al usuario y se preguntó `Continuar` / `Detenerme aquí` antes de crear
 
 **Condiciones para `Estado: Ready`:**
+- [ ] **`Tipo: bug`:** Descripción, Comportamiento esperado/observado, Pasos para reproducir, al menos una fila de Evidencia (sin credenciales), Severidad y Repositorio/sistema bajo prueba; **sin** Plan de implementación ni Archivos afectados; ninguna propuesta de solución en el texto. Las condiciones siguientes aplican a los demás tipos.
 - [ ] **Descripción** con problema/necesidad claros
 - [ ] **Criterios de aceptación** verificables
 - [ ] Si hay **Reglas de negocio** (`BR-XX`) declaradas: cada una verificada por al menos un `AC-XXX` — ninguna `BR-XX` sin su `AC-XXX` correspondiente
@@ -246,6 +263,11 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 
 ## Anti-patrones
 
+- Escribir en un WI de tipo `bug` cómo solucionarlo (plan, archivos, diseño): un bug describe qué está mal; la solución es un `bug-fix`.
+- Crear un `bug-fix`, refactor u otro tipo implementable en un repositorio con `implementation.scope: tests`: allí solo se registran hallazgos (`bug`); la remediación se planifica en el repositorio de la aplicación.
+- Dejar un `bug` en `Ready` sin evidencia verificable, o pegar en su evidencia tokens, cookies o valores del `.env`.
+- Enviar un `bug` a `work-implement` u ofrecerle `test-define`.
+
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - Implementar el arreglo, la migración o los tests mientras se redacta el WI.
 - Crear el WI como un archivo suelto `WI-XXX-[slug].md` en lugar de una carpeta `WI-XXX-[slug]/README.md`.
@@ -275,8 +297,8 @@ Posición: **planificación** — una tarea de mantenimiento (`WI`) es **autocon
 
 | | |
 |--|--|
-| **Entrada** | Petición de mantenimiento del usuario, o un **dossier de bug** de `work-research` (flujo «Analizar issue»), del que se mapean descripción, evidencia y criterios (bug, refactor, deuda técnica, dependencias, operativa). No requiere una US previa. |
-| **Salida para implementar** | WI en **`Estado: Ready`** (Descripción, Criterios, Plan, Dependencias y Referencias según checklist). Stubs en Draft **no** habilitan `work-implement`. |
+| **Entrada** | Petición de mantenimiento del usuario, un **hallazgo** que se registra como `WI` de tipo `bug` (desde `work-implement`, `coverage-verify`, una ejecución manual de TC o producción), o un **dossier de bug** de `work-research` (flujo «Analizar issue»), del que se mapean descripción, evidencia y criterios a un `bug-fix`. No requiere una US previa. |
+| **Salida para implementar** | WI en **`Estado: Ready`** (Descripción, Criterios, Plan, Dependencias y Referencias según checklist). Stubs en Draft **no** habilitan `work-implement`. Un `WI` de tipo **`bug`** nunca es salida para implementar: su siguiente paso es `work-research` («Analizar issue») o un `bug-fix` que lo cite — y en `implementation.scope: tests`, ninguno: solo se registra. |
 | **Siguiente paso** | Según `specification.testCases.createMode`: **`/test-define`** sobre el WI si corresponde y aún no tiene `TC-XXX`, y **`/work-implement`** — solo cuando el WI a ejecutar está `Ready`. La implementación nunca se hace directamente desde `work-plan`. |
 | **Regreso desde implement** | Ambigüedad técnica o alcance incorrecto → ajustar el WI aquí. |
 

@@ -262,7 +262,7 @@ Se resuelve primero por `verification.qualityCheck.confirmFix` (ver [Política d
 
 | Contexto | Qué hacer |
 |----------|-----------|
-| **Dentro de una implementación** — hay un **trabajo en curso** al que atribuir la rama: un artefacto del plugin (`US-XXX`, `WI-XXX`, o `FT-XXX`/`TC-XXX` sobre rama `test/`) **o un artefacto externo** (ticket, spec suelto) que el usuario o la rama señalen. **No se exige carpeta ni `progress.md`** (cierre vía `work-integrate` / `pr-create`) | Mostrar el reporte y **preguntar si se corrige**. Es el flujo normal del cierre: corregir es lo esperado, pero sigue requiriendo autorización. **Excepción — repositorio solo de pruebas** (`.sdd-devkit/settings.json` con `implementation.scope: tests`): una prueba en rojo **no se corrige ni se delega** — no hay código de producción en ese repo. Se reporta como **hallazgo** (comportamiento del sistema distinto al `TC-XXX`) y se remite a la regla de prueba en rojo de `work-implement/references/test-cases.md` § Modo pruebas; solo los checks propios del repo de pruebas (lint, tipado, build, configuración del runner) siguen siendo corregibles con autorización. |
+| **Dentro de una implementación** — hay un **trabajo en curso** al que atribuir la rama: un artefacto del plugin (`US-XXX`, `WI-XXX`, o `FT-XXX`/`TC-XXX` sobre rama `test/`) **o un artefacto externo** (ticket, spec suelto) que el usuario o la rama señalen. **No se exige carpeta ni `progress.md`** (cierre vía `work-integrate` / `pr-create`) | Mostrar el reporte y **preguntar si se corrige**. Es el flujo normal del cierre: corregir es lo esperado, pero sigue requiriendo autorización. **Excepción — repositorio solo de pruebas** (`.sdd-devkit/settings.json` con `implementation.scope: tests`): una prueba en rojo **no se corrige ni se delega** — no hay código de producción en ese repo. Se reporta como **hallazgo** (comportamiento del sistema distinto al `TC-XXX`), se ofrece registrarlo como `WI` de tipo `bug` vía `work-plan` (solo reporte, sin plan de remediación) y se remite a la regla de prueba en rojo de `work-implement/references/test-cases.md` § Modo pruebas; solo los checks propios del repo de pruebas (lint, tipado, build, configuración del runner) siguen siendo corregibles con autorización. |
 | **Fuera de una implementación** — corrida suelta sobre un repo, rama sin artefacto derivable, auditoría puntual, revisión exploratoria | **Preguntar explícitamente qué quiere el usuario**, con dos opciones: **[Corregir los hallazgos]** o **[Solo el informe, detener aquí]**. **No asumir que hay que corregir.** Quien pide una verificación fuera de un ciclo de implementación muchas veces solo quiere el diagnóstico. |
 
 Con `always`, la pregunta va por la **herramienta de preguntas estructuradas** del cliente (opciones tappables); si el cliente no la expone, formularla en prosa con las opciones enumeradas. Reglas:
@@ -287,13 +287,13 @@ Solo si el usuario autorizó corregir. Depende de si hay un **artefacto de traba
 
 | Rama | Artefacto | Carpeta |
 |------|-----------|---------|
-| `feature/US-042-…` | `US-042` | `docs/specs/changes/user-stories/US-042-…/` |
-| `fix/`\|`chore/`\|`refactor/` + `WI-007-…` | `WI-007` | `docs/specs/changes/work-items/WI-007-…/` |
-| `test/FT-003-…` | `FT-003` | `docs/specs/current/FT-003-…/` |
+| `feature/US-042-…` | `US-042` | `<changesPath>/user-stories/US-042-…/` |
+| `fix/`\|`chore/`\|`refactor/` + `WI-007-…` | `WI-007` | `<changesPath>/work-items/WI-007-…/` |
+| `test/FT-003-…` | `FT-003` | `<currentPath>/FT-003-…/` |
 | `test/US-042-…` \| `test/WI-018-…` | los `TC-XXX` de ese padre | la carpeta de la US o el WI |
 | Otro prefijo o convención (`PROJ-1234`, `ticket/…`, ruta a un spec) | el artefacto externo | la que indique el usuario, o ninguna |
 
-> **Buscar también en `docs/specs/archived/`.** Al cerrar un trabajo, `work-integrate` y `pr-create` pueden mover su carpeta a `docs/specs/archived/user-stories/` o `docs/specs/archived/work-items/`. Si no está en la ruta activa, mirar ahí antes de concluir que «no hay artefacto» y dejar de delegar en `work-implement` — y **nunca** crear la carpeta en la ruta activa por no haberla encontrado. Este skill **solo lee** la carpeta (para resolver el artefacto y decidir si delega); no escribe nada dentro. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> **Buscar también en `<archivedPath>/`.** El usuario puede haber archivado la carpeta del trabajo bajo `<archivedPath>/user-stories/` o `<archivedPath>/work-items/` con el modificador `archive` de `work-define`/`work-plan`. Si no está en la ruta activa, mirar ahí antes de concluir que «no hay artefacto» y dejar de delegar en `work-implement` — y **nunca** crear la carpeta en la ruta activa por no haberla encontrado. Este skill **solo lee** la carpeta (para resolver el artefacto y decidir si delega); no escribe nada dentro. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo).
 >
 > **Cuándo se da.** En el flujo normal el archivado ocurre **después** de esta puerta (`work-integrate` paso 11, ya en la rama base tras el merge; `pr-create` Paso 5), así que aquí el artefacto suele estar todavía en la ruta activa. Se lo encuentra archivado al **repetir** el cierre tras una corrección, o al correr `quality-check` sobre trabajo ya integrado — dos situaciones normales, no excepcionales.
 >
@@ -301,7 +301,7 @@ Solo si el usuario autorizó corregir. Depende de si hay un **artefacto de traba
 
 Si no se resuelve un artefacto del plugin, **comprobar antes si hay uno externo** (ver [Artefactos externos al plugin](#artefactos-externos-al-plugin)); solo si tampoco lo hay, **no hay artefacto**: no delegar ni inventarlo. Si hay ambigüedad (varios candidatos), preguntar al usuario antes de delegar. Esta es también la señal que distingue los dos contextos del punto 1.
 
-**Qué se le pasa a `work-implement`** al delegar: el artefacto en curso (`US-XXX` / `WI-XXX` / `FT-XXX` / `TC-XXX`), el check que falló, el comando exacto, la salida de error relevante y los archivos implicados. La corrección se atribuye a ese artefacto y se anota en su `progress.md` como nota de retrabajo — **salvo que el artefacto esté archivado**, en cuyo caso la nota va en este informe y no se escribe dentro de `docs/specs/archived/` (ver la regla de artefacto archivado en [`work-implement`](../work-implement/SKILL.md#seleccion-del-tipo-de-implementacion)); `work-implement` aplica su propio criterio en su [Modo corrección](../work-implement/SKILL.md#modo-correccion-delegado-desde-quality-check) — un modo acotado, sin ritmo por unidad y sin exigir `Estado: Ready` ni working tree limpio.
+**Qué se le pasa a `work-implement`** al delegar: el artefacto en curso (`US-XXX` / `WI-XXX` / `FT-XXX` / `TC-XXX`), el check que falló, el comando exacto, la salida de error relevante y los archivos implicados. La corrección se atribuye a ese artefacto y se anota en su `progress.md` como nota de retrabajo — **salvo que el artefacto esté archivado**, en cuyo caso la nota va en este informe y no se escribe dentro de `<archivedPath>/` (ver la regla de artefacto archivado en [`work-implement`](../work-implement/SKILL.md#seleccion-del-tipo-de-implementacion)); `work-implement` aplica su propio criterio en su [Modo corrección](../work-implement/SKILL.md#modo-correccion-delegado-desde-quality-check) — un modo acotado, sin ritmo por unidad y sin exigir `Estado: Ready` ni working tree limpio.
 
 **Aplica igual a fallos de pruebas** (las dos fijas, e2e y cualquier suite configurada) que a fallos de tipado, linter o build: en ambos casos hay que escribir o ajustar código, que es justo lo que hace `work-implement`.
 
@@ -348,7 +348,7 @@ archivo; las pruebas acotadas que `work-implement` corre durante el desarrollo n
 consumen.
 
 La clave de frescura es el **`FINGERPRINT` canónico** —compartido, con la misma receta, entre las tres
-puertas del cierre (`quality-check-run.json` aquí, `coverage.md` en `coverage-verify`, `docs/audits/code-review.md`
+puertas del cierre (`quality-check-run.json` aquí, `criteria-coverage.md` en `coverage-verify`, `docs/audits/code-review.md`
 en `code-review`)—: un hash del commit + working tree + cambios sin commitear, excluyendo toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`, para que ni escribir un artefacto de la propia tubería ni editar documentación desplace la clave. **La clave se mueve solo cuando cambia algo que puede alterar el resultado de una prueba o de una compilación.**
 
 Detalle completo (receta exacta del fingerprint y por qué cada exclusión existe, esquema `quality-check-run.json`

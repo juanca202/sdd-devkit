@@ -56,7 +56,7 @@ La ausencia de manifiestos por sí sola **no** distingue "sin código" de "solo 
 
 - Hay módulos, rutas/endpoints, modelos de dominio o componentes con nombres propios del negocio (no genéricos de ejemplo).
 - Existen tests que verifican lógica de negocio (no solo el test de ejemplo del scaffold).
-- `docs/specs/changes/user-stories/`, `docs/specs/changes/work-items/` o sus equivalentes bajo `docs/specs/archived/` ya tienen contenido (un repo cuyo trabajo esté todo archivado **no** es greenfield).
+- `<changesPath>/user-stories/`, `<changesPath>/work-items/` o sus equivalentes bajo `<archivedPath>/` ya tienen contenido (un repo cuyo trabajo esté todo archivado **no** es greenfield).
 - El historial de git tiene múltiples commits de features a lo largo del tiempo.
 
 ### Si la señal es ambigua

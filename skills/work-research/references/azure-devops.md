@@ -101,8 +101,9 @@ URL del artefacto leído para que el skill destino lo enlace o lo reutilice:
 
 | Flujo | Qué propagar |
 |-------|--------------|
-| **Analizar issue** → `work-plan` | El `ado_id` del **bug ya existente** y la indicación de **reutilizarlo**: `work-plan` usa el identificador del gestor como número del WI (`WI-<ado_id>-{kebab-case}/`) y lo registra en `Work Item (ADO)`. Crear un segundo work item para el mismo defecto es un duplicado. Si el usuario prefiere separar el reporte (tipo `Bug`) del trabajo de corrección, preguntárselo y dejar que `work-plan` cree el nuevo work item vinculado al bug como `Related` |
+| **Analizar issue** → `work-plan` | El `ado_id` del **`Bug` ya existente** en ADO. Ese `Bug` es el **reporte** (equivale a un `WI` de tipo `bug`); el `bug-fix` que planifica `work-plan` es trabajo de corrección y en ADO es siempre una `Task` **vinculada** a ese `Bug` (`Related`/`Child`), con `Origen: #<ado_id>` en su cabecera — nunca un segundo `Bug` para el mismo defecto. Si el bug no existe aún en ADO ni como WI local, `work-plan` puede registrarlo primero como `WI` de tipo `bug` (→ `Bug`) y después el `bug-fix` (→ `Task`) |
 | **Analizar decisiones pendientes** → `work-define` / `work-plan` | El `ado_id` del artefacto investigado, para que las actualizaciones caigan sobre ese mismo work item |
+| **Historia leída de ADO sin documento local** → `work-define` | Sugerir `/work-define sync #<ado_id>`: es la única vía para que la US se materialice localmente con su `id` y su `Work Item (ADO)`; `work-define` sin ese modificador no sincroniza (pregunta). |
 | **Analizar test case** → `test-define` | El `ado_id` del `Test Case` auditado, para que se corrija o amplíe **ese** work item y no se cree uno nuevo |
 
 El detalle de creación y actualización vive en la referencia de ADO de cada skill

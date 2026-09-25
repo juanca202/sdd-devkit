@@ -9,7 +9,7 @@ suite de pruebas** frente a ese escenario y propone la remediación como un cicl
 `work-implement`.
 
 ```text
-Descripción del bug  ─ o ─  Código del bug en el gestor de proyectos (MCP)
+Descripción del bug  ─ o ─  WI-XXX de tipo `bug` (hallazgo registrado)  ─ o ─  Código del bug en el gestor de proyectos (MCP)
     │
     ▼
 Normalizar el reporte           ┐
@@ -43,7 +43,7 @@ Handoff → work-plan (WI tipo bug-fix) → work-implement
 ```
 
 **Entregable:** un `WI` de tipo `bug-fix` en
-`docs/specs/changes/work-items/WI-XXX-{kebab-case}/README.md`, creado por `work-plan` a partir
+`<changesPath>/work-items/WI-XXX-{kebab-case}/README.md`, creado por `work-plan` a partir
 del **dossier de bug** que produce este flujo con
 [`assets/issue/diagnosis-template.md`](../../assets/issue/diagnosis-template.md).
 
@@ -63,7 +63,7 @@ mínimo (observado, esperado y disparador) — ver Paso 0.
 > y la remediación viven en el `WI-XXX-{kebab-case}/README.md` que crea `work-plan`.
 > Guardar además un RS solo si el usuario lo pide explícitamente (p. ej. la
 > investigación produjo hallazgos reutilizables más allá de este bug); en ese caso se
-> guarda en `docs/specs/changes/research/RS-XXX-{slug}/` y el WI lo referencia.
+> guarda en `<changesPath>/research/RS-XXX-{slug}/` y el WI lo referencia.
 
 ## Principios rectores (no negociables)
 

@@ -53,7 +53,7 @@ Las reglas de `implementation.md` son obligatorias y tienen prioridad para deter
 
 No continues hasta haber leido y aplicado `implementation.md`.
 
-**Excepcion deliberada:** `archiveMode` **no** lo aplica este skill — el archivado del artefacto ocurre al cerrarlo, en `work-integrate` / `pr-create`.
+**Fuera de este skill:** el archivado del artefacto no forma parte de la implementacion ni del cierre; lo pide el usuario, tras su revision, al skill que produjo el artefacto (`/work-define US-XXX archive`, `/work-plan WI-XXX archive` — ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md)).
 
 ---
 
@@ -77,17 +77,17 @@ La senal que distingue los tipos es **el artefacto que el usuario referencia** (
 
 | Tipo | Como se identifica | Que se implementa | Unidad de confirmacion | Flujo a leer |
 |------|--------------------|-------------------|------------------------|--------------|
-| **Tarea de historia de usuario** | El trabajo referencia una historia `US-XXX` o una tarea `TK-XXX` que cuelga de ella; el artefacto vive bajo `docs/specs/changes/user-stories/` (o su equivalente archivado, ver la nota de abajo). | El plan tecnico de la TK (codigo de produccion + sus tests) | **Una `TK-XXX`** | `references/user-story-tasks.md` — **leer antes de implementar.** |
-| **Tarea de mantenimiento** | El trabajo referencia un `WI-XXX` (bug, refactor, deuda tecnica, dependencias, operativa) **sin historia asociada**; vive bajo `docs/specs/changes/work-items/` (o su equivalente archivado, ver la nota de abajo). | El plan del WI (codigo de produccion + sus tests) | **El `WI-XXX` completo** | `references/work-items.md` — **leer antes de implementar.** |
+| **Tarea de historia de usuario** | El trabajo referencia una historia `US-XXX` o una tarea `TK-XXX` que cuelga de ella; el artefacto vive bajo `<changesPath>/user-stories/` (o su equivalente archivado, ver la nota de abajo). | El plan tecnico de la TK (codigo de produccion + sus tests) | **Una `TK-XXX`** | `references/user-story-tasks.md` — **leer antes de implementar.** |
+| **Tarea de mantenimiento** | El trabajo referencia un `WI-XXX` (bug, refactor, deuda tecnica, dependencias, operativa) **sin historia asociada**; vive bajo `<changesPath>/work-items/` (o su equivalente archivado, ver la nota de abajo). | El plan del WI (codigo de produccion + sus tests) | **El `WI-XXX` completo** | `references/work-items.md` — **leer antes de implementar.** |
 | **Caso de prueba** | El trabajo referencia uno o varios `TC-XXX`; viven en la carpeta `test-cases/` de un artefacto padre (`US-XXX`, `WI-XXX` o `FT-XXX`). | **Las pruebas automatizadas de esos `TC-XXX`** | **Un `TC-XXX`** | `references/test-cases.md` — **leer antes de implementar.** |
-| **Feature** | El trabajo referencia un `FT-XXX` — funcionalidad **ya implementada** registrada bajo `docs/specs/current/`. | **Las pruebas de todos los `TC-XXX` asociados a los `AC-XXX` que contiene el feature** — nunca funcionalidad nueva | **El `FT-XXX` completo** | `references/test-cases.md` — **leer antes de implementar.** |
+| **Feature** | El trabajo referencia un `FT-XXX` — funcionalidad **ya implementada** registrada bajo `<currentPath>/`. | **Las pruebas de todos los `TC-XXX` asociados a los `AC-XXX` que contiene el feature** — nunca funcionalidad nueva | **El `FT-XXX` completo** | `references/test-cases.md` — **leer antes de implementar.** |
 
-> **Artefacto archivado.** Al cerrar un trabajo, `work-integrate` y `pr-create` pueden mover su carpeta a `docs/specs/archived/user-stories/` o `docs/specs/archived/work-items/`. Si el artefacto referenciado no aparece en su ruta activa, **buscarlo ahi antes de darlo por inexistente** — y **nunca** crear la carpeta en la ruta activa por no haberla encontrado: este skill hace «leer o crear» el `progress.md`, asi que el descuido produciria una carpeta fantasma con un identificador ya usado. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo). Que se haga con el hallazgo depende del modo:
+> **Artefacto archivado.** El usuario puede haber archivado la carpeta del trabajo bajo `<archivedPath>/user-stories/` o `<archivedPath>/work-items/` con el modificador `archive` de `work-define`/`work-plan`. Si el artefacto referenciado no aparece en su ruta activa, **buscarlo ahi antes de darlo por inexistente** — y **nunca** crear la carpeta en la ruta activa por no haberla encontrado: este skill hace «leer o crear» el `progress.md`, asi que el descuido produciria una carpeta fantasma con un identificador ya usado. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo). Que se haga con el hallazgo depende del modo:
 >
 > - **En los cuatro tipos de implementacion** (US/TK, WI, TC, FT): **parar y avisar**. Implementar trabajo nuevo sobre un artefacto ya cerrado exige desarchivarlo primero —mover su carpeta de vuelta—, y eso lo decide el usuario.
 > - **En [modo correccion](#modo-correccion-delegado-desde-quality-check)**: un artefacto archivado es **esperable**, no un error — la correccion llega justo en la fase de cierre, cuando el archivado ya se commiteo. Continuar con la correccion, pero **sin escribir dentro de la carpeta archivada**: la nota de retrabajo va en el informe de `quality-check`, no en el `progress.md` archivado.
 >
-> Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 > **Modo correccion (entrada delegada desde [`quality-check`](../quality-check/SKILL.md#corrección-de-fallos)).** Ademas de los cuatro tipos, este skill acepta una **correccion puntual delegada** por `quality-check` cuando un check falla en el cierre y el usuario autoriza el arreglo. No es un tipo nuevo: es un modo acotado sobre el **artefacto que ya se implemento en esta rama** — `US-XXX`, `WI-XXX`, una automatizacion de pruebas (`FT-XXX` / `TC-XXX` en rama `test/`), o un artefacto externo al plugin. Ver [Modo correccion](#modo-correccion-delegado-desde-quality-check).
 
@@ -139,7 +139,7 @@ proceso de worktrees y el arbol principal ya no se toca. La razon de ser de `wor
 que el usuario siga trabajando en su arbol —normalmente en la rama de integracion— mientras la
 implementacion avanza aparte; un checkout «solo para crear la rama» rompe eso.
 
-Todo ocurre en worktrees, en dos niveles: el **worktree del artefacto** (`<workTreePath>/<artefacto>`, en la
+Todo ocurre en worktrees, en dos niveles, **siempre bajo la raíz del repositorio de código afectado** (`workTreePath`, por defecto `.worktrees/`, es relativa a ese repositorio: el principal en un repo único o monorepo; **cada submódulo afectado** en multi-repo — uno por repositorio —, y **nunca el repositorio de especificaciones**, cuyos artefactos se editan en su propio árbol; detalle en [`references/worktrees.md`](references/worktrees.md)): el **worktree del artefacto** (`<repo-afectado>/<workTreePath>/<artefacto>`, en la
 rama del artefacto, creado con `git worktree add … [-b <rama>] <rama-base>` — sin checkout previo de la
 base, que es solo una referencia) y un **worktree por unidad** (`wt/<unidad>`, derivado del anterior). El
 «Paso 1 — Preparar repositorio y rama» de cada referencia de tipo se cumple creando el worktree del
@@ -309,7 +309,7 @@ Es el **primer paso** y condiciona todo lo demas. No lanzar ningun subagente ant
 - **El maximo de subagentes en paralelo lo fija `maxParallel`** (por defecto 3; `-1` = sin limite). Si una ola tiene mas unidades independientes que ese maximo, despacharlas en lotes de ese tamano; al liberarse un cupo, entra la siguiente unidad pendiente de la ola.
 - **Un worktree por unidad.** Cada subagente trabaja en su propio `git worktree`, en una rama derivada de la rama del artefacto:
   - Rama base = la rama del artefacto de esta ejecucion (`feature/US-XXX-*` o la rama del `WI`). **Si el alcance son WI de tipo `bug-fix` / `security-update`** —que no tienen rama propia—, la base de los worktrees es la **rama de integracion** confirmada, y ahi mismo se hacen los merges de las unidades; no se crea una rama intermedia para agruparlos.
-  - Crear el worktree bajo la raiz que fije **`workTreePath`** (relativa a la raiz del repo si no es absoluta — p. ej. `.worktrees/`; sin definir, una ruta temporal fuera del arbol principal) con `git worktree add <workTreePath>/<unidad> -b wt/<unidad> <rama-base>` (p. ej. `.worktrees/TK-003` con rama `wt/TK-003`). `<rama-base>` es una **referencia**: no hace falta —ni se debe— hacer checkout de ella en el arbol principal para crear el worktree. El worktree parte del estado de la rama base **ya integrado con las olas anteriores**.
+  - Crear el worktree bajo la raiz que fije **`workTreePath`** (relativa a la raiz del **repositorio de codigo afectado** si no es absoluta; por defecto `.worktrees/`; en multi-repo, dentro del submodulo que la unidad toca, nunca en el repo de especificaciones) con `git worktree add <workTreePath>/<unidad> -b wt/<unidad> <rama-base>` (p. ej. `.worktrees/TK-003` con rama `wt/TK-003`). `<rama-base>` es una **referencia**: no hace falta —ni se debe— hacer checkout de ella en el arbol principal para crear el worktree. El worktree parte del estado de la rama base **ya integrado con las olas anteriores**.
 - Cada subagente **ejecuta el flujo completo de su unidad** segun la referencia del tipo (Paso 3 de la referencia correspondiente): ciclo TDD, lint/typecheck/build, validacion, checkboxes del artefacto, cobertura de test cases y commits dentro de su worktree. **Excepcion a la delegacion en `/git-commit` del Paso 3:** dentro del worktree el commit se hace de forma **directa** (`git commit`), sin invocar `/git-commit` — un subagente en su propio worktree no puede sostener las pausas de ese skill (la propuesta de division, o una parada por secretos, rama protegida o hook fallido), y el modo paralelo existe precisamente para no pausar. Como compensacion, el subagente debe aplicar antes de cada commit directo la misma deteccion de secretos que usa `git-commit` (patrones de nombre de archivo sensibles y `grep` sobre el diff staged) y, si encuentra alguno, **abortar la unidad sin comitear** y escalar el hallazgo al orquestador en vez de comitear. El subagente **no** integra ni mergea a la rama base ni ofrece handoffs; al terminar devuelve al orquestador el resultado (unidad, rama, estado, notas, resultado de tests/validacion).
 - El orquestador arranca una **nueva ola solo cuando la anterior este completamente integrada** en la rama base, para que las unidades dependientes vean el codigo de sus predecesoras.
 
@@ -378,7 +378,7 @@ relevante y los archivos implicados.
   se inventan estados: los validos siguen siendo `Pending`, `In Progress`, `Done`, y una unidad ya en
   `Done` permanece en `Done`. **Si el artefacto es externo y no hay `progress.md`**, no crearlo: devolver
   esa misma nota en la respuesta a `quality-check`. **Si el artefacto esta archivado** (su carpeta vive bajo
-  `docs/specs/archived/`), tampoco escribir dentro: mismo trato — la nota va en la respuesta a
+  `<archivedPath>/`), tampoco escribir dentro: mismo trato — la nota va en la respuesta a
   `quality-check`, que la recoge en su informe.
 - **Sin commit automatico ni handoff:** al terminar, devolver el control a `quality-check`, que verifica el
   arreglo re-ejecutando el check, recalcula el fingerprint y reinicia su corrida. Este skill no re-ejecuta
@@ -401,7 +401,7 @@ completo en lugar del skill destino. `quality-check` no debe reintentar la deleg
 reportarlo al usuario en su informe y emitir el veredicto que aplique (`REJECTED`), dejando el cierre
 bloqueado hasta que el escalado se resuelva. Anotar tambien la decision como **nota** en `progress.md` —
 salvo que el artefacto sea externo o este archivado, en cuyo caso la nota viaja en la respuesta a
-`quality-check` y no se escribe dentro de `docs/specs/archived/`.
+`quality-check` y no se escribe dentro de `<archivedPath>/`.
 
 ---
 

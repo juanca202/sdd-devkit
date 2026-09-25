@@ -13,8 +13,8 @@
     "confirmByUnit": "always",
     "uncommittedChanges": "ask",
     "workTree": "ask",
+    "workTreePath": ".worktrees/",
     "maxParallel": 3,
-    "archiveMode": "ask",
     "handoff": "ask",
     "scope": "code"
   },

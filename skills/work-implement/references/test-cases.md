@@ -3,7 +3,7 @@
 Flujo para **ejecutar en codigo** los casos de prueba ya documentados por `test-define`. Cubre **dos puntos de entrada**:
 
 - **`TC-XXX`** — el usuario indica uno o varios casos de prueba concretos; se automatizan esos TC.
-- **`FT-XXX`** — el usuario indica un feature (funcionalidad ya implementada, `docs/specs/current/`); se automatizan **todos los `TC-XXX` asociados a los `AC-XXX` que contiene**.
+- **`FT-XXX`** — el usuario indica un feature (funcionalidad ya implementada, `<currentPath>/`); se automatizan **todos los `TC-XXX` asociados a los `AC-XXX` que contiene**.
 
 Esta referencia se carga desde `SKILL.md` cuando la seleccion de tipo resuelve a cualquiera de esos dos casos. Asume ya resueltos el mecanismo de preguntas, el idioma, la validacion de repositorio y el ritmo de confirmacion (ver `SKILL.md`).
 
@@ -29,23 +29,23 @@ El `TC-XXX` siempre vive en la carpeta `test-cases/` de un **artefacto padre**. 
 
 | Artefacto padre | Especificacion | Test cases | Progreso |
 | --------------- | -------------- | ---------- | -------- |
-| **Feature** | `docs/specs/current/FT-XXX-[slug]/README.md` | `docs/specs/current/FT-XXX-[slug]/test-cases/` | `docs/specs/current/FT-XXX-[slug]/progress.md` |
-| **Historia de usuario** | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/README.md` | `.../test-cases/` | `.../progress.md` |
-| **Tarea de mantenimiento** | `docs/specs/changes/work-items/WI-XXX-[kebab-case]/README.md` | `.../test-cases/` | `.../progress.md` |
+| **Feature** | `<currentPath>/FT-XXX-[slug]/README.md` | `<currentPath>/FT-XXX-[slug]/test-cases/` | `<currentPath>/FT-XXX-[slug]/progress.md` |
+| **Historia de usuario** | `<changesPath>/user-stories/US-XXX-[nombre-corto]/README.md` | `.../test-cases/` | `.../progress.md` |
+| **Tarea de mantenimiento** | `<changesPath>/work-items/WI-XXX-[kebab-case]/README.md` | `.../test-cases/` | `.../progress.md` |
 
 | Otros artefactos | Ruta |
 | ---------------- | ---- |
 | Indice de test cases | `[carpeta del padre]/test-cases/README.md` |
-| Reporte de trazabilidad | `[carpeta del padre]/coverage.md` (lo produce `coverage-verify`, no este skill) |
-| Padre ya archivado (fallback) | `docs/specs/archived/user-stories/US-XXX-…/` · `docs/specs/archived/work-items/WI-XXX-…/`, con la misma estructura interna |
+| Reporte de trazabilidad | `[carpeta del padre]/criteria-coverage.md` (lo produce `coverage-verify`, no este skill) |
+| Padre ya archivado (fallback) | `<archivedPath>/user-stories/US-XXX-…/` · `<archivedPath>/work-items/WI-XXX-…/`, con la misma estructura interna |
 | ADR | `docs/adr/` |
 | Glosario | `docs/glossary.md` |
 
-> **Si la carpeta del padre no esta en la ruta activa, buscarla bajo `docs/specs/archived/`** antes de darla por inexistente: `work-integrate` y `pr-create` pueden moverla ahi al cerrar el trabajo, si el usuario lo confirma. Un padre archivado significa que ese trabajo **ya se cerro**: parar y avisar en vez de escribir dentro, y **nunca** recrear la carpeta en la ruta activa — dejaria dos artefactos con el mismo identificador y la numeracion de los `TC-XXX` reiniciaria en `001`.
+> **Si la carpeta del padre no esta en la ruta activa, buscarla bajo `<archivedPath>/`** antes de darla por inexistente: el usuario puede haberla archivado con el modificador `archive` de `work-define`/`work-plan`. Un padre archivado significa que ese trabajo **ya se cerro**: parar y avisar en vez de escribir dentro, y **nunca** recrear la carpeta en la ruta activa — dejaria dos artefactos con el mismo identificador y la numeracion de los `TC-XXX` reiniciaria en `001`.
 >
 > **Excepcion — modo correccion.** En la correccion delegada desde `quality-check` (ver [modo correccion](../SKILL.md#modo-correccion-delegado-desde-quality-check)) un padre archivado es **esperable**, no un error: ahi se continua, pero sin escribir nada dentro de la carpeta archivada — la nota de retrabajo va en el informe de `quality-check`. Importa especialmente en este flujo, porque `quality-check` senala la rama `test/` como el caso donde delegar es **mas** importante, y ahi el padre archivado es lo habitual.
 >
-> Aparte de eso, el unico skill que escribe dentro de un artefacto archivado es `coverage-verify`, y solo su `coverage.md`. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> Aparte de eso, el unico skill que escribe dentro de un artefacto archivado es `coverage-verify`, y solo su `criteria-coverage.md`. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 **Rama de trabajo:** `test/[ID del artefacto padre]-[slug]` — p. ej. `test/FT-003-carga-masiva`, `test/US-042-login`, `test/WI-018-migracion-logs`. **Una rama por artefacto padre**, aunque se automaticen varios TC de el. No asumir la rama base; acordarla con el usuario.
 
@@ -76,9 +76,9 @@ El origen de los criterios y de los TC **no cambia**: las US/WI/FT y sus `test-c
 |-------|--------------------------------|--------------------|
 | **Tipos admitidos** | TK, WI, TC, FT | **Solo TC y FT.** Un TK/WI referenciado en este repo => parar: no hay codigo de aplicacion que implementar aqui. |
 | **Stack y acceso al sistema** | Descubierto del repo (manifest, tests vecinos, `AGENTS.md`, `MEMORY.md`) | Igual, pero del **proyecto de pruebas**: el stack lo declara `AGENTS.md` (`# Stack tecnologico`). Las URLs (`BASE_URL`, `API_BASE_URL`) y toda credencial salen del `.env` **a traves del modulo de configuracion del proyecto**; ninguna prueba lee variables de entorno por su cuenta ni hardcodea URLs, usuarios o tokens. Si una prueba necesita una variable que `.env.example` no declara, **anadirla a `.env.example` sin valor** y avisar al usuario para que la complete en su `.env`. **Nunca** leer, imprimir ni registrar los valores del `.env`. |
-| **Registro del avance** | `progress.md` en la carpeta del padre | **`progress.md` no se crea ni se toca.** En su lugar, `test-cases/automation.md` en la carpeta del padre (desde [`assets/automation-template.md`](../assets/automation-template.md)). **No lleva marcas ocultas** `<!-- unit:… -->`: el estado de cada unidad es el valor de su linea `**Estado:**` (`Pending` / `In Progress` / `Done`, siempre en ingles), que es lo que `work-integrate` verifica en las ramas `test/` de este tipo de repo. Toda referencia a `progress.md` en los Pasos 1-4 se lee como `automation.md`; sus secciones son `Pruebas`, `Cobertura de test cases` y `Hallazgos` (no hay `Archivos`, `Notas` ni `Decisiones adicionales`). |
+| **Registro del avance** | `progress.md` en la carpeta del padre | **`progress.md` no se crea ni se toca.** En su lugar, `test-cases-automation.md` en la **raíz de la carpeta del padre** — junto a `README.md` y `test-cases/`, **no dentro** de `test-cases/`, que es solo de `test-define` — (desde [`assets/test-cases-automation-template.md`](../assets/test-cases-automation-template.md)). **No lleva marcas ocultas** `<!-- unit:… -->`: el estado de cada unidad es el valor de su linea `**Estado:**` (`Pending` / `In Progress` / `Done`, siempre en ingles), que es lo que `work-integrate` verifica en las ramas `test/` de este tipo de repo. Toda referencia a `progress.md` en los Pasos 1-4 se lee como `test-cases-automation.md`; sus secciones son `Pruebas`, `Cobertura de test cases` y `Hallazgos` (no hay `Archivos`, `Notas` ni `Decisiones adicionales`). |
 | **Niveles de prueba** | `Unit`, `Integration`, `API Test`, `Visual Test`, `E2E` | Solo `API Test`, `Visual Test`, `E2E`. Un TC con `testType` `Unit` o `Integration` **no se excluye en silencio**: por cada uno, **preguntar** (herramienta estructurada) — Opciones: [Automatizar como API] / [Automatizar como E2E] / [Excluir y devolver a test-define]. Si se automatiza, registrar la desviacion de nivel en `Cobertura de test cases`; si se excluye, anotarlo con motivo y ofrecer el handoff a `test-define` al cerrar. |
-| **Prueba en rojo (Paso 3.4)** | Cuatro opciones, incluida corregir produccion o la prueba | **No existe codigo de produccion que corregir.** Verificar primero que la prueba es fiel al TC y que el fallo no es de entorno (URL, credencial, dato de precondicion no disponible): eso se arregla en la prueba o en la configuracion sin preguntar, porque no es una discrepancia con el TC. Si la prueba es fiel y el sistema se comporta distinto a lo documentado, parar y preguntar con la evidencia — **Opciones: [Registrar como hallazgo] / [El TC esta mal: parar]**. *Registrar como hallazgo* => marcar la prueba como `skip`/`todo` con el ID del TC y una referencia al hallazgo segun la convencion del runner (nunca relajar la asercion ni borrar la prueba), anotar la linea en `Hallazgos` de `automation.md`, y **ofrecer** abrir el seguimiento: un `WI-XXX` de tipo bug via el flujo «Analizar issue» de `work-research` o, si la integracion con el gestor de proyectos esta activa, el work item que ese flujo ya crea — sin cambiar como funciona esa integracion. *El TC esta mal* => handoff a `test-define`; este skill no edita el TC. |
+| **Prueba en rojo (Paso 3.4)** | Cuatro opciones, incluida corregir produccion o la prueba | **No existe codigo de produccion que corregir.** Verificar primero que la prueba es fiel al TC y que el fallo no es de entorno (URL, credencial, dato de precondicion no disponible): eso se arregla en la prueba o en la configuracion sin preguntar, porque no es una discrepancia con el TC. Si la prueba es fiel y el sistema se comporta distinto a lo documentado, parar y preguntar con la evidencia — **Opciones: [Registrar como hallazgo] / [El TC esta mal: parar]**. *Registrar como hallazgo* => marcar la prueba como `skip`/`todo` con el ID del TC y una referencia al hallazgo segun la convencion del runner (nunca relajar la asercion ni borrar la prueba), anotar la linea en `Hallazgos` de `test-cases-automation.md`, y **ofrecer registrar el hallazgo** como `WI-XXX` de tipo **`bug`** via `/work-plan` (que esta mal: esperado/observado, pasos, evidencia con el `TC-XXX` y el nombre de la prueba — nunca la solucion; con la integracion activa, `work-plan` crea ademas el work item `Bug`). En modo pruebas **no se planifica la remediacion** (`bug-fix`): eso ocurre en el repositorio de la aplicacion, citando este bug. *El TC esta mal* => handoff a `test-define`; este skill no edita el TC. |
 | **Ejecucion en iteracion** | Unit e integracion en cada vuelta; e2e diferidas al cierre | Todas las pruebas son API/E2E/Visual, asi que **no se difieren**: cada prueba recien escrita se ejecuta **sola** (archivo o caso filtrado) contra el ambiente del `.env`, y el cierre de unidad corre los specs **del padre**. Nunca la suite completa del proyecto: esa sigue siendo de `quality-check`. Ver [`scoped-tests.md` § Modo pruebas](scoped-tests.md#modo-pruebas-implementationscope-tests). |
 | **Datos de prueba** | Fixtures/factories del stack real | Sin acceso a la base de datos del sistema: las precondiciones del TC se satisfacen **por la interfaz publica** (API de alta, UI) o con datos ya sembrados en el ambiente que el `.env` identifica. Si una precondicion no se puede construir desde fuera, el TC se registra en `Cobertura de test cases` como no automatizable con motivo, no se simula con mocks del sistema bajo prueba. |
 | **`quality-specialist`** | Escribe las pruebas si el proyecto lo define | Igual. |
@@ -118,7 +118,7 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
 1. Verificar working tree limpio; si no, parar y avisar.
 2. Resolver nombre de rama: `test/[ID del artefacto padre]-[slug]`. **Sin worktrees**, `git checkout` si existe; si no, `git checkout -b` desde la rama base acordada (no asumir `main`/`develop`). **Con worktrees**, ver la nota de abajo.
-3. Leer o crear `progress.md` en la carpeta del artefacto padre (desde `assets/progress-template.md`). Al crearlo, anadir **una entrada por unidad**: una sola entrada `FT-XXX` si la entrada es un feature, o una entrada por cada `TC-XXX` del alcance si la entrada son test cases sueltos. **En [modo pruebas](#modo-pruebas-implementationscope-tests):** en lugar de `progress.md`, leer o crear `test-cases/automation.md` del padre desde `assets/automation-template.md`, con las mismas unidades; `progress.md` no se crea.
+3. Leer o crear `progress.md` en la carpeta del artefacto padre (desde `assets/progress-template.md`). Al crearlo, anadir **una entrada por unidad**: una sola entrada `FT-XXX` si la entrada es un feature, o una entrada por cada `TC-XXX` del alcance si la entrada son test cases sueltos. **En [modo pruebas](#modo-pruebas-implementationscope-tests):** en lugar de `progress.md`, leer o crear `test-cases-automation.md` del padre desde `assets/test-cases-automation-template.md`, con las mismas unidades; `progress.md` no se crea.
 4. **Descubrir el stack de pruebas** del repositorio antes de escribir nada: runner y scripts de test del manifest, configs, convenciones de los tests vecinos y reglas de testing en `.agents/MEMORY.md`. No inventar infraestructura que el repo no tenga. **En modo pruebas**, ademas: localizar el modulo de configuracion que lee el `.env` y comprobar que `.env.example` declara las variables que el alcance va a necesitar (`BASE_URL`, `API_BASE_URL`, credenciales) — solo nombres; si falta `.env`, avisar al usuario antes de ejecutar nada.
 
 > **Con worktrees (`workTree: always`, `ask` afirmativo o modo paralelo), este paso NO hace `git checkout` en el arbol principal.** Se cumple creando el worktree del artefacto (`git worktree add <workTreePath>/<artefacto> [-b <rama>] <rama-base>`) y el resto del flujo corre dentro de el. **El punto 1 (working tree limpio) sigue siendo sobre el arbol principal y va antes:** con cambios sin commitear se aplica `uncommittedChanges` (`commit` / `stash` / `ask`) igual que sin worktrees, y solo despues se crea el worktree. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
@@ -135,7 +135,7 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
    | AC-002 | — | — | — | Sin TC: hueco de cobertura |
 
 3. Construir dos listas explicitas:
-   - **Automatizables:** TC `Ready` con `Tipo de prueba` distinto de `Manual`, no marcados como `Done` en `progress.md` (en modo pruebas, en `automation.md`; ahi los TC `Unit`/`Integration` se listan aparte como **«a decidir»**, ver [Modo pruebas](#modo-pruebas-implementationscope-tests)).
+   - **Automatizables:** TC `Ready` con `Tipo de prueba` distinto de `Manual`, no marcados como `Done` en `progress.md` (en modo pruebas, en `test-cases-automation.md`; ahi los TC `Unit`/`Integration` se listan aparte como **«a decidir»**, ver [Modo pruebas](#modo-pruebas-implementationscope-tests)).
    - **Excluidos:** el resto, con su motivo entre parentesis — p. ej. `TC-007 (Manual)`, `TC-009 (Draft)`, `TC-011 (Obsolete)`, `TC-004 (ya Done)`.
 4. **No ejecutar codigo en este turno.** Preguntar si continuar y **esperar confirmacion**.
 
@@ -173,7 +173,7 @@ Por cada `TC-XXX` automatizable de la unidad, en el orden del indice:
    - **Por cada TC cubierto:** marcar su entrada de to-do como `completed`.
    - **Al cerrar la unidad:** estado `Done` en `progress.md`, con el campo **Archivos** relleno (rutas tocadas, una por linea, sin vineta, prefijadas `+`/`~`/`-`), con todos los TC `completed` y la primera entrada tambien `completed`; registrar `Decisiones adicionales` si hubo decisiones nuevas en la sesion. Completar `Cobertura de test cases` **solo con observaciones puntuales**: TC no automatizados (con motivo: `Manual`, `Draft`, TC erroneo, hallazgo abierto), TC cubiertos con un nivel de prueba distinto al del campo `Tipo de prueba`, y AC sin TC. Si todo se automatizo como se esperaba, dejar el campo sin comentarios.
 
-   > **En modo pruebas**, todo lo anterior se aplica sobre `test-cases/automation.md` del padre (secciones `Pruebas`, `Cobertura de test cases`, `Hallazgos`, y el valor de `**Estado:**` de la unidad); `progress.md` no existe en este repo y no se crea.
+   > **En modo pruebas**, todo lo anterior se aplica sobre `test-cases-automation.md` del padre (secciones `Pruebas`, `Cobertura de test cases`, `Hallazgos`, y el valor de `**Estado:**` de la unidad); `progress.md` no existe en este repo y no se crea.
 
    > **No se marcan checkboxes:** un `TC-XXX` no tiene subtareas. La *excepcion de checkboxes* del `SKILL.md` no aplica a este tipo; el `TC-XXX-*.md`, el indice `test-cases/README.md` y el `README.md` del padre **no se modifican** desde aqui.
 
@@ -218,7 +218,7 @@ WARNING No es posible continuar con la implementacion:
 
 ## Checklist
 
-**Repositorio:** working tree limpio; rama `test/[ID del padre]-[slug]` activa o creada; `progress.md` leido o creado (modo pruebas: `test-cases/automation.md`, y `progress.md` **no** creado); stack de pruebas descubierto del repo real (modo pruebas: de `AGENTS.md`, con modulo de configuracion y `.env.example` verificados, sin leer valores).
+**Repositorio:** working tree limpio; rama `test/[ID del padre]-[slug]` activa o creada; `progress.md` leido o creado (modo pruebas: `test-cases-automation.md`, y `progress.md` **no** creado); stack de pruebas descubierto del repo real (modo pruebas: de `AGENTS.md`, con modulo de configuracion y `.env.example` verificados, sin leer valores).
 
 **Alcance:** `README.md` del padre e indice `test-cases/README.md` leidos; cada `TC-XXX-*.md` del alcance leido completo; matriz AC => TC presentada con automatizables y excluidos; confirmacion recibida antes de escribir la primera prueba.
 
@@ -226,7 +226,7 @@ WARNING No es posible continuar con la implementacion:
 
 **Cierre:** pruebas de los archivos afectados en verde y e2e corridas una vez sobre el codigo consolidado; working tree limpio; handoff ofrecido a `coverage-verify`, `pr-create` o `work-integrate`.
 
-**Modo pruebas, ademas:** ningun TK/WI implementado en este repo; TC `Unit`/`Integration` decididos uno a uno; ninguna URL, credencial ni valor del `.env` en pruebas, en `automation.md` ni en el chat; cada rojo fiel al TC resuelto como hallazgo (prueba en `skip`/`todo` con ID del TC, linea en `Hallazgos`, seguimiento ofrecido) o devuelto a `test-define`; `**Estado:**` de cada unidad de `automation.md` en `Done` al cerrar.
+**Modo pruebas, ademas:** ningun TK/WI implementado en este repo; TC `Unit`/`Integration` decididos uno a uno; ninguna URL, credencial ni valor del `.env` en pruebas, en `test-cases-automation.md` ni en el chat; cada rojo fiel al TC resuelto como hallazgo (prueba en `skip`/`todo` con ID del TC, linea en `Hallazgos`, seguimiento ofrecido) o devuelto a `test-define`; `**Estado:**` de cada unidad de `test-cases-automation.md` en `Done` al cerrar.
 
 ---
 
@@ -254,11 +254,11 @@ WARNING No es posible continuar con la implementacion:
 
 **Ejemplo 7 - Modo pruebas: prueba en rojo contra el sistema desplegado**
 - *Entrada:* repo de pruebas con `implementation.scope: tests`; "Implementa las pruebas de la US-042"; TC-005 (API Test) falla porque la API responde 200 donde el TC espera 422.
-- *Comportamiento:* verificar que la prueba es fiel al TC y que `API_BASE_URL` apunta al ambiente correcto (sin mostrar su valor); preguntar con la evidencia — [Registrar como hallazgo] / [El TC esta mal: parar]. Con *hallazgo*: `test.skip`/`todo` con `TC-005` y referencia, linea en `Hallazgos` de `test-cases/automation.md`, y ofrecer abrir el `WI-XXX` de tipo bug (o el work item, si la integracion esta activa). `progress.md` no se crea.
+- *Comportamiento:* verificar que la prueba es fiel al TC y que `API_BASE_URL` apunta al ambiente correcto (sin mostrar su valor); preguntar con la evidencia — [Registrar como hallazgo] / [El TC esta mal: parar]. Con *hallazgo*: `test.skip`/`todo` con `TC-005` y referencia, linea en `Hallazgos` de `test-cases-automation.md`, y ofrecer abrir el `WI-XXX` de tipo bug (o el work item, si la integracion esta activa). `progress.md` no se crea.
 
 **Ejemplo 8 - Modo pruebas: TC clasificado Unit**
 - *Entrada:* mismo repo; TC-003 tiene `Tipo de prueba: Unit`.
-- *Comportamiento:* no se excluye en silencio: preguntar [Automatizar como API] / [Automatizar como E2E] / [Excluir y devolver a test-define]. Si se automatiza como API, registrar la desviacion en `Cobertura de test cases` de `automation.md`.
+- *Comportamiento:* no se excluye en silencio: preguntar [Automatizar como API] / [Automatizar como E2E] / [Excluir y devolver a test-define]. Si se automatiza como API, registrar la desviacion en `Cobertura de test cases` de `test-cases-automation.md`.
 
 **Ejemplo 6 - Feature en Draft**
 - *Entrada:* "Implementa las pruebas del FT-009" y el feature esta en `Draft`.
@@ -283,7 +283,7 @@ WARNING No es posible continuar con la implementacion:
 - Automatizar TC de mas de un artefacto padre en la misma rama.
 - Cerrar la unidad como `Done` con pruebas en rojo en el arbol, o con TC no cubiertos sin registrarlos en `Cobertura de test cases`.
 - Escribir las pruebas en el hilo principal cuando el proyecto define `quality-specialist` y la delegacion via Task esta disponible.
-- **Modo pruebas:** crear o editar `progress.md`; hardcodear URLs o credenciales en una prueba, o leer `process.env`/`os.environ` fuera del modulo de configuracion; imprimir o registrar valores del `.env`; ofrecer «corregir el codigo de produccion» o «corregir la prueba» ante un rojo fiel al TC; mockear el sistema bajo prueba para forzar una precondicion; traducir los valores `Pending`/`In Progress`/`Done` de `automation.md`; aplicar cualquiera de estas reglas con `scope: code`.
+- **Modo pruebas:** crear o editar `progress.md`; hardcodear URLs o credenciales en una prueba, o leer `process.env`/`os.environ` fuera del modulo de configuracion; imprimir o registrar valores del `.env`; ofrecer «corregir el codigo de produccion» o «corregir la prueba» ante un rojo fiel al TC; mockear el sistema bajo prueba para forzar una precondicion; traducir los valores `Pending`/`In Progress`/`Done` de `test-cases-automation.md`; aplicar cualquiera de estas reglas con `scope: code`.
 
 ---
 
@@ -294,7 +294,7 @@ Posicion: **implementacion de pruebas** - entre `test-define` y `coverage-verify
 | | |
 |--|--|
 | **Entrada** | Artefacto padre (`FT-XXX`, `US-XXX` o `WI-XXX`) en `Estado: Ready` con `AC-XXX`, y su carpeta `test-cases/` poblada por `test-define` con TC en `Ready`. |
-| **Salida** | Pruebas automatizadas commiteadas y en verde; `progress.md` con cada unidad en `Done` y su `Cobertura de test cases` (modo pruebas: `test-cases/automation.md` con cada unidad en `Done`, su `Cobertura de test cases` y sus `Hallazgos`); working tree limpio. |
+| **Salida** | Pruebas automatizadas commiteadas y en verde; `progress.md` con cada unidad en `Done` y su `Cobertura de test cases` (modo pruebas: `test-cases-automation.md` con cada unidad en `Done`, su `Cobertura de test cases` y sus `Hallazgos`); working tree limpio. |
 | **Siguiente paso** | `coverage-verify` sobre el artefacto padre (matriz de cobertura y veredicto) => `pr-create` (opcional) => `work-integrate`. Nota: `work-integrate` ejecutara las tres puertas de cierre (`quality-check`, `code-review` y `coverage-verify`) y exigira veredicto `APPROVED` en las tres antes de integrar. |
 | **Regreso a definicion** | TC ambiguo, erroneo o AC sin cobertura => volver a `test-define`. Si el hueco es del propio artefacto (criterio no testeable o mal definido), volver a quien lo registro: `work-define`/`work-plan` para US/WI, el flujo «Analizar legado» de `work-research` para un `FT-XXX`. |
-| **Bug detectado** | Discrepancia real entre TC y codigo que el usuario no quiere corregir en el momento => flujo «Analizar issue» de `work-research` y, desde ahi, un `WI-XXX` de tipo bug via `work-plan`. En modo pruebas es la **unica** salida de un rojo fiel al TC (no hay codigo que corregir aqui): se ofrece al registrar el hallazgo. |
+| **Bug detectado** | Discrepancia real entre TC y codigo que el usuario no quiere corregir en el momento => flujo «Analizar issue» de `work-research` y, desde ahi, un `WI-XXX` de tipo bug via `work-plan`. En modo pruebas el rojo fiel al TC se registra como `WI` de tipo **`bug`** (solo reporte, sin plan de remediacion): es la **unica** salida, y el `bug-fix` se planifica en el repositorio de la aplicacion. |

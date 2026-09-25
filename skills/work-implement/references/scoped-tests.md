@@ -50,7 +50,7 @@ Reglas adicionales del modo:
 
 - La orden de prueba **nunca lleva la URL ni credenciales en linea** (`BASE_URL=https://… npx playwright test` esta prohibido): el runner las toma del `.env` a traves del modulo de configuracion del proyecto. Si hace falta apuntar a otro ambiente, se cambia el `.env` — y lo cambia el usuario.
 - No se «estabiliza» un rojo repitiendo la corrida mas alla del limite de `escalation.md`; un rojo fiel al TC es un hallazgo (ver `test-cases.md`).
-- La salida del runner que se muestra al usuario o se registra en `automation.md` se revisa antes: sin tokens, cookies ni cabeceras de autorizacion.
+- La salida del runner que se muestra al usuario o se registra en `test-cases-automation.md` se revisa antes: sin tokens, cookies ni cabeceras de autorizacion.
 
 Con `scope: code` esta seccion no aplica y la tabla principal rige sin cambios.
 

@@ -47,7 +47,7 @@ fuera de formato — el resto del catálogo lee estos archivos por sus títulos 
 
 **Detección:** el archivo existe y su contenido no valida contra
 `${PLUGIN_ROOT}/schemas/settings.schema.json` — típicamente por **claves obsoletas** que versiones
-anteriores escribían (p. ej. `trackingEnabled` y `trackingUrl` en la raíz, que el schema vigente rechaza
+anteriores escribían (p. ej. `trackingEnabled` y `trackingUrl` en la raíz, o `specification.artifactRoot`, restos del antiguo CLI de tracking, o `implementation.archiveMode`, que dejó de existir cuando el archivado pasó de los skills de cierre a los skills que producen cada artefacto, que el schema vigente rechaza
 por `additionalProperties: false`), o por claves obligatorias que entonces no existían.
 
 **Normalización:** eliminar las claves que el schema rechaza y añadir las obligatorias que falten con los
@@ -169,7 +169,7 @@ en cada repositorio un `CLAUDE.md` con una sola línea (`@AGENTS.md`) como punte
 toda migración que mueva rutas, no una familia opcional. Lo que cite esas rutas desde fuera del repo
 (tracker externo, wikis) solo puede reportarse en el mapeo del cierre.
 
-## 9. Layout de especificaciones anterior (`basePath` / `archivePath`)
+## 9. Layout de especificaciones anterior (`basePath` / `archivePath`) y `coverage.md`
 
 **Layout vigente** (`${PLUGIN_ROOT}/references/artifacts.md` § Resolución de las rutas de especificación):
 tres raíces en `.sdd-devkit/settings.json` → `specification.changesPath` (default `docs/specs/changes/`:
@@ -181,6 +181,7 @@ tres raíces en `.sdd-devkit/settings.json` → `specification.changesPath` (def
 
 - `settings.json` trae `specification.basePath` o `specification.archivePath` (claves que el schema
   vigente rechaza), o le faltan `changesPath` / `currentPath` / `archivedPath`.
+- Existe algún `coverage.md` dentro de la carpeta de un artefacto (nombre anterior del reporte de `coverage-verify`, hoy `criteria-coverage.md`).
 - Existe alguna de las carpetas del layout anterior con contenido: `docs/specs/user-stories/`,
   `docs/specs/work-items/`, `docs/specs/requirements/`, `docs/specs/research/`, `docs/specs/features/`
   o `docs/archive/` (o sus equivalentes bajo un `basePath`/`archivePath` no default).
@@ -204,8 +205,14 @@ tres raíces en `.sdd-devkit/settings.json` → `specification.changesPath` (def
    `<archivedPath>/` (conservando `user-stories/`, `work-items/`, `research/`). Si el destino ya existe
    con contenido, no fusionar por cuenta propia: mostrar ambos y preguntar. Las carpetas se mueven
    **completas y tal cual** — `README.md`, `TK-XXX-*.md`, `test-cases/`, `research/`, `progress.md`,
-   `coverage.md`, `assets/` — sin renumerar ni editar nada dentro. Dejar `docs/specs/` sin las carpetas
+   `criteria-coverage.md`, `assets/` — sin renumerar ni editar nada dentro. Dejar `docs/specs/` sin las carpetas
    antiguas vacías.
+
+3. **Reportes de cobertura con el nombre anterior.** Un `coverage.md` dentro de la carpeta de una US, WI o FT
+   (activa o archivada) es el reporte de `coverage-verify` con su nombre antiguo: proponer `git mv` a
+   `criteria-coverage.md` en la misma carpeta, conservando el contenido y su marca de pie
+   `<!-- coverage-verify:verdict=… -->` tal cual (la caché de frescura sigue siendo válida). Esta parte se
+   detecta y aplica aunque las carpetas ya estén en el layout vigente.
 
 Después, la familia 8 reescribe las referencias internas (`docs/specs/user-stories/…` →
 `docs/specs/changes/user-stories/…`, `docs/specs/features/…` → `docs/specs/current/…`, `docs/archive/…`

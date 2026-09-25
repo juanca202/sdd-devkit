@@ -1,6 +1,6 @@
 ---
 name: test-define
-description: 'Crear casos de prueba (TC-XXX) a partir de los criterios de aceptación de cualquier artefacto de especificación que los tenga con identificador codificado: una historia de usuario (US-XXX), un work item (WI-XXX), un feature ya implementado (FT-XXX) o cualquier otro documento de especificación cuyos criterios estén numerados o codificados (AC-001, 1.1, R-3, etc.), siguiendo el estándar IEEE 29119-4. Activar cuando el usuario pida "definir test cases", "crear casos de prueba", "generar TCs", "pruebas para la US/WI/FT", "pruebas para este spec/documento", "documentar pruebas", "casos de prueba para los criterios de aceptación", o cualquier variante que implique producir documentación de prueba a partir de requisitos ya especificados. También activar cuando el usuario mencione "test-define" o "/test-define". Si el artefacto está archivado en docs/specs/archived/, se detiene: es trabajo cerrado y hay que desarchivarlo antes.'
+description: 'Crear casos de prueba (TC-XXX) a partir de los criterios de aceptación de cualquier artefacto de especificación que los tenga con identificador codificado: una historia de usuario (US-XXX), un work item (WI-XXX), un feature ya implementado (FT-XXX) o cualquier otro documento de especificación cuyos criterios estén numerados o codificados (AC-001, 1.1, R-3, etc.), siguiendo el estándar IEEE 29119-4. Activar cuando el usuario pida "definir test cases", "crear casos de prueba", "generar TCs", "pruebas para la US/WI/FT", "pruebas para este spec/documento", "documentar pruebas", "casos de prueba para los criterios de aceptación", o cualquier variante que implique producir documentación de prueba a partir de requisitos ya especificados. También activar cuando el usuario mencione "test-define" o "/test-define". Con integración de gestor de proyectos activa, activar además para sincronizar casos de prueba que ya existen en el tracker con el modificador explícito `sync`, indicando el código o URL de un Test Case o de su historia de usuario («sincroniza los test cases de la #4821», «trae el test case #4830 de Azure») — crea los TC locales que falten y actualiza los que existan; un `#id` o URL sin modificador NO sincroniza nada: se pregunta. Si el artefacto está archivado en <archivedPath>/, se detiene: es trabajo cerrado y hay que desarchivarlo antes.'
 license: MIT
 ---
 
@@ -19,6 +19,7 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 | Necesitas… | Archivo |
 | ---------- | ------- |
 | Integración condicional con un gestor de proyectos: detalle específico de cada proveedor (creación de work items, campos, IDs, vinculación al artefacto padre) | `references/<proveedor>.md` (p. ej. [`references/azure-devops.md`](references/azure-devops.md) para Azure DevOps) — leer solo si la integración está activa (ver [Resolución de la integración con el gestor de proyectos](#resolución-de-la-integración-con-el-gestor-de-proyectos)) |
+| **Sincronizar** casos de prueba desde el gestor de proyectos (`sync <#TC \| #US \| URL>`): crea los que falten y actualiza los que existan — solo con integración activa | [Flujo: sincronizar TCs](#flujo-sincronizar-tcs-desde-el-gestor-de-proyectos-sync) y, por proveedor, la sección «Lectura» de `references/<proveedor>.md` (p. ej. [`references/azure-devops.md`](references/azure-devops.md#lectura-sync)) |
 | Estructura del archivo de un caso de prueba | [`assets/test-case-template.md`](assets/test-case-template.md) |
 
 
@@ -94,7 +95,21 @@ No continúes hasta haber leído y aplicado `project-management.md`.
 
 Todo el detalle propio de cada proveedor (herramienta MCP, campos, tipo de work item, límites de formato) vive exclusivamente en esos archivos.
 
+**Dirección de lectura (`sync`).** Con la integración activada, la referencia del proveedor cubre además la lectura de Test Cases ya existentes en el tracker para materializarlos o actualizarlos localmente. Esa lectura **nunca escribe** en el tracker y solo se activa con el modificador explícito de [Modificadores de invocación](#modificadores-de-invocación); con la integración desactivada, ese modificador para e informa que el repo no está vinculado a un gestor de proyectos.
+
 **Regla de fidelidad (transversal a cualquier sistema):** toda la información del TC debe quedar representada en el work item externo — los pasos de ejecución en un campo dedicado si el sistema lo expone, el resto en la descripción si no lo expone. Ninguna sección del `.md` puede omitirse al sincronizar; el objetivo es poder reconstruir el TC completo a partir del work item si el archivo local se perdiera. Qué campo usa cada sistema para qué sección es detalle de su archivo de referencia.
+
+---
+
+## Modificadores de invocación
+
+Las **claves** son en inglés (estándar); el usuario puede nombrarlas en español («importa», «trae de Azure», «sincroniza con ADO») y se mapean. **Sin modificador, el skill genera** TCs desde los criterios del artefacto (Pasos 1-5) o corrige los existentes (flujo de actualización), como siempre.
+
+| Modificador | Efecto |
+|-------------|--------|
+| `sync <#id \| URL \| TC-XXX \| US-XXX> [<#id> …]` | **Sincronizar** desde el gestor de proyectos. El `#id` puede ser un **Test Case** (se sincroniza ese) o una **historia / work item padre** (se sincronizan todos sus Test Cases). Los que **no existen** localmente se crean: `test-cases/TC-<id>-[slug].md` bajo el artefacto padre **local**, con el `id` del tracker como número y el campo `Work Item (<Sistema>)`. Los que **ya existen** se actualizan: diff por sección, se aplica solo lo confirmado, identificador y archivo intactos, `Obsolete` (no borrar) para los que el tracker cerró. Regenera el índice y la trazabilidad del Paso 5. Si el padre no existe localmente, para y sugiere `/work-define sync #<us>` primero. Dirección única tracker → repo. Ver [flujo](#flujo-sincronizar-tcs-desde-el-gestor-de-proyectos-sync). |
+
+> **Un `#id` o una URL de work item sin modificador nunca dispara una sincronización ni sirve de número para un TC nuevo.** Si la entrada trae algo que parece un identificador del tracker, o palabras como «importa», «trae», «sincroniza», «los test cases de Azure/ADO», **preguntar** (herramienta estructurada) antes de hacer nada: Opciones: [Sincronizar desde <Sistema>] / [Generar TCs nuevos desde los criterios (el número es solo contexto)]. Con integración desactivada, la pregunta se reduce a confirmar que se generan TCs nuevos.
 
 ---
 
@@ -104,25 +119,25 @@ El usuario indica un artefacto: puede ser un identificador conocido del repo (`U
 
 | Tipo | Ubicación del artefacto | Ubicación de los TCs |
 |------|------------------------|----------------------|
-| Historia de usuario | `docs/specs/changes/user-stories/US-XXX-{nombre}/README.md` | `docs/specs/changes/user-stories/US-XXX-{nombre}/test-cases/` |
-| Work item | `docs/specs/changes/work-items/WI-XXX-{kebab-case}/README.md` | `docs/specs/changes/work-items/WI-XXX-{kebab-case}/test-cases/` |
-| Feature (funcionalidad ya implementada) | `docs/specs/current/FT-XXX-{slug}/README.md` | `docs/specs/current/FT-XXX-{slug}/test-cases/` |
+| Historia de usuario | `<changesPath>/user-stories/US-XXX-{nombre}/README.md` | `<changesPath>/user-stories/US-XXX-{nombre}/test-cases/` |
+| Work item | `<changesPath>/work-items/WI-XXX-{kebab-case}/README.md` | `<changesPath>/work-items/WI-XXX-{kebab-case}/test-cases/` |
+| Feature (funcionalidad ya implementada) | `<currentPath>/FT-XXX-{slug}/README.md` | `<currentPath>/FT-XXX-{slug}/test-cases/` |
 | **Cualquier otro artefacto** de especificación, sea cual sea su origen o formato | La ruta que indique el usuario (buscarla en el repo si solo da un nombre) | `test-cases/` dentro de la carpeta que contiene el artefacto; si el artefacto es un archivo suelto, `test-cases/` junto a él. Confirmar la ruta con el usuario antes de escribir. |
 
 > La carpeta `test-cases/` se crea si no existe; el archivo del artefacto permanece donde está.
 
-> **Artefacto archivado.** Si un `US-XXX`/`WI-XXX` no aparece en su ruta activa, buscarlo bajo `docs/specs/archived/user-stories/` o `docs/specs/archived/work-items/` antes de darlo por inexistente — `work-integrate` y `pr-create` pueden moverlo ahí al cerrar el trabajo, si el usuario lo confirma. Si está archivado, **parar y avisar**: definir casos de prueba nuevos para un trabajo ya cerrado requiere desarchivarlo primero, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado: además de duplicar el identificador, la numeración de TCs del [Paso 3](#numeración-y-nombres-de-archivo) reiniciaría en `001` ignorando los TCs que ya existen en el archivo. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> **Artefacto archivado.** Si un `US-XXX`/`WI-XXX` no aparece en su ruta activa, buscarlo bajo `<archivedPath>/user-stories/` o `<archivedPath>/work-items/` antes de darlo por inexistente — el usuario puede haberlo archivado con el modificador `archive` de `work-define`/`work-plan`. Si está archivado, **parar y avisar**: definir casos de prueba nuevos para un trabajo ya cerrado requiere desarchivarlo primero, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado: además de duplicar el identificador, la numeración de TCs del [Paso 3](#numeración-y-nombres-de-archivo) reiniciaría en `001` ignorando los TCs que ya existen en el archivo. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 ### Feature (`FT-XXX`) — funcionalidad ya implementada
 
 Un `FT-XXX` es el registro de una funcionalidad **ya implementada**, que vive en
-`docs/specs/current/`. Puede nacer del flujo «Analizar legado» de `work-research` —feature
+`<currentPath>/`. Puede nacer del flujo «Analizar legado» de `work-research` —feature
 inferido de código— o documentar funcionalidad existente en general; en ambos casos
 `test-define` lo trata **igual** que una US o un WI: lee los criterios de la sección
 **Criterios de aceptación** del `README.md` —con el identificador que usen, normalmente `AC-XXX`—
 y verifica el estado si el artefacto lo declara (`Estado: Ready`), sigue el
 flujo normal (entrevista, perspectivas happy/error/límite, índice, trazabilidad del Paso
-5) y guarda los TCs bajo `docs/specs/current/FT-XXX-{slug}/test-cases/`. Particularidad: los
+5) y guarda los TCs bajo `<currentPath>/FT-XXX-{slug}/test-cases/`. Particularidad: los
 criterios del feature describen el comportamiento **ya implementado**, así que los TCs son
 la **red de seguridad** para cubrirlo; cuando un TC valide un comportamiento que el
 discovery marcó como posible bug preservado, anotarlo para trazabilidad.
@@ -312,11 +327,25 @@ Tras editar, informar al usuario qué criterios quedaron enlazados con qué TCs.
 
 ---
 
+## Flujo: sincronizar TCs desde el gestor de proyectos (`sync`)
+
+Solo con la integración **activada** y el modificador explícito. El detalle de lectura y mapeo por proveedor vive en la sección «Lectura» de `references/<proveedor>.md` (p. ej. [`azure-devops.md`](references/azure-devops.md#lectura-sync)); este flujo es el esqueleto común. `sync` **crea** los TC locales que falten y **actualiza** los que existan. **No sustituye a los Pasos 1-5**: los TC sincronizados no se derivan de los criterios, se traen tal como están en el tracker, y lo que falte para cumplir la plantilla se registra como laguna, nunca se inventa.
+
+1. **Resolver la entrada.** Uno o varios `#id`/URL (o un `TC-XXX`/`US-XXX` local con `Work Item (<Sistema>)`). Leer cada work item y clasificarlo: **Test Case** → se sincroniza ese TC; **historia u otro artefacto padre** (User Story / PBI / Task / Bug / Feature documentado como FT) → se resuelven **sus** Test Cases (relaciones «Tested By» y, si el proveedor tiene jerarquía de suites, la suite que lleva el nombre del padre) y se sincronizan todos. Cualquier otro tipo → informar y no hacer nada. Sin MCP → degradar pidiendo el contenido pegado; el número del TC es el `id` indicado.
+2. **Resolver el artefacto padre local.** Para cada TC, su padre es la US/WI/FT local cuya cabecera tenga `Work Item (<Sistema>): [#<id-del-padre>]` (o la carpeta `US-<id>-*`). Buscar en la ruta activa **y** en el archivo. **Sin padre local no se sincroniza nada**: parar y sugerir `/work-define sync #<us>` (un TC sin padre no tiene criterios que trazar ni carpeta donde vivir). Un padre archivado → parar y avisar. Un TC cuyo padre en el tracker es distinto del que el usuario indicó → informar y preguntar.
+3. **¿Crear o actualizar?** Si ya existe `TC-<id>-*.md` en `test-cases/` del padre, o un TC local con `Work Item (<Sistema>): [#<id>]`, el TC se **actualiza** (paso 6); si no, se **crea**.
+4. **Mapear** los campos del Test Case a la plantilla (título GWT, pasos con acción y resultado esperado, datos de prueba, precondiciones, prioridad, estado) siguiendo la referencia del proveedor. Los pasos se copian **uno a uno**, sin resumir ni reordenar.
+5. **Resolver lo que el tracker no codifica**, en **una sola tanda** para todo el lote: el **criterio de aceptación** que cubre cada TC (identificador **verbatim** de la sección de criterios del padre local — imprescindible para `coverage-verify`), la **perspectiva** (Happy Path / Error / Límite) y el **tipo de prueba** cuando no se pueden derivar del propio work item (etiquetas, título, campo de automatización). Con `createDetailsMode: never` no se pregunta: el TC queda en `Draft` con `criterion=—` y las lagunas en Observaciones, y **no** entra en la línea `Casos de prueba:` del padre hasta que se trace. Un TC nunca se traza a un criterio «probable».
+6. **Escribir.** TC nuevo → `test-cases/TC-<id>-[slug].md` con la marca `<!-- tc:status=… · testType=… · criterion=… · parent=… -->` y `Work Item (<Sistema>)`. TC existente → diff por sección en una sola tanda, aplicar solo lo confirmado conservando identificador y archivo, y ofrecer `Obsolete` (no borrar) para un TC que el tracker cerró o desvinculó. En ambos casos regenerar el índice `test-cases/README.md` (Paso 4.3) y la trazabilidad del padre (Paso 5) **solo con los TC trazados**.
+7. **Cerrar** con el mensaje explícito — «Sincronizados N TC desde <Sistema> para US-<id>: C creados, A actualizados, M en Draft por trazar» — y el handoff habitual: `work-implement` para automatizar los `Ready`, `coverage-verify` para el veredicto. **Nada se escribe en el tracker** desde este flujo.
+
+---
+
 ## Flujo: actualizar TCs existentes
 
-El flujo de los Pasos 1–5 **crea** casos de prueba. Pero tres skills devuelven aquí el control para **corregir o ampliar un TC que ya existe** —`work-implement` cuando al automatizar descubre que el TC está mal (`references/test-cases.md`), y `work-research` cuando el análisis de un caso de prueba concluye que la especificación es la que falla—, y ese camino necesita su propio procedimiento: regenerar desde cero perdería el identificador, que es el vínculo de trazabilidad que sostienen el índice, la línea `Casos de prueba:` del artefacto y todos los `coverage.md`.
+El flujo de los Pasos 1–5 **crea** casos de prueba. Pero tres skills devuelven aquí el control para **corregir o ampliar un TC que ya existe** —`work-implement` cuando al automatizar descubre que el TC está mal (`references/test-cases.md`), y `work-research` cuando el análisis de un caso de prueba concluye que la especificación es la que falla—, y ese camino necesita su propio procedimiento: regenerar desde cero perdería el identificador, que es el vínculo de trazabilidad que sostienen el índice, la línea `Casos de prueba:` del artefacto y todos los `criteria-coverage.md`.
 
-1. **Localizar el TC** por su identificador dentro de `test-cases/` del artefacto padre. Si el **padre** no está en su ruta activa, buscarlo bajo `docs/specs/archived/` como en [Selección del artefacto](#selección-del-artefacto): si está archivado, **parar y avisar** — editar un TC de un trabajo ya cerrado es escribir dentro del archivo, y eso exige desarchivarlo primero. Es el caso más frecuente al llegar aquí desde una escalada de `work-implement` en modo corrección. Si el TC no aparece, parar y preguntar: no crear uno nuevo con ese ID.
+1. **Localizar el TC** por su identificador dentro de `test-cases/` del artefacto padre. Si el **padre** no está en su ruta activa, buscarlo bajo `<archivedPath>/` como en [Selección del artefacto](#selección-del-artefacto): si está archivado, **parar y avisar** — editar un TC de un trabajo ya cerrado es escribir dentro del archivo, y eso exige desarchivarlo primero. Es el caso más frecuente al llegar aquí desde una escalada de `work-implement` en modo corrección. Si el TC no aparece, parar y preguntar: no crear uno nuevo con ese ID.
 2. **Entender el cambio pedido.** Quien delega debe traer el motivo (paso ambiguo, dato de prueba irreal, resultado esperado que contradice el comportamiento correcto, criterio que quedó sin cubrir). Si no viene, pedirlo; no deducirlo del código, que es circular.
 3. **Aplicar el cambio conservando el identificador y el archivo.** Se editan los campos afectados; **nunca** se renumera, ni se renombra el archivo, ni se crea un TC nuevo para sustituirlo.
 4. **Ajustar el `Estado`** según el desenlace:
@@ -365,6 +394,8 @@ La trazabilidad inversa (de un criterio a sus TCs) se obtiene buscando el identi
 - **Hacer la entrevista del Paso 2 con `createDetailsMode: never`**, aunque las respuestas parezcan valiosas: ese valor es la instrucción de no preguntar. Lo que se hace en su lugar es aplicar los valores por defecto y **marcar los supuestos** en los TC, no callarlos.
 - Confundir `createDetailsMode` con el alcance: `false` suprime las preguntas de clarificación, **no** reduce los criterios cubiertos.
 - Crear un TC que cubra más de un criterio de aceptación.
+- Tratar un `#id` o URL de work item **sin modificador `sync`** como orden de sincronizar, o usar ese número para un TC generado desde los criterios — preguntar siempre qué se espera.
+- Sincronizar un TC sin padre local (crear carpetas de US desde aquí), o trazarlo a un criterio «probable» en vez de dejarlo en `Draft` por trazar; escribir en el tracker desde `sync`.
 - **Preguntar al usuario si quiere cubrir todos los criterios o solo algunos.** Por defecto se cubren **todos**; un subconjunto solo se genera cuando el usuario lo pidió por su cuenta, sin que el skill se lo ofrezca.
 - **Pedir confirmación de la lista de criterios extraídos en el Paso 1** antes de generar los TC: el alcance ya es todos por defecto, no hay nada que confirmar en ese punto.
 - **Preguntar si se acepta el resultado en el Paso 4.5 cuando `specification.testCases.createMode: always`**: con ese valor el resultado se da por aceptado sin preguntar.
@@ -374,7 +405,7 @@ La trazabilidad inversa (de un criterio a sus TCs) se obtiene buscando el identi
 - Reutilizar un número de secuencia ya existente en `test-cases/`.
 - Dejar el índice `test-cases/README.md` desactualizado tras crear o regenerar TCs (debe reflejar siempre todos los TCs de la carpeta).
 - Regenerar TCs existentes sin instrucción explícita del usuario. Cuando otro skill devuelve el control para corregir uno, el camino es el [flujo de actualización](#flujo-actualizar-tcs-existentes): se edita conservando el identificador, no se rehace.
-- **Renumerar o sustituir un TC por otro con ID nuevo** al corregirlo: rompe el índice, la línea `Casos de prueba:` del artefacto y todos los `coverage.md` que lo citaban.
+- **Renumerar o sustituir un TC por otro con ID nuevo** al corregirlo: rompe el índice, la línea `Casos de prueba:` del artefacto y todos los `criteria-coverage.md` que lo citaban.
 - **Borrar el archivo de un TC que dejó de aplicar** en lugar de marcarlo `Obsolete`: la fila se conserva por trazabilidad, aunque ya no cuente como cobertura.
 - Modificar el artefacto origen más allá de agregar la línea `Casos de prueba:` bajo cada criterio en el Paso 5; cualquier otro cambio al texto de los criterios o a otras secciones está prohibido.
 - **Rechazar un artefacto por no seguir las convenciones de este plugin** (nombre `US-XXX`/`WI-XXX`/`FT-XXX`, ubicación en `docs/specs/`, campo `Estado:`, identificadores en formato `AC-XXX`). El único requisito es que los criterios tengan identificador codificado; el formato es indiferente.

@@ -186,7 +186,7 @@ build y sonar incluidos— cuando nada cambió. Esta sección es la **definició
 ### Fingerprint canónico
 
 Clave de frescura compartida entre las **tres puertas del cierre**, cada una sobre su propio artefacto:
-`quality-check-run.json` aquí, el `coverage.md` de
+`quality-check-run.json` aquí, el `criteria-coverage.md` de
 [`coverage-verify`](../../coverage-verify/SKILL.md#reutilización-del-reporte-idempotencia) y el
 `docs/audits/code-review.md` de
 [`code-review`](../../code-review/SKILL.md#reutilización-del-informe-idempotencia). (`code-review` le
@@ -235,13 +235,13 @@ difiere, hubo cambios y es **obsoleta** (re-ejecutar).
 > | Pathspec | Qué saca de la clave |
 > |----------|----------------------|
 > | `':(top,exclude,glob)**/.*/**'` | El contenido de **cualquier carpeta oculta**, en la raíz o anidada: `.sdd-devkit/` (donde vive `quality-check-run.json`), y de paso `.git/`, `.github/`, `.venv/`, `.cache/`, `.idea/`… El `**/` inicial cubre los dos niveles con un solo patrón. **Los archivos ocultos de la raíz (`.eslintrc.json`, `.env`, `.npmrc`, `.babelrc`) NO se excluyen**: son configuración que sí puede cambiar el resultado de un check. |
-> | `':(top,exclude,glob)**/docs/**'` | **Cualquier `docs/`, en la raíz o dentro de un módulo**: el informe vigente (`quality-check.md`, `code-review.md`), las copias con marca de tiempo de `save-report`, los informes de `arch-audit`, los `coverage.md` que viven junto a su artefacto y el resto de documentación. El `**/` inicial es lo que cubre el caso monorepo: `:(top,exclude)docs` a secas excluiría **solo** el `docs/` de la raíz, y en una corrida lanzada desde `packages/api/` el informe se escribe en `packages/api/docs/audits/` — que seguiría dentro de la clave y la desplazaría en cada corrida. |
-> | `**/*.md` · `**/*.markdown` · `**/*.rst` · `**/*.adoc` | **Toda la documentación en texto, viva donde viva**: el `README.md` de la raíz, un `NOTES.md` dentro de `src/`, un `coverage.md` de un artefacto externo al plugin escrito fuera de `docs/`. Un `.md` no compila ni se ejecuta; editarlo no puede cambiar el resultado de una prueba. **`*.mdx` NO se excluye**: MDX es código (importa componentes y se compila). Tampoco `*.txt`: `requirements.txt` y `CMakeLists.txt` son manifiestos. |
+> | `':(top,exclude,glob)**/docs/**'` | **Cualquier `docs/`, en la raíz o dentro de un módulo**: el informe vigente (`quality-check.md`, `code-review.md`), las copias con marca de tiempo de `save-report`, los informes de `arch-audit`, los `criteria-coverage.md` que viven junto a su artefacto y el resto de documentación. El `**/` inicial es lo que cubre el caso monorepo: `:(top,exclude)docs` a secas excluiría **solo** el `docs/` de la raíz, y en una corrida lanzada desde `packages/api/` el informe se escribe en `packages/api/docs/audits/` — que seguiría dentro de la clave y la desplazaría en cada corrida. |
+> | `**/*.md` · `**/*.markdown` · `**/*.rst` · `**/*.adoc` | **Toda la documentación en texto, viva donde viva**: el `README.md` de la raíz, un `NOTES.md` dentro de `src/`, un `criteria-coverage.md` de un artefacto externo al plugin escrito fuera de `docs/`. Un `.md` no compila ni se ejecuta; editarlo no puede cambiar el resultado de una prueba. **`*.mdx` NO se excluye**: MDX es código (importa componentes y se compila). Tampoco `*.txt`: `requirements.txt` y `CMakeLists.txt` son manifiestos. |
 > | `**/LICENSE*` · `**/CHANGELOG*` · `**/AUTHORS*` · `**/NOTICE*` · `**/CODEOWNERS` | Los archivos de acompañamiento sin extensión o con extensión libre, que ningún build lee. |
 > | `**/.gitignore` | Solo afecta a qué versiona git, no a qué se compila ni se prueba. Y es el archivo que este mismo skill edita al normalizar la caché: dentro de la clave, la primera corrida en un repo la desplazaba a sí misma. |
 >
 > Así ningún artefacto que produce la propia tubería puede desplazar la clave de frescura —correr
-> `arch-audit` no invalida un `coverage.md`, ni escribir un informe invalida el `quality-check-run.json`—, y
+> `arch-audit` no invalida un `criteria-coverage.md`, ni escribir un informe invalida el `quality-check-run.json`—, y
 > **tampoco lo hace la edición de documentación**: retocar el `README.md`, el `CHANGELOG.md` o un criterio
 > de aceptación mantiene fresca la corrida de pruebas, que es lo que se espera de una clave que solo debe
 > moverse cuando cambia el código.

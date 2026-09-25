@@ -21,12 +21,27 @@ inicio, con la politica que el propio usuario configuro, es lo que deja el arbol
 integracion— mientras la implementacion avanza aparte; un checkout en el arbol principal rompe eso aunque
 sea «solo para crear la rama».
 
-**Todo ocurre en worktrees**, con dos niveles:
+> **Raíz del worktree: siempre el repositorio de código afectado, nunca el de especificaciones.**
+> `implementation.workTreePath` (por defecto `.worktrees/`) es **relativa a la raíz del repositorio que se
+> va a modificar**, no al directorio desde el que se invoca el skill ni a la raíz de la solución:
+>
+> - **Repo único / monorepo:** el repositorio principal es el afectado; el worktree se crea bajo
+>   `<raíz-del-repo>/<workTreePath>/<artefacto>`.
+> - **Multi-repo (repo de especificaciones + submódulos):** el afectado es **cada submódulo** que la unidad
+>   toca (campo `Repositorio` del `TK-XXX`/`WI-XXX`; para `TC-XXX`/`FT-XXX`, el del artefacto padre). El
+>   worktree se crea **desde ese submódulo** — `git -C <submódulo> worktree add <submódulo>/<workTreePath>/<artefacto> …` —,
+>   uno por cada repositorio afectado si la unidad toca varios. El repositorio de especificaciones **nunca
+>   se clona en un worktree**: sus artefactos (`README.md`, `TK-XXX`, `progress.md`, `test-cases-automation.md`)
+>   se editan directamente en su árbol y se commitean allí por separado.
+> - Una ruta **absoluta** en `workTreePath` se usa tal cual, pero sigue creándose un worktree por repositorio
+>   afectado (`<workTreePath>/<repo>/<artefacto>`), nunca uno de la solución completa.
+
+**Todo ocurre en worktrees**, con dos niveles (`<workTreePath>` ya resuelta contra la raíz del repositorio afectado):
 
 | Nivel | Worktree | Rama | Se crea |
 |-------|----------|------|---------|
-| **Artefacto** | `<workTreePath>/<artefacto>` (p. ej. `.worktrees/US-042`) | la rama del artefacto (`feature/US-XXX-*`, la rama del `WI`, `test/…`) | al iniciar: `git worktree add <workTreePath>/<artefacto> -b <rama-artefacto> <rama-base>` si la rama no existe, o `git worktree add <workTreePath>/<artefacto> <rama-artefacto>` si ya existe. **Sin checkout previo de la rama base**: `<rama-base>` es una referencia, no hace falta estar en ella. |
-| **Unidad** | `<workTreePath>/<unidad>` (p. ej. `.worktrees/TK-003`) | `wt/<unidad>`, derivada de la rama del artefacto | por unidad, como describe [Concurrencia y worktrees](../SKILL.md#concurrencia-y-worktrees). |
+| **Artefacto** | `<repo-afectado>/<workTreePath>/<artefacto>` (p. ej. `.worktrees/US-042`, o `api-catalogo/.worktrees/US-042` en multi-repo) | la rama del artefacto (`feature/US-XXX-*`, la rama del `WI`, `test/…`) | al iniciar: `git worktree add <workTreePath>/<artefacto> -b <rama-artefacto> <rama-base>` si la rama no existe, o `git worktree add <workTreePath>/<artefacto> <rama-artefacto>` si ya existe. **Sin checkout previo de la rama base**: `<rama-base>` es una referencia, no hace falta estar en ella. |
+| **Unidad** | `<repo-afectado>/<workTreePath>/<unidad>` (p. ej. `.worktrees/TK-003`) | `wt/<unidad>`, derivada de la rama del artefacto | por unidad, como describe [Concurrencia y worktrees](../SKILL.md#concurrencia-y-worktrees). |
 
 - **La rama del artefacto se crea desde el worktree, nunca con `git checkout -b` en el arbol principal.**
   El «Paso 1 — Preparar repositorio y rama» de cada referencia de tipo dice `git checkout`; con worktrees ese
@@ -57,9 +72,10 @@ sea «solo para crear la rama».
   artefacto queda**, con todos sus commits, lista para `work-integrate` / `pr-create`, que si necesitan
   hacer checkout de ella en el arbol principal (el cierre es otro skill con otras reglas). El arbol
   principal sigue donde estaba.
-- **`workTreePath` dentro del repo** (p. ej. `.worktrees/`) es una carpeta oculta: queda fuera del fingerprint
-  de la tuberia de cierre y hay que dejarla en `.gitignore` la primera vez (misma mecanica que la cache de
-  `quality-check`, con `git check-ignore -q`). Sin `workTreePath`, usar una ruta temporal fuera del arbol.
+- **`workTreePath` dentro del repo** (por defecto `.worktrees/`) es una carpeta oculta: queda fuera del fingerprint
+  de la tuberia de cierre y hay que dejarla en el `.gitignore` **del repositorio afectado** la primera vez (misma
+  mecanica que la cache de `quality-check`, con `git check-ignore -q`). Sin `workTreePath` en `settings.json`,
+  el valor es `.worktrees/`; no se usan rutas temporales fuera del arbol.
 
 > **Una peticion explicita del usuario gana.** «Implementalo aqui mismo», «sin worktrees» desactiva la regla
 > para esa ejecucion sin modificar `settings.json` — y entonces si aplica el `git checkout` de cada referencia.

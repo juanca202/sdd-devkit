@@ -29,7 +29,7 @@
     },
     "specification": {
       "type": "object",
-      "description": "Configuración de especificaciones: rutas de cambios (changesPath), de estado actual (currentPath) y de archivado (archivedPath), artefacto raíz del CLI de tracking y política de definición de casos de prueba al planificar.",
+      "description": "Configuración de especificaciones: rutas de cambios (changesPath), de estado actual (currentPath) y de archivado (archivedPath), y política de definición de casos de prueba al planificar.",
       "required": [
         "changesPath",
         "currentPath",
@@ -49,10 +49,6 @@
         "archivedPath": {
           "type": "string",
           "description": "Ruta relativa a la raíz del repositorio donde work-integrate/pr-create archivan el trabajo cerrado, espejando las subcarpetas de changesPath (user-stories/, work-items/, research/). Ej: docs/specs/archived/. Reemplaza a la antigua archivePath."
-        },
-        "artifactRoot": {
-          "type": "string",
-          "description": "Code del artefacto raíz (ej: US-001) que el CLI de tracking consulta por defecto cuando la invocación no aporta el override --requirement <code>."
         },
         "testCases": {
           "type": "object",
@@ -92,7 +88,6 @@
         "uncommittedChanges",
         "workTree",
         "maxParallel",
-        "archiveMode",
         "handoff"
       ],
       "additionalProperties": false,
@@ -125,21 +120,13 @@
         },
         "workTreePath": {
           "type": "string",
-          "description": "Ruta, absoluta o relativa a la raíz del repositorio, donde generar los git worktrees temporales (ej: ../worktrees)."
+          "description": "Ruta donde work-implement crea los git worktrees, relativa a la raíz del repositorio de código afectado (el principal en un repo único o monorepo; cada submódulo afectado en multi-repo, uno por repositorio; nunca el repositorio de especificaciones). Por defecto .worktrees/ si se omite. Una ruta absoluta se usa tal cual, con un worktree por repositorio afectado.",
+          "default": ".worktrees/"
         },
         "maxParallel": {
           "type": "integer",
           "minimum": -1,
           "description": "Número máximo de tareas ejecutándose en paralelo. Usa -1 para sin límite."
-        },
-        "archiveMode": {
-          "type": "string",
-          "description": "Al cerrar un trabajo, si su carpeta se mueve a la ruta de archivado: se pide confirmación mostrando origen y destino (ask), se archiva sin preguntar (always), o no se archiva ni se ofrece (never). Lo resuelven work-integrate y pr-create.",
-          "enum": [
-            "ask",
-            "always",
-            "never"
-          ]
         },
         "handoff": {
           "type": "string",
@@ -151,7 +138,7 @@
         },
         "scope": {
           "type": "string",
-          "description": "Dónde vive el código bajo prueba. code (por defecto si se omite): en este repositorio, flujo habitual. tests: este repositorio contiene solo pruebas contra un sistema desplegado cuyo código no está aquí; work-implement aplica el modo pruebas (solo tipos TC/FT, sin corrección de código de producción, URLs y credenciales desde .env, registro en test-cases/automation.md en lugar de progress.md).",
+          "description": "Dónde vive el código bajo prueba. code (por defecto si se omite): en este repositorio, flujo habitual. tests: este repositorio contiene solo pruebas contra un sistema desplegado cuyo código no está aquí; work-implement aplica el modo pruebas (solo tipos TC/FT, sin corrección de código de producción, URLs y credenciales desde .env, registro en test-cases-automation.md en lugar de progress.md).",
           "enum": [
             "code",
             "tests"

@@ -26,7 +26,6 @@ if (impl) {
   const tree = impl.workTree;
   const treePath = impl.workTreePath;
   const max = impl.maxParallel === undefined ? 3 : impl.maxParallel;
-  const archive = impl.archiveMode || 'ask';
   const handoff = impl.handoff;
   const scope = impl.scope || 'code';
 
@@ -54,7 +53,7 @@ if (impl) {
     console.log('- workTree = ask -> preguntar UNA sola vez, al inicio de la ejecucion, si usar worktrees; aplicar la respuesta a todas las unidades.');
   }
 
-  console.log('- workTreePath = ' + (treePath ? treePath + ' -> raiz donde crear los worktrees (relativa a la raiz del repo si no es absoluta).' : '(sin definir) -> crear los worktrees en una ruta temporal fuera del arbol principal.'));
+  console.log('- workTreePath = ' + (treePath || '.worktrees/ (valor por defecto)') + ' -> raiz donde crear los worktrees, **relativa a la raiz del repositorio de codigo afectado** (si no es absoluta). Repo unico/monorepo: el repo principal. Multi-repo: CADA submodulo que la unidad toca, uno por repositorio afectado; el repositorio de especificaciones NUNCA se clona en un worktree.');
 
   if (max === -1) {
     console.log('- maxParallel = -1 -> sin limite de subagentes concurrentes.');
@@ -62,7 +61,6 @@ if (impl) {
     console.log('- maxParallel = ' + max + ' -> maximo ' + max + ' subagentes en paralelo. Si una ola tiene mas unidades independientes, despacharlas en lotes de ese tamano; al liberarse un cupo, entra la siguiente.');
   }
 
-  console.log('- archiveMode = ' + archive + ' -> politica de archivado del artefacto al cerrarlo (la aplica el skill que archiva, no el que implementa): always = archivar sin preguntar; never = no archivar; ask = preguntar.');
 
   if (handoff === 'always') {
     console.log('- handoff = always -> al cerrar el alcance implementado, invocar directamente el siguiente skill del ciclo (el primero de los handoffs salientes que aplique) sin presentar el menu de opciones.');
@@ -71,7 +69,7 @@ if (impl) {
   }
 
   if (scope === 'tests') {
-    console.log('- scope = tests -> **sistema bajo prueba externo**: este repositorio contiene solo pruebas contra una aplicacion desplegada cuyo codigo NO esta aqui. Solo aplican los tipos TC-XXX y FT-XXX de work-implement (un TK/WI no se implementa en este repo). Reglas del modo: no hay codigo de produccion que corregir (una prueba en rojo es un hallazgo), URLs y credenciales salen del .env via el modulo de configuracion del proyecto, no se crea ni se toca progress.md (el registro va a test-cases/automation.md del padre), y las e2e/API se ejecutan aisladas en cada iteracion. Ver work-implement/references/test-cases.md § Modo pruebas.');
+    console.log('- scope = tests -> **sistema bajo prueba externo**: este repositorio contiene solo pruebas contra una aplicacion desplegada cuyo codigo NO esta aqui. Solo aplican los tipos TC-XXX y FT-XXX de work-implement (un TK/WI no se implementa en este repo). Reglas del modo: no hay codigo de produccion que corregir (una prueba en rojo es un hallazgo), URLs y credenciales salen del .env via el modulo de configuracion del proyecto, no se crea ni se toca progress.md (el registro va a test-cases-automation.md del padre), y las e2e/API se ejecutan aisladas en cada iteracion. Ver work-implement/references/test-cases.md § Modo pruebas.');
   } else {
     console.log('- scope = code -> el codigo bajo prueba vive en este repositorio (comportamiento por defecto). Sin cambios respecto al flujo habitual.');
   }
@@ -80,15 +78,29 @@ if (impl) {
   console.log('- **confirmByUnit = always**: una unidad por confirmacion; esperar confirmacion explicita entre unidades.');
   console.log('- **uncommittedChanges = ask**: parar e informar si hay cambios sin commitear al iniciar o reanudar.');
   console.log('- **workTree = ask**: preguntar una sola vez, al inicio, si usar worktrees (con respuesta afirmativa: primero uncommittedChanges sobre el arbol principal, y despues ya no se toca — ni checkout ni merges en el).');
-  console.log('- **workTreePath** sin definir: worktrees en una ruta temporal fuera del arbol principal.');
+  console.log('- **workTreePath = .worktrees/**: worktrees bajo .worktrees/ de la raiz del repositorio de codigo afectado (en multi-repo, de cada submodulo afectado; nunca del repositorio de especificaciones).');
   console.log('- **maxParallel = 3**: hasta 3 subagentes concurrentes.');
-  console.log('- **archiveMode = ask**: preguntar antes de archivar.');
   console.log('- **handoff = ask**: presentar las opciones de cierre y esperar la eleccion del usuario.');
   console.log('- **scope = code**: el codigo bajo prueba vive en este repositorio. Si el repositorio NO tiene codigo de aplicacion y su .env o .env.example declara BASE_URL o API_BASE_URL, ver la deteccion de respaldo de la nota **Modo pruebas** de esta referencia antes de asumirlo.');
   console.log('**No decidir estos valores por cuenta propia** ni ofrecer escribirlos: arch-init es quien crea el archivo.');
 }
 "
 ```
+
+> **Raíz del worktree: siempre el repositorio de código afectado, nunca el de especificaciones.**
+> `implementation.workTreePath` (por defecto `.worktrees/`) es **relativa a la raíz del repositorio que se
+> va a modificar**, no al directorio desde el que se invoca el skill ni a la raíz de la solución:
+>
+> - **Repo único / monorepo:** el repositorio principal es el afectado; el worktree se crea bajo
+>   `<raíz-del-repo>/<workTreePath>/<artefacto>`.
+> - **Multi-repo (repo de especificaciones + submódulos):** el afectado es **cada submódulo** que la unidad
+>   toca (campo `Repositorio` del `TK-XXX`/`WI-XXX`; para `TC-XXX`/`FT-XXX`, el del artefacto padre). El
+>   worktree se crea **desde ese submódulo** — `git -C <submódulo> worktree add <submódulo>/<workTreePath>/<artefacto> …` —,
+>   uno por cada repositorio afectado si la unidad toca varios. El repositorio de especificaciones **nunca
+>   se clona en un worktree**: sus artefactos (`README.md`, `TK-XXX`, `progress.md`, `test-cases-automation.md`)
+>   se editan directamente en su árbol y se commitean allí por separado.
+> - Una ruta **absoluta** en `workTreePath` se usa tal cual, pero sigue creándose un worktree por repositorio
+>   afectado (`<workTreePath>/<repo>/<artefacto>`), nunca uno de la solución completa.
 
 > **Una peticion explicita del usuario gana.** Si en el turno el usuario pide algo incompatible con lo
 > resuelto ("de corrido", "sin preguntar", "una por una", "sin worktrees"), se respeta esa peticion para

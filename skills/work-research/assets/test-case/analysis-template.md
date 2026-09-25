@@ -5,10 +5,10 @@ Eliminar este bloque y sustituir todos los {{…}} al publicar el documento fina
 Este es el analysis.md — archivo ADICIONAL del flujo «Analizar test case».
 Vive junto al README.md (informe principal) dentro de la misma carpeta del RS:
 
-  TC de una US:   docs/specs/changes/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/analysis.md
-  TC de un WI:    docs/specs/changes/work-items/WI-XXX-{kebab}/research/RS-XXX-{slug}/analysis.md
-  TC de un FT:  docs/specs/current/FT-XXX-{slug}/research/RS-XXX-{slug}/analysis.md
-  TC suelto:      docs/specs/changes/research/RS-XXX-{slug}/analysis.md
+  TC de una US:   <changesPath>/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/analysis.md
+  TC de un WI:    <changesPath>/work-items/WI-XXX-{kebab}/research/RS-XXX-{slug}/analysis.md
+  TC de un FT:  <currentPath>/FT-XXX-{slug}/research/RS-XXX-{slug}/analysis.md
+  TC suelto:      <changesPath>/research/RS-XXX-{slug}/analysis.md
 
 El README.md se redacta con assets/research-template.md y enlaza este archivo desde
 su sección «Archivos adicionales». El veredicto se resume en «Conclusión y

@@ -20,10 +20,10 @@ Investigar según el dominio
 Sintetizar hallazgos + recomendación
     │
     ▼
-RS-XXX en docs/specs/changes/research/RS-XXX-{slug}/README.md
+RS-XXX en <changesPath>/research/RS-XXX-{slug}/README.md
 ```
 
-**Entregable:** un `RS-XXX` en `docs/specs/changes/research/RS-XXX-{slug}/README.md`, redactado
+**Entregable:** un `RS-XXX` en `<changesPath>/research/RS-XXX-{slug}/README.md`, redactado
 con [`assets/research-template.md`](../../assets/research-template.md). Sin archivos
 adicionales; la sección **Impacto en el artefacto** se marca
 `N/A — investigación independiente`.

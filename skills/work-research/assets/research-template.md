@@ -4,11 +4,11 @@ Eliminar este bloque y sustituir todos los {{…}} al publicar el documento fina
 
 Este es el README.md — el INFORME PRINCIPAL de la investigación. Vive en:
   Con artefacto vinculado (decisiones pendientes, test case de un artefacto):
-    US/TK: docs/specs/changes/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/README.md
-    WI:    docs/specs/changes/work-items/WI-XXX-{kebab-case}/research/RS-XXX-{slug}/README.md
-    FT:  docs/specs/current/FT-XXX-{slug}/research/RS-XXX-{slug}/README.md
+    US/TK: <changesPath>/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/README.md
+    WI:    <changesPath>/work-items/WI-XXX-{kebab-case}/research/RS-XXX-{slug}/README.md
+    FT:  <currentPath>/FT-XXX-{slug}/research/RS-XXX-{slug}/README.md
   Sin artefacto vinculado (investigación libre, legado, migración):
-    docs/specs/changes/research/RS-XXX-{slug}/README.md   (migración: en el proyecto destino)
+    <changesPath>/research/RS-XXX-{slug}/README.md   (migración: en el proyecto destino)
 
   NO aplica al flujo «Analizar issue»: su entregable es un WI de tipo bug-fix.
 

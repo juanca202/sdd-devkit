@@ -1,7 +1,7 @@
 ---
 name: work-research
 description: >-
-  Investigar y sintetizar hallazgos en un informe estructurado (RS-XXX). Skill genérico con seis flujos según la entrada: investigación libre de un tema; decisiones pendientes de un US-XXX/TK-XXX/WI-XXX antes de planificar; análisis de un issue o bug (reproducción, causa raíz y diagnóstico de pruebas, con entregable WI de tipo bug-fix); auditoría de un caso de prueba TC-XXX; análisis de legado (descubrir features FT-XXX y sus pruebas desde código existente); y discovery de migración entre proyectos. Activar cuando el usuario pida "investiga", "research", "¿es viable?", "¿cómo funciona X?", "¿qué impacto tiene?", "compara opciones", "¿qué falta por decidir?", "hay un bug", "falla en producción", "analiza el bug #1234", "revisa este caso de prueba", "analiza este código legacy", "ingeniería inversa de requisitos", "migración entre proyectos", o mencione "RS-XXX". Si hay un artefacto o un identificador del gestor de proyectos en contexto, usarlo sin preguntar.
+  Investigar y sintetizar hallazgos en un informe estructurado (RS-XXX). Skill genérico con seis flujos según la entrada: investigación libre de un tema; decisiones pendientes de un US-XXX/TK-XXX/WI-XXX antes de planificar; análisis de un issue o bug (reproducción, causa raíz y diagnóstico de pruebas, con entregable WI de tipo bug-fix); auditoría de un caso de prueba TC-XXX; análisis de legado (descubrir features FT-XXX y sus pruebas desde código existente); y discovery de migración entre proyectos. Activar cuando el usuario pida "investiga", "research", "¿es viable?", "¿cómo funciona X?", "¿qué impacto tiene?", "compara opciones", "¿qué falta por decidir?", "hay un bug", "falla en producción", "analiza el bug #1234", "revisa este caso de prueba", "analiza este código legacy", "ingeniería inversa de requisitos", "migración entre proyectos", o mencione "RS-XXX". Si hay un artefacto o un identificador del gestor de proyectos en contexto, usarlo sin preguntar. Activar también para archivar investigaciones sueltas («archiva el RS-003») con el modificador `archive`, que informa si otro artefacto aún la referencia y pide confirmación.
 license: MIT
 ---
 
@@ -45,18 +45,18 @@ Toda investigación genera **una carpeta** `research/RS-XXX-{slug}/` con un `REA
 
 | Caso                                    | Ubicación                                                                                                                                           |
 | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Artefacto vinculado `US-XXX` / `TK-XXX` | `docs/specs/changes/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/`                                                                                   |
-| Artefacto vinculado `WI-XXX`            | `docs/specs/changes/work-items/WI-XXX-{kebab-case}/research/RS-XXX-{slug}/`                                                                                 |
-| Artefacto vinculado `FT-XXX`            | `docs/specs/current/FT-XXX-{slug}/research/RS-XXX-{slug}/`                                                                                         |
-| Sin artefacto vinculado                 | `docs/specs/changes/research/RS-XXX-{slug}/` (en la migración, en el **proyecto destino**; en el análisis de legado, en el proyecto que contiene el código) |
+| Artefacto vinculado `US-XXX` / `TK-XXX` | `<changesPath>/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/`                                                                                   |
+| Artefacto vinculado `WI-XXX`            | `<changesPath>/work-items/WI-XXX-{kebab-case}/research/RS-XXX-{slug}/`                                                                                 |
+| Artefacto vinculado `FT-XXX`            | `<currentPath>/FT-XXX-{slug}/research/RS-XXX-{slug}/`                                                                                         |
+| Sin artefacto vinculado                 | `<changesPath>/research/RS-XXX-{slug}/` (en la migración, en el **proyecto destino**; en el análisis de legado, en el proyecto que contiene el código) |
 
-> **Artefacto archivado.** Si la carpeta de un `US-XXX`/`TK-XXX`/`WI-XXX`/`RS-XXX` no aparece en su ruta activa, buscarla bajo `docs/specs/archived/` (`archive/user-stories/`, `archive/work-items/`, `archive/research/`) antes de darla por inexistente: `work-integrate` y `pr-create` pueden moverla ahí al cerrar el trabajo, si el usuario lo confirma. **Nunca** recrearla en la ruta activa. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo). Lo que se haga con el hallazgo depende de dónde escriba el flujo:
+> **Artefacto archivado.** Si la carpeta de un `US-XXX`/`TK-XXX`/`WI-XXX`/`RS-XXX` no aparece en su ruta activa, buscarla bajo `<archivedPath>/` (`user-stories/`, `work-items/`, `research/`) antes de darla por inexistente: el usuario puede haberla archivado con el modificador `archive` del skill que la produjo (`work-define`, `work-plan`, `requirement-refine`, `work-research`). **Nunca** recrearla en la ruta activa. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo). Lo que se haga con el hallazgo depende de dónde escriba el flujo:
 >
 > - **Flujos que escribirían el `RS-XXX` dentro del `research/` del artefacto** — solo *Analizar decisiones pendientes*: **parar y avisar**. Un trabajo cerrado no tiene decisiones pendientes que resolver, y retomarlo exige desarchivarlo, decisión del usuario.
 > - **Flujos que lo leen como contexto y escriben fuera** (*Analizar issue*, que produce un dossier y un `WI-XXX` nuevo; *Investigación libre*): **continuar**. Leer un artefacto archivado es siempre legítimo — investigar un bug de algo ya entregado es el caso normal.
-> - ***Analizar test case*** **cambia de grupo según el padre:** con padre activo escribe en su `research/`; con padre **archivado** no escribe dentro pero **tampoco para** — lee el padre como contexto y guarda el `RS-XXX` en `docs/specs/changes/research/`, la ruta que su propia tabla ya reserva para un TC sin padre local. Auditar el caso de prueba de un trabajo entregado es legítimo y frecuente; ver [`references/test-case/flow.md`](references/test-case/flow.md).
+> - ***Analizar test case*** **cambia de grupo según el padre:** con padre activo escribe en su `research/`; con padre **archivado** no escribe dentro pero **tampoco para** — lee el padre como contexto y guarda el `RS-XXX` en `<changesPath>/research/`, la ruta que su propia tabla ya reserva para un TC sin padre local. Auditar el caso de prueba de un trabajo entregado es legítimo y frecuente; ver [`references/test-case/flow.md`](references/test-case/flow.md).
 >
-> Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 **Archivos adicionales por flujo:**
 
@@ -69,9 +69,9 @@ Toda investigación genera **una carpeta** `research/RS-XXX-{slug}/` con un `REA
 ### Salidas fuera de `research/`
 
 - **Analizar legado** crea además, por cada feature descubierto, una carpeta
-`docs/specs/current/FT-XXX-{slug}/` con su `README.md` (`[assets/legacy/feature-template.md](assets/legacy/feature-template.md)`) y sus casos de prueba vía `test-define`, en su propio subárbol y con numeración independiente. Condiciones y doctrina en `[references/legacy/flow.md](references/legacy/flow.md)`.
+`<currentPath>/FT-XXX-{slug}/` con su `README.md` (`[assets/legacy/feature-template.md](assets/legacy/feature-template.md)`) y sus casos de prueba vía `test-define`, en su propio subárbol y con numeración independiente. Condiciones y doctrina en `[references/legacy/flow.md](references/legacy/flow.md)`.
 - **Analizar issue** es la **única excepción a la salida estandarizada: no crea un**
-`RS-XXX`**.** Su entregable es el `WI` de tipo `bug-fix` que crea `work-plan` en `docs/specs/changes/work-items/WI-XXX-{kebab-case}/README.md`. Este skill produce el **dossier de bug** con `[assets/issue/diagnosis-template.md](assets/issue/diagnosis-template.md)`, lo presenta y lo pasa como insumo del *handoff*. Solo si el usuario lo pide explícitamente se guarda además un `RS-XXX` en `docs/specs/changes/research/`.
+`RS-XXX`**.** Su entregable es el `WI` de tipo `bug-fix` que crea `work-plan` en `<changesPath>/work-items/WI-XXX-{kebab-case}/README.md`. Este skill produce el **dossier de bug** con `[assets/issue/diagnosis-template.md](assets/issue/diagnosis-template.md)`, lo presenta y lo pasa como insumo del *handoff*. Solo si el usuario lo pide explícitamente se guarda además un `RS-XXX` en `<changesPath>/research/`.
 
 ---
 
@@ -108,6 +108,25 @@ No continúes hasta haber leído y aplicado `project-management.md`.
 > documento local es la especificación; el work item aporta estado, comentarios,
 > adjuntos y decisiones que nunca llegaron al documento. Si discrepan, señalarlo como
 > hallazgo en lugar de elegir uno por cuenta propia.
+
+---
+
+## Modificador `archive` (archivar investigaciones sueltas `RS-XXX`)
+
+**Archiva este skill, no los de cierre.** `work-integrate` y `pr-create` no archivan: siempre hay una revisión humana antes, y el usuario lo pide aquí cuando decide. Procedimiento, destinos, reglas de confirmación y contrato para el resto del catálogo: [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md) — leerlo antes de mover nada.
+
+| Invocación | Alcance |
+|------------|---------|
+| `/work-research archive RS-XXX` · `/work-research RS-XXX archive` (uno o varios IDs; el orden es indiferente) | Los artefactos indicados, **estén como estén**. |
+| `/work-research archive` (sin ID) | **Todos** los `RS-XXX` de `<changesPath>/research/` que ya estén **completos**; los incompletos se listan aparte con su estado y no se mueven. |
+
+Reglas que este skill aplica al archivar:
+
+- **El estado no restringe, pero se informa.** Antes de preguntar, componer el parte de estado: referencias vivas desde artefactos activos de `<changesPath>` y `<currentPath>` (≥ 1 cuenta como incompleto: otro trabajo aún la enlaza). Con algo incompleto, la pregunta lo dice explícitamente y el usuario decide.
+- **Siempre se confirma** (herramienta estructurada, una sola tanda para todo el lote), mostrando origen → destino de cada carpeta y las investigaciones sueltas que quedarían huérfanas. Sin canal de respuesta, no se archiva.
+- **Destino:** `<archivedPath>/research/<ID>-<slug>/`, con `<archivedPath>` = `specification.archivedPath` de `.sdd-devkit/settings.json` (por defecto `docs/specs/archived/`) y la subcarpeta espejo de `<changesPath>`. `git mv`, guard de destino, reparación de enlaces y cierre con `/git-commit`, tal como describe la referencia.
+- Un artefacto ya bajo `<archivedPath>` se informa y no se toca; un ID suelto **sin** `archive` nunca archiva.
+- Solo aplica a las investigaciones **sueltas** de `<changesPath>/research/`; las que viven dentro de un artefacto (`US-XXX/research/`) se archivan con él.
 
 ---
 
@@ -223,7 +242,7 @@ Qué leer y en qué orden lo define el archivo de referencia del flujo elegido. 
 
 - **Leer antes de investigar.** Nunca investigar sobre un artefacto sin haberlo abierto.
 - **No duplicar investigaciones previas.** Revisar el `research/` correspondiente —y, si
-la base es `docs/specs/changes/research/`, también `docs/specs/archived/research/`—; si ya hay un RS sobre el mismo tema, mostrarlo al usuario y partir de él.
+la base es `<changesPath>/research/`, también `<archivedPath>/research/`—; si ya hay un RS sobre el mismo tema, mostrarlo al usuario y partir de él.
 - **Verificar contra el repo, no contra la memoria.** Stack, versiones y estructura se
 comprueban en los manifiestos y el código.
 - **Registrar lo que no existe.** «No hay ADR sobre esto», «no hay pruebas de este
@@ -320,18 +339,18 @@ es una hipótesis: se marca como tal y se verifica o se descarta.
    presentación, volver al Paso 4 y presentarlo de nuevo entero antes de escribir.
 1. Determinar la **carpeta base** —la que contendrá las carpetas `RS-XXX-`*— según
   haya artefacto vinculado o no (ver [Salida estandarizada](#salida-estandarizada)):
-   `<carpeta-del-artefacto>/research/` si lo hay, `docs/specs/changes/research/` si no. La base
+   `<carpeta-del-artefacto>/research/` si lo hay, `<changesPath>/research/` si no. La base
    ya incluye el segmento `research/`: no anidarlo dos veces. Si el artefacto vinculado
    resultó estar archivado, aquí ya no se llega: la regla de artefacto archivado obligó a
    parar antes.
 2. Determinar el siguiente `RS-XXX` leyendo las carpetas `RS-XXX-*` existentes en esa
   base y tomando el mayor número + 1. Empezar en `001` si no hay ninguna.
-   - **Si la base es `docs/specs/changes/research/`, escanear también `docs/specs/archived/research/`**
+   - **Si la base es `<changesPath>/research/`, escanear también `<archivedPath>/research/`**
      y tomar el mayor de las dos. `work-integrate` y `pr-create` archivan ahí las
      investigaciones sueltas que se quedan sin artefacto activo que las referencie; su
      número **sigue ocupado**, y mirar solo la ruta activa haría retroceder el contador y
      reemitir un `RS-XXX` ya usado. Ver
-     [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+     [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo).
 3. Construir el `{slug}`: descripción corta del tema en kebab-case (p. ej.
   `viabilidad-redis-cache`, `impacto-refactor-pagos`, `orm-sequelize-a-prisma`).
 4. Crear `<base>/RS-XXX-{slug}/` y escribir dentro el `README.md` con su estado
@@ -359,7 +378,7 @@ es una hipótesis: se marca como tal y se verifica o se descarta.
 > Reglas comunes de identificadores y secuenciales: [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md). Lo específico de los RS:
 
 - **Secuencial** `XXX`**:** tres dígitos, por carpeta base de destino. Leer las carpetas
-`RS-XXX-*` existentes y tomar el siguiente número. Cuando la base es `docs/specs/changes/research/`, el escaneo incluye `docs/specs/archived/research/`: archivar no libera el número.
+`RS-XXX-*` existentes y tomar el siguiente número. Cuando la base es `<changesPath>/research/`, el escaneo incluye `<archivedPath>/research/`: archivar no libera el número.
 - **Slug:** kebab-case, descriptivo del tema. Máximo 5 palabras.
 - **Un RS por pregunta de investigación.** Si la sesión produce varias, generar un RS
 por cada una con su propio secuencial. *Excepción:* una migración con **varios proyectos destino** escribe un RS en cada uno, con el **mismo** `{slug}` y un secuencial común (ver `[references/migrate/flow.md](references/migrate/flow.md)`) — sigue siendo una sola pregunta de investigación.

@@ -41,17 +41,17 @@ No continúes hasta haber leído y aplicado `escalation.md`.
 | Fuente | Qué extraer |
 |--------|-------------|
 | `.agents/MEMORY.md` | Reglas de dominio y convenciones del proyecto |
-| `docs/specs/changes/user-stories/US-*/` | US existentes, numeración libre, `README.md`, `TK-*.md`, `progress.md` |
-| `docs/specs/archived/user-stories/US-*/` · `docs/specs/archived/work-items/WI-*/` | Trabajo **ya cerrado e integrado**. Se lee (contexto e historial) y **cuenta para la numeración libre**: un ID archivado sigue ocupado. No se escribe dentro. |
-| `docs/specs/changes/work-items/WI-*/` | Tareas de mantenimiento existentes, con su `README.md` y `progress.md` |
-| `docs/specs/current/FT-*/` | Features ya implementadas, con sus criterios y `test-cases/` |
+| `<changesPath>/user-stories/US-*/` | US existentes, numeración libre, `README.md`, `TK-*.md`, `progress.md` |
+| `<archivedPath>/user-stories/US-*/` · `<archivedPath>/work-items/WI-*/` | Trabajo **archivado por decisión del usuario** (normalmente cerrado e integrado, pero el estado no restringe el archivado: mirar su `progress.md`). Se lee (contexto e historial) y **cuenta para la numeración libre**: un ID archivado sigue ocupado. No se escribe dentro. |
+| `<changesPath>/work-items/WI-*/` | Tareas de mantenimiento existentes, con su `README.md` y `progress.md` |
+| `<currentPath>/FT-*/` | Features ya implementadas, con sus criterios y `test-cases/` |
 | `docs/architecture/` | Contratos, flujos y referencias técnicas existentes |
 | `docs/glossary.md` | Términos de dominio ya definidos |
 | `docs/adr/` | ADRs previos (decisiones), estados, índice en `README.md`. **Relativo a la raíz de arquitectura**: en un repo con submódulos, cada uno lleva su propia serie |
 | `docs/standards/` | Estándares vigentes (reglas verificables), estados, índice en `README.md`. **Relativo a la raíz de arquitectura** |
 | Skills (`skills/*/SKILL.md`) | Plantillas en `assets/`, flujos y reglas del artefacto activo |
 
-Regla de fallback y numeración sobre `docs/specs/archived/`: ver [`../skills/work-integrate/references/archive.md`](../skills/work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+Regla de fallback y numeración sobre `<archivedPath>/`: ver [`../references/archive.md`](../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 **No inventes** ids, decisiones de producto, BR/SC, endpoints ni estados. Si falta información, pregunta al usuario (preferir **herramienta de preguntas estructuradas** del cliente; fallback: prosa con opciones numeradas).
 
@@ -59,10 +59,10 @@ Regla de fallback y numeración sobre `docs/specs/archived/`: ver [`../skills/wo
 
 | Artefacto | Ruta típica |
 |-----------|-------------|
-| Historia de usuario | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/README.md` |
-| Tarea técnica | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` |
-| Tarea de mantenimiento | `docs/specs/changes/work-items/WI-XXX-[kebab-case]/README.md` |
-| Feature ya implementada | `docs/specs/current/FT-XXX-[slug]/README.md` |
+| Historia de usuario | `<changesPath>/user-stories/US-XXX-[nombre-corto]/README.md` |
+| Tarea técnica | `<changesPath>/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` |
+| Tarea de mantenimiento | `<changesPath>/work-items/WI-XXX-[kebab-case]/README.md` |
+| Feature ya implementada | `<currentPath>/FT-XXX-[slug]/README.md` |
 | Documentación técnica | `docs/architecture/` |
 | Glosario | `docs/glossary.md` |
 | ADR (decisión) | `docs/adr/ADR-XXX-<slug>.md` (id `ADR-XXX`) — relativo a la **raíz de arquitectura** |

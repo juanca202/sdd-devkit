@@ -32,8 +32,8 @@ RS-XXX dentro de la carpeta del artefacto
 **Entregable:** un `RS-XXX` en la carpeta `research/` **del propio artefacto**,
 redactado con `[assets/research-template.md](../../assets/research-template.md)`:
 
-- `US-XXX` / `TK-XXX` → `docs/specs/changes/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/`
-- `WI-XXX` → `docs/specs/changes/work-items/WI-XXX-{kebab-case}/research/RS-XXX-{slug}/`
+- `US-XXX` / `TK-XXX` → `<changesPath>/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/`
+- `WI-XXX` → `<changesPath>/work-items/WI-XXX-{kebab-case}/research/RS-XXX-{slug}/`
 
 **Pregunta de investigación:** «¿Qué falta decidir o aclarar en  para poder
 planificarlo o implementarlo?». Confirmarla con el usuario antes de investigar.
@@ -59,17 +59,17 @@ Leer el artefacto **antes** de investigar:
 
 | Tipo     | Archivo a leer                                        | Qué extraer                                                                   |
 | -------- | ----------------------------------------------------- | ----------------------------------------------------------------------------- |
-| `US-XXX` | `docs/specs/changes/user-stories/US-XXX-{nombre}/README.md`   | Objetivo, criterios `AC-XXX`, reglas de negocio, restricciones, Observaciones |
+| `US-XXX` | `<changesPath>/user-stories/US-XXX-{nombre}/README.md`   | Objetivo, criterios `AC-XXX`, reglas de negocio, restricciones, Observaciones |
 | `TK-XXX` | El `TK-XXX-{kebab}.md` bajo la carpeta de su `US-XXX` | Objetivo técnico, dependencias, decisiones abiertas                           |
-| `WI-XXX` | `docs/specs/changes/work-items/WI-XXX-{kebab-case}/README.md` | Descripción, criterios, plan de implementación actual, Observaciones          |
+| `WI-XXX` | `<changesPath>/work-items/WI-XXX-{kebab-case}/README.md` | Descripción, criterios, plan de implementación actual, Observaciones          |
 
 
-> **Si el artefacto no está en la ruta activa, buscarlo bajo `docs/specs/archived/`**
-> (`archived/user-stories/`, `archived/work-items/`): `work-integrate` y `pr-create` lo
-> mueven ahí al cerrar el trabajo. Un artefacto archivado es trabajo **ya cerrado**: no
-> tiene decisiones pendientes que analizar, así que **parar y avisar** en vez de escribir
+> **Si el artefacto no está en la ruta activa, buscarlo bajo `<archivedPath>/`**
+> (`archived/user-stories/`, `archived/work-items/`): el usuario puede
+> haberlo archivado con el modificador `archive` del skill que lo produjo. Un artefacto archivado no se retoma sin
+> desarchivarlo: **parar y avisar** en vez de escribir
 > un `RS-XXX` en su `research/`. **Nunca** recrear la carpeta en la ruta activa. Ver
-> [`work-integrate/references/archive.md`](../../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> [`${PLUGIN_ROOT}/references/archive.md`](../../../../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 Además:
 
@@ -135,7 +135,7 @@ dependencia registrar, qué decisión anotar en Observaciones.
 ## Anti-patrones
 
 - Editar el `README.md` de la US/WI o un `TK-XXX` desde este flujo.
-- Guardar el RS en `docs/specs/changes/research/` en vez de en la carpeta del artefacto.
+- Guardar el RS en `<changesPath>/research/` en vez de en la carpeta del artefacto.
 - Investigar lagunas que el usuario podía responder en una pregunta.
 - Cerrar una decisión con «depende» sin una recomendación condicionada a criterios
 verificables.

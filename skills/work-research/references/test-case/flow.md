@@ -40,18 +40,18 @@ ese artefacto:
 
 | El TC cuelga de… | Carpeta del RS |
 |------------------|----------------|
-| `US-XXX` | `docs/specs/changes/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/` |
-| `WI-XXX` | `docs/specs/changes/work-items/WI-XXX-{kebab-case}/research/RS-XXX-{slug}/` |
-| `FT-XXX` | `docs/specs/current/FT-XXX-{slug}/research/RS-XXX-{slug}/` |
-| Nada local (TC suelto o solo en el gestor de proyectos) | `docs/specs/changes/research/RS-XXX-{slug}/` |
+| `US-XXX` | `<changesPath>/user-stories/US-XXX-{nombre}/research/RS-XXX-{slug}/` |
+| `WI-XXX` | `<changesPath>/work-items/WI-XXX-{kebab-case}/research/RS-XXX-{slug}/` |
+| `FT-XXX` | `<currentPath>/FT-XXX-{slug}/research/RS-XXX-{slug}/` |
+| Nada local (TC suelto o solo en el gestor de proyectos) | `<changesPath>/research/RS-XXX-{slug}/` |
 
-> **Si el artefacto padre no está en su ruta activa, buscarlo bajo `docs/specs/archived/`**
+> **Si el artefacto padre no está en su ruta activa, buscarlo bajo `<archivedPath>/`**
 > antes de darlo por inexistente, y **nunca** recrear la carpeta en la ruta activa. Si está
 > archivado, **no escribir dentro** — pero tampoco parar: auditar el `TC-XXX` de un trabajo
 > ya entregado es un caso legítimo y frecuente. Se lee el padre archivado como contexto y
-> el `RS-XXX` se guarda en `docs/specs/changes/research/RS-XXX-{slug}/`, la misma fila «nada local»
+> el `RS-XXX` se guarda en `<changesPath>/research/RS-XXX-{slug}/`, la misma fila «nada local»
 > de la tabla de arriba. Decírselo al usuario al reportar la ruta. Ver
-> [`work-integrate/references/archive.md`](../../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> [`${PLUGIN_ROOT}/references/archive.md`](../../../../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 **Pregunta de investigación:** «¿*<TC-XXX>* verifica realmente *<AC-XXX>*, y la
 implementación lo satisface?». Confirmarla con el usuario antes de investigar.

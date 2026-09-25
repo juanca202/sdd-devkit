@@ -4,7 +4,7 @@ Eliminar este bloque y sustituir todos los {{…}} al publicar el documento fina
 
 Este es un ARCHIVO ADICIONAL del flujo «Analizar migración», no el informe principal.
 Vive junto al README.md dentro de la carpeta de la investigación:
-  <destino>/docs/specs/changes/research/RS-XXX-{slug}/discovery.md
+  <destino>/<changesPath>/research/RS-XXX-{slug}/discovery.md
 El informe principal (README.md) lo enlaza en su sección "Archivos adicionales".
 -->
 

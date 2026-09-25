@@ -42,13 +42,13 @@ En caso de duda entre A y B: preguntar al usuario antes de continuar. No combina
 
 | Artefacto | Ruta |
 |-----------|------|
-| Tarea | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` |
+| Tarea | `<changesPath>/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` |
 | ADR | `docs/adr/` |
 | Documentación técnica | `docs/architecture/[capability]/` — `README.md`, `models/`, `diagrams/` (propiedad de `design-define`; aquí solo se referencia) |
 | Glosario | `docs/glossary.md` |
-| US padre ya archivada (fallback) | `docs/specs/archived/user-stories/US-XXX-[nombre-corto]/` |
+| US padre ya archivada (fallback) | `<archivedPath>/user-stories/US-XXX-[nombre-corto]/` |
 
-> **US padre archivada.** Si la carpeta de la US no está en `docs/specs/changes/user-stories/`, buscarla bajo `docs/specs/archived/user-stories/` antes de darla por inexistente. Si está ahí, la historia **ya se cerró e integró**: **parar y avisar** en vez de añadirle tareas — retomarla exige desarchivarla, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado. Ver [`work-integrate/references/archive.md`](../../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+> **US padre archivada.** Si la carpeta de la US no está en `<changesPath>/user-stories/`, buscarla bajo `<archivedPath>/user-stories/` antes de darla por inexistente. Si está ahí, la historia **ya se cerró e integró**: **parar y avisar** en vez de añadirle tareas — retomarla exige desarchivarla, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 ---
 
@@ -154,7 +154,7 @@ Una TK completa puede alcanzar `Estado: Ready` si cumple todas las condiciones d
 
 ## Flujo: Actualizar una TK existente
 
-1. **Identificar el archivo** — por número, nombre o título, dentro de la carpeta de su US. Si esa carpeta no está en `docs/specs/changes/user-stories/`, buscarla bajo `docs/specs/archived/user-stories/`: si está archivada, la historia y sus tareas ya se cerraron e integraron — **parar y avisar**, editarlas exige desarchivar primero y eso lo decide el usuario.
+1. **Identificar el archivo** — por número, nombre o título, dentro de la carpeta de su US. Si esa carpeta no está en `<changesPath>/user-stories/`, buscarla bajo `<archivedPath>/user-stories/`: si está archivada, la historia y sus tareas ya se cerraron e integraron — **parar y avisar**, editarlas exige desarchivar primero y eso lo decide el usuario.
 2. **Leer el contenido actual** completo antes de editar.
 3. **Leer el `README.md` de la US y las demás TKs** para detectar solapamientos con los cambios propuestos.
 4. **Aplicar los cambios** solicitados. Reglas invariantes:
@@ -251,7 +251,7 @@ Aplica siempre que se planifiquen o secuencien **varias TK dentro de la misma US
 
 **Validación:**
 - [ ] Carpeta de la US existe con `README.md`
-- [ ] ID `TK-XXX` libre en la carpeta de la US realmente resuelta (nunca en una ruta activa dada por vacía sin comprobar `docs/specs/archived/user-stories/`)
+- [ ] ID `TK-XXX` libre en la carpeta de la US realmente resuelta (nunca en una ruta activa dada por vacía sin comprobar `<archivedPath>/user-stories/`)
 - [ ] Sin solapamiento de alcance con TKs existentes
 - [ ] Rama de trabajo actual verificada; si es una rama de implementación distinta de la propia US padre, se advirtió al usuario y se preguntó `Continuar` / `Detenerme aquí` antes de crear
 

@@ -1,6 +1,6 @@
 ---
 name: work-plan
-description: "Planifica trabajo de distintos tipos sin generar código ni pruebas. Dos tipos de plan: (1) tareas técnicas (TK-XXX) bajo una historia de usuario existente; (2) tareas de mantenimiento (WI-XXX) sin historia asociada — bugs, refactor, deuda técnica, actualización de dependencias, tareas operativas. Activar cuando el usuario pida planificar implementación, descomponer trabajo, definir alcance técnico o planificar mantenimiento/deuda técnica/refactor, aunque no nombre «tarea», «TK» o «WI». Activar también, por defecto, cuando solo entregue una referencia a una historia («US-004», «planifica US-007»): proponer la descomposición en tareas por repositorio cubriendo los AC-XXX y preguntar si crear los planes completos, stubs, ajustar u otro, o cancelar. Selecciona el tipo según haya o no historia asociada y carga su definición desde references/. Cuenta el trabajo archivado en docs/specs/archived/ al asignar IDs y detectar solapamientos; lo archivado no se edita."
+description: "Planifica trabajo de distintos tipos sin generar código ni pruebas. Dos tipos de plan: (1) tareas técnicas (TK-XXX) bajo una historia de usuario existente; (2) tareas de mantenimiento (WI-XXX) sin historia asociada — bugs, refactor, deuda técnica, actualización de dependencias, tareas operativas. Activar cuando el usuario pida planificar implementación, descomponer trabajo, definir alcance técnico o planificar mantenimiento/deuda técnica/refactor, aunque no nombre «tarea», «TK» o «WI». Activar también, por defecto, cuando solo entregue una referencia a una historia («US-004», «planifica US-007»): proponer la descomposición en tareas por repositorio cubriendo los AC-XXX y preguntar si crear los planes completos, stubs, ajustar u otro, o cancelar. Selecciona el tipo según haya o no historia asociada y carga su definición desde references/. Cuenta el trabajo archivado en <archivedPath>/ al asignar IDs y detectar solapamientos; lo archivado no se edita. Activar también para archivar tareas de mantenimiento («archiva el WI-007», «archiva los WI ya implementados») con el modificador `archive`, que muestra el estado real y pide confirmación."
 license: MIT
 ---
 
@@ -81,9 +81,28 @@ La señal que distingue los tipos es **si el trabajo tiene una historia de usuar
 Reglas de selección:
 
 - **Hay historia asociada → tarea de historia de usuario. No la hay → mantenimiento.** Leer la referencia correspondiente y seguir **únicamente** su flujo.
-- **Una US archivada sigue siendo una US.** Antes de concluir que «no hay historia asociada», buscarla también bajo `docs/specs/archived/user-stories/`: `work-integrate` y `pr-create` mueven ahí la carpeta al cerrar el trabajo. Si aparece ahí, el tipo **es** tarea de historia de usuario y su referencia dirá que hay que parar por estar archivada — degradarla a `WI-XXX` por no encontrarla en la ruta activa crearía un artefacto nuevo para trabajo que ya existe. Ver [`work-integrate/references/archive.md`](../work-integrate/references/archive.md#contrato-para-el-resto-del-catálogo).
+- **Una US archivada sigue siendo una US.** Antes de concluir que «no hay historia asociada», buscarla también bajo `<archivedPath>/user-stories/`: el usuario puede haberla archivado con `/work-define US-XXX archive`. Si aparece ahí, el tipo **es** tarea de historia de usuario y su referencia dirá que hay que parar por estar archivada — degradarla a `WI-XXX` por no encontrarla en la ruta activa crearía un artefacto nuevo para trabajo que ya existe. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo).
 - Si no está claro **si existe o no** una historia asociada (p. ej. una referencia ambigua que podría apuntar a una US), **preguntar al usuario** antes de continuar; no asumir la existencia de una US ni inventarla.
 - Si el tipo seleccionado aún no tiene su flujo definido, la propia referencia indica cómo proceder (p. ej. confirmar con el usuario en lugar de inventar estructura).
+
+---
+
+## Modificador `archive` (archivar tareas de mantenimiento `WI-XXX`)
+
+**Archiva este skill, no los de cierre.** `work-integrate` y `pr-create` no archivan: siempre hay una revisión humana antes, y el usuario lo pide aquí cuando decide. Procedimiento, destinos, reglas de confirmación y contrato para el resto del catálogo: [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md) — leerlo antes de mover nada.
+
+| Invocación | Alcance |
+|------------|---------|
+| `/work-plan archive WI-XXX` · `/work-plan WI-XXX archive` (uno o varios IDs; el orden es indiferente) | Los artefactos indicados, **estén como estén**. |
+| `/work-plan archive` (sin ID) | **Todos** los `WI-XXX` de `<changesPath>/work-items/` que ya estén **completos**; los incompletos se listan aparte con su estado y no se mueven. |
+
+Reglas que este skill aplica al archivar:
+
+- **El estado no restringe, pero se informa.** Antes de preguntar, componer el parte de estado: `Estado` del `README.md`; `progress.md`; `criteria-coverage.md`; en un `WI` de tipo `bug`, la línea `Resolución:` (`Abierto`/`En corrección` cuentan como incompleto). Con algo incompleto, la pregunta lo dice explícitamente y el usuario decide.
+- **Siempre se confirma** (herramienta estructurada, una sola tanda para todo el lote), mostrando origen → destino de cada carpeta y las investigaciones sueltas que quedarían huérfanas. Sin canal de respuesta, no se archiva.
+- **Destino:** `<archivedPath>/work-items/<ID>-<slug>/`, con `<archivedPath>` = `specification.archivedPath` de `.sdd-devkit/settings.json` (por defecto `docs/specs/archived/`) y la subcarpeta espejo de `<changesPath>`. `git mv`, guard de destino, reparación de enlaces y cierre con `/git-commit`, tal como describe la referencia.
+- Un artefacto ya bajo `<archivedPath>` se informa y no se toca; un ID suelto **sin** `archive` nunca archiva.
+- Solo se archivan `WI-XXX`; las `TK-XXX` viajan con su historia (`/work-define US-XXX archive`).
 
 ---
 

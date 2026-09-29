@@ -41,7 +41,7 @@ Panel de Powers → `Add Custom Power` → `Import power from GitHub` → pega `
 
 ## Configuración del proyecto
 
-La primera vez que uses el plugin en un proyecto, `/arch-init` crea `.sdd-devkit/settings.json`. Ahí eliges el idioma de los documentos, dónde viven tus especificaciones, cuánto te pregunta el agente antes de commitear, implementar o corregir algo, y cuántos intentos hace sobre un problema que no logra resolver antes de devolvértelo. Puedes dejarlo todo en sus valores por defecto y ajustarlo cuando quieras.
+La primera vez que uses el plugin en un proyecto, `/arch-init` crea `.sdd-devkit/settings.json` en la raíz principal (en una solución multi-repo, la del repo de especificaciones: es un único archivo para toda la solución, nunca uno por submódulo). Ahí eliges el idioma de los documentos, dónde viven tus especificaciones, cuánto te pregunta el agente antes de commitear, implementar o corregir algo, y cuántos intentos hace sobre un problema que no logra resolver antes de devolvértelo. Puedes dejarlo todo en sus valores por defecto y ajustarlo cuando quieras.
 
 Detalle de cada opción en [SETTINGS.md](SETTINGS.md).
 

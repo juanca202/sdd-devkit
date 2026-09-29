@@ -84,7 +84,7 @@ Los archivos del harness que **ya existan** en el proyecto se revisan en el Paso
 > que un submódulo comparte los del padre.
 >
 > **Único vs. por repositorio.** `.agents/MEMORY.md` y `.sdd-devkit/settings.json` son artefactos **únicos**
-> de la solución: viven solo en la raíz principal, nunca en un submódulo. `AGENTS.md` y
+> de la solución: viven solo en la raíz principal, nunca en un submódulo — y todos los skills los resuelven subiendo desde el directorio de trabajo hasta la raíz principal, así que dentro de un submódulo **no** se busca, crea ni referencia un `.sdd-devkit/settings.json` propio. `AGENTS.md` y
 > `README.md` **no** son únicos: cada repositorio —la raíz principal y cada submódulo— tiene el suyo propio,
 > porque un agente puede trabajar directamente dentro de un submódulo sin pasar por la raíz principal y
 > necesita encontrar ahí sus propias instrucciones. `docs/adr/README.md`/`docs/standards/README.md` siguen

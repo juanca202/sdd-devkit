@@ -10,7 +10,24 @@ node -e "
 const fs = require('fs');
 const path = require('path');
 
-const settingsPath = path.join(process.cwd(), '.sdd-devkit', 'settings.json');
+// settings.json es UNICO por solucion: vive solo en la raiz principal (repo unico, o repo de
+// especificaciones en multi-repo), nunca dentro de un submodulo. Se localiza subiendo desde el cwd;
+// si aparece mas de uno, gana el mas alto y se advierte del sobrante.
+const settingsPath = (() => {
+  const found = [];
+  let dir = process.cwd();
+  for (;;) {
+    const candidate = path.join(dir, '.sdd-devkit', 'settings.json');
+    if (fs.existsSync(candidate)) found.push(candidate);
+    const parent = path.dirname(dir);
+    if (parent === dir) break;
+    dir = parent;
+  }
+  if (found.length > 1) {
+    console.log('ADVERTENCIA: hay mas de un .sdd-devkit/settings.json (' + found.join(' , ') + '). Solo es valido el de la raiz principal: ' + found[found.length - 1] + '. Los que estan dentro de submodulos deben eliminarse y no referenciarse.');
+  }
+  return found.length ? found[found.length - 1] : path.join(process.cwd(), '.sdd-devkit', 'settings.json');
+})();
 
 let verification = null;
 if (fs.existsSync(settingsPath)) {

@@ -337,7 +337,7 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 | ------------------------------------- | ------------------------------------------------- |
 | Hay una historia de usuario asociada | Tareas técnicas dentro de esa historia            |
 | No hay historia (bug, deuda, mantenimiento) | Una tarea de mantenimiento independiente     |
-| Hay un hallazgo que reportar (prueba en rojo, defecto observado) | Un work item de tipo `bug`: solo qué está mal, con evidencia; sin plan de corrección (único tipo posible en un repo con `implementation.scope: tests`) |
+| Hay un hallazgo que reportar (prueba en rojo, defecto observado) | Un work item de tipo `bug`: solo qué está mal, con evidencia; sin plan de corrección (único tipo posible en un repo con `implementation.scope: tests`, donde el documento toma la forma del caso de prueba: sus pasos con lo observado y los comentarios para reproducirlo, los hallazgos y las evidencias de la suite adjuntas en `assets/`) |
 
 **Ejemplos de invocación:**
 

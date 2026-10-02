@@ -4,7 +4,7 @@ Definición del tipo de plan **tarea de mantenimiento (`WI-XXX`)**: trabajo **si
 
 > **Alcance de un WI:** documento **único y combinado** de especificación. A diferencia de una historia de usuario —donde el requerimiento (`README.md`) y la especificación técnica (`TK-XXX`) viven en archivos separados porque la historia es un artefacto con dueño y fase propios—, una tarea de mantenimiento no tiene fase funcional separada ni se descompone en sub-tareas: el requerimiento, los criterios de aceptación y la especificación técnica conviven en **un solo documento** (`WI-XXX-[kebab-case]/README.md`), que mapea 1:1 con un único work item del tracker externo cuando hay uno vinculado (su tipo exacto lo define el archivo de referencia del sistema). No implementa código, no ejecuta pruebas, no crea ADRs. Lo no acordado va en **Observaciones** o se pregunta — nunca se inventa.
 
-La plantilla canónica está en `assets/work-item-template.md` (léela antes de escribir cualquier WI).
+La plantilla canónica está en `assets/work-item-template.md` (léela antes de escribir cualquier WI). **Excepción:** en un repositorio con `implementation.scope: tests` la plantilla es `assets/work-item-tests-template.md` — ver [Variante: modo pruebas](#variante-modo-pruebas-implementationscope-tests).
 
 ## Contenido
 
@@ -15,6 +15,8 @@ La plantilla canónica está en `assets/work-item-template.md` (léela antes de 
 - [Validación antes de crear](#validación-antes-de-crear)
 - [Flujo: Crear stub](#flujo-crear-stub-anclaje-de-id)
 - [Flujo: Crear WI completo](#flujo-crear-wi-completo)
+- [Variante: `Tipo: bug`](#variante-tipo-bug-registro-de-un-hallazgo)
+- [Variante: modo pruebas](#variante-modo-pruebas-implementationscope-tests)
 - [Flujo: Actualizar un WI existente](#flujo-actualizar-un-wi-existente)
 - [Flujo: Proponer varios WI desde un esfuerzo grande](#flujo-proponer-varios-wi-desde-un-esfuerzo-grande)
 - [Checklist antes de redactar](#checklist-antes-de-redactar)
@@ -78,7 +80,7 @@ Antes de crear o editar cualquier WI, tener clara esta información. **No invent
 | **Tipo** | Del usuario o inferido del requerimiento (bug / bug-fix / refactor / dependency-update / optimization / security-update / test-improvement / documentation-update / operational-change). `bug` = registrar un defecto (qué está mal); `bug-fix` = planificar su corrección | Si es ambiguo, preguntar; si hay un tracker externo vinculado, condiciona el tipo de work item que se crea allí (mapeo exacto en su archivo de referencia) |
 | **Vinculación con el gestor de proyectos** | Ver sección «Resolución de la integración con el gestor de proyectos» de `SKILL.md` | Si la integración está activa, seguir el archivo de referencia del proveedor antes de crear archivos |
 
-> **Repositorio con `implementation.scope: tests`** (política de implementación, `${PLUGIN_ROOT}/references/implementation.md`): en un repositorio solo de pruebas **no existe código de aplicación que planificar**, así que el único tipo de WI que `work-plan` crea allí es **`bug`** — el reporte de un hallazgo. Si el usuario pide un `bug-fix`, un refactor o cualquier otro tipo, parar e indicar que el plan de remediación pertenece al repositorio de la aplicación: allí se crea el `bug-fix` (vía «Analizar issue» de `work-research` o directamente con `work-plan`) citando el `WI-XXX` de tipo `bug` de este repo, o el work item que la integración con el tracker haya creado. Un `bug` en modo pruebas usa como `Repositorio` el nombre del **sistema bajo prueba** que declara `AGENTS.md`.
+> **Repositorio con `implementation.scope: tests`** (política de implementación, `${PLUGIN_ROOT}/references/implementation.md`): en un repositorio solo de pruebas **no existe código de aplicación que planificar**, así que el único tipo de WI que `work-plan` crea allí es **`bug`** — el reporte de un hallazgo. Si el usuario pide un `bug-fix`, un refactor o cualquier otro tipo, parar e indicar que el plan de remediación pertenece al repositorio de la aplicación: allí se crea el `bug-fix` (vía «Analizar issue» de `work-research` o directamente con `work-plan`) citando el `WI-XXX` de tipo `bug` de este repo, o el work item que la integración con el tracker haya creado. Un `bug` en modo pruebas usa como `Repositorio` el nombre del **sistema bajo prueba** que declara `AGENTS.md`, y **se redacta con la plantilla `assets/work-item-tests-template.md`** — con forma de caso de prueba —, no con `work-item-template.md`: ver [Variante: modo pruebas](#variante-modo-pruebas-implementationscope-tests).
 
 > **Entrada desde `work-research`.** Cuando el WI nace de un **dossier de bug** (flujo «Analizar issue»), ese documento ya trae el problema, la evidencia y los criterios propuestos, y define un mapeo sección a sección hacia el `README.md` del WI (ver `work-research/references/issue/flow.md`). En ese caso: leerlo completo, aplicar ese mapeo, y limitar la entrevista a lo que el dossier deje abierto. **Los `AC-XXX` sí se reescriben aquí**: el dossier los propone en prosa y es este skill el que les da formato verificable e identificador — es lo que el propio dossier declara.
 >
@@ -162,9 +164,27 @@ Un WI de tipo `bug` **registra** un comportamiento incorrecto; **no** planifica 
 2. **Evidencia obligatoria.** Al menos una fila con referencia verificable (`TC-XXX`, prueba automatizada con su ID, log o captura en `assets/`, `criteria-coverage.md`). Sin evidencia el bug queda en `Draft`. Nunca incluir credenciales, tokens ni valores del `.env`; los ambientes se citan por nombre.
 3. **Origen y trazabilidad.** `Origen del hallazgo` indica de dónde viene; si nace de un `TC-XXX`, enlazarlo en Evidencia y anotar el bug en la línea `Hallazgos` de `test-cases-automation.md` (modo pruebas) o en `Cobertura de test cases` de `progress.md`, según corresponda — eso lo hace el skill que detectó el hallazgo al recibir el `WI-XXX` creado.
 4. **`Resolución`** arranca en `Abierto`. Pasa a `En corrección (WI-YYY)` cuando se crea el `bug-fix` que lo cita (lo actualiza `work-plan` al crear ese `bug-fix`), a `Corregido (WI-YYY)` cuando ese `bug-fix` se integra (lo actualiza `work-integrate` / `pr-create` al cerrarlo), o a `Descartado — motivo` por decisión del usuario.
-5. **Ready** exige: Descripción, Esperado/Observado, Pasos para reproducir, al menos una Evidencia, Severidad y Repositorio (o sistema bajo prueba). No exige Plan, Dependencias ni Archivos afectados.
+5. **Ready** exige: Descripción, Esperado/Observado, Pasos para reproducir, al menos una Evidencia, **Severidad** (`Crítico` | `Alto` | `Medio` | `Bajo` — solo esos valores) y Repositorio (o sistema bajo prueba). No exige Plan, Dependencias ni Archivos afectados.
 6. **Handoffs.** Un `bug` **no va a `work-implement`** (no tiene nada que implementar) ni dispara `test-define` (`createMode` no aplica: el TC que lo detectó ya existe). Al cerrar, ofrecer: **[Planificar la corrección]** → `work-research` «Analizar issue» sobre este WI (diagnóstico y `bug-fix` con plan) o, si la causa ya es conocida, `work-plan` para un `WI` de tipo `bug-fix` que cite este bug en su cabecera (`Origen: WI-XXX (bug)`); **[Solo registrar]** → terminar. **Con `implementation.scope: tests` la única opción es registrar**: la corrección se planifica en el repositorio de la aplicación (ver la nota de «Información requerida»).
 7. **Tracker.** Con la integración activa, `bug` es el **único** tipo de WI que se crea como work item `Bug` (ver `references/<proveedor>.md`); todos los demás, `bug-fix` incluido, son `Task`. La descripción lleva las secciones de esperado/observado, pasos y evidencia con los mismos encabezados.
+
+---
+
+## Variante: modo pruebas (`implementation.scope: tests`)
+
+Aplica **solo** cuando la política de implementación resolvió `scope = tests`. Allí el WI es siempre un `bug` nacido de ejecutar un caso de prueba, así que el documento **tiene la forma de ese caso de prueba**: se redacta con **`assets/work-item-tests-template.md`** (leerla antes de escribir), no con `work-item-template.md`. Todo lo dicho en [Variante: `Tipo: bug`](#variante-tipo-bug-registro-de-un-hallazgo) sigue valiendo (no se propone solución, `Resolución`, handoffs, tracker); esta variante cambia **la estructura del documento y cómo se reúne la evidencia**. Con `scope: code` nada de esto aplica.
+
+1. **Partir del `TC-XXX`.** Leer completo el caso de prueba que detectó el hallazgo (lo pasa el skill que lo detectó, o lo indica el usuario) y **copiar** sus Precondiciones, Datos de prueba, Pasos de ejecución y Resultado esperado final, con la misma numeración de pasos. La cabecera enlaza el TC, su criterio y su artefacto padre. El `TC-XXX-*.md` **no se edita**. Si el hallazgo no nace de un TC (observación manual), las mismas secciones se redactan a mano con lo que el usuario describa y `Caso de prueba: N/A`.
+2. **Ampliar los pasos con lo ocurrido.** Cada paso lleva su **Resultado observado** (literal; «Conforme» si se comportó como se esperaba; «No ejecutado» tras el fallo) y sus **Comentarios**: todo lo que hace falta para **reproducirlo** y el TC no dice — esperas, endpoint o selector exacto, cuerpo de la petición, datos que hay que sembrar, orden, diferencias entre ejecuciones. Se marca con ❌ el paso donde aparece el fallo. Los valores reales usados van en Datos de prueba; lo sensible, por el nombre de su variable. Esa información sale del spec automatizado, de la salida del runner y de lo que reporte el skill que detectó el hallazgo; lo que no conste **se pregunta**, no se inventa.
+3. **Hallazgos (`H-XX`).** Una fila por comportamiento incorrecto distinto: paso, qué está mal, esperado, observado, su **Severidad** (`Crítico` | `Alto` | `Medio` | `Bajo`) y sus evidencias; la `Severidad` de Impacto es la más alta de la tabla. Si son defectos independientes, proponer un WI por defecto.
+4. **Evidencias (`EV-XX`) — adjuntar lo que registró la suite.**
+   - **Localizar** la salida del runner para la prueba fallida a partir de **su configuración real** (p. ej. `outputDir` / reporter en Playwright, `screenshotsFolder` / `videosFolder` en Cypress, el directorio de reportes que declare el proyecto o `AGENTS.md`); no asumir rutas. Recoger los artefactos **de esa prueba y esa ejecución**: capturas, video, traza, diff visual, reporte, log, respuesta de la API.
+   - **Copiar** cada artefacto a `WI-XXX-[slug]/assets/` con nombre `EV-XX-<descripción>.<ext>` y enlazarlo por ruta relativa en la tabla. No se enlaza la carpeta de salida del runner: suele estar en `.gitignore` y se sobrescribe en la siguiente ejecución.
+   - **Este skill no ejecuta pruebas.** Si la suite no dejó artefactos (o ya se sobrescribieron), no se re-ejecuta desde aquí: se pide al usuario la evidencia o se le indica re-ejecutar el caso con `work-implement` / el runner, y el WI queda en `Draft` hasta tener al menos una.
+   - **Sanitizar.** Trazas, HAR y logs pueden contener tokens, cookies o cabeceras de sesión: revisarlos antes de copiar; si los contienen y no se pueden limpiar, **no adjuntarlos** — listarlos en la tabla como «No adjuntado — motivo» con su ruta de origen — y preguntar al usuario. Un artefacto muy pesado (video o traza grande) se confirma con el usuario antes de entrar al repositorio.
+5. **Ready** exige: Descripción, Caso de prueba (o `N/A` justificado), Precondiciones, Pasos con observado y el paso fallido marcado, Resultado esperado y observado final, al menos un `H-XX`, al menos una `EV-XX` **adjunta en `assets/`**, Severidad y sistema bajo prueba.
+6. **Trazabilidad.** El `WI-XXX` creado se devuelve al skill que detectó el hallazgo para que lo anote en la línea `Hallazgos` de `test-cases-automation.md` (`seguimiento: WI-XXX`).
+7. **Tracker.** Con la integración activa, el work item `Bug` lleva el documento con estos mismos encabezados y las evidencias de `assets/` **como adjuntos** — ver `references/<proveedor>.md`.
 
 ---
 
@@ -218,6 +238,7 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - [ ] Rama de trabajo actual verificada; si es una rama de implementación de otra US o WI, se advirtió al usuario y se preguntó `Continuar` / `Detenerme aquí` antes de crear
 
 **Condiciones para `Estado: Ready`:**
+- [ ] **Modo pruebas (`implementation.scope: tests`):** plantilla `assets/work-item-tests-template.md`; secciones del `TC-XXX` copiadas con su numeración; pasos con Resultado observado y Comentarios para reproducir, paso fallido marcado; al menos un `H-XX`; evidencias de la suite copiadas a `assets/` y enlazadas (`EV-XX`), sanitizadas. Sustituye a la condición siguiente.
 - [ ] **`Tipo: bug`:** Descripción, Comportamiento esperado/observado, Pasos para reproducir, al menos una fila de Evidencia (sin credenciales), Severidad y Repositorio/sistema bajo prueba; **sin** Plan de implementación ni Archivos afectados; ninguna propuesta de solución en el texto. Las condiciones siguientes aplican a los demás tipos.
 - [ ] **Descripción** con problema/necesidad claros
 - [ ] **Criterios de aceptación** verificables
@@ -230,7 +251,7 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - [ ] Referencias a ADRs y documentación técnica con rutas relativas válidas, y las de `docs/architecture/` tal como las devolvió `design-define` — `models/MD-XXX-{slug}.md` / `apis/API-XXX-{slug}.md` / `flows/FL-XXX-{slug}.md` / `diagrams/DG-XXX-{slug}.md`, con `#<método-ruta>` cuando se cita un endpoint concreto — copiadas tal cual, nunca recompuestas del título
 
 **Formato:**
-- [ ] Plantilla `assets/work-item-template.md` leída
+- [ ] Plantilla `assets/work-item-template.md` leída (en modo pruebas, `assets/work-item-tests-template.md`)
 - [ ] Nombre de archivo en kebab-case, secuencial global sobre `work-items/` **+ `archive/work-items/`**
 - [ ] Sin código de aplicación en el archivo
 - [ ] Sin párrafos instructivos de plantilla en el WI publicado
@@ -257,7 +278,11 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - *Comportamiento — turno 1:* Activa el *Flujo: Proponer varios WI*. Presenta `WI-003` (API), `WI-004` (workers), `WI-005` (batch), cada uno con objetivo breve y repositorio. Pregunta con opciones: [Confirmar] / [Cancelar]. **No crea archivos.**
 - *Comportamiento — turno 2:* Tras confirmación, crea los WI (stub o completo según claridad) y reporta rutas.
 
-**Ejemplo 5 — Repo vinculado a un tracker externo** — ver el archivo de referencia del sistema correspondiente (p. ej. `references/azure-devops.md`, donde el `Tipo` del WI determina el tipo de work item creado).
+**Ejemplo 5 — Hallazgo en un repositorio solo de pruebas**
+- *Entrada:* `implementation.scope: tests`; `work-implement` reporta que `TC-005` (API Test) falla: la API responde 200 donde el TC espera 422, y el runner dejó el reporte y el cuerpo de la respuesta.
+- *Salida:* carpeta `WI-003-alta-cliente-acepta-email-invalido/` con `README.md` según `assets/work-item-tests-template.md`: cabecera enlazando `TC-005` y su `AC-XXX`; Precondiciones, Datos y Pasos copiados del TC, con el paso 2 marcado ❌ (observado: `200 OK`, comentario con el endpoint y el cuerpo enviado); `H-01`; `assets/EV-01-reporte.html` y `assets/EV-02-respuesta.json` copiados de la salida del runner; `Resolución: Abierto`. Sin plan ni propuesta de corrección.
+
+**Ejemplo 6 — Repo vinculado a un tracker externo** — ver el archivo de referencia del sistema correspondiente (p. ej. `references/azure-devops.md`, donde el `Tipo` del WI determina el tipo de work item creado).
 
 ---
 
@@ -267,6 +292,7 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - Crear un `bug-fix`, refactor u otro tipo implementable en un repositorio con `implementation.scope: tests`: allí solo se registran hallazgos (`bug`); la remediación se planifica en el repositorio de la aplicación.
 - Dejar un `bug` en `Ready` sin evidencia verificable, o pegar en su evidencia tokens, cookies o valores del `.env`.
 - Enviar un `bug` a `work-implement` u ofrecerle `test-define`.
+- En modo pruebas: redactar el `bug` con `work-item-template.md` en vez de la plantilla con forma de caso de prueba; resumir los pasos en lugar de copiar los del `TC-XXX` con lo observado; enlazar la carpeta de salida del runner en vez de copiar las evidencias a `assets/`; adjuntar una traza, HAR o log sin revisar que no lleve tokens o cookies; re-ejecutar la suite desde `work-plan` para generar evidencia.
 
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - Implementar el arreglo, la migración o los tests mientras se redacta el WI.

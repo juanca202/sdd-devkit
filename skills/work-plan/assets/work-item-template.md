@@ -1,6 +1,9 @@
 <!--
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
+
+En un repositorio con `implementation.scope: tests` NO se usa esta plantilla: el WI (siempre `bug`) se
+redacta con `work-item-tests-template.md`, que tiene la forma del caso de prueba que detectó el hallazgo.
 -->
 # WI-XXX: {{título corto del work item}}
 
@@ -16,7 +19,7 @@ de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md
 Tipos de work item:
 | Tipo | Incluye |
 |---|---|
-| bug | Registro de un comportamiento incorrecto, defecto o incidencia detectada. Describe **qué está mal**, no cómo solucionarlo. No se implementa: es el reporte del que después puede nacer un `bug-fix`. Único tipo admitido en un repositorio con `implementation.scope: tests`. |
+| bug | Registro de un comportamiento incorrecto, defecto o incidencia detectada. Describe **qué está mal**, no cómo solucionarlo. No se implementa: es el reporte del que después puede nacer un `bug-fix`. Único tipo admitido en un repositorio con `implementation.scope: tests`, donde se redacta con `work-item-tests-template.md`. |
 | bug-fix | Corrección de errores: el plan de remediación de un bug (propio o registrado como WI de tipo `bug`). |
 | refactor | Refactorización, limpieza de código y reducción de deuda técnica. |
 | dependency-update | Actualización de librerías, frameworks y SDKs. |
@@ -26,7 +29,7 @@ Tipos de work item:
 | documentation-update | Documentación técnica y funcional. |
 | operational-change | Configuración, CI/CD, infraestructura, despliegues y migraciones. |
 -->
-**Repositorio:** {{obligatorio para Ready: nombre del repositorio git al que afecta el work item; inferido del repo (git remote / carpeta) o indicado por el usuario. En un `bug` registrado desde un repositorio solo de pruebas (`implementation.scope: tests`), el nombre del sistema bajo prueba tal como lo declara `AGENTS.md`}}
+**Repositorio:** {{obligatorio para Ready: nombre del repositorio git al que afecta el work item; inferido del repo (git remote / carpeta) o indicado por el usuario.}}
 **Origen:** {{solo en un `bug-fix` que corrige un hallazgo ya registrado: `WI-XXX (bug)` enlazado por ruta relativa, o el work item del tracker si el bug vive en otro repositorio; omitir línea si no aplica}}
 **Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}
 **Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema de seguimiento vinculado — solo si se creó; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica}}
@@ -66,7 +69,7 @@ el comportamiento correcto, nunca la solución.
 ## Impacto
 
 <!-- SOLO PARA Tipo: bug. Eliminar esta sección en cualquier otro tipo. -->
-**Severidad:** {{Crítica (bloquea el flujo o corrompe datos) | Alta (sin alternativa razonable) | Media (con alternativa) | Baja (cosmético)}}
+**Severidad:** {{Crítico (bloquea el flujo o corrompe datos) | Alto (sin alternativa razonable) | Medio (con alternativa) | Bajo (cosmético)}}
 **Alcance:** {{a quién o qué afecta: actores, módulos, ambientes}}
 **Origen del hallazgo:** {{automatización de `TC-XXX` (work-implement) | ejecución manual de `TC-XXX` | `coverage-verify` | quality-check | producción | otro}}
 **Resolución:** {{Abierto | En corrección (WI-YYY) | Corregido (WI-YYY) | Descartado — motivo}}

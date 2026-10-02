@@ -140,6 +140,7 @@ Solo resultados y lo que el usuario debe saber o decidir. No incluir razonamient
 | `references/<proveedor>.md` (p. ej. `azure-devops.md`) | Solo si `project-management.md` resolvió la integración como activada; el archivo concreto depende del `provider` resuelto. |
 | `assets/task-template.md` | Plantilla canónica de una tarea de historia de usuario (`TK-XXX`). Leer antes de redactar el documento. |
 | `assets/work-item-template.md` | Plantilla canónica de una tarea de mantenimiento (`WI-XXX`). Leer antes de redactar el documento. |
+| `assets/work-item-tests-template.md` | Plantilla del `WI-XXX` en un repositorio con `implementation.scope: tests`: un `bug` con forma de caso de prueba (pasos del `TC-XXX` con lo observado y comentarios para reproducir, hallazgos y evidencias de la suite adjuntas). **Sustituye** a la anterior en ese modo. |
 
 ### Referencias compartidas del plugin
 

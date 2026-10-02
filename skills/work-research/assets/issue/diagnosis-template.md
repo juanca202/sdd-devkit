@@ -1,7 +1,7 @@
 # Debug — {{título corto del defecto}}
 
 **Estado:** {{Draft | Ready}}  
-**Severidad:** {{Crítica | Alta | Media | Baja}} — {{a quién y a qué afecta}}  
+**Severidad:** {{Crítico | Alto | Medio | Bajo}} — {{a quién y a qué afecta}}  
 **Reproducibilidad:** {{Siempre | Intermitente ({{frecuencia}}) | No reproducible}}  
 **Repositorio:** `{{nombre del repo afectado}}`  
 **Relacionado:** {{US-XXX | WI-XXX | FT-XXX | N/A}}  

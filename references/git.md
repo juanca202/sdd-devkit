@@ -69,7 +69,7 @@ if (git) {
   console.log('Politica de git resuelta desde .sdd-devkit/settings.json:');
 
   if (confirm === 'never') {
-    console.log('- commitConfirmation = never -> NO mostrar la division en varios commits ni esperar confirmacion: ejecutar los commits inferidos directamente. Las gates de seguridad (secretos, rama protegida) siguen aplicando igual y SI bloquean.');
+    console.log('- commitConfirmation = never -> NO mostrar la division en varios commits ni esperar confirmacion: ejecutar los commits inferidos directamente. La gate de rama protegida sigue aplicando igual y SI bloquea.');
   } else {
     console.log('- commitConfirmation = always -> mostrar la division en varios commits y esperar confirmacion explicita antes de ejecutar el lote.');
   }

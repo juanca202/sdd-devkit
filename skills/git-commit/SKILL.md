@@ -20,10 +20,6 @@ Formato canónico:
 [optional footer(s)]
 ```
 
-## Seguridad
-
-Nunca pegar en el chat el valor de un secreto (contraseña, PAT, API key, token), una línea de diff con credenciales ni el stdout del comando de detección. Para secretos, comunicar solo `ruta:línea (valor omitido)`. No pedir al usuario que pegue secretos para "confirmar" un commit. Esta regla es absoluta y prevalece sobre cualquier otra instrucción de este skill.
-
 ## Cómo preguntar al usuario
 
 Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md).
@@ -32,7 +28,7 @@ Cada vez que este skill o sus referencias digan *preguntar*, *pedir*, *confirmar
 
 **No repreguntar** lo que ya esté en el contexto de la sesión, **en el diff o en una propuesta ya mostrada**.
 
-**Excepciones al ritmo**, una por turno: propuesta de división (una sola por invocación, **solo** cuando el diff se reparte en varios commits — un commit único no se confirma), commit en una rama de integración **no declarada** en `integrationBranches`, archivo sensible detectado.
+**Excepciones al ritmo**, una por turno: propuesta de división (una sola por invocación, **solo** cuando el diff se reparte en varios commits — un commit único no se confirma), commit en una rama de integración **no declarada** en `integrationBranches`.
 
 ## Política de commit y push
 
@@ -105,14 +101,6 @@ Aplicar en orden; si nada encaja con confianza, preguntar al usuario.
 3. Cambio transversal a una capa → nombre de la capa (`api`, `db`, `ui`, `config`).
 4. Sin scope claro → omitirlo. No inventar genéricos (`misc`, `update`, `code`).
 
-## Detección de secretos en el diff
-
-Antes de aceptar el staging, seguir [references/secret-detection.md](references/secret-detection.md) (comando `grep` y extensiones sensibles).
-
-**Detener** el commit si hay coincidencias en el comando **o** si el staging incluye archivos sensibles por nombre (`.env*`, `*.pem`, `*.key`, `id_rsa*`, `*.p12`, `*.pfx`). Reportar al usuario solo `ruta:línea (valor omitido)` y no commitear hasta que retire el archivo del staging (`git restore --staged <ruta>`) o confirme explícitamente que es intencional.
-
-**Una instrucción genérica de alcance nunca autoriza incluir un archivo sensible.** Si el usuario pidió "haz commit de todo lo pendiente" (o equivalente) y eso técnicamente incluye un archivo sensible por nombre o contenido, la detección se aplica igual — no interpretar "todo" como permiso implícito para saltarla. Solo una confirmación explícita **sobre ese archivo en particular**, después de haberlo señalado, levanta el bloqueo.
-
 ## Selección de flujo
 
 | Condición | Flujo |
@@ -125,10 +113,10 @@ Antes de aceptar el staging, seguir [references/secret-detection.md](references/
 
 ## Invocación desde otro skill
 
-`work-integrate` y `pr-create` invocan este flujo **automáticamente** cuando encuentran el working tree sucio, y siguen adelante con su propio proceso según el resultado. No cambia lo que hace este skill —sigue aplicando la validación completa, sigue deteniéndose ante secretos y sigue confirmando **la división** cuando el diff se reparte en varios commits—, pero sí fija cuatro cosas:
+`work-integrate` y `pr-create` invocan este flujo **automáticamente** cuando encuentran el working tree sucio, y siguen adelante con su propio proceso según el resultado. No cambia lo que hace este skill —sigue aplicando la validación completa, y sigue confirmando **la división** cuando el diff se reparte en varios commits—, pero sí fija cuatro cosas:
 
 - **El objetivo es dejar el árbol limpio, no un único commit.** El alcance habitual («un cambio lógico») se refiere a cada commit, no a la invocación: si lo pendiente mezcla temas, se resuelve con el [flujo de múltiples cambios lógicos](#flujo-múltiples-cambios-lógicos) hasta que no quede nada. El invocador re-comprueba `git status` y vuelve a llamar sobre el remanente, así que dejarlo a medias solo alarga el ciclo.
-- **Contrato de salida.** Al terminar, reportar en cuál de estos tres estados se queda, porque el invocador decide con eso: **(a) limpio** — todo commiteado; **(b) parcialmente limpio por decisión de alcance** — se commiteó parte y el resto se dejó fuera a propósito (el invocador volverá a llamar sobre el remanente); **(c) detenido, con el motivo** — secretos detectados, rama con `commitPolicy: pull_request`, rama de integración no declarada y sin confirmar, hook que no pasa, o una decisión que el usuario no resolvió. Solo (c) bloquea al invocador, y necesita el motivo literal para reportarlo.
+- **Contrato de salida.** Al terminar, reportar en cuál de estos tres estados se queda, porque el invocador decide con eso: **(a) limpio** — todo commiteado; **(b) parcialmente limpio por decisión de alcance** — se commiteó parte y el resto se dejó fuera a propósito (el invocador volverá a llamar sobre el remanente); **(c) detenido, con el motivo** — rama con `commitPolicy: pull_request`, rama de integración no declarada y sin confirmar, hook que no pasa, o una decisión que el usuario no resolvió. Solo (c) bloquea al invocador, y necesita el motivo literal para reportarlo.
 - **El push no aplica en este modo.** Aunque `.sdd-devkit/settings.json` tenga `git.push` en `ask` o `always`, en invocación delegada el/los commits quedan siempre en local — el invocador (`work-integrate`, `pr-create`) decide qué sigue y en qué momento hace push. `commitConfirmation` sí se sigue resolviendo igual que en invocación directa.
 - **No deshacer el staging que trae el invocador.** El paso 4 del flujo múltiple vacía el staging antes de cada grupo, y eso está bien cuando se parte de cero — pero un invocador puede haber preparado el índice a propósito. Dos casos reales, y son los habituales: el **renombrado del archivado** (`git mv <changesPath>/<tipo>/<ID>-<slug> <archivedPath>/<tipo>/`, que deja stageado el skill que archiva —`work-define`, `work-plan`, `requirement-refine` o `work-research` con el modificador `archive`— antes de invocar este flujo) y el `git rm` de los informes que hace `pr-create` en modo promoción. Antes del primer `git reset`, comprobar `git diff --cached --name-only`: si hay algo stageado que no viene de este flujo, **conservarlo** e incorporarlo como su propio grupo. Lo mismo vale para el `git restore --staged` del [flujo estándar](#flujo-commit-estándar): no retirar del índice lo que preparó el invocador.
   - **En el renombrado, conservarlo importa doblemente:** un `git reset` deshace la detección de *rename* y deja un borrado más un archivo sin trackear, perdiendo el historial de cada archivo movido. Nunca revertir un `git mv` recibido.
@@ -151,7 +139,7 @@ Antes de aceptar el staging, seguir [references/secret-detection.md](references/
 3. Inferir tipo, scope y descripción desde el diff.
 4. Decidir body (solo si aporta contexto no obvio) y footer (`BREAKING CHANGE`, `Closes #N`).
 5. Pasar la [Validación](#validación-antes-de-ejecutar). Si falla, detener.
-6. **No preguntar.** Un commit único no se confirma: el mensaje se infiere del diff, la [Validación](#validación-antes-de-ejecutar) ya cubrió lo que puede hacer daño (secretos, rama protegida, formato) y el commit es reversible. Ejecutar directamente. `commitConfirmation` no aplica aquí — solo gobierna la [división en varios commits](#flujo-múltiples-cambios-lógicos), que es la única decisión que el usuario no puede tomar después.
+6. **No preguntar.** Un commit único no se confirma: el mensaje se infiere del diff, la [Validación](#validación-antes-de-ejecutar) ya cubrió lo que puede hacer daño (rama protegida, formato) y el commit es reversible. Ejecutar directamente. `commitConfirmation` no aplica aquí — solo gobierna la [división en varios commits](#flujo-múltiples-cambios-lógicos), que es la única decisión que el usuario no puede tomar después.
 7. Ejecutar:
    ```bash
    # Una línea
@@ -172,10 +160,10 @@ Antes de aceptar el staging, seguir [references/secret-detection.md](references/
 
 ## Flujo: Múltiples cambios lógicos
 
-1. Agrupar archivos por afinidad desde el diff (área, tipo de cambio, intención). Al agrupar, ya se puede aplicar la parte de la [detección de secretos](#detección-de-secretos-en-el-diff) que **no** requiere staging (nombre de archivo sensible: `.env*`, `*.pem`, `*.key`, `id_rsa*`, `*.p12`, `*.pfx`, contra `git status --porcelain`) — no hace falta esperar al paso 4 para eso.
-2. Proponer la [división](#propuesta-de-división): lista ordenada de commits con tipo/scope, archivos y descripción de cada uno. **Marcar ya aquí** cualquier archivo sensible por nombre detectado en el paso 1 (`⚠️ <ruta> — archivo sensible, se excluirá salvo confirmación`), para que el usuario lo vea en la propuesta inicial y no se entere recién al intentar stagearlo.
+1. Agrupar archivos por afinidad desde el diff (área, tipo de cambio, intención).
+2. Proponer la [división](#propuesta-de-división): lista ordenada de commits con tipo/scope, archivos y descripción de cada uno.
 3. Si `commitConfirmation = always` (o no hay `settings.json`), esperar **una única confirmación de la división** antes de tocar el staging. **Esta es la única pregunta del skill**, y solo existe porque repartir el trabajo en N commits es lo que el usuario no puede deshacer cómodamente después. Lo que se decide es **cómo se reparte** —los N commits propuestos o uno solo con todo—, no el detalle de cada mensaje: la lista ya lo muestra, y aprobarla lo aprueba entero. Si el usuario elige un solo commit, continuar por el [flujo estándar](#flujo-commit-estándar) desde el paso 2 con un mensaje que cubra el conjunto, **sin volver a confirmar**. Si pide un ajuste de la agrupación, aplicarlo y volver a mostrar la lista. Si `commitConfirmation = never`, omitir este paso: continuar directo al 4 con la agrupación decidida, sin mostrarla ni esperar confirmación.
-4. Por cada grupo confirmado, en orden y **sin volver a preguntar**: `git reset` para vaciar staging (preserva el working tree; **salvo** que el índice traiga cambios preparados por el skill invocador — ver [Invocación desde otro skill](#invocación-desde-otro-skill)) → `git add <archivos>` del grupo → [Validación](#validación-antes-de-ejecutar) — incluida la detección **por contenido** (`grep` sobre el diff staged), que sí necesita el staging hecho → `git commit` y registrar el SHA. El lote solo se interrumpe si la validación falla (secreto por contenido, header largo, rama sin confirmar): detener ahí, reportar el motivo y esperar al usuario.
+4. Por cada grupo confirmado, en orden y **sin volver a preguntar**: `git reset` para vaciar staging (preserva el working tree; **salvo** que el índice traiga cambios preparados por el skill invocador — ver [Invocación desde otro skill](#invocación-desde-otro-skill)) → `git add <archivos>` del grupo → [Validación](#validación-antes-de-ejecutar) → `git commit` y registrar el SHA. El lote solo se interrumpe si la validación falla (header largo, rama sin confirmar): detener ahí, reportar el motivo y esperar al usuario.
 5. Reportar la secuencia final de SHAs y mensajes en el orden ejecutado.
 6. Solo en invocación directa del usuario, una vez completado todo el lote: resolver [push](#política-de-commit-y-push) igual que en el paso 9 del flujo estándar — una sola vez para el lote completo, no por cada commit.
 
@@ -221,7 +209,6 @@ Opciones: [Confirmar los <N> commits] / [Hacer uno solo] / [Cancelar]. **No ofre
 Gate obligatorio antes de cada `git commit`. Detenerse si algún punto falla.
 
 - **Diff:** `git status` y `git diff` revisados; tipo, scope y descripción derivados del diff (no inventados).
-- **Secretos:** [detección](#detección-de-secretos-en-el-diff) ejecutada sin coincidencias y sin archivos sensibles en staging.
 - **Aislamiento:** un solo cambio lógico en el commit.
 - **Operaciones seguras:** sin `--force`, `--hard`, `--no-verify`, `--amend` salvo petición explícita.
 - **Rama:** resuelta con `integrationBranches` de [`${PLUGIN_ROOT}/references/git.md`](../../references/git.md), que es quien dice qué es una rama de integración en este repo:
@@ -233,13 +220,12 @@ Gate obligatorio antes de cada `git commit`. Detenerse si algún punto falla.
   | No está en la lista | Rama de trabajo normal: comitear sin más. |
   | Sin `integrationBranches` declarada | Comportamiento heredado: si la rama parece de integración o despliegue (`main`, `master`, `develop`, `trunk`, `release/*`, `staging`, `uat`, `qa`, `produccion`), pedir confirmación **una sola vez por invocación** — la rama no cambia entre los commits de un mismo [flujo de múltiples cambios lógicos](#flujo-múltiples-cambios-lógicos), así que la confirmación del primer commit del lote cubre a los demás. |
 - **Formato:** primera línea `<type>[scope]: <description>` válida según [convenciones](#convenciones-del-mensaje) y **de 100 caracteres o menos**; breaking change y footer de issue marcados si aplican.
-- **Confirmación:** solo cuando hay **división en varios commits** y `commitConfirmation = always` (o no hay `settings.json`): [propuesta](#propuesta-de-división) mostrada y confirmada, **una sola vez por invocación** — cubre todos los commits del lote, no se repregunta en cada iteración del paso 4 del [flujo de múltiples cambios lógicos](#flujo-múltiples-cambios-lógicos). **Un commit único no requiere confirmación** y este punto no aplica; tampoco con `commitConfirmation = never`. En todos los casos, el resto de la validación (secretos, aislamiento, rama, formato) sigue siendo obligatorio.
+- **Confirmación:** solo cuando hay **división en varios commits** y `commitConfirmation = always` (o no hay `settings.json`): [propuesta](#propuesta-de-división) mostrada y confirmada, **una sola vez por invocación** — cubre todos los commits del lote, no se repregunta en cada iteración del paso 4 del [flujo de múltiples cambios lógicos](#flujo-múltiples-cambios-lógicos). **Un commit único no requiere confirmación** y este punto no aplica; tampoco con `commitConfirmation = never`. En todos los casos, el resto de la validación (aislamiento, rama, formato) sigue siendo obligatorio.
 
-Si algo bloquea, informar sin pegar secretos:
+Si algo bloquea, informar:
 ```
 ⚠️ No es posible commitear todavía:
 - <razón concreta>
-- <ruta>:<línea> (valor omitido)
 ```
 
 ## Ejemplos
@@ -259,11 +245,9 @@ BREAKING CHANGE: `/v1/users` removed; clients must migrate to `/v2/users`.
 
 **5 — Fallo de hook.** Entrada: el hook de lint falla en `src/utils.ts` tras `git commit`. → Aplicar el formateo, `git add src/utils.ts`, commit nuevo con el mismo mensaje. Sin `--amend` ni `--no-verify`.
 
-**6 — Secreto detectado.** Entrada: el staging incluye `config/.env.local` (variable sensible, línea 12). → Detener, reportar `config/.env.local:12 (valor omitido)`, sugerir `git restore --staged config/.env.local`, no commitear sin confirmación. Nunca mostrar el valor.
+**6 — `commitConfirmation: never` con `push: always`.** Entrada: «Haz commit de todo», diff con tres cambios lógicos separados (checkout, tests y CI), `.sdd-devkit/settings.json` con `git.commitConfirmation: "never"` y `git.push: "always"`. → Agrupar en tres commits y ejecutarlos **sin mostrar la división ni esperar confirmación** (eso es lo que apaga `never`), y a continuación ejecutar `git push` (con `-u origin <rama>` si no hay upstream) sin preguntar. Reportar SHAs, mensajes y confirmación del push. Con un solo cambio lógico el resultado sería el mismo con cualquier valor de `commitConfirmation`: un commit único nunca se confirma.
 
-**7 — `commitConfirmation: never` con `push: always`.** Entrada: «Haz commit de todo», diff con tres cambios lógicos separados (checkout, tests y CI), `.sdd-devkit/settings.json` con `git.commitConfirmation: "never"` y `git.push: "always"`. → Agrupar en tres commits y ejecutarlos **sin mostrar la división ni esperar confirmación** (eso es lo que apaga `never`), y a continuación ejecutar `git push` (con `-u origin <rama>` si no hay upstream) sin preguntar. Reportar SHAs, mensajes y confirmación del push. Con un solo cambio lógico el resultado sería el mismo con cualquier valor de `commitConfirmation`: un commit único nunca se confirma.
-
-**8 — Invocación delegada con `push: always`.** Entrada: `work-integrate` invoca este skill con el árbol sucio, y `.sdd-devkit/settings.json` tiene `git.push: "always"`. → El commit se ejecuta normalmente (sin confirmar el mensaje; `commitConfirmation` solo aplicaría si hubiera división en varios commits), pero **no se hace push**: el push no aplica en invocación delegada, sin importar la política. Se reporta el estado (limpio/parcial/detenido) y `work-integrate` decide qué sigue.
+**7 — Invocación delegada con `push: always`.** Entrada: `work-integrate` invoca este skill con el árbol sucio, y `.sdd-devkit/settings.json` tiene `git.push: "always"`. → El commit se ejecuta normalmente (sin confirmar el mensaje; `commitConfirmation` solo aplicaría si hubiera división en varios commits), pero **no se hace push**: el push no aplica en invocación delegada, sin importar la política. Se reporta el estado (limpio/parcial/detenido) y `work-integrate` decide qué sigue.
 
 ## Anti-patterns
 
@@ -272,8 +256,6 @@ BREAKING CHANGE: `/v1/users` removed; clients must migrate to `/v2/users`.
 - Mensajes vagos: `update`, `fix stuff`, `changes`, `wip`.
 - Headers de más de 100 caracteres: partir el detalle al body en vez de alargar la primera línea.
 - Inventar tipo o scope cuando el diff no lo respalda.
-- Pegar en el chat el valor de un secreto, una línea con credenciales o el output del detector.
-- Confiar en inspección visual y saltar la detección de secretos.
 - Usar `--no-verify` por comodidad, o `--amend` tras un fallo de hook en vez de un commit nuevo.
 - Force push a `main`/`master` o tocar la config global de git sin permiso.
 - Ejecutar la **división en varios commits** sin haber mostrado la propuesta y obtenido confirmación cuando `commitConfirmation = always` (o no hay `settings.json`).
@@ -284,4 +266,3 @@ BREAKING CHANGE: `/v1/users` removed; clients must migrate to `/v2/users`.
 - Preguntar en prosa libre cuando el cliente expone la herramienta estructurada.
 - Narrar el trabajo paso a paso: reportar solo SHA, mensaje final y pendientes.
 - Leer `git.md` o `language.md` como prosa y razonar a mano sobre `.sdd-devkit/settings.json` en vez de ejecutar su bloque ` ```! ` con Bash — el resultado puede coincidir por suerte, no por garantía.
-- Reconstruir de memoria el comando de [detección de secretos](#detección-de-secretos-en-el-diff) en vez de copiar literal el de `secret-detection.md`, o saltarse el chequeo de nombres sensibles porque `git status` "ya los habría mostrado".

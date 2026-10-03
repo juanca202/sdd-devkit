@@ -81,8 +81,6 @@ destino la ruta relativa (lo que navega el lector): las dos nombran el mismo arc
 
 Leer el bloque como texto y reconstruir la lógica manualmente (parsear el JSON, inferir la conclusión) reintroduce el margen de error de interpretación que el script existe para eliminar, aunque se llegue al mismo resultado — y es más lento. Cada uno de estos siete archivos trae, justo antes de su bloque, un recordatorio de una línea con esta misma regla; **al añadir un archivo nuevo con este patrón, replicar ese recordatorio** en vez de asumir que se sobreentiende.
 
-El mismo criterio vale para cualquier comando exacto y validado que una referencia entregue para un chequeo determinista (el caso vigente es el `grep` de [`secret-detection.md`](../skills/git-commit/references/secret-detection.md#comando) en `git-commit`): copiarlo literal y ejecutarlo, no reconstruirlo de memoria — ya resolvió los casos borde que una versión improvisada puede pasar por alto.
-
 ## Cuándo añadir algo aquí
 
 Cuando una regla aplique a **tres o más skills** y su redacción sea sustancialmente la misma. Si aplica

@@ -150,8 +150,6 @@ Skills que preparan y mantienen la base del proyecto — arquitectura y control 
 
 **Cómo trabaja:** si el cambio es un único tema, comitea directo con un mensaje inferido del diff. Si mezcla varios temas sin relación, te propone dividirlo en varios commits antes de continuar. Si un pre-commit hook falla, corrige y crea un commit nuevo (nunca reescribe uno anterior).
 
-Detiene el commit si detecta un secreto o un archivo sensible, salvo que confirmes explícitamente incluirlo.
-
 **Ejemplos de invocación:**
 
 ```text

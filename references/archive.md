@@ -1,7 +1,7 @@
 # Archivado de artefactos de especificación (compartida)
 
 Referencia transversal del plugin **SDD Devkit**. Es la **fuente única** de cómo se archiva un artefacto
-(`SRS-XXX`, `US-XXX`, `WI-XXX`, `RS-XXX` suelto) y de las dos reglas que el resto del catálogo aplica sobre
+(`SRS-XXX`, `RQ-XXX`, `US-XXX`, `WI-XXX`, `RS-XXX` suelto) y de las dos reglas que el resto del catálogo aplica sobre
 lo ya archivado. Los `SKILL.md` la enlazan; no repiten el procedimiento.
 
 > **Notación.** `<archivedPath>` es `specification.archivedPath` de `.sdd-devkit/settings.json` ya
@@ -22,6 +22,7 @@ siempre hay una revisión humana entre integrar y archivar, y ese momento lo eli
 | Artefacto | Skill que archiva | Invocación |
 |-----------|-------------------|------------|
 | `SRS-XXX` | `requirement-refine` | `/requirement-refine archive SRS-003` · `/requirement-refine SRS-003 archive` |
+| `RQ-XXX` (con sus `test-cases/` y `assets/`) | `test-define` | `/test-define archive RQ-001` · `/test-define RQ-001 archive` |
 | `US-XXX` (con sus `TK-XXX`, `test-cases/`, `research/`, `progress.md`, `criteria-coverage.md`, `assets/`) | `work-define` | `/work-define archive US-042` · `/work-define US-042 archive` |
 | `WI-XXX` (todos los tipos, `bug` incluido) | `work-plan` | `/work-plan archive WI-007` · `/work-plan WI-007 archive` |
 | `RS-XXX` suelto (`<changesPath>/research/`) | `work-research` | `/work-research archive RS-003` · `/work-research RS-003 archive` |
@@ -54,6 +55,7 @@ lee el artefacto y compone un **parte de estado**:
 | Artefacto | Qué se comprueba | Señal de «incompleto» |
 |-----------|------------------|-----------------------|
 | `SRS-XXX` | `Estado`; tabla «Historias de usuario derivadas» | `Draft`; FR/NFR sin US derivada |
+| `RQ-XXX` | `Estado`; `test-cases/` (criterios sin TC, TC en `Draft`); `criteria-coverage.md` si existe | `Draft`; algún `AC-XXX` sin TC; TC en `Draft`; cobertura `REJECTED` |
 | `US-XXX` | `Estado`; `progress.md` (marca `work:status` y la de cada `TK`); `criteria-coverage.md` (marca `coverage-verify:verdict`); `TK-XXX` en `Draft`; `test-cases/` con TC en `Draft` | `Draft`; sin `progress.md` o con unidades no `Done`; sin cobertura o `REJECTED`; rama `feature/US-XXX-*` aún sin integrar (`git branch --merged <base>` si la base es conocida) |
 | `WI-XXX` | `Estado`; `progress.md`; `criteria-coverage.md`; tipo `bug` → línea `Resolución:` | Igual que la US; un `bug` con `Resolución: Abierto` o `En corrección` |
 | `RS-XXX` suelto | Referencias vivas desde artefactos **activos** (misma búsqueda que el paso 2 del procedimiento) | ≥ 1 referencia viva |
@@ -95,6 +97,7 @@ Reglas de la confirmación:
 | Artefacto | Origen | Destino |
 |-----------|--------|---------|
 | Especificación de requisitos | `<changesPath>/requirements/SRS-XXX-{nombre-corto}/` | `<archivedPath>/requirements/SRS-XXX-{nombre-corto}/` |
+| Requerimiento formalizado para pruebas | `<changesPath>/requirements/RQ-XXX-{slug}/` | `<archivedPath>/requirements/RQ-XXX-{slug}/` |
 | Historia de usuario | `<changesPath>/user-stories/US-XXX-{nombre-corto}/` | `<archivedPath>/user-stories/US-XXX-{nombre-corto}/` |
 | Tarea de mantenimiento | `<changesPath>/work-items/WI-XXX-{kebab-case}/` | `<archivedPath>/work-items/WI-XXX-{kebab-case}/` |
 | Investigación suelta | `<changesPath>/research/RS-XXX-{slug}/` | `<archivedPath>/research/RS-XXX-{slug}/` |
@@ -233,6 +236,7 @@ historial, no su ubicación.
 | Contador | Dónde se escanea | Skill |
 |----------|------------------|-------|
 | `SRS-XXX` | `<changesPath>/requirements/` **+** `<archivedPath>/requirements/` | `requirement-refine` |
+| `RQ-XXX` | `<changesPath>/requirements/` **+** `<archivedPath>/requirements/` (solo carpetas `RQ-*`) | `test-define` |
 | `US-XXX` | `<changesPath>/user-stories/` **+** `<archivedPath>/user-stories/` | `work-define` |
 | `WI-XXX` | `<changesPath>/work-items/` **+** `<archivedPath>/work-items/` | `work-plan` |
 | `RS-XXX` | `<changesPath>/research/` **+** `<archivedPath>/research/`, y el `research/` del artefacto | `work-research` |

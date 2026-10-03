@@ -16,7 +16,7 @@ Skills que preparan y mantienen la base del proyecto — arquitectura y control 
 
 **Cuándo:** preparar un proyecto (nuevo o existente, uno o varios repositorios) para trabajar con el plugin.
 
-**Produce:** los archivos base del proyecto (`AGENTS.md`, memoria, configuración, índices de arquitectura) y una compuerta de calidad mínima. Al terminar sugiere continuar con `work-define` o `work-plan`.
+**Produce:** los archivos base del proyecto (`AGENTS.md`, memoria, configuración, índices de arquitectura) y una compuerta de calidad mínima. Al terminar sugiere el siguiente paso: en un proyecto de código, iniciar un requerimiento (`requirement-refine`), `work-define` o `work-plan`; en un proyecto de pruebas (`implementation.scope: tests`), conectar el gestor de proyectos (con su URL) para traer historias y planificar sus casos de prueba, o crear casos de prueba desde un requerimiento (`test-define`).
 
 **Según el punto de partida:**
 
@@ -299,7 +299,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** documentar casos de prueba a partir de los criterios de aceptación de una historia, tarea o funcionalidad. No implementa ni ejecuta las pruebas — solo las documenta.
 
-**Produce:** casos de prueba junto al artefacto de origen (historia, tarea de mantenimiento o funcionalidad).
+**Produce:** casos de prueba junto al artefacto de origen (historia, tarea de mantenimiento o funcionalidad). Si recibe un requerimiento en texto crudo (o un documento adjunto que no vive en el proyecto), primero lo formaliza como `RQ-XXX-{slug}` en `requirements/` —con el original guardado en `assets/` y enlazado— y crea los casos de prueba sobre ese documento; un documento que ya existe en el proyecto se procesa en su sitio. Los `RQ-XXX` se archivan con `/test-define archive`.
 
 Cada criterio se cubre desde varios ángulos (camino esperado, error, límites — el que aplique) y se marca si la prueba es manual o automatizable.
 
@@ -310,6 +310,9 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 /test-define US-005
 /test-define WI-003
 /test-define FT-002
+/test-define RQ-001
+/test-define archive RQ-001
+/test-define el cliente pide que el login bloquee la cuenta tras 5 intentos fallidos
 /test-define US-005 solo criterios AC-001 y AC-003
 /test-define sync #4821
 /test-define sync #4830 #4831

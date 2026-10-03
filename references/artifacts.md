@@ -39,7 +39,7 @@ específico (una salida propia, una excepción de ruta).
 >
 > | Clave | Default (literal en el catálogo) | Qué cuelga de ella |
 > |-------|----------------------------------|--------------------|
-> | `specification.changesPath` | `docs/specs/changes/` | Lo que **cambia** el sistema: `user-stories/US-XXX-…/` (con `TK-XXX`, `test-cases/`, `research/`, `progress.md`), `work-items/WI-XXX-…/`, `requirements/SRS-XXX-…/`, `research/RS-XXX-…/` (investigaciones sueltas). |
+> | `specification.changesPath` | `docs/specs/changes/` | Lo que **cambia** el sistema: `user-stories/US-XXX-…/` (con `TK-XXX`, `test-cases/`, `research/`, `progress.md`), `work-items/WI-XXX-…/`, `requirements/SRS-XXX-…/` y `requirements/RQ-XXX-…/` (con `test-cases/`), `research/RS-XXX-…/` (investigaciones sueltas). |
 > | `specification.currentPath` | `docs/specs/current/` | El sistema **tal como está**: `FT-XXX-[slug]/` directamente bajo la raíz, sin subcarpeta. |
 > | `specification.archivedPath` | `docs/specs/archived/` | Trabajo **cerrado** movido por `work-integrate`/`pr-create`, espejando las subcarpetas de `changesPath` (`user-stories/`, `work-items/`, `research/`). |
 >
@@ -69,6 +69,7 @@ específico (una salida propia, una excepción de ruta).
 | Fitness functions | `<raíz-arq>/scripts/arch/verify.<ext>` + `<raíz-arq>/scripts/arch/checks/[slug-estándar].<ext>` | `arch-manage` |
 | Definition of Done | `docs/policies/definition-of-done.md` | **Ninguno — lo escribe y lo mantiene el equipo.** Los skills lo leen; ningún skill del plugin lo genera ni ofrece generarlo. |
 | Especificación de requisitos (SRS) | `docs/specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md` | `requirement-refine` |
+| Requerimiento formalizado para pruebas (RQ) | `docs/specs/changes/requirements/RQ-XXX-[slug]/README.md` | `test-define` (cuando recibe un requerimiento en bruto; el original queda en `assets/`) |
 | Historia de usuario | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/README.md` | `work-define` |
 | Tarea técnica de una US | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` | `work-plan` |
 | Tarea de mantenimiento | `docs/specs/changes/work-items/WI-XXX-[kebab-case]/README.md` | `work-plan` |
@@ -150,6 +151,7 @@ runner de fitness functions, versionados junto a su código.
 |---------|-----------|------------------------|
 | `ADR-XXX` | Architecture Decision Record | Global, sobre el `docs/adr/` **de su raíz de arquitectura** |
 | `SRS-XXX` | Especificación de requisitos de software | Global, sobre `docs/specs/changes/requirements/` |
+| `RQ-XXX` | Requerimiento formalizado como origen de casos de prueba | Global, sobre las carpetas `RQ-*` de `docs/specs/changes/requirements/` **+ el archivo** (independiente de `SRS-XXX`) |
 | `US-XXX` | Historia de usuario | Global, sobre `docs/specs/changes/user-stories/` **+ el archivo** |
 | `TK-XXX` | Tarea técnica | Por historia de usuario padre |
 | `WI-XXX` | Tarea de mantenimiento | Global, sobre `docs/specs/changes/work-items/` **+ el archivo** |

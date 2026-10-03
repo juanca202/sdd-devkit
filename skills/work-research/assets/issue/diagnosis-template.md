@@ -4,7 +4,8 @@
 **Severidad:** {{Crítico | Alto | Medio | Bajo}} — {{a quién y a qué afecta}}  
 **Reproducibilidad:** {{Siempre | Intermitente ({{frecuencia}}) | No reproducible}}  
 **Repositorio:** `{{nombre del repo afectado}}`  
-**Relacionado:** {{US-XXX | WI-XXX | FT-XXX | N/A}}  
+**Historia de usuario:** {{enlace por ruta relativa al `README.md` de la `US-XXX` a la que pertenece el comportamiento defectuoso + su título (o el `WI-XXX` / `FT-XXX` si el artefacto relacionado no es una historia); con tracker vinculado, añadir el enlace a su work item. `N/A` solo si se buscó y no existe}}  
+**Caso de prueba:** {{enlace por ruta relativa al `TC-XXX-{slug}.md` que detectó el bug o que cubre el comportamiento afectado + el `AC-XXX` que verifica; varios separados por coma. Omitir la línea si no hay ningún TC}}  
 **Work Item ({{Sistema}}):** {{enlace markdown al work item en el sistema de seguimiento vinculado; {{Sistema}} es el nombre corto del archivo de referencia (p. ej. "ADO" para references/azure-devops.md). Omitir la línea si el bug se reportó solo en conversación}}  
 **Fecha:** {{YYYY-MM-DD}}  
 **Creado por:** {{git config user.name}}

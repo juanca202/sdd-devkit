@@ -105,7 +105,8 @@ La entrada puede venir de dos sitios:
 | Entorno y versión | Deseable | Registrar como `Desconocido` y marcar el riesgo de no poder reproducir |
 | Frecuencia (siempre / intermitente) | Deseable | Preguntar; un bug intermitente cambia la estrategia de prueba (ver Paso 2) |
 | Severidad / impacto | Deseable | Inferir del comportamiento y confirmar |
-| Artefacto relacionado (`US`/`WI`/`FT`) | No | Si existe, cargarlo: sus `AC-XXX` y `TC-XXX` son la referencia de «esperado» |
+| Historia de usuario relacionada (`US-XXX`; o `WI`/`FT`) | No | **Buscarla siempre** antes de darla por inexistente: la que cite el reporte o el work item del tracker (padre / vínculos), o la que documente el comportamiento afectado en `<changesPath>/user-stories/` y `<archivedPath>/user-stories/`. Si existe, cargarla —sus `AC-XXX` son la referencia de «esperado»— y **enlazarla en la cabecera del dossier** (`Historia de usuario`). `N/A` solo tras buscar |
+| Caso de prueba (`TC-XXX`) | No | Si el bug lo detectó un TC, o la historia tiene en `test-cases/` un TC que cubre el comportamiento afectado, **enlazarlo en la cabecera** (`Caso de prueba`) con su `AC-XXX`. Sin TC, omitir la línea: este flujo no crea TC |
 
 Con el reporte normalizado, **confirmar la pregunta de investigación** con el usuario
 antes de continuar (Paso 1 de `SKILL.md`): «¿Por qué ocurre *<comportamiento
@@ -262,6 +263,7 @@ Añadir además:
 | **Reglas de negocio** confirmadas durante el análisis | **Reglas de negocio** |
 | **Archivos afectados** (corrección y prueba) | **Archivos afectados** |
 | Dependencias del fix citadas en la corrección (servicio, versión, migración) | **Dependencias** |
+| Cabecera: **Historia de usuario** y **Caso de prueba** | **Referencias** (enlaces a la `US-XXX` y al `TC-XXX`, conservados tal cual) |
 | **Referencias** (work item, artefacto, archivos citados) | **Referencias** |
 
 > **El formato de los `AC-XXX` lo impone `work-plan`, no el dossier.** El dossier los

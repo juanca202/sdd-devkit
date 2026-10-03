@@ -1,7 +1,7 @@
 ---
 name: arch-init
 description: >-
-  Identifica el punto de partida de un proyecto (sin código / con código base / con implementación) e inicializa lo que falte de su harness multi-agente: repo git —o, si la solución abarca varios repositorios, un repo de especificaciones que los agrega como submódulos—, placeholders `AGENTS.md`/`.agents/MEMORY.md`/`.sdd-devkit/settings.json`/`docs/adr/README.md`/`docs/standards/README.md`/`README.md` (raíz, con descripción del proyecto), el stack tecnológico (investigando con `work-research` si hace falta), candidatos de ADR/estándares (vía `arch-discover` si ya hay implementación, por repositorio si es multi-repo) y la compuerta de calidad (vía `quality-check`). Cierra actualizando el stack y sugiriendo `work-define` o `work-plan`. Activar al pedir inicializar, bootstrapear o preparar uno o varios repos de una solución para agentes, configurar su harness, crear `AGENTS.md`/`CLAUDE.md`/`MEMORY.md` desde cero, o mencionar "arch-init", "/arch-init", "inicializa el harness".
+  Identifica el punto de partida de un proyecto (sin código / con código base / con implementación) e inicializa lo que falte de su harness multi-agente: repo git —o, si la solución abarca varios repositorios, un repo de especificaciones que los agrega como submódulos—, placeholders `AGENTS.md`/`.agents/MEMORY.md`/`.sdd-devkit/settings.json`/`docs/adr/README.md`/`docs/standards/README.md`/`README.md` (raíz, con descripción del proyecto), el stack tecnológico (investigando con `work-research` si hace falta), candidatos de ADR/estándares (vía `arch-discover` si ya hay implementación, por repositorio si es multi-repo) y la compuerta de calidad (vía `quality-check`). Cierra actualizando el stack y sugiriendo el siguiente paso (`requirement-refine`, `work-define`, `work-plan` o `test-define`). Activar al pedir inicializar o preparar uno o varios repos para agentes, configurar su harness, crear `AGENTS.md`/`MEMORY.md` desde cero, o mencionar "arch-init", "/arch-init", "inicializa el harness".
 license: MIT
 ---
 
@@ -25,7 +25,8 @@ Inicializa, en un proyecto **en cualquier punto de partida**, las primeras instr
 | `arch-discover` | Infiere ADR/estándares candidatos **del código ya existente** y los crea por su cuenta (su Fase 5 invoca `arch-manage`). `arch-init` lo invoca **completo** en el Paso 4.1 cuando el punto de partida es "con implementación" — no reimplementa esa inspección ni repite su creación de documentos. |
 | `arch-audit` | Audita `docs/standards/` y `AGENTS.md` contra el repo — de `AGENTS.md` toma también el contexto de stack (`# Stack tecnológico`). `arch-init` es lo que le da a `arch-audit` algo que auditar la primera vez. |
 | `quality-check` | Sabe qué se suele validar por stack — tipado, linter, unit tests, coverage, build, e2e, sonar (`quality-check/references/stacks.md`) — más las suites de prueba que declare el **estándar de testing** del repo, que son las únicas no fijas ([Suites de prueba](../quality-check/SKILL.md#suites-de-prueba-fijas-y-configuradas)). `arch-init` lo **consulta** en el Paso 4 para saber qué le falta a la compuerta de calidad; no ejecuta la corrida completa (esa corre sobre código ya implementado, no aplica en una inicialización). |
-| `work-define` / `work-plan` | Reciben el handoff que `arch-init` ofrece al cerrar (Paso 5). |
+| `requirement-refine` / `work-define` / `work-plan` | Reciben el handoff que `arch-init` ofrece al cerrar (Paso 5.3) cuando `implementation.scope` es `code`. |
+| `test-define` (y `work-define sync`) | Reciben el handoff del Paso 5.3 cuando `implementation.scope` es `tests`. |
 
 ---
 
@@ -341,7 +342,15 @@ suelto, sí tiene hijos cuyo stack resumir. Formato exacto en `references/multi-
 
 Confirmar al usuario que el harness inicial quedó listo, resumiendo: **topología** (repo único, o repo de especificaciones + submódulos con sus rutas), punto de partida (situación del Paso 1.2 — por submódulo si es multi-repo), repositorio git (creado o ya existía), archivos del harness creados, **archivos fuera de formato** (normalizados vía `/plugin-migrate`, o dejados como estaban por decisión del usuario — Paso 3.1), **un `.sdd-devkit/settings.json` preexistente cuyos valores el schema rechaza** (Paso 3, si se detectó), stack definitivo (por submódulo si aplica), compuerta de calidad configurada (por submódulo si aplica), y — si aplica — los ADR/estándares creados con sus rutas, agrupados por raíz de arquitectura: los del Paso 5.1 y, si la situación fue "con implementación", también los que creó `arch-discover` en su propia Fase 5 (retenidos del Paso 4.1).
 
-Después, ofrecer el siguiente paso natural con la herramienta de preguntas estructuradas — **es una sugerencia, no un paso bloqueante**: *"¿Quieres continuar con...?"* opciones: `Escribir la primera historia de usuario (work-define)` / `Planificar tareas técnicas o de mantenimiento (work-plan)` / `Nada por ahora`.
+Después, ofrecer el siguiente paso natural con la herramienta de preguntas estructuradas — **es una sugerencia, no un paso bloqueante**: *"¿Quieres continuar con...?"*. Las opciones dependen del `implementation.scope` que quedó escrito en `.sdd-devkit/settings.json` (Paso 3, punto 5), en este orden:
+
+- **`implementation.scope: "code"`** (el valor por defecto) → `Iniciar un nuevo requerimiento (requirement-refine)` / `Escribir la primera historia de usuario (work-define)` / `Planificar tareas técnicas o de mantenimiento (work-plan)` / `Nada por ahora`.
+- **`implementation.scope: "tests"`** (proyecto de pruebas contra un sistema externo) → `Conectar con el gestor de proyectos y traer historias de usuario para planificar sus casos de prueba` / `Crear casos de prueba a partir de un requerimiento (test-define)` / `Nada por ahora`. En este modo **no** se ofrecen `requirement-refine`, `work-define` (crear historias) ni `work-plan`: el repositorio no especifica ni construye el sistema, solo lo prueba.
+
+**Handoff de cada opción en modo `tests`:**
+
+1. **Conectar con el gestor de proyectos.** Pedir la **URL** del proyecto en el gestor (o de una historia concreta) con una sola pregunta abierta. De la URL se derivan `provider`, `host`, `workspace` y `project`; mostrárselos al usuario y, confirmados, escribir el bloque `projectManagement` con `enabled: true` en `.sdd-devkit/settings.json` — es la única clave que este paso toca, y solo con valores que el schema acepta. Si la URL no corresponde a un proveedor soportado por el schema, o no se puede derivar algún valor, **informar y no escribir nada**; ofrecer la otra opción (crear desde un requerimiento). Con la integración ya activa (reejecución), no volver a pedir la URL. Después, preguntar qué historias traer (uno o varios `#id`/URL) y hacer el handoff: `/work-define sync <#id | URL>` las materializa localmente como `US-<id>-…` y, sobre cada una, `/test-define US-<id>` planifica sus casos de prueba. `arch-init` no lee el tracker ni crea historias ni TCs por su cuenta.
+2. **Crear casos de prueba a partir de un requerimiento.** **Primero pedir al usuario que pase el requerimiento** (pegar el texto o adjuntar el documento) con una sola pregunta abierta; **solo con el requerimiento en mano** hacer el handoff a `/test-define`, pasándolo tal cual. Al llegar en bruto, `test-define` lo formaliza primero como `RQ-XXX-{slug}` en `<changesPath>/requirements/` y planifica los casos de prueba sobre ese documento. `arch-init` no redacta el `RQ-XXX`.
 
 No confirmar el cierre antes de que `AGENTS.md` tenga el stack ya escrito.
 
@@ -418,7 +427,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 - Cerrar el Paso 4.2 sin ejecutar la suite de pruebas al menos una vez para confirmar que corre.
 - Delegar en `/arch-manage` sin que el usuario haya aceptado explícitamente al menos un candidato, o sin agrupar por dominio los candidatos que comparten estándar.
 - Confirmar el cierre antes de actualizar el stack definitivo en `AGENTS.md`.
-- Forzar el handoff a `work-define`/`work-plan` en el 5.3 en vez de ofrecerlo como sugerencia que el usuario puede declinar.
+- Forzar el handoff del 5.3 (`requirement-refine`/`work-define`/`work-plan`, o `test-define` en modo pruebas) en vez de ofrecerlo como sugerencia que el usuario puede declinar; u ofrecer las opciones de un `implementation.scope` distinto del escrito en `settings.json` (p. ej. `work-plan` en un proyecto de pruebas, o conectar el gestor de proyectos para traer historias en uno de código). Tampoco escribir `projectManagement` con valores inferidos sin que el usuario haya dado la URL y confirmado lo derivado.
 - Hacer commit automático del harness sin que el usuario lo pida (queda para `git-commit`, fuera de este skill).
 - Lanzar preguntas como prosa libre cuando el cliente expone la herramienta de preguntas estructuradas.
 - Escribir más de 1-2 párrafos de descripción en el `README.md` raíz, o agregarle secciones que el usuario no pidió (instalación, features, badges, tabla de contenidos, roadmap).
@@ -479,6 +488,9 @@ El usuario invoca `/arch-init` sobre un repositorio recién creado y explica que
 
 | Después de `arch-init`... | Skill natural siguiente | Contexto que pasa |
 | -------------------------- | ------------------------ | -------------------- |
+| Harness inicializado (`scope: code`), el requerimiento llega crudo o hay que iniciarlo | `requirement-refine` | Ofrecido explícitamente en el Paso 5.3, como primera opción. Produce el `SRS-XXX` que luego descompone `work-define`. |
+| Harness inicializado (`scope: tests`), las historias viven en el gestor de proyectos | `work-define sync` → `test-define` | La URL que dio el usuario, ya escrita como `projectManagement` en `settings.json`, y los `#id`/URL de las historias a traer. Ofrecido en el Paso 5.3. |
+| Harness inicializado (`scope: tests`), hay un requerimiento que probar | `test-define` | El requerimiento tal cual; `test-define` lo formaliza como `RQ-XXX` y planifica los TCs. Ofrecido en el Paso 5.3. |
 | Harness inicializado, listo para escribir requisitos | `work-define` | El stack y las convenciones ya viven en `AGENTS.md`/`docs/standards/`. Ofrecido explícitamente en el Paso 5.3. |
 | Harness inicializado, hay trabajo técnico que planificar | `work-plan` | Ofrecido explícitamente en el Paso 5.3. |
 | Se necesita investigar algo más allá del stack inicial | `work-research` | Puede referenciar el `RS-XXX` generado en el Paso 2.2. |

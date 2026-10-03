@@ -84,7 +84,7 @@ El origen de los criterios y de los TC **no cambia**: las US/WI/FT y sus `test-c
 | **`quality-specialist`** | Escribe las pruebas si el proyecto lo define | Igual. |
 | **Cierre y handoffs** | `coverage-verify` => `pr-create` / `work-integrate` | Igual. `coverage-verify` cruza TC con las pruebas del repo sin cambios. `quality-check` corre la suite en el cierre pero **no delega correcciones de codigo**: un rojo alli es un hallazgo que se trata con la regla de arriba. |
 
-> **Que no cambia, explicitamente:** la rama `test/[ID del padre]-[slug]`, el ritmo por unidad (`confirmByUnit`), worktrees, la matriz de alcance del Paso 2, la trazabilidad del ID del TC en el nombre de la prueba, la prohibicion de editar la especificacion, `/git-commit` (que ya bloquea `.env*` y secretos en el staging), la integracion con Azure DevOps y la ubicacion de artefactos en mono o multirepo.
+> **Que no cambia, explicitamente:** la rama `test/[ID del padre]-[slug]`, el ritmo por unidad (`confirmByUnit`), worktrees, la matriz de alcance del Paso 2, la trazabilidad del ID del TC en el nombre de la prueba, la prohibicion de editar la especificacion, `/git-commit`, la integracion con Azure DevOps y la ubicacion de artefactos en mono o multirepo.
 
 ---
 
@@ -178,7 +178,7 @@ Por cada `TC-XXX` automatizable de la unidad, en el orden del indice:
    > **No se marcan checkboxes:** un `TC-XXX` no tiene subtareas. La *excepcion de checkboxes* del `SKILL.md` no aplica a este tipo; el `TC-XXX-*.md`, el indice `test-cases/README.md` y el `README.md` del padre **no se modifican** desde aqui.
 
 7. **Detenerse y preguntar** (herramienta estructurada), **sin commitear todavia**: "FT-XXX completado. Continuo con FT-YYY - [titulo]?" (o el TC siguiente). Opciones: [Si, continuar] / [No, detener aqui]. Con `confirmByUnit: always`, aunque el alcance sea una sola unidad, confirmar antes del cierre; con `confirmByUnit: never` no hay pausa y se encadena el cierre. Esta pausa, con el working tree sin commitear, es la ventana para que el usuario revise las pruebas escritas antes de que queden commiteadas.
-8. Solo si confirma: **invocar `/git-commit`** sobre los cambios de la unidad, delegando en ese skill la agrupacion, el mensaje, el staging y la deteccion de secretos. Recien despues, pasar a la siguiente unidad. Si detiene, registrar nota y pasar al Paso 4 — la invocacion a `/git-commit` se hace ahi.
+8. Solo si confirma: **invocar `/git-commit`** sobre los cambios de la unidad, delegando en ese skill la agrupacion, el mensaje y el staging. Recien despues, pasar a la siguiente unidad. Si detiene, registrar nota y pasar al Paso 4 — la invocacion a `/git-commit` se hace ahi.
 
 ### Paso 4 - Cierre
 

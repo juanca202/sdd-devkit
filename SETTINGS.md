@@ -73,8 +73,6 @@ Comportamiento del skill `git-commit`. Detalle en [references/git.md](references
 | `push` | `ask` · `always` · `never` | Política de push tras completar el/los commits. Solo aplica en invocación directa del usuario, nunca cuando `git-commit` es invocado por otro skill (`work-integrate`, `pr-create`). |
 | `integrationBranches` | lista de `{ name, commitPolicy }` | Ramas de integración o despliegue del repositorio. Vacía o ausente ⇒ ningún skill asume `main`/`develop`: pregunta cuando necesite resolver una. `commitPolicy: merge` admite commit y merge en local sin confirmación extra; `commitPolicy: pull_request` no admite commit ni merge en local — solo entra trabajo vía pull request. |
 
-Las gates de seguridad de `git-commit` (detección de secretos, archivos sensibles) no son configurables.
-
 ## `projectManagement`
 
 Integración opcional con un sistema de tickets externo, usada por `work-plan`, `test-define` y `work-research`. Detalle en [references/project-management.md](references/project-management.md).

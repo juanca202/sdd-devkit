@@ -27,7 +27,7 @@ Este paso hace **tres** cosas, en este orden. Las dos primeras se ejecutan **sie
 - Con `working-tree`, no hay base: el alcance son los cambios sin commitear.
 - Sin modificador, inferirla (rama de integración configurada del repo, `origin/HEAD`, o la base del PR si existe) y **confirmarla con el usuario si es ambigua**.
 
-**0.2 — Calcular la clave** (`BASE` es la rama ya resuelta; en `working-tree` no hay `BASE_COMMIT`). El bloque `EXC`/`FINGERPRINT` es **copia literal** de la receta canónica de [`quality-check`](../../quality-check/references/execution.md#fingerprint-canónico), la única fuente de verdad — si cambia allí, cambia aquí:
+**0.2 — Calcular la clave** (`BASE` es la rama ya resuelta; en `working-tree` no hay `BASE_COMMIT`). El bloque `EXC`/`FINGERPRINT` es **copia literal** de la receta canónica de [`${PLUGIN_ROOT}/references/fingerprint.md`](../../../references/fingerprint.md), la única fuente de verdad — si cambia allí, cambia aquí:
 
 ```bash
 ROOT=$( git rev-parse --show-toplevel )

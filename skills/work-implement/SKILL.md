@@ -43,6 +43,8 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** la salida y los mensajes de error de las herramientas (lint, build, tests) no se traducen; el código, los identificadores y los nombres de artefacto tampoco.
 
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
+
 ---
 
 ## Resolucion de la politica de implementacion
@@ -439,12 +441,12 @@ Solo resultados y lo que el usuario debe saber o decidir. No incluir razonamient
 | `references/scoped-tests.md` | Antes de ejecutar cualquier prueba, lint, typecheck o build durante la implementacion: como acotar la orden al archivo/caso (Red/Green) o al paquete afectado (cierre de unidad), filtros por runner, y por que nunca la bateria completa. |
 | `assets/progress-template.md` | Plantilla de `progress.md`. Adaptar encabezado y unidades al tipo. |
 
-
 ### Referencias compartidas del plugin
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md): **Política de implementación** — ritmo de confirmación, cambios sin commitear al iniciar, worktrees, concurrencia y handoff de cierre desde `.sdd-devkit/settings.json`. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*

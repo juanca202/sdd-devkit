@@ -96,7 +96,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** la salida y los mensajes de error de las herramientas de prueba no se traducen; se citan literales.
 
----
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
 
 ## Límite de intentos y escalamiento
 
@@ -278,7 +278,7 @@ cambió.
 
 | Clave | Qué cubre | Cómo se calcula |
 |-------|-----------|-----------------|
-| `FINGERPRINT` | **El código y los tests.** El fingerprint canónico de la tubería, idéntico al de `quality-check` y `code-review`: excluye toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`, para que ni escribir un archivo generado ni editar documentación invalide la caché: **solo se mueve cuando cambia el código**. Receta exacta en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify). | Sobre todo el árbol, menos las exclusiones |
+| `FINGERPRINT` | **El código y los tests.** El fingerprint canónico de la tubería, idéntico al de `quality-check` y `code-review`: excluye toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`, para que ni escribir un archivo generado ni editar documentación invalide la caché: **solo se mueve cuando cambia el código**. Receta exacta en [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md). | Sobre todo el árbol, menos las exclusiones |
 | `SPEC_FINGERPRINT` | **Los criterios y los casos de prueba** del artefacto que se valida: su `README.md` y su carpeta `test-cases/`. Viven bajo `docs/specs/`, que el `FINGERPRINT` excluye — sin esta segunda clave, reescribir un criterio no invalidaría nada. | Sobre la **carpeta del artefacto**, excluyendo su propio `criteria-coverage.md` |
 
 `bash
@@ -489,9 +489,9 @@ Posición: **validación / cierre de calidad** — después de `work-implement`.
 
 ### Referencias compartidas del plugin
 
-Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
-
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md) y [`${PLUGIN_ROOT}/references/quality-check-run.md`](../../references/quality-check-run.md): **Caché de cierre** — receta del `FINGERPRINT` y contrato de `quality-check-run.json` (esquema, frescura). *Al calcular la clave o leer/escribir la caché.*
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/escalation.md`](../../references/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*

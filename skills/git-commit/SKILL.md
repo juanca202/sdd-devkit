@@ -52,6 +52,8 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** el tipo y el scope van **siempre en inglés** (Conventional Commits), salvo convención explícita del equipo. El idioma resuelto aplica solo a la parte en lenguaje natural (descripción, body, footers). El output y los mensajes de error de git no se traducen.
 
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
+
 ## Convenciones del mensaje
 
 - **Tipo y scope:** en inglés (ver «Resolución de idioma»).

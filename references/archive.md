@@ -23,7 +23,7 @@ siempre hay una revisión humana entre integrar y archivar, y ese momento lo eli
 |-----------|-------------------|------------|
 | `SRS-XXX` | `requirement-refine` | `/requirement-refine archive SRS-003` · `/requirement-refine SRS-003 archive` |
 | `RQ-XXX` (con sus `test-cases/` y `assets/`) | `test-define` | `/test-define archive RQ-001` · `/test-define RQ-001 archive` |
-| `US-XXX` (con sus `TK-XXX`, `test-cases/`, `research/`, `progress.md`, `criteria-coverage.md`, `assets/`) | `work-define` | `/work-define archive US-042` · `/work-define US-042 archive` |
+| `US-XXX` (con sus `TK-XXX`, `test-cases/`, `research/`, `progress.md`, `criteria-coverage.md`, `wireframes/`, `assets/`) | `work-define` | `/work-define archive US-042` · `/work-define US-042 archive` |
 | `WI-XXX` (todos los tipos, `bug` incluido) | `work-plan` | `/work-plan archive WI-007` · `/work-plan WI-007 archive` |
 | `RS-XXX` suelto (`<changesPath>/research/`) | `work-research` | `/work-research archive RS-003` · `/work-research RS-003 archive` |
 
@@ -103,7 +103,7 @@ Reglas de la confirmación:
 | Investigación suelta | `<changesPath>/research/RS-XXX-{slug}/` | `<archivedPath>/research/RS-XXX-{slug}/` |
 
 La carpeta se mueve **completa y tal cual**: `README.md`, `TK-XXX-*.md`, `progress.md`,
-`test-cases-automation.md`, `criteria-coverage.md`, `test-cases/`, `research/` interno y `assets/`. No se
+`test-cases-automation.md`, `criteria-coverage.md`, `test-cases/`, `research/` interno, `wireframes/` y `assets/`. No se
 renombra, no se aplana, no se borra nada de dentro.
 
 ---

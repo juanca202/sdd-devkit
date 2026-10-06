@@ -30,7 +30,7 @@ Antes de trabajar, evitar regenerar si nada cambió (ver [Reutilización del rep
                          git -C "$ROOT" diff                     -- "$ARTEFACTO" "$NO_REPORT"; \
                        } | git hash-object --stdin )
    `
-   El primero cubre **código y tests** (excluye toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`; es **copia literal** de la receta canónica de [`quality-check`](../../quality-check/references/execution.md#fingerprint-canónico), que es la única fuente de verdad — si cambia allí, cambia aquí). El segundo cubre **los criterios y los `TC-XXX`** de este artefacto, que el primero deja fuera por vivir bajo `docs/specs/`.
+   El primero cubre **código y tests** (excluye toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`; es **copia literal** de la receta canónica de [`${PLUGIN_ROOT}/references/fingerprint.md`](../../../references/fingerprint.md), que es la única fuente de verdad — si cambia allí, cambia aquí). El segundo cubre **los criterios y los `TC-XXX`** de este artefacto, que el primero deja fuera por vivir bajo `docs/specs/`.
 
    > **`$NO_REPORT` es lo que hace que la idempotencia funcione.** El `criteria-coverage.md` vive **dentro** de `$ARTEFACTO`, así que sin excluirlo el Paso 7 desplazaría el `SPEC_FINGERPRINT` **al escribir el propio reporte**: el hash grabado en la marca de pie sería el de *antes* de escribir, nunca coincidiría en la corrida siguiente, y el Paso 0 regeneraría siempre. La clave cubre las **entradas** del reporte (criterios y `TC-XXX`), no su salida — el mismo motivo por el que el `FINGERPRINT` lo excluye.
    >
@@ -233,14 +233,14 @@ persiste el resultado en `.sdd-devkit/quality-check-run.json` (esquema `quality-
    `Resultado = `NOT_RUN` con la razón; entregar la cobertura estática.
 
 **Esquema `quality-check-run.json`.** La definición canónica —campos, semántica y valores permitidos— vive en
-[`quality-check` → Caché de corrida de pruebas](../../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify).
+[`${PLUGIN_ROOT}/references/quality-check-run.md`](../../../references/quality-check-run.md).
 **No** se replica aquí para que no diverja. Lo que este skill necesita de ella:
 
 - `schema` debe ser `quality-check-run/v1`; cualquier otro valor → **descartar la caché** y delegar en `quality-check`: un `suites[]` de otro esquema no es interpretable con estas reglas.
 - `generatedBy` debe ser `"quality-check"`; cualquier otro valor → descartar la caché.
 - `git.fingerprint` es la clave de frescura del **código**; la conformidad del `suites[]` con el estándar de testing vigente es la segunda condición (siguiente viñeta). Ambas deben cumplirse para reutilizar.
 - `suites[]` trae **siempre las dos fijas** (`unit`, `coverage`); la que el repo no tiene viene con `result: "N/A"`. **Todo lo demás puede no estar, `e2e` incluido**: las otras entradas son `e2e`, cuando el repo tiene config, y las **suites configuradas** en el estándar de testing, cuyo `type` es el **`ID` del requisito** que las declara (p. ej. `integration-testing`, `contract-testing`), con su referencia global en `standard` (p. ej. `testing/integration-testing`). La ausencia de una de ellas significa que el repo no ejecuta esa clase de prueba, no que falte información — y **no** se traduce en un fallo. **No buscar una clave fija como `e2e` o `integration`:** localizar la suite por su `standard` o por el `type` que el estándar declare, y tratar la ausencia como «no declarada».
-- Si el `suites[]` de la caché **no cubre el conjunto vigente** de suites del estándar de testing (porque el estándar cambió después de la corrida), tratarla como **obsoleta** y delegar en `quality-check`, aunque el `git.fingerprint` coincida: el estándar vive en `docs/`, que el fingerprint excluye deliberadamente. Ver [`quality-check` → Caché de corrida de pruebas](../../quality-check/references/execution.md#caché-de-corrida-de-pruebas).
+- Si el `suites[]` de la caché **no cubre el conjunto vigente** de suites del estándar de testing (porque el estándar cambió después de la corrida), tratarla como **obsoleta** y delegar en `quality-check`, aunque el `git.fingerprint` coincida: el estándar vive en `docs/`, que el fingerprint excluye deliberadamente. Ver [`${PLUGIN_ROOT}/references/quality-check-run.md`](../../../references/quality-check-run.md) (Frescura).
 - `invokedFrom` es informativo: **no** filtrar resultados por él ni descartar la caché porque nombre otro trabajo — la corrida es de la rama, no de la unidad.
 
 Reglas:

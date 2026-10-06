@@ -13,14 +13,14 @@ validaciones de arquitectura como un check más de su batería y persiste el res
 `.sdd-devkit/quality-check-run.json`, como una entrada `suites[]` de `type: "architecture"`. Esa corrida es
 reutilizable aquí si es **fresca**, con las **mismas reglas que las demás entradas** de esa caché
 (definición canónica en
-[`../../quality-check/references/execution.md`](../../quality-check/references/execution.md#caché-de-corrida-de-pruebas)):
+[`${PLUGIN_ROOT}/references/quality-check-run.md`](../../../references/quality-check-run.md)):
 
 | Comprobación | Qué exige |
 |--------------|-----------|
 | `schema` | `quality-check-run/v1`. Otro valor ⇒ caché inservible. |
 | `generatedBy` | `"quality-check"`. Otro valor ⇒ descartar: es el único productor autorizado. |
 | Entrada | Existe una de `type: "architecture"`. Si no está, el repo no tenía runner en esa corrida ⇒ no hay caché que usar. |
-| `git.fingerprint` | Coincide con el `FINGERPRINT` recalculado ahora, con la [receta canónica](../../quality-check/references/execution.md#fingerprint-canónico). Difiere ⇒ obsoleta. |
+| `git.fingerprint` | Coincide con el `FINGERPRINT` recalculado ahora, con la receta canónica de [`${PLUGIN_ROOT}/references/fingerprint.md`](../../../references/fingerprint.md). Difiere ⇒ obsoleta. |
 
 - **Fresca** ⇒ reutilizar su `result` y su `summary` sin volver a ejecutar el runner, y anotar la
   procedencia en el informe («runner tomado de la corrida de `quality-check` del {{fecha}}»). Las

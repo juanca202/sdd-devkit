@@ -56,6 +56,8 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada: este skill crea el archivo donde `language.md` lee el idioma.** El idioma resuelto se **persiste** en la clave `language` de `.sdd-devkit/settings.json` al crearlo (Paso 3); a partir de ahí lo lee todo el catálogo.
 
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
+
 ---
 
 ## Mapa del harness
@@ -371,12 +373,10 @@ No confirmar el cierre antes de que `AGENTS.md` tenga el stack ya escrito.
 | `assets/standards-index-template.md` | Paso 3 — plantilla de `docs/standards/README.md`. |
 | `assets/settings-template.json` | Paso 3 — plantilla de `.sdd-devkit/settings.json`. |
 
-
 ### Referencias compartidas del plugin
 
-Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
-
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 

@@ -26,6 +26,8 @@ Lo **transversal a varios skills** no se duplica: vive en [`references/`](refere
   Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md).
   ```
 
+- **Enlaces a archivos del proyecto.** Todo skill y agente lleva, tras «Resolución de idioma», el párrafo **Enlaces a archivos del proyecto**, que obliga a aplicar [`references/linking.md`](references/linking.md): un archivo del proyecto se menciona siempre como enlace que lo abre (`[WF-001](ruta)`), no como etiqueta. Las plantillas y flujos del skill deben mostrarlo así.
+- **Plantillas compartidas (`assets/` en la raíz del plugin).** Una plantilla que usan **dos o más skills** vive en [`assets/`](assets/) de la raíz, no en el `assets/` de uno de ellos: ningún skill enlaza archivos de la carpeta de otro skill. Se referencia igual que las reglas compartidas: texto `${PLUGIN_ROOT}/assets/<archivo>` y destino relativo (`../../assets/<archivo>` desde un `SKILL.md`). Hoy: [`wireframe-template.md`](assets/wireframe-template.md) (`requirement-refine`, `work-define`). La carpeta viaja con el plugin junto a `references/`.
 - Cada skill lista además las referencias compartidas que consume en una subsección **Referencias compartidas del plugin** dentro de su *Mapa de referencias*.
 - **La carpeta `references/` viaja con el catálogo.** Un skill copiado suelto fuera del plugin deja de resolver sus rutas relativas; el catálogo se distribuye e instala como plugin (ver [README.md](README.md#instalación)).
 - Al añadir un archivo a `references/`, registrarlo en la tabla de [`references/README.md`](references/README.md).

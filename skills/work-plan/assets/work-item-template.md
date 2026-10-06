@@ -109,6 +109,7 @@ Rutas permitidas: assets/ (recursos propios de este work item) o docs/architectu
 - **Arquitectura:** {{enlace a ADR en `docs/adr/` si el work item depende de decisiones ya registradas; no inventar ADRs nuevos}}
 - **Documentación técnica:** {{enlace si aplica, tal como lo devuelve `design-define`: `docs/architecture/[capability]/models/MD-XXX-{slug}.md` / `apis/API-XXX-{slug}.md` / `flows/FL-XXX-{slug}.md` / `diagrams/DG-XXX-{slug}.md`, añadiendo el ancla de operación `#<método-ruta>` cuando se cita un endpoint concreto (`apis/API-001-facturas.md#post-invoices`); copiar la referencia tal cual, nunca recomponerla del título}}
 - **Diseño:** {{enlace a Figma, wireframe o imagen de alta fidelidad; obligatorio si el work item toca UI}}
+- **Wireframe:** {{[WF-XXX: pantalla](wireframes/WF-XXX-{slug}.md), uno por pantalla, si el work item tiene wireframes propios (viven en `wireframes/` de esta carpeta, nunca en `docs/architecture/`); omitir si no aplica}}
 
 ## Migración (origen → destino)
 

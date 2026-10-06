@@ -44,7 +44,7 @@ de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md
 <!--
 Documentos o estándares EXTERNOS a los que este SRS remite (guías de estilo, contratos, normativa,
 otras especificaciones) — no confundir con la sección 14 (Enlaces y archivos de apoyo), que enlaza los
-archivos propios de esta carpeta (requerimiento original, investigación) y los wireframes de la capability.
+archivos propios de esta carpeta (requerimiento original, investigación) y los wireframes de este SRS.
 Sección opcional. Eliminar si no aplica.
 -->
 - {{título del documento/estándar}}: {{versión, fecha, enlace o ubicación}}
@@ -137,7 +137,7 @@ respuesta a la pregunta inicial del flujo (investigar vs. ya decidido).
 Id secuencial FR-001, FR-002, … Cada fila indica su categoría, prioridad y el enunciado con palabra
 clave RFC 2119 en MAYÚSCULAS en el idioma de preferencia.
 Categorías: Reglas de negocio · Casos de uso · Flujos de proceso · Procesamiento de datos · Integraciones · Interacción de usuario · Salidas del sistema
-Detalle en ../../work-define/references/quality-criteria.md#rfc-2119 y #categorías-de-criterios-de-aceptación.
+Detalle en ${PLUGIN_ROOT}/references/requirement-criteria.md (RFC 2119 y Categorías).
 Prioridad: Esencial · Alta · Media · Baja — ver quality-criteria.md#prioridad. Estado: Propuesto (inferido
 por el agente, aún sin confirmación explícita) · Aprobado (el usuario ya lo confirmó) — ver
 quality-criteria.md#estado-por-requisito.
@@ -237,10 +237,10 @@ Sección opcional — incluir solo si el requerimiento involucra una interfaz de
 se infiere del objetivo funcional y los FR-XXX (solo se pregunta al usuario si la inferencia es ambigua) —
 ver flow.md, paso 4. Eliminar la sección por completo (incluida la marca oculta) si no aplica — p. ej. un
 servicio o API sin UI.
-Cada fila enlaza a un wireframe generado con la plantilla wireframe-template.md de design-define, uno por
-pantalla, guardado POR CAPABILITY en docs/architecture/[capability]/wireframes/WF-XXX-[pantalla-slug].md
-(+ su .svg hermano) — no en la carpeta del SRS — y con fila en el índice «Wireframes» del README de esa
-capability (ver flow.md, paso 4, punto 3). El SRS no se declara Ready mientras alguna pantalla siga
+Cada fila enlaza a un wireframe generado con la plantilla compartida del plugin (assets/wireframe-template.md en su raíz), uno por pantalla,
+guardado en wireframes/WF-XXX-[pantalla-slug].md (+ su .svg hermano) DENTRO DE LA CARPETA DE ESTE SRS
+— los wireframes son un recurso del SRS, nunca van en docs/architecture/ (ver flow.md, paso 4, punto 3).
+El SRS no se declara Ready mientras alguna pantalla siga
 "Pendiente": las observaciones de la revisión deben quedar reflejadas aquí y en los FR-XXX afectados
 antes de cerrar.
 -->
@@ -257,9 +257,9 @@ wireframes, incluido el `viewBox` de cada SVG (retrato para móvil, ancho para w
 
 **¿Debe ser responsiva (adaptable a distintos tamaños de pantalla)?** {{Sí | No | No aplica — app nativa de un solo dispositivo}}
 
-| Pantalla | Capability | Wireframe | Estado de revisión | Observaciones ya incorporadas |
-| -------- | ---------- | --------- | --------------------- | -------------------------------- |
-| {{nombre de la pantalla}} | {{capability}} | {{[WF-XXX](../../../../architecture/[capability]/wireframes/WF-XXX-[pantalla-slug].md)}} | {{Pendiente / Revisado con cambios / Aprobado}} | {{resumen de los cambios pedidos y en qué FR-XXX quedaron reflejados; «Ninguna» si se aprobó sin cambios}} |
+| Pantalla | Wireframe | Estado de revisión | Observaciones ya incorporadas |
+| -------- | --------- | --------------------- | -------------------------------- |
+| {{nombre de la pantalla}} | {{[WF-XXX](wireframes/WF-XXX-[pantalla-slug].md)}} | {{Pendiente / Revisado con cambios / Aprobado}} | {{resumen de los cambios pedidos y en qué FR-XXX quedaron reflejados; «Ninguna» si se aprobó sin cambios}} |
 
 ## 12. Verificación y trazabilidad
 
@@ -289,7 +289,7 @@ derivadas), que se completa después del handoff y por eso no puede ir aquí.
 <!-- Archivos propios de esta carpeta del SRS — no confundir con la sección 1.4 (referencias a documentos o estándares externos). Solo enlaces a recursos ya almacenados; nunca pegar archivos, imágenes ni descripciones directamente aquí. -->
 - **Requerimiento original:** {{enlace markdown a `references/[archivo]`, dentro de esta misma carpeta}}
 - **Investigación de stack:** {{enlace a `research/RS-XXX-{slug}/README.md`, si se investigó}}
-- **Wireframes:** {{enlace a `../../../../architecture/[capability]/wireframes/` por cada capability involucrada, si el requerimiento tiene UI — el detalle por pantalla está en la sección 11}}
+- **Wireframes:** {{[`wireframes/`](wireframes/), si el requerimiento tiene UI — el detalle por pantalla está en la sección 11}}
 - {{añadir entradas adicionales o indicar «Ninguna por ahora»}}
 
 ## 15. Historias de usuario derivadas

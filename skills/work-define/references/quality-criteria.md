@@ -6,17 +6,7 @@ Referencia detallada para redactar y validar Historias de Usuario. Las secciones
 
 ## RFC 2119
 
-Tabla de equivalencias para palabras clave normativas (en MAYÚSCULAS en el idioma de preferencia):
-
-
-| Nivel (semántica RFC 2119) | Inglés (`en`)                | Español (`es`)                          |
-| -------------------------- | ---------------------------- | --------------------------------------- |
-| Obligación absoluta        | **MUST** / **REQUIRED**      | **DEBE** / **ES OBLIGATORIO**           |
-| Prohibición absoluta       | **MUST NOT** / **SHALL NOT** | **NO DEBE** / **ESTÁ PROHIBIDO**        |
-| Recomendación fuerte       | **SHOULD** / **RECOMMENDED** | **DEBERÍA** / **ES RECOMENDABLE**       |
-| Desaconsejado salvo causa  | **SHOULD NOT**               | **NO DEBERÍA** / **NO ES RECOMENDABLE** |
-| Permiso u opcionalidad     | **MAY** / **OPTIONAL**       | **PUEDE** / **OPCIONAL**                |
-
+Tabla de equivalencias de las palabras clave normativas (en MAYÚSCULAS en el idioma de preferencia): ver [`${PLUGIN_ROOT}/references/requirement-criteria.md`](../../../references/requirement-criteria.md) (RFC 2119).
 
 Elegir una forma por nivel y mantenerla consistente en toda la US. Si el usuario pide no usar RFC 2119, documentarlo en Observaciones; el formato Gherkin en MAYÚSCULAS se mantiene salvo petición explícita en contra.
 
@@ -26,34 +16,7 @@ Elegir una forma por nivel y mantenerla consistente en toda la US. Si el usuario
 
 Cada **AC-XXX** declara su categoría entre paréntesis. Las categorías se dividen en dos grupos:
 
-### Categorías funcionales
-
-Usar cuando el criterio describe comportamiento observable del sistema (qué hace, no cómo rinde o se comporta ante cargas):
-
-| Categoría | Cuándo usarla |
-| --------- | ------------- |
-| Reglas de negocio | Restricciones, obligaciones o prohibiciones que impone el dominio o la organización |
-| Casos de uso | Flujos de interacción actor-sistema de inicio a fin |
-| Flujos de proceso | Pasos secuenciales o ramificados dentro de un proceso de negocio |
-| Procesamiento de datos | Cálculos, transformaciones, validaciones o reglas sobre datos |
-| Integraciones | Contratos con sistemas externos, APIs, eventos o mensajería |
-| Interacción de usuario | Comportamiento de la interfaz, accesibilidad, retroalimentación al usuario |
-| Salidas del sistema | Documentos, reportes, notificaciones, exportaciones generadas |
-
-### Categorías no funcionales (ISO/IEC 25010)
-
-Usar cuando el criterio describe un atributo de calidad medible (rendimiento, seguridad, fiabilidad, etc.):
-
-| Característica (`es`) | Característica (`en`) | Ejemplos |
-| --------------------- | --------------------- | -------- |
-| Idoneidad funcional | Functional suitability | Completitud de funciones, corrección, pertinencia |
-| Eficiencia de rendimiento | Performance efficiency | Tiempos de respuesta, throughput, uso de recursos |
-| Compatibilidad | Compatibility | Coexistencia, interoperabilidad |
-| Usabilidad | Usability | Accesibilidad, aprendizaje, operabilidad |
-| Fiabilidad | Reliability | Disponibilidad, tolerancia a fallos, recuperabilidad |
-| Seguridad | Security | Confidencialidad, integridad, autenticación |
-| Mantenibilidad | Maintainability | Modularidad, testabilidad, modificabilidad |
-| Portabilidad | Portability | Adaptabilidad, instalabilidad |
+Los dos catálogos —las siete **categorías funcionales** y las ocho características **no funcionales (ISO/IEC 25010)**— viven en [`${PLUGIN_ROOT}/references/requirement-criteria.md`](../../../references/requirement-criteria.md) (Categorías).
 
 Elegir la categoría de **primer nivel** que mejor encaje. Si un criterio abarca más de una, dividirlo en `AC-XXX` distintos.
 
@@ -86,7 +49,7 @@ Tabla con los seis criterios de la plantilla. Para cada uno: `Cumple` / `No cump
 | Inputs/outputs claros              | Entradas y salidas funcionales bien definidas. |
 | Repositorios definidos             | Campo **Repositorios:** de la cabecera poblado con el/los repositorio(s) git afectados, separados por coma. |
 | Sin decisiones técnicas pendientes | No quedan decisiones técnicas abiertas que condicionen el alcance. |
-| Referencias de UI                  | Para US de UI: enlaces de diseño presentes — diseño/Figma aportado, o wireframes `WF-XXX` de la capability (`docs/architecture/[capability]/wireframes/`) heredados del SRS o generados por este skill y **aprobados** (uno `Pendiente` deja el criterio en `Parcial`) (`No aplica` si no hay UI propia). |
+| Referencias de UI                  | Para US de UI: enlaces de diseño presentes — diseño/Figma aportado, o wireframes `WF-XXX` heredados del SRS (`wireframes/` de su carpeta) o generados por este skill (`wireframes/` de la US) y **aprobados** (uno `Pendiente` deja el criterio en `Parcial`) (`No aplica` si no hay UI propia). |
 | Sin aclaraciones pendientes        | Observaciones vacías o «Ninguna»; nada pendiente con usuario/producto. |
 
 El estado **Ready** requiere todos los datos sin excepción: Criterios de aceptación completos (al menos un `AC-XXX`), DoR completado, repositorios afectados identificados y Observaciones sin pendientes abiertos.

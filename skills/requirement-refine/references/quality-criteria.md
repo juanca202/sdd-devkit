@@ -6,7 +6,7 @@ Referencia detallada para redactar y validar Especificaciones de Requisitos de S
 
 ## RFC 2119
 
-Mismo vocabulario normativo que usa `work-define` para sus `AC-XXX` — no se duplica aquí. Ver la tabla completa en [`../../work-define/references/quality-criteria.md#rfc-2119`](../../work-define/references/quality-criteria.md#rfc-2119).
+Mismo vocabulario normativo que usa `work-define` para sus `AC-XXX` — no se duplica aquí. Ver la tabla completa en [`${PLUGIN_ROOT}/references/requirement-criteria.md`](../../../references/requirement-criteria.md) (RFC 2119).
 
 Aplica igual a `FR-XXX`, `NFR-XXX` y `BR-XX`: elegir una forma por nivel y mantenerla consistente en todo el SRS. Un enunciado que no admite una palabra clave RFC 2119 clara suele ser un síntoma de que todavía no es **verificable** — ver [Verificabilidad](#verificabilidad).
 
@@ -14,7 +14,7 @@ Aplica igual a `FR-XXX`, `NFR-XXX` y `BR-XX`: elegir una forma por nivel y mante
 
 ## Categorías de FR-XXX
 
-Cada **FR-XXX** declara su categoría. Son las mismas siete categorías funcionales que usa `work-define` para sus `AC-XXX` — ver [`../../work-define/references/quality-criteria.md#categorías-de-criterios-de-aceptación`](../../work-define/references/quality-criteria.md#categorías-de-criterios-de-aceptación):
+Cada **FR-XXX** declara su categoría. Son las mismas siete categorías funcionales que usa `work-define` para sus `AC-XXX` — ver [`${PLUGIN_ROOT}/references/requirement-criteria.md`](../../../references/requirement-criteria.md) (Categorías funcionales):
 
 Reglas de negocio · Casos de uso · Flujos de proceso · Procesamiento de datos · Integraciones · Interacción de usuario · Salidas del sistema
 
@@ -24,7 +24,7 @@ Usar la categoría de **primer nivel** que mejor encaje. Un `FR-XXX` no tiene po
 
 ## Categorías de NFR-XXX
 
-Cada **NFR-XXX** usa las características **ISO/IEC 25010** — mismo catálogo que las categorías no funcionales de `AC-XXX` en `work-define`, ver [`../../work-define/references/quality-criteria.md#categorías-de-criterios-de-aceptación`](../../work-define/references/quality-criteria.md#categorías-de-criterios-de-aceptación):
+Cada **NFR-XXX** usa las características **ISO/IEC 25010** — mismo catálogo que las categorías no funcionales de `AC-XXX` en `work-define`, ver [`${PLUGIN_ROOT}/references/requirement-criteria.md`](../../../references/requirement-criteria.md) (Categorías no funcionales):
 
 Idoneidad funcional · Eficiencia de rendimiento · Compatibilidad · Usabilidad · Fiabilidad · Seguridad · Mantenibilidad · Portabilidad
 

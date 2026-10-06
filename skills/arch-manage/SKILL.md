@@ -147,6 +147,8 @@ Las reglas de `language.md` son obligatorias y tienen prioridad para determinar 
 
 No continúes hasta haber leído y aplicado `language.md`.
 
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
+
 ---
 
 ## Resolución de la raíz de arquitectura
@@ -332,12 +334,12 @@ mantiene ligero):
 - [`references/fitness-functions.md`](references/fitness-functions.md) — cómo **proponer los criterios (CR) con su mecanismo de verificación** para que el usuario elija cuáles crear, cómo crear la **fitness function** de los seleccionados, registrarla en el archivo de checks de su estándar y mantener el **runner** `scripts/arch/verify.<ext>`. Leer **antes de escribir CR nuevos**, al automatizar un CR o al tocar el runner.
 - [`references/dependencies.md`](references/dependencies.md) — flujo para ofrecer **instalar dependencias** ausentes que referencia la decisión. Leer tras crear los documentos si referencian una tecnología concreta.
 
-
 ### Referencias compartidas del plugin
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, **resolución de la raíz de arquitectura** (repo principal vs. submódulo), identificadores, archivado. *Lectura obligatoria al resolver una ruta o calcular un ID.*
 
 ---

@@ -1,16 +1,17 @@
 <!--
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque al publicar el documento final.
-Dos archivos por pantalla, en wireframes/ dentro de la carpeta de la capability
-(docs/architecture/[capability]/wireframes/), nombrados con el estándar WF-XXX-{slug} — mismo principio que
-models/, flows/ y diagrams/: id de 3 dígitos + slug kebab-case del nombre de la pantalla, fijado al crear el
+Dos archivos por pantalla, en wireframes/ DENTRO DE LA CARPETA DEL ARTEFACTO que los origina
+(SRS-XXX-…/wireframes/, US-XXX-…/wireframes/ o WI-XXX-…/wireframes/), nombrados con el estándar WF-XXX-{slug}:
+id de 3 dígitos secuencial dentro de esa carpeta + slug kebab-case del nombre de la pantalla, fijado al crear el
 wireframe; renombrar la pantalla después no renombra los archivos; el id es el contrato de enlace.
   - WF-XXX-{slug}.md  (este documento: objetivo, componentes, estados, historial de revisión)
   - WF-XXX-{slug}.svg (el wireframe visual, enlazado desde aquí — nunca pegado como código)
-Enlazar este archivo desde la tabla índice «Wireframes» del README.md de la capability — crear el wireframe y
-su fila de índice en la misma pasada. La referencia que consumen SRS/US/TK/WI es la ruta del archivo
-(docs/architecture/{{capability}}/wireframes/WF-001-{{slug}}.md), sin ancla.
-Lo crean requirement-refine (desde un SRS-XXX) o work-define (desde una US-XXX que toca UI y no hereda
+Los wireframes son un recurso del artefacto de implementación, NO documentación de arquitectura: nunca van en
+docs/architecture/. Enlazar este archivo desde la tabla de wireframes del README.md del artefacto (sección 11 del
+SRS; Referencias de la US o del WI) en la misma pasada. Un artefacto derivado (una US de un SRS) lo enlaza en la
+carpeta de origen, no lo copia.
+Lo crean requirement-refine (en un SRS-XXX) o work-define (en una US-XXX que toca UI y no hereda
 wireframes). Es un mockup de baja/media fidelidad para validar alcance con el usuario — no un diseño visual
 definitivo ni una guía de estilo. Color de marca, tipografía real y medidas pixel-perfect no son
 responsabilidad de estos skills; eso lo define diseño visual más adelante.
@@ -19,7 +20,7 @@ responsabilidad de estos skills; eso lo define diseño visual más adelante.
 
 <!-- wireframe:review-status={{pending|revised|approved}} -->
 <!-- Marca oculta; claves y valores en inglés siempre, igual criterio que srs:status. -->
-**Origen:** [{{SRS-XXX: título | US-XXX: título}}]({{ruta relativa al README.md del artefacto de origen — p. ej. ../../../specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md o ../../../specs/changes/user-stories/US-XXX-[nombre-corto]/README.md}})
+**Origen:** [{{SRS-XXX: título | US-XXX: título | WI-XXX: título}}](../README.md)
 **Tipo de solución:** {{Aplicación web / App nativa (iOS) / App nativa (Android) / App híbrida / Aplicación de escritorio}} — {{responsiva | no responsiva | no aplica}}
 **Estado de revisión:** {{Pendiente | Revisado con cambios | Aprobado}}
 

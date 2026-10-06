@@ -167,8 +167,7 @@ Reglas al rellenar:
 Artefacto reutilizable que evita repetir los **checks deterministas** de la corrida: que `coverage-verify`
 vuelva a ejecutar las pruebas, que `arch-audit` vuelva a correr el runner de validaciones de
 arquitectura, y que **este propio skill** vuelva a ejecutar cualquiera de sus checks —tipado, linter,
-build y sonar incluidos— cuando nada cambió. Esta sección es la **definición canónica y única** —los consumidores (`coverage-verify`,
-`arch-audit`, `code-review`) la referencian, no la copian—; `SKILL.md` solo la resume.
+build y sonar incluidos— cuando nada cambió. El contrato que leen los consumidores (esquema y frescura) y la receta del fingerprint son referencias compartidas del plugin (ver las dos subsecciones siguientes); esta sección conserva el **procedimiento del productor**.
 
 > **Las validaciones de arquitectura se cachean con las mismas reglas que las demás.** Son una entrada
 > más de `suites[]` (`type: "architecture"`), con la misma clave de frescura (el `FINGERPRINT` canónico),
@@ -185,18 +184,12 @@ build y sonar incluidos— cuando nada cambió. Esta sección es la **definició
 
 ### Fingerprint canónico
 
-Clave de frescura compartida entre las **tres puertas del cierre**, cada una sobre su propio artefacto:
-`quality-check-run.json` aquí, el `criteria-coverage.md` de
-[`coverage-verify`](../../coverage-verify/SKILL.md#reutilización-del-reporte-idempotencia) y el
-`docs/audits/code-review.md` de
-[`code-review`](../../code-review/SKILL.md#reutilización-del-informe-idempotencia). (`code-review` le
-añade además el commit de la rama base, porque su unidad es un diff con dos lados; el `FINGERPRINT` en sí
-es idéntico en las tres.) Hash reproducible del commit + working tree + cambios sin commitear **del
-código y de la configuración visible** — es decir, de **todo aquello que puede cambiar el resultado de una
-prueba o de una compilación, y de nada más**. Quedan fuera, para que escribirlos o editarlos **no desplace
-la clave**: **toda carpeta oculta** (empieza por `.`, en la raíz o anidada), **todo `docs/`**, **toda la
-documentación en texto** viva donde viva (`*.md`, `*.markdown`, `*.rst`, `*.adoc`, `LICENSE*`,
-`CHANGELOG*`, `AUTHORS*`, `NOTICE*`, `CODEOWNERS`) y el **`.gitignore`**:
+La receta, sus exclusiones y el porqué de cada una viven en
+[`${PLUGIN_ROOT}/references/fingerprint.md`](../../../references/fingerprint.md) — **definición canónica y
+única**, compartida con `code-review` y `coverage-verify`. Calcularlo con ese bloque, sin variantes, y
+persistirlo como `git.fingerprint`.
+
+Copia literal de la receta, para ejecutarla sin abrir la referencia (si cambia allí, cambia aquí):
 
 ```bash
 ROOT=$( git rev-parse --show-toplevel )
@@ -212,121 +205,11 @@ FINGERPRINT=$( { git -C "$ROOT" ls-files -s              -- "${EXC[@]}"; \
 } | git hash-object --stdin )
 ```
 
-Las tres piezas se reparten el estado: `ls-files -s` da el contenido **trackeado** (el SHA de cada blob del índice), `diff` los cambios **sin stagear** del árbol, y `status -uall` las rutas **sin trackear**. Juntas cubren el estado del código sin referenciar `HEAD` ni una sola vez, que es lo que hace la clave utilizable (ver la nota de abajo).
-
-Cubre **código fuente, tests y manifiestos** — todo aquello de lo que dependen los resultados de las
-herramientas. La caché es **fresca** si el `fingerprint` guardado coincide con el recalculado ahora; si
-difiere, hubo cambios y es **obsoleta** (re-ejecutar).
-
-> **Qué queda deliberadamente fuera, y qué implica.** La exclusión de `docs/` mantiene la clave estable
-> frente a la documentación, pero también deja fuera **los criterios de aceptación** (`docs/specs/**/README.md`).
-> Para este skill da igual —una prueba no cambia de resultado porque se reescriba un criterio—, pero **sí
-> importa en `coverage-verify` y en `code-review`**, cuyo veredicto depende de esos criterios: si se editan
-> sin tocar el código, el informe se dará por fresco y hay que **revalidar a mano** (ver la nota de cada uno).
-> Tampoco se cubren los cambios de **entorno** (dependencias instaladas, red, servicios) que no tocan el árbol.
-
-> **Nombre único de la clave.** En todo el repo esta variable se llama `FINGERPRINT` y su valor persistido
-> es `git.fingerprint`. No usar alias (`FP`, `HASH`) en ningún skill: el mismo valor debe ser reconocible
-> a simple vista cuando un skill delega en otro.
->
-> **El criterio de exclusión es uno solo: ¿puede este archivo cambiar el resultado de una prueba o de una
-> compilación?** Si no, se excluye; si sí —o si hay duda—, se queda dentro. Los pathspecs, grupo a grupo:
->
-> | Pathspec | Qué saca de la clave |
-> |----------|----------------------|
-> | `':(top,exclude,glob)**/.*/**'` | El contenido de **cualquier carpeta oculta**, en la raíz o anidada: `.sdd-devkit/` (donde vive `quality-check-run.json`), y de paso `.git/`, `.github/`, `.venv/`, `.cache/`, `.idea/`… El `**/` inicial cubre los dos niveles con un solo patrón. **Los archivos ocultos de la raíz (`.eslintrc.json`, `.env`, `.npmrc`, `.babelrc`) NO se excluyen**: son configuración que sí puede cambiar el resultado de un check. |
-> | `':(top,exclude,glob)**/docs/**'` | **Cualquier `docs/`, en la raíz o dentro de un módulo**: el informe vigente (`quality-check.md`, `code-review.md`), las copias con marca de tiempo de `save-report`, los informes de `arch-audit`, los `criteria-coverage.md` que viven junto a su artefacto y el resto de documentación. El `**/` inicial es lo que cubre el caso monorepo: `:(top,exclude)docs` a secas excluiría **solo** el `docs/` de la raíz, y en una corrida lanzada desde `packages/api/` el informe se escribe en `packages/api/docs/audits/` — que seguiría dentro de la clave y la desplazaría en cada corrida. |
-> | `**/*.md` · `**/*.markdown` · `**/*.rst` · `**/*.adoc` | **Toda la documentación en texto, viva donde viva**: el `README.md` de la raíz, un `NOTES.md` dentro de `src/`, un `criteria-coverage.md` de un artefacto externo al plugin escrito fuera de `docs/`. Un `.md` no compila ni se ejecuta; editarlo no puede cambiar el resultado de una prueba. **`*.mdx` NO se excluye**: MDX es código (importa componentes y se compila). Tampoco `*.txt`: `requirements.txt` y `CMakeLists.txt` son manifiestos. |
-> | `**/LICENSE*` · `**/CHANGELOG*` · `**/AUTHORS*` · `**/NOTICE*` · `**/CODEOWNERS` | Los archivos de acompañamiento sin extensión o con extensión libre, que ningún build lee. |
-> | `**/.gitignore` | Solo afecta a qué versiona git, no a qué se compila ni se prueba. Y es el archivo que este mismo skill edita al normalizar la caché: dentro de la clave, la primera corrida en un repo la desplazaba a sí misma. |
->
-> Así ningún artefacto que produce la propia tubería puede desplazar la clave de frescura —correr
-> `arch-audit` no invalida un `criteria-coverage.md`, ni escribir un informe invalida el `quality-check-run.json`—, y
-> **tampoco lo hace la edición de documentación**: retocar el `README.md`, el `CHANGELOG.md` o un criterio
-> de aceptación mantiene fresca la corrida de pruebas, que es lo que se espera de una clave que solo debe
-> moverse cuando cambia el código.
->
-> **Caso límite asumido: sitios de documentación.** En un repo cuyo build *compila* los `.md` (Docusaurus,
-> VitePress, MkDocs), editar un `.md` sí puede romper el build y la clave no lo verá. Es una decisión
-> deliberada —la regla general vale más que ese caso— y tiene salida: el modificador `no-cache` de este
-> skill fuerza la re-ejecución.
->
-> **Nada de `HEAD` — y es deliberado.** La receta **no** referencia `HEAD` en ningún punto, porque `HEAD` no
-> admite pathspec: cualquier commit lo mueve, incluidos los que solo tocan rutas excluidas. Con `git rev-parse HEAD`
-> en la receta, el commit de los propios artefactos que hace el cierre (`work-integrate` paso 8, `pr-create`
-> paso 6) caducaba **las tres claves a la vez** y obligaba a re-ejecutar toda la batería de pruebas — la
-> idempotencia no sobrevivía al flujo que la usa. `ls-files -s` da la misma señal (el SHA de cada blob
-> trackeado) **respetando los pathspecs**, y de paso funciona en un repo **sin ningún commit**, donde
-> `git rev-parse HEAD` aborta con `fatal: bad revision`.
->
-> **`git -C "$ROOT"` no es cosmético.** `status` y `diff` imprimen rutas **relativas al directorio de trabajo**:
-> el mismo árbol da hashes distintos según desde dónde se lance la corrida. Anclando los tres comandos a la raíz,
-> el `FINGERPRINT` es idéntico desde la raíz o desde `packages/api/`, que es lo que permite compararlo entre
-> corridas y entre skills.
->
-> **La magia `top` tampoco es opcional.** `:(top,…)` ancla el pathspec a la **raíz del repositorio**; sin ella,
-> git lo resolvería relativo al directorio de trabajo y las exclusiones se desplazarían con el cwd.
->
-> **`-uall` tampoco es opcional.** Sin él, `git status --porcelain` **colapsa** los directorios sin trackear a
-> una sola entrada (`?? docs/`) y las exclusiones de dentro no llegan a aplicarse — el caso típico es la
-> primera corrida en un repo, donde nada de esto está aún versionado. Con `-uall` git lista archivo por
-> archivo y los pathspecs filtran de verdad. Aun así, el contenido de un archivo que **permanezca** sin
-> trackear no entra en la clave: solo su ruta. Si el resultado pudiera depender de un archivo nuevo aún sin
-> añadir a git, tratar la caché como no concluyente.
->
-> **La clave es conservadora, nunca laxa.** Commitear cambios de **código** sí la mueve, aunque el árbol
-> resultante sea idéntico al que se probó: `status` distingue un cambio stageado de uno ya commiteado. Eso
-> provoca alguna revalidación de más, que es el error barato; el caro —dar por fresca una caché que ya no
-> corresponde— no puede ocurrir por esta vía.
-
 ### Esquema `quality-check-run.json`
 
-`schema: quality-check-run/v1` — **esta es la definición canónica y única**; los consumidores la referencian, no
-la copian:
-
-```json
-{
-  "schema": "quality-check-run/v1",
-  "generatedBy": "quality-check",
-  "timestamp": "2026-07-17T10:20:00-05:00",
-  "invokedFrom": "US-004-checkout",
-  "testingStandard": "docs/standards/testing.md",
-  "git": { "branch": "feature/US-004-checkout", "commit": "abc1234", "workingTreeClean": true,
-           "fingerprint": "<hash>" },
-  "suites": [
-    { "type": "architecture","command": "node scripts/arch/verify.mjs", "result": "PASS", "summary": "9 criterios, 0 violaciones" },
-    { "type": "unit",        "command": "npm test",            "result": "PASS", "summary": "48 passed" },
-    { "type": "coverage",    "command": "npm run coverage",    "result": "PASS", "summary": "line 82%" },
-    { "type": "e2e",         "command": "npx playwright test", "result": "FAIL", "summary": "2 failed" },
-    { "type": "integration-testing", "command": "npm run test:it",   "result": "PASS", "summary": "18 passed",
-      "standard": "testing/integration-testing" },
-    { "type": "contract-testing",    "command": "npm run test:pact", "result": "SKIPPED", "summary": "config rota",
-      "standard": "testing/contract-testing" }
-  ],
-  "checks": [
-    { "type": "typecheck", "command": "npx tsc --noEmit", "result": "PASS", "summary": "sin errores" },
-    { "type": "lint",      "command": "npm run lint",     "result": "PASS", "summary": "0 errores, 0 warnings" },
-    { "type": "build",     "command": "npm run build",    "result": "PASS", "summary": "build ok" }
-  ]
-}
-```
-
-Semántica de los campos:
-
-- **`generatedBy`** — siempre `"quality-check"`. Un consumidor que lea otro valor debe **descartar la caché** y no reutilizarla: este skill es el único productor autorizado.
-- **`timestamp`** — momento de la corrida, para reportar procedencia al usuario. No es clave de frescura (esa es `git.fingerprint`).
-- **`invokedFrom`** — trabajo desde el que se invocó la corrida (`US-XXX-slug`, `WI-XXX-slug`) o `null` si no aplica. Es **informativo**: la corrida es de la **rama consolidada**, que puede incluir varios trabajos, así que **no** debe usarse para filtrar resultados ni para decidir si la caché aplica a otro trabajo.
-- **`testingStandard`** — ruta del estándar de testing del que salieron las suites configuradas, o `null` si el repo no tiene ninguno (en cuyo caso `suites[]` trae las dos fijas más `e2e` si el repo tiene config). Informativo: permite al consumidor distinguir «este repo no declara integración» de «no se leyó el estándar».
-- **`git.fingerprint`** — única clave de frescura. Debe corresponder al estado del código **realmente probado** (recalcular tras cualquier corrección).
-- **`suites[].type` = `architecture`** — la corrida del **runner de validaciones de arquitectura** del repo (`scripts/arch/verify.<ext>`). Slug canónico, como `unit`/`coverage`/`e2e`, pero **no garantizado**: se emite solo si el repo tiene runner. **No lleva `standard`**: la corrida es del runner completo, no de un estándar concreto, y el reparto por `CR-XXX` lo hace `arch-audit` leyendo la salida, no esta caché. Es la **única entrada de `suites[]` que no es una clase de prueba**: `coverage-verify` la ignora (no es cobertura funcional) y su consumidor es `arch-audit`.
-- **`suites[].type`** — para las **fijas**, `unit` o `coverage` (slugs canónicos de este skill): **siempre se emiten las dos**, y la que el repo no tiene va con `result: "N/A"`. `e2e` usa también un slug canónico pero **no está garantizada**: se emite solo si el repo tiene config e2e o el estándar la declara. Para las **configuradas**, el `ID` **tal cual lo declara el requisito** en el estándar de testing (`integration-testing`, `contract-testing`, `performance-testing`…): se emite **una entrada por requisito vigente**, y ninguna si el estándar no declara más. **No** emitir una entrada por una suite que el estándar no declara.
-- **`suites[].standard`** — solo en las configuradas: referencia global al requisito del estándar, `<slug-del-estándar>/<ID-del-requisito>` (p. ej. `testing/integration-testing`). Ausente en las fijas y en un `e2e` que salga del catálogo de checks y no del estándar.
-- **`suites[].result`** — `PASS` · `FAIL` · `SKIPPED` (correspondía pero no se pudo ejecutar) · `N/A` (no aplica al repo).
-- **`checks[]`** (opcional) — los checks **estáticos** de una corrida completa: `typecheck`, `lint`, `build` y `sonar`, con la misma semántica de `command`/`result`/`summary` que `suites[]` (los que quedaron `N/A` se omiten, igual que en el informe). Los escribe **solo una corrida completa** de este skill — nunca `tests-only` — y su único consumidor es **este propio skill**, para no re-ejecutar nada con caché fresca; `coverage-verify` y `arch-audit` los ignoran. Su ausencia significa que la corrida que escribió la caché no los ejecutó — no es un fallo: la siguiente corrida completa los ejecuta y los añade.
-
-> **Solo `unit` y `coverage` están garantizadas.** Para **toda** otra entrada —`e2e` y `architecture` incluidas— la regla de consumo es la misma: buscarla en `suites[]` y, si no está, tratarla como algo que este repo no ejecuta. Nunca asumir su presencia ni deducir un fallo de su ausencia.
-
-> **Cada consumidor lee solo lo suyo.** `coverage-verify` mapea las suites de prueba a la matriz de cobertura y **descarta `architecture`** —igual que ya descarta `coverage`—; `arch-audit` lee **solo** `architecture` y no mira las suites de prueba. Ninguno reescribe el archivo: el productor único sigue siendo `quality-check`.
+El esquema (`quality-check-run/v1`), la semántica de cada campo y las reglas de frescura para los
+lectores viven en [`${PLUGIN_ROOT}/references/quality-check-run.md`](../../../references/quality-check-run.md) —
+contrato compartido con `coverage-verify` y `arch-audit`. Aquí queda solo el procedimiento del productor.
 
 ### Cuándo se escribe y se reutiliza
 

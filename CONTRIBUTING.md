@@ -32,6 +32,7 @@ Antes de abrir uno nuevo, revisa que no exista ya un issue similar.
    - Cursor: `npx skills add <ruta-o-url-de-tu-fork>`.
    - Claude Code: `claude --plugin-dir .` desde la raíz del repo.
    - Validadores del repo: `node scripts/validate-skills.js` (formato y enlaces de los skills) y `node --test scripts/*.test.js` (sus pruebas, más la del `FINGERPRINT` canónico de la tubería de cierre — si tocas la receta en `quality-check`, `code-review` o `coverage-verify`, esa prueba comprueba que las tres copias sigan idénticas y que la clave se mueva solo cuando cambia el código).
+   - Publicar una versión: `node scripts/release.js <major|minor|patch>` desde `develop` con el árbol limpio. Sube la versión en `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `plugin.json` (Cursor) y el badge del `README.md`, commitea el bump, publica `develop`, abre y mergea el PR a `main` y crea el release `vX.Y.Z`. `--dry-run` solo muestra lo que haría; `--no-publish` se detiene tras el commit.
 4. Usa [Conventional Commits](https://www.conventionalcommits.org/) en tus mensajes de commit (`feat:`, `fix:`, `docs:`, `refactor:`, etc.) — puedes apoyarte en el skill `git-commit` del propio repo.
 5. Abre el Pull Request contra `main` con:
    - Descripción clara del **qué** y el **por qué** del cambio.
@@ -47,6 +48,7 @@ Antes de abrir uno nuevo, revisa que no exista ya un issue similar.
 | `agents/` | Agentes reutilizables invocables con la herramienta Task o referenciados desde reglas. |
 | `.claude-plugin/` | Marketplace (`marketplace.json`) y manifiesto del plugin SDD Devkit (`plugin.json`) para Claude Code. |
 | `plugin.json` (raíz) | Manifiesto del plugin SDD Devkit según el estándar abierto [Agent Plugins](https://cursor.com/docs/plugins) — lo consumen Cursor y cualquier otro cliente compatible con la especificación. |
+| `assets/` | Plantillas compartidas por dos o más skills (p. ej. `wireframe-template.md`). |
 | `docs/use-cases/` | Recorridos de extremo a extremo del harness, enlazados desde el README. |
 
 ## Preguntas

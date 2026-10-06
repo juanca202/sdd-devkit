@@ -4,7 +4,7 @@ Cómo se define cada tipo de elemento de una capability. La estructura exacta de
 
 Reglas comunes a todos los tipos:
 
-- **Id estable por tipo:** `MD-XXX`, `API-XXX`, `FL-XXX`, `DG-XXX` (y `WF-XXX` para los wireframes, ver abajo), secuencial dentro de la capability (la secuencia es única aunque los elementos vivan en archivos distintos). No renumerar nunca: otros artefactos enlazan por ancla o por nombre de archivo. Si un elemento deja de aplicar, marcarlo `(Obsoleto)` en el título y explicar en qué fue reemplazado, en lugar de borrarlo, mientras existan consumidores que lo referencien.
+- **Id estable por tipo:** `MD-XXX`, `API-XXX`, `FL-XXX`, `DG-XXX`, secuencial dentro de la capability (la secuencia es única aunque los elementos vivan en archivos distintos). No renumerar nunca: otros artefactos enlazan por ancla o por nombre de archivo. Si un elemento deja de aplicar, marcarlo `(Obsoleto)` en el título y explicar en qué fue reemplazado, en lugar de borrarlo, mientras existan consumidores que lo referencien.
 - **Dónde vive cada tipo:** cada modelo (`MD-XXX`), cada **grupo de APIs** (`API-XXX`), cada flujo (`FL-XXX`) y cada diagrama (`DG-XXX`) en su propio archivo bajo `models/`, `apis/`, `flows/` y `diagrams/`, **nombrado con el estándar `MD-XXX-{slug}` / `API-XXX-{slug}` / `FL-XXX-{slug}` / `DG-XXX-{slug}`** (`models/MD-001-factura.md`, `apis/API-001-facturas.md`, `flows/FL-001-emision-factura.md`, `diagrams/DG-001-contexto.md`; slug kebab-case del nombre, fijado al crear el elemento) y enlazado desde la tabla índice correspondiente del README. Renombrar el elemento no renombra el archivo: el id es el contrato, igual que en las carpetas `US-XXX-[nombre-corto]`. Su referencia externa es la ruta del archivo, sin ancla. **El `README.md` es el índice de la capability: no define elementos.**
 - **Ancla explícita de operación, derivada de método + ruta** (dentro de un archivo de `apis/`). Un `API-XXX` contiene varias operaciones; cada una lleva **inmediatamente antes** de su encabezado una línea con su ancla, y el encabezado es `### \`MÉTODO /ruta\` — Nombre`:
 
@@ -233,11 +233,11 @@ C4Context
 
 ---
 
-## Wireframes (WF-XXX) — mismo estándar, otro productor
+## Wireframes (WF-XXX) — insumo, no elemento de la capability
 
-Un `WF-XXX` es el wireframe de una pantalla: un documento `wireframes/WF-XXX-{slug}.md` (objetivo, componentes, estados, historial de revisión) y su SVG hermano `wireframes/WF-XXX-{slug}.svg` (mockup en escala de grises, baja/media fidelidad), con fila en la tabla índice «Wireframes» del README. Sigue las mismas reglas de id estable, slug fijado al crear, referencia por ruta de archivo sin ancla y «sin fila en el índice = huérfano» que `MD`/`API`/`FL`/`DG`. Plantilla: `assets/wireframe-template.md`.
+Un `WF-XXX` es el wireframe de una pantalla: un documento `wireframes/WF-XXX-{slug}.md` (objetivo, componentes, estados, historial de revisión) y su SVG hermano `wireframes/WF-XXX-{slug}.svg`. **No es documentación de arquitectura**: es un recurso del artefacto de implementación que lo origina y vive en la carpeta de ese artefacto (`SRS-XXX-…/wireframes/`, `US-XXX-…/wireframes/` o `WI-XXX-…/wireframes/`), con id secuencial dentro de ella. La carpeta de capability no tiene `wireframes/` ni tabla índice de wireframes.
 
-La diferencia es **quién lo produce**: `requirement-refine` (paso 4 de su flujo, desde un `SRS-XXX`) o `work-define` (desde una `US-XXX` que toca UI y no hereda wireframes), porque el wireframe se valida con el usuario en lenguaje de experiencia, no de implementación. `design-define` **no crea, renumera ni revisa** wireframes: los lee como insumo (una pantalla aprobada suele anticipar el `FL-XXX` y las `API-XXX` que la sirven), los cita por id en Notas cuando un flujo o un endpoint los materializa, y conserva sus filas al reescribir el README. Su estado de revisión (`Pendiente` / `Revisado con cambios` / `Aprobado`) lo gobierna el artefacto de origen (SRS o US), no la capability.
+Los producen `requirement-refine` (paso 4 de su flujo, en un `SRS-XXX`) y `work-define` (en una `US-XXX` que toca UI y no hereda wireframes), porque el wireframe se valida con el usuario en lenguaje de experiencia, no de implementación. `design-define` **no crea, renumera, mueve ni revisa** wireframes: los lee como insumo cuando el artefacto que motiva el diseño los trae (una pantalla aprobada suele anticipar el `FL-XXX` y las `API-XXX` que la sirven) y puede enlazarlos en Notas cuando un flujo o un endpoint los materializa. Su estado de revisión (`Pendiente` / `Revisado con cambios` / `Aprobado`) lo gobierna el artefacto de origen.
 
 ---
 

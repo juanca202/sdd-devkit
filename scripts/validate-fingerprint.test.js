@@ -7,8 +7,9 @@
 //   node --test scripts/validate-fingerprint.test.js
 //
 // Qué verifica:
-//   1. Que la receta (`EXC=` + `FINGERPRINT=`) sea idéntica en los tres archivos
-//      que la copian: skills/quality-check/references/execution.md (canónica),
+//   1. Que la receta (`EXC=` + `FINGERPRINT=`) sea idéntica en la referencia canónica
+//      (references/fingerprint.md) y en los tres archivos que la copian:
+//      skills/quality-check/references/execution.md,
 //      skills/code-review/references/execution.md y
 //      skills/coverage-verify/references/flow.md.
 //   2. Que, ejecutada sobre un repo real, la clave se mueva SOLO cuando cambia
@@ -26,7 +27,8 @@ const { execFileSync, spawnSync } = require('node:child_process');
 
 const ROOT = path.resolve(__dirname, '..');
 const RECIPE_FILES = [
-  'skills/quality-check/references/execution.md', // canónica
+  'references/fingerprint.md', // canónica
+  'skills/quality-check/references/execution.md',
   'skills/code-review/references/execution.md',
   'skills/coverage-verify/references/flow.md',
 ];
@@ -47,7 +49,7 @@ function extractRecipe(file) {
     .join('\n');
 }
 
-test('la receta del FINGERPRINT es idéntica en sus tres copias', () => {
+test('la receta del FINGERPRINT es idéntica en la canónica y sus tres copias', () => {
   const [canonical, ...copies] = RECIPE_FILES.map(extractRecipe);
   for (let i = 0; i < copies.length; i++) {
     assert.equal(

@@ -94,7 +94,7 @@ sección de **fitness functions**: cuáles existen y su resultado al ejecutarlas
 > es lo que la Fase 0 de este skill da por hecho al buscar la auditoría previa.
 >
 > Todo `docs/` —y por tanto `docs/audits/`— está **excluido del fingerprint canónico** de la tubería de
-> cierre (ver [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify)):
+> cierre (ver [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md)):
 > **escribir el informe** de auditoría no invalida la caché de pruebas, ni el `criteria-coverage.md`, ni el
 > `code-review.md`.
 >
@@ -123,6 +123,8 @@ Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
+
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
 
 ---
 
@@ -475,12 +477,13 @@ hallazgo vive en `assets/`. **Leerlos solo cuando la fase correspondiente lo pid
 - [`references/revalidation.md`](references/revalidation.md) — procedimiento completo de la Fase 0 cuando el usuario elige revalidar un informe previo en vez de auditar desde cero.
 - [`assets/audit-template.md`](assets/audit-template.md) — plantilla del informe, incluido el formato exacto de cada hallazgo. Leer en la Fase 3, al redactar.
 
-
 ### Referencias compartidas del plugin
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md) y [`${PLUGIN_ROOT}/references/quality-check-run.md`](../../references/quality-check-run.md): **Caché de cierre** — receta del `FINGERPRINT` y contrato de `quality-check-run.json` (esquema, frescura). *Al calcular la clave o leer/escribir la caché.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/escalation.md`](../../references/escalation.md): **Límite de intentos** — cuántos intentos sobre un mismo problema irresoluble antes de escalar, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 

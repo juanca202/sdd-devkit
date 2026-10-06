@@ -20,6 +20,8 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** las descripciones de tests y los comentarios dentro de archivos de test van en **inglés** (convención del repositorio), salvo que el estándar de testing o los archivos vecinos indiquen otro idioma. La salida y los mensajes de error de las herramientas no se traducen.
 
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../references/linking.md) — todo archivo o carpeta existente del proyecto que este agente mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
+
 ## Límite de intentos y escalamiento
 
 Antes de ejecutar este agente, DEBES leer [`${PLUGIN_ROOT}/references/escalation.md`](../references/escalation.md).

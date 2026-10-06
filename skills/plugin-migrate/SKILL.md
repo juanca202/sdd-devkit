@@ -23,6 +23,7 @@ El catálogo de migraciones conocidas —qué se detecta y cómo se normaliza, f
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — layout vigente del harness, identificadores, archivado. *Es la definición de «estructura vigente» contra la que se detecta.*
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas estructuradas** — mecanismo y ritmo para proponer el plan y pedir confirmación.
 
@@ -37,6 +38,8 @@ Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
+
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
 
 ## Modos de invocación
 

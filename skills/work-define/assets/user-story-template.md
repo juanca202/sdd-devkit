@@ -73,9 +73,10 @@ Categorías no funcionales (ISO/IEC 25010): Idoneidad funcional · Eficiencia de
 <!--
 Incluir únicamente enlaces a recursos ya almacenados; nunca pegar archivos, imágenes ni descripciones directamente aquí.
 Recursos válidos: mockups, wireframes, flujos, modelos, diagramas, especificaciones técnicas.
-Rutas permitidas: assets/ (recursos propios de esta historia) o docs/architecture/ (documentación técnica compartida
-y wireframes de la capability). Los wireframes nunca van en assets/: viven en
-docs/architecture/[capability]/wireframes/WF-XXX-{slug}.md (+ .svg hermano), heredados del SRS o generados por work-define.
+Rutas permitidas: assets/ y wireframes/ (recursos propios de esta historia) o docs/architecture/ (documentación técnica
+compartida). Los wireframes nunca van en assets/ ni en docs/architecture/: viven en wireframes/WF-XXX-{slug}.md (+ .svg
+hermano) de esta carpeta si los generó work-define, o se enlazan en la carpeta del SRS de origen si se heredan
+(../../requirements/SRS-XXX-[nombre-corto]/wireframes/WF-XXX-{slug}.md), sin copiarlos.
 Al enlazar un elemento de la documentación técnica, copiar la referencia tal como la devuelve design-define, nunca el título
 convertido a slug. Toda referencia es la ruta del archivo del elemento:
 docs/architecture/[capability]/models/MD-XXX-{slug}.md, apis/API-XXX-{slug}.md (añadiendo el ancla de
@@ -83,7 +84,7 @@ operación #<método-ruta> cuando se cita un endpoint concreto, p. ej. apis/API-
 flows/FL-XXX-{slug}.md o diagrams/DG-XXX-{slug}.md.
 -->
 - **Diseño / prototipo:** {{enlace markdown al diseño o prototipo}}
-- **Wireframe:** {{[WF-XXX: pantalla](../../../../architecture/[capability]/wireframes/WF-XXX-{slug}.md), uno por pantalla; omitir si la US no tiene UI}}
+- **Wireframe:** {{[WF-XXX: pantalla](wireframes/WF-XXX-{slug}.md) — {{Pendiente / Revisado con cambios / Aprobado}}, uno por pantalla; si se hereda del SRS, enlazarlo en su carpeta; omitir si la US no tiene UI}}
 - **Archivo local:** {{enlace markdown al archivo en assets/}}
 - {{añadir entradas adicionales o indicar «Ninguna por ahora»}}
 

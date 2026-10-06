@@ -20,6 +20,8 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** los nombres de clases, identificadores, props y rutas **no** siguen el idioma resuelto — siguen la convención del código existente. El texto visible de la UI sigue el idioma de los archivos vecinos o del sistema de i18n del repo cuando el gate de i18n está activo.
 
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../references/linking.md) — todo archivo o carpeta existente del proyecto que este agente mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
+
 ## Límite de intentos y escalamiento
 
 Antes de ejecutar este agente, DEBES leer [`${PLUGIN_ROOT}/references/escalation.md`](../references/escalation.md).

@@ -162,7 +162,7 @@ en cada repositorio un `CLAUDE.md` con una sola línea (`@AGENTS.md`) como punte
 
 ## 8. Referencias internas a rutas movidas
 
-**Detección:** tras aplicar las familias 3, 4, 6, 7 o 9, quedan en el repositorio citas a las rutas antiguas
+**Detección:** tras aplicar las familias 3, 4, 6, 7, 9 o 10, quedan en el repositorio citas a las rutas antiguas
 (secciones Referencias de US/TK/WI, índices, prosa de documentos del proyecto).
 
 **Normalización:** reescribirlas según el mapeo viejo → nuevo de esta corrida. Es el **último paso** de
@@ -219,3 +219,36 @@ Después, la familia 8 reescribe las referencias internas (`docs/specs/user-stor
 → `docs/specs/archived/…`, y los enlaces relativos entre artefactos que cambiaron de profundidad) y
 reporta el mapeo viejo → nuevo; los trackers externos que citaban rutas del repo solo pueden
 reportarse.
+
+## 10. Wireframes guardados en la carpeta de capability
+
+**Ubicación vigente** (`${PLUGIN_ROOT}/references/artifacts.md` § Layout del harness): un `WF-XXX` es un
+recurso del **artefacto de implementación** que lo origina y vive en `wireframes/WF-XXX-{slug}.md` (+ su
+`.svg` hermano) **dentro de la carpeta de ese artefacto** (`SRS-XXX-…/`, `US-XXX-…/` o `WI-XXX-…/`). No es
+documentación de arquitectura: `docs/architecture/[capability]/` no tiene `wireframes/` ni tabla índice
+«Wireframes».
+
+**Detección** (cualquiera de estas señales):
+
+- Existe `docs/architecture/[capability]/wireframes/` con archivos `WF-*`.
+- El `README.md` de una capability tiene una sección o tabla índice «Wireframes».
+
+**Normalización:**
+
+1. **Resolver el artefacto de origen de cada wireframe**: el campo **Origen** de la cabecera de su `.md`, o
+   la columna Origen de su fila en el índice de la capability; si falta o apunta a un artefacto que no
+   existe, buscar qué SRS/US/WI lo enlaza. Si lo enlazan varios, el origen es el más antiguo de la cadena
+   (el SRS antes que sus US). **Si no se puede determinar, no adivinar:** listarlo en el plan y preguntar.
+2. **Mover con `git mv`** cada par `.md` + `.svg` (y sus variantes de estado `WF-XXX-{slug}-*.svg`) a
+   `<carpeta del artefacto de origen>/wireframes/`, esté el artefacto en `changesPath` o ya archivado en
+   `archivedPath`. El **id heredado se conserva tal cual** aunque la secuencia de la carpeta destino quede
+   con huecos o no empiece en `001`; solo si dos wireframes con el mismo id caen en la misma carpeta,
+   mostrar el choque y preguntar cuál se renumera. Actualizar el enlace **Origen** del `.md` a `../README.md`.
+3. **Limpiar la capability:** quitar la sección «Wireframes» de su `README.md` y la carpeta `wireframes/`
+   vacía. Si la capability queda sin ningún elemento (`models/`, `apis/`, `flows/`, `diagrams/` vacíos o
+   inexistentes y un README con solo Propósito y Observaciones), proponer eliminarla con su propia
+   confirmación — no borrarla en silencio.
+4. **Reescribir los enlaces** (familia 8): sección 11 y «Enlaces y archivos de apoyo» de los SRS,
+   Referencias de US/TK/WI y cualquier documento de `docs/architecture/` que los citara, según el mapeo
+   `docs/architecture/[capability]/wireframes/WF-XXX-…` → `<artefacto>/wireframes/WF-XXX-…`. En los SRS,
+   quitar además la columna «Capability» de la tabla de la sección 11. El mapeo completo va en el reporte.

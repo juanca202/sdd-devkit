@@ -44,12 +44,14 @@ Carga cada archivo **solo cuando lo necesites** (rutas relativas a la raíz del 
 | [`references/stacks.md`](references/stacks.md) | Detección de ecosistema, categoría de cada check por stack, comandos y parseo por herramienta. | En el Paso 1, **una vez identificado** el stack (no antes). |
 | [`assets/quality-check-template.md`](assets/quality-check-template.md) | Plantilla canónica del informe. | En el Paso 4, para rellenar el informe. |
 
-
 ### Referencias compartidas del plugin
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md) y [`${PLUGIN_ROOT}/references/quality-check-run.md`](../../references/quality-check-run.md): **Caché de cierre** — receta del `FINGERPRINT` y contrato de `quality-check-run.json` (esquema, frescura). *Al calcular la clave o leer/escribir la caché.*
+- [`${PLUGIN_ROOT}/references/requirement-criteria.md`](../../references/requirement-criteria.md): **Vocabulario de requisitos** — tabla RFC 2119 y catálogos de categorías. *Al redactar o clasificar un requisito o criterio.*
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/verification.md`](../../references/verification.md): **Política de corrección** — si se pregunta antes de corregir un fallo o se corrige directo. *Lectura obligatoria antes de ejecutar el skill.*
@@ -190,7 +192,7 @@ El **conjunto de pruebas** de una corrida tiene dos partes, y solo la primera es
 - **Lo que no aplica no se lista.** La tabla del informe incluye **solo los checks que se ejecutaron**, más `unit` y `coverage` siempre. Cualquier otro check en `N/A` —sin stack/config detectable, o excluido por un modificador del usuario— **se omite del informe**: no lleva fila, y no se añade nota al pie ni sección que enumere lo omitido. Esto vale para `e2e` igual que para tipado, linter, build o sonar.
 - **El estándar es la única fuente de las suites configuradas** (salvo `e2e`, que sale del catálogo de checks). Si el repo no tiene estándar de testing, o su estándar no declara más clases de prueba que las fijas, la corrida son **solo `unit`, `coverage` y —si hay config— `e2e`**. No se añade ninguna otra suite por haberla detectado en el repo.
 - **Solo cuentan los requisitos vigentes.** Un requisito con `**Estado:** Deprecated` o `Superseded` no se ejecuta ni se lista: dejó de ser exigible.
-- **La categoría sale del enunciado normativo** del requisito (RFC 2119, ver [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md)): **DEBE / MUST → Bloqueante**; **DEBERÍA / PUEDE (SHOULD / MAY) → Condicional**. Si el enunciado no es claro, tratarla como **Condicional** y anotarlo en el detalle del check.
+- **La categoría sale del enunciado normativo** del requisito (RFC 2119, ver [`${PLUGIN_ROOT}/references/requirement-criteria.md`](../../references/requirement-criteria.md)): **DEBE / MUST → Bloqueante**; **DEBERÍA / PUEDE (SHOULD / MAY) → Condicional**. Si el enunciado no es claro, tratarla como **Condicional** y anotarlo en el detalle del check.
 - **El estándar puede endurecer un check, nunca ablandarlo.** Si declara e2e con **DEBE**, e2e pasa de Condicional a Bloqueante (y, al estar declarado, un e2e que no se puede ejecutar es `SKIPPED`, no `N/A`, así que **sí lleva fila**). Lo que el stack exige como Bloqueante (unit, coverage) sigue siéndolo aunque el estándar calle o suavice.
 - **Suite declarada que no se puede ejecutar → `SKIPPED`** (`INCOMPLETE`), no `N/A`: el estándar es precisamente la declaración de que ese check debe correr — es la mnemónica de [SKIPPED vs N/A](#skipped-vs-na-definición-tajante) aplicada al pie de la letra.
 - **Suite presente en el repo pero no declarada en el estándar:** **no se ejecuta y no bloquea**. Anotarla en **Próximas acciones** como recomendación de declararla en el estándar (vía `arch-manage`), igual que se hace con la cobertura sin tooling.
@@ -351,10 +353,11 @@ La clave de frescura es el **`FINGERPRINT` canónico** —compartido, con la mis
 puertas del cierre (`quality-check-run.json` aquí, `criteria-coverage.md` en `coverage-verify`, `docs/audits/code-review.md`
 en `code-review`)—: un hash del commit + working tree + cambios sin commitear, excluyendo toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`, para que ni escribir un artefacto de la propia tubería ni editar documentación desplace la clave. **La clave se mueve solo cuando cambia algo que puede alterar el resultado de una prueba o de una compilación.**
 
-Detalle completo (receta exacta del fingerprint y por qué cada exclusión existe, esquema `quality-check-run.json`
-con la semántica de cada campo, y cuándo se escribe/reutiliza la caché) en
-[`references/execution.md`](references/execution.md#caché-de-corrida-de-pruebas) — **es la definición
-canónica y única**; los consumidores la referencian, no la copian.
+Definiciones canónicas, compartidas con los consumidores: receta exacta del fingerprint y por qué existe cada
+exclusión en [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md); esquema
+`quality-check-run.json`, semántica de cada campo y frescura para los lectores en
+[`${PLUGIN_ROOT}/references/quality-check-run.md`](../../references/quality-check-run.md). Cuándo este skill escribe y
+reutiliza la caché: [`references/execution.md`](references/execution.md#caché-de-corrida-de-pruebas).
 
 ---
 
@@ -396,3 +399,5 @@ Las reglas de `language.md` son obligatorias y tienen prioridad para determinar 
 No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** la salida y los mensajes de error de las herramientas no se traducen; se citan literales.
+
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.

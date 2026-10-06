@@ -35,12 +35,12 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 | Estándares de definición de **modelos de datos** (`MD-XXX`), **grupos de APIs/endpoints** (`API-XXX`: criterio de agrupación, ancla de operación), **flujos/procesos** (`FL-XXX`) y **diagramas** (`DG-XXX`: clases, contexto, contenedores, componentes): tablas, diagramas Mermaid, ejemplos | [`references/element-standards.md`](references/element-standards.md) |
 | Estructura de la carpeta de capability (README índice, modelos, APIs, flujos, diagramas) | `assets/capability-readme-template.md` · `assets/model-template.md` · `assets/api-template.md` · `assets/flow-template.md` · `assets/diagram-template.md` |
 
-
 ### Referencias compartidas del plugin
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 
 ---
@@ -59,6 +59,8 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** los nombres de campos, rutas y payloads **no** siguen el idioma resuelto — siguen la convención del código existente (ver [`references/element-standards.md`](references/element-standards.md)).
 
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
+
 ---
 
 ## Ubicación de archivos
@@ -76,17 +78,17 @@ Lo propio de este skill:
 | Flujos / procesos (un archivo por flujo) | `docs/architecture/[capability]/flows/FL-XXX-[slug].md` |
 | Diagramas (un archivo por diagrama) | `docs/architecture/[capability]/diagrams/DG-XXX-[slug].md` |
 | Archivos de apoyo (imágenes, esquemas exportados) | `docs/architecture/[capability]/assets/` |
-| Wireframes de pantalla (**solo lectura para este skill**) | `docs/architecture/[capability]/wireframes/WF-XXX-[slug].md` + `WF-XXX-[slug].svg` — los crean `requirement-refine` y `work-define` con [`assets/wireframe-template.md`](assets/wireframe-template.md); este skill los lee como contexto de UI y mantiene su fila en el índice del README, nunca los genera ni los revisa |
+| Wireframes de pantalla (**solo lectura para este skill**) | `wireframes/WF-XXX-[slug].md` + `WF-XXX-[slug].svg` **dentro de la carpeta del artefacto de origen** (SRS / US / WI) — son un recurso de ese artefacto, no de la capability; este skill los lee como contexto de UI cuando el artefacto que motiva el diseño los trae, y nunca los genera, mueve ni indexa en `docs/architecture/` |
 | Glosario (opcional) | `docs/glossary.md` |
 
 ### Convenciones
 
 - **Una carpeta por capability.** Si la carpeta de la capability ya existe, se **actualiza** (se añaden o modifican elementos); nunca crear una segunda carpeta para la misma capability.
 - Nombre de la carpeta: capability en minúsculas, kebab-case, sin artículos ni palabras vacías. Ejemplos: `facturacion/`, `gestion-recetas/`, `autenticacion/`.
-- Cada elemento lleva id secuencial **por tipo**, único en el ámbito de la capability: modelos `MD-001, MD-002, …`; APIs `API-001, API-002, …`; flujos `FL-001, FL-002, …`; diagramas `DG-001, DG-002, …`; wireframes `WF-001, WF-002, …` — todos con **3 dígitos**, como los identificadores de artefactos del catálogo. No renumerar elementos existentes: los ids son estables porque otras historias y tareas ya pueden enlazarlos.
+- Cada elemento lleva id secuencial **por tipo**, único en el ámbito de la capability: modelos `MD-001, MD-002, …`; APIs `API-001, API-002, …`; flujos `FL-001, FL-002, …`; diagramas `DG-001, DG-002, …` — todos con **3 dígitos**, como los identificadores de artefactos del catálogo. No renumerar elementos existentes: los ids son estables porque otras historias y tareas ya pueden enlazarlos.
 - **Modelos, grupos de APIs, flujos y diagramas viven cada uno en su propio archivo**, en `models/`, `apis/`, `flows/` y `diagrams/`, nombrado con el estándar **`MD-XXX-{slug}` / `API-XXX-{slug}` / `FL-XXX-{slug}` / `DG-XXX-{slug}`** — `models/MD-001-factura.md`, `apis/API-001-facturas.md`, `flows/FL-001-emision-factura.md`, `diagrams/DG-002-contexto.md` — donde `{slug}` es el nombre del elemento en kebab-case, **fijado al crearlo**: renombrar el elemento después no renombra el archivo (el id sigue siendo el contrato de enlace; mismo criterio que las carpetas `US-XXX-[nombre-corto]`). Su referencia es la ruta del archivo, sin ancla: `docs/architecture/facturacion/apis/API-001-facturas.md`. El nombre humano vive en el `# {{ID}}: Nombre` del propio archivo y en las **tablas índice** del README («Modelos de datos», «APIs / Endpoints», «Flujos / Procesos» y «Diagramas»), que enlazan cada archivo — un elemento sin fila en su índice es un elemento huérfano. **El README no define elementos: es el índice.**
 - **Un `API-XXX` agrupa endpoints por entidad o funcionalidad**, no por operación: el CRUD completo de un recurso más sus endpoints relacionados va en un solo archivo (`apis/API-001-proyectos.md`), igual que `login`/`logout`/`refresh`/`forgot-password` van juntos en `apis/API-002-autenticacion.md`. Un endpoint pertenece a **un solo** grupo. Dentro del archivo, cada operación es un encabezado `###` con el formato `### \`MÉTODO /ruta\` — Nombre` precedido de su **ancla explícita** derivada de **método + ruta, sin el prefijo de versión**: se descartan los segmentos iniciales `api` y `vN` de la ruta, y el resto se pasa a minúsculas con todo carácter no alfanumérico convertido a guion (sin guiones repetidos ni al inicio/fin). `POST /api/v1/projects` → `<a id="post-projects"></a>`; `GET /api/v1/projects/{id}` → `<a id="get-projects-id"></a>`. El ancla no lleva versión **a propósito**: subir de `v1` a `v2` no debe invalidar los enlaces entrantes. Para citar un endpoint concreto se añade esa ancla a la ruta del archivo: `docs/architecture/proyectos/apis/API-001-proyectos.md#post-projects`. Nunca un ancla derivada del título de la operación: depende del renderizador y se rompe al renombrarla. Ver [Por qué el ancla no se deriva del título](references/element-standards.md#por-qué-el-ancla-no-se-deriva-del-título).
-- **Los wireframes siguen el mismo principio, pero no los produce este skill.** `wireframes/WF-XXX-{slug}.md` (+ `WF-XXX-{slug}.svg` hermano) con fila en la tabla índice «Wireframes» del README los crean `requirement-refine` (paso 4 de su flujo, desde un `SRS-XXX`) y `work-define` (desde una `US-XXX` que toca UI y no hereda wireframes), con la plantilla [`assets/wireframe-template.md`](assets/wireframe-template.md) que vive aquí porque es un elemento de la carpeta de capability. Es la **única excepción** a «`docs/architecture/` lo escribe `design-define`». Este skill los lee al abrir una capability (pantallas y flujos de usuario ya validados son insumo para `FL-XXX`/`API-XXX`), conserva sus filas de índice al reescribir el README y nunca los genera, renumera ni cambia su estado de revisión.
+- **Los wireframes no son parte de la capability.** Un `WF-XXX` es un recurso del artefacto de implementación que lo origina (`wireframes/` dentro de la carpeta del SRS, la US o el WI); los crean `requirement-refine` y `work-define`. `docs/architecture/` lo escribe **solo** `design-define`, sin excepciones, y no contiene wireframes ni índice de ellos. Este skill los lee como insumo cuando el artefacto que motiva el diseño los trae (pantallas y flujos de usuario ya validados anticipan `FL-XXX`/`API-XXX`), puede enlazarlos en Notas, y nunca los genera, renumera, mueve ni cambia su estado de revisión.
 - El `README.md` lleva **fecha de creación** y **última actualización** de la capability. Las lagunas abiertas se registran en **Observaciones** del README, citando el elemento afectado esté donde esté.
 
 ---

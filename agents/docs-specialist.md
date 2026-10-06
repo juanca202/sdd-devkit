@@ -18,6 +18,8 @@ Las reglas de `language.md` son obligatorias y tienen prioridad para determinar 
 
 No continúes hasta haber leído y aplicado `language.md`.
 
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../references/linking.md) — todo archivo o carpeta existente del proyecto que este agente mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
+
 ## Límite de intentos y escalamiento
 
 Antes de ejecutar este agente, DEBES leer [`${PLUGIN_ROOT}/references/escalation.md`](../references/escalation.md).

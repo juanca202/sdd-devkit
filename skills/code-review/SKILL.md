@@ -45,12 +45,13 @@ Carga cada archivo **solo cuando lo necesites** (rutas relativas a la raíz del 
 | [`references/qualitative-review.md`](references/qualitative-review.md) | Detalle de las tres dimensiones, modelo ISO/IEC 25010, calibración de severidad y ejemplos de buen/mal feedback. | En el Paso 3, antes de redactar hallazgos. |
 | [`assets/code-review-template.md`](assets/code-review-template.md) | Plantilla canónica del informe. | En el Paso 4, para rellenar el informe. |
 
-
 ### Referencias compartidas del plugin
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md): **Fingerprint canónico** — receta y exclusiones de la clave de frescura `FINGERPRINT`. *Al calcular o comparar la clave.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/verification.md`](../../references/verification.md): **Política de corrección** — si se pregunta antes de corregir un hallazgo bloqueante o se corrige directo. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/escalation.md`](../../references/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
@@ -184,7 +185,7 @@ Las **claves** de los modificadores son siempre en inglés (estándar). Si el us
 
 ## Reutilización del informe (idempotencia)
 
-Mismo principio de caché que [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify) y `coverage-verify`: **si no hubo cambios en los archivos desde la última revisión, no se vuelve a revisar** — se devuelven el veredicto y el resumen del `docs/audits/code-review.md` existente. Revisar de nuevo un diff idéntico produciría el mismo informe y gasta el tiempo del usuario (y el contexto) sin aportar señal nueva.
+Mismo principio de caché que `quality-check` y `coverage-verify`: **si no hubo cambios en los archivos desde la última revisión, no se vuelve a revisar** — se devuelven el veredicto y el resumen del `docs/audits/code-review.md` existente. Revisar de nuevo un diff idéntico produciría el mismo informe y gasta el tiempo del usuario (y el contexto) sin aportar señal nueva.
 
 > **Contexto de ejecución.** Como las otras dos puertas, este skill es una **compuerta de cierre** (al integrar o antes del PR), no corre por tarea ni durante la implementación. La frescura se evalúa sobre la rama **consolidada** del cierre. Si `work-integrate` o `pr-create` invocan las puertas del cierre y el código no cambió desde la corrida anterior, esta devuelve su informe sin rehacer el análisis.
 
@@ -192,7 +193,7 @@ Mismo principio de caché que [`quality-check`](../quality-check/SKILL.md#caché
 
 | Componente | Qué cubre | Cómo se obtiene |
 |------------|-----------|-----------------|
-| `FINGERPRINT` | El lado de la rama: contenido trackeado, cambios sin stagear y rutas sin trackear, **excluyendo toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`** — se mueve solo cuando cambia el código. Es **el mismo valor** que calculan `quality-check` y `coverage-verify`; receta exacta en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify). | `git hash-object` sobre `ls-files -s` + `status` + `diff` (ver receta) |
+| `FINGERPRINT` | El lado de la rama: contenido trackeado, cambios sin stagear y rutas sin trackear, **excluyendo toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`** — se mueve solo cuando cambia el código. Es **el mismo valor** que calculan `quality-check` y `coverage-verify`; receta exacta en [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md). | `git hash-object` sobre `ls-files -s` + `status` + `diff` (ver receta) |
 | `BASE_COMMIT` | El otro lado: el commit de la **rama base** contra la que se diffea. Un `git fetch` que mueva la base cambia el diff sin tocar el árbol local, así que el `FINGERPRINT` solo no lo detectaría. Compara **commits**, no nombres de ref: `base develop` y `base origin/develop` apuntando al mismo commit son el mismo valor. | `git rev-parse --short <base>` con la base ya resuelta (Paso 0.1) |
 
 La exclusión de `docs/` es la que hace que **escribir el propio `code-review.md` no invalide su caché**.
@@ -255,7 +256,7 @@ Es un proceso **posterior a la implementación**: no forma parte de `work-implem
 
 ### Fingerprint canónico de la tubería
 
-Las **tres** puertas del cierre usan el **mismo** fingerprint canónico como clave de frescura, con el mismo nombre de variable (`FINGERPRINT`) y la misma receta —que vive en [`quality-check`](../quality-check/SKILL.md#caché-de-corrida-de-pruebas-compartida-con-coverage-verify)—, cada una sobre su propio artefacto: `quality-check-run.json` en `quality-check`, `criteria-coverage.md` en `coverage-verify` y `docs/audits/code-review.md` aquí. Este skill le añade un segundo componente, el commit de la **rama base**, porque su unidad de trabajo es un diff con dos lados (ver [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia)); el `FINGERPRINT` en sí **no** cambia de definición.
+Las **tres** puertas del cierre usan el **mismo** fingerprint canónico como clave de frescura, con el mismo nombre de variable (`FINGERPRINT`) y la misma receta —que vive en [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md)—, cada una sobre su propio artefacto: `quality-check-run.json` en `quality-check`, `criteria-coverage.md` en `coverage-verify` y `docs/audits/code-review.md` aquí. Este skill le añade un segundo componente, el commit de la **rama base**, porque su unidad de trabajo es un diff con dos lados (ver [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia)); el `FINGERPRINT` en sí **no** cambia de definición.
 
 Que la receta excluya **toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`** es lo que permite que escribir `code-review.md` no desplace la clave de frescura de ninguna de las tres. La contrapartida —que ni los criterios de aceptación de `docs/specs/` ni ningún otro `.md` del diff cuenten para la frescura de este informe— está en [Reutilización del informe (idempotencia)](#reutilización-del-informe-idempotencia).
 
@@ -272,3 +273,5 @@ Las reglas de `language.md` son obligatorias y tienen prioridad para determinar 
 No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** la salida y los mensajes de error de las herramientas no se traducen; se citan literales.
+
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.

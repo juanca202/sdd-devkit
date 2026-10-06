@@ -19,18 +19,19 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 | Necesitas… | Archivo |
 | ---------- | ------- |
 | Flujo paso a paso de **crear** y **actualizar**, cómo preguntar al usuario, validación antes de crear, checklist completo, ejemplos, anti-patrones y handoffs del ciclo | [`references/flow.md`](references/flow.md) |
-| Cómo **descomponer un `SRS-XXX`** de `/requirement-refine` en una o más historias (mapeo `FR-XXX`/`NFR-XXX` → `AC-XXX`, herencia de repos/wireframes `WF-XXX` de la capability, escritura de vuelta en el SRS) — entrada alternativa, no la habitual | [`references/flow.md`](references/flow.md#flujo-descomponer-un-srs-xxx-en-historias) |
+| Cómo **descomponer un `SRS-XXX`** de `/requirement-refine` en una o más historias (mapeo `FR-XXX`/`NFR-XXX` → `AC-XXX`, herencia de repos/wireframes `WF-XXX` del SRS, escritura de vuelta en el SRS) — entrada alternativa, no la habitual | [`references/flow.md`](references/flow.md#flujo-descomponer-un-srs-xxx-en-historias) |
 | Cómo ordenar y encadenar IDs al proponer **varias historias en una misma invocación** (SRS descompuesto, migración descompuesta, o varias funcionalidades relacionadas pedidas juntas) | [`references/flow.md`](references/flow.md#flujo-proponer-varias-historias-en-una-misma-invocación) |
 | Detalle de **RFC 2119** (tabla de modalidades), **ISO 25010** (categorías de criterios de aceptación no funcionales), rúbrica **INVEST** y **DoR** ampliado | [`references/quality-criteria.md`](references/quality-criteria.md) |
 | **Sincronizar** una historia desde el gestor de proyectos (`sync #id`): la crea localmente si no existe o la actualiza si ya existe — solo con integración activa | [`references/flow.md`](references/flow.md#flujo-sincronizar-una-historia-desde-el-gestor-de-proyectos-sync) y, por proveedor, [`references/azure-devops.md`](references/azure-devops.md) |
 | Estructura del `README.md` de una US | [`assets/user-story-template.md`](assets/user-story-template.md) |
-
 
 ### Referencias compartidas del plugin
 
 Reglas transversales del catálogo; viven en la raíz del plugin, no en este skill.
 
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
+- [`${PLUGIN_ROOT}/references/requirement-criteria.md`](../../references/requirement-criteria.md): **Vocabulario de requisitos** — tabla RFC 2119 y catálogos de categorías. *Al redactar o clasificar un requisito o criterio.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md): **Política de planificación** — si se pregunta, se invoca automáticamente o nunca se sugiere `test-define` al dejar la US en Ready. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/project-management.md`](../../references/project-management.md): **Gestor de proyectos** — si la integración está activa, proveedor y datos de conexión. *Lectura obligatoria antes de ejecutar el skill.*
@@ -49,6 +50,8 @@ Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/language.md
 Las reglas de `language.md` son obligatorias y tienen prioridad para determinar el idioma de todos los artefactos, documentos y mensajes generados por este skill.
 
 No continúes hasta haber leído y aplicado `language.md`.
+
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
 
 ---
 
@@ -121,7 +124,7 @@ Lo propio de este skill:
 | --------- | ---- |
 | Historia de usuario (**salida**) | `<changesPath>/user-stories/US-XXX-[nombre-corto]/README.md` |
 | Archivos de apoyo | `<changesPath>/user-stories/US-XXX-[nombre-corto]/assets/` |
-| Wireframes de pantalla (si la US toca UI y no hereda wireframes) | `docs/architecture/[capability]/wireframes/WF-XXX-[pantalla-slug].md` + `WF-XXX-[pantalla-slug].svg` — **por capability**, no en `assets/` de la US; mismo principio que `models/`/`diagrams/`; con fila en el índice «Wireframes» del `README.md` de la capability; plantilla [`${PLUGIN_ROOT}/skills/design-define/assets/wireframe-template.md`](../design-define/assets/wireframe-template.md). Única escritura de este skill en `docs/architecture/` |
+| Wireframes de pantalla (si la US toca UI y no hereda wireframes) | `wireframes/WF-XXX-[pantalla-slug].md` + `WF-XXX-[pantalla-slug].svg` — **dentro de la carpeta de la US**, en su propia subcarpeta (no en `assets/`), indexados en Referencias; plantilla [`${PLUGIN_ROOT}/assets/wireframe-template.md`](../../assets/wireframe-template.md). Son un recurso de la US, no documentación de arquitectura: este skill **no escribe en `docs/architecture/`** |
 | Documentación técnica (solo lectura) | `docs/architecture/[capability]/` — `README.md`, `models/`, `flows/`, `diagrams/`; propiedad de `design-define`; este skill la referencia, nunca la crea ni la edita |
 | Glosario (opcional) | `docs/glossary.md` |
 
@@ -135,14 +138,13 @@ Lo propio de este skill:
 - Nombre corto: minúsculas, kebab-case, sin artículos ni palabras vacías.
 - Si esta historia se vincula manualmente a un work item de un sistema de seguimiento externo (ver `Work Item (<sistema>)` en la plantilla), el nombre completo `US-XXX-[nombre-corto]` debe respetar el límite de longitud de título que imponga ese sistema; si el nombre corto propuesto lo supera, acortarlo antes de crear la carpeta.
 - Ejemplos: `US-001-seleccion-item-sdp-desde-receta`, `US-004-resumen-costos-receta`.
-- Archivos de apoyo en `assets/`; enlazarlos desde Referencias con rutas relativas, p. ej. `![Descripción](assets/nombre.png)`. Los wireframes **no** van en `assets/`: se enlazan por su ruta en la capability (`docs/architecture/[capability]/wireframes/WF-XXX-[pantalla-slug].md`).
+- Archivos de apoyo en `assets/`; enlazarlos desde Referencias con rutas relativas, p. ej. `![Descripción](assets/nombre.png)`. Los wireframes **no** van en `assets/`: viven en `wireframes/` de la carpeta de la US (`wireframes/WF-XXX-[pantalla-slug].md`) o, si se heredan de un SRS, se enlazan en la carpeta de ese SRS.
 
 ---
 
 ## Información requerida antes de redactar
 
 Antes de crear o editar cualquier US, el agente debe tener clara la siguiente información. **No inventar nada** — si algún dato no es explícito, preguntar al usuario.
-
 
 | Dato                                            | Cómo obtenerlo                                                                           | Si no está disponible                                                                 |
 | ----------------------------------------------- | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
@@ -155,7 +157,6 @@ Antes de crear o editar cualquier US, el agente debe tener clara la siguiente in
 | **Work item del gestor de proyectos** (solo `sync`) | El `#id` o URL que da el usuario; título, descripción, criterios y estado se leen del tracker (ver `references/<proveedor>.md`) y **no se repreguntan** | Sin MCP: pedir el contenido pegado; el número de la US es el `#id` indicado |
 | **`SRS-XXX` de origen** (opcional)               | Solo si el usuario pide descomponer un SRS de `/requirement-refine`; en ese caso, actor/valor/AC-XXX/repos/referencias de UI se heredan de él en vez de preguntarse desde cero | No aplica — la mayoría de las US no parten de un SRS; caso por defecto sigue siendo la necesidad descrita directamente |
 
-
 > El único dato estrictamente obligatorio para crear la historia es tener identificado el actor y el valor de negocio. Si INVEST no es completamente valorable con la información disponible, la historia se crea con `Estado: Draft` y las lagunas documentadas en Observaciones. El estado **Ready** requiere todos los datos sin excepción.
 
 ---
@@ -167,7 +168,7 @@ El procedimiento completo —cómo preguntar al usuario, validación antes de cr
 - **Descomponer un `SRS-XXX` (entrada alternativa):** solo cuando el usuario pide explícitamente descomponer un SRS de `/requirement-refine` — leer su `README.md` completo, agrupar `FR-XXX`/`NFR-XXX` en historias candidatas (por pantalla/actor, no 1:1 obligatorio), heredar de él criterios de verificación, repositorios y wireframes en vez de repreguntarlos, enlazar el SRS de origen en la línea `Requerimiento:` de la cabecera de cada US, y al terminar actualizar la tabla **Historias de usuario derivadas** del SRS. Ver [`references/flow.md`](references/flow.md#flujo-descomponer-un-srs-xxx-en-historias).
 - **Varias historias en una misma invocación:** si el agrupamiento de un SRS o la migración investigada produjeron varias US, o el usuario pide crear de una vez varias historias relacionadas, primero detectar dependencias entre ellas y ordenarlas — la infraestructura y las que no dependen de ninguna otra de la tanda van primero — y confirmar ese orden con el usuario antes de fijar IDs; con una sola historia, saltar directo a Crear. Ver [`references/flow.md`](references/flow.md#flujo-proponer-varias-historias-en-una-misma-invocación).
 - **Sincronizar (`sync`, solo con gestor de proyectos activo):** leer el work item, verificar que es una historia, mapear sus campos a la plantilla, codificar los criterios si no traen identificador, y crear `US-<id>-[slug]/` si no existe o mostrar el diff y aplicar lo confirmado si ya existe, sin escribir nada en el tracker — ver [Modificadores de invocación](#modificadores-de-invocación).
-- **Crear:** fijar ID y carpeta `US-XXX-[nombre-corto]/` → redactar el `README.md` con la plantilla (Descripción RFC 2119, Referencias, Criterios `AC-XXX` con categoría y enunciado RFC 2119, campo **Repositorios:** de la cabecera, Complejidad Fibonacci, INVEST, DoR con sus indicadores 🟢/🟡/🔴 en la cabecera, Observaciones) → si la US toca UI y no hereda wireframes (del SRS, de un diseño aportado o de la capability), inferir la **capability** (preguntar solo si es ambigua), generar los **wireframes `WF-XXX` de todas las pantallas de una vez** en `docs/architecture/[capability]/wireframes/` con su fila en el índice de la capability, presentar el lote y preguntar **una sola vez** si hay cambios, enlazándolos desde Referencias → si el requerimiento define modelos, APIs o flujos, **delegar la documentación técnica a `/design-define` mediante subagente** y agregar las referencias devueltas a la sección Referencias → glosario si aplica → cierre.
+- **Crear:** fijar ID y carpeta `US-XXX-[nombre-corto]/` → redactar el `README.md` con la plantilla (Descripción RFC 2119, Referencias, Criterios `AC-XXX` con categoría y enunciado RFC 2119, campo **Repositorios:** de la cabecera, Complejidad Fibonacci, INVEST, DoR con sus indicadores 🟢/🟡/🔴 en la cabecera, Observaciones) → si la US toca UI y no hereda wireframes (del SRS o de un diseño aportado), generar los **wireframes `WF-XXX` de todas las pantallas de una vez** en `wireframes/` de la carpeta de la US, presentar el lote y preguntar **una sola vez** si hay cambios, enlazándolos desde Referencias → si el requerimiento define modelos, APIs o flujos, **delegar la documentación técnica a `/design-define` mediante subagente** y agregar las referencias devueltas a la sección Referencias → glosario si aplica → cierre.
 - **Actualizar:** identificar y leer el `README.md` → aplicar cambios conservando **siempre** los ids `AC-XXX` existentes (son inmutables: los nuevos toman el siguiente libre) → revalidar (checklists e indicadores de cabecera) → confirmar. Ante conflicto `TK-XXX` ↔ US, **la US prevalece**.
 - **Cierre:** si queda **Draft**, cerrar lagunas con preguntas estructuradas (una por laguna, máx. tres por bloque); si queda **Ready**, resolver la definición de casos de prueba según `specification.testCases.createMode` (`ask` pregunta, `always` invoca `/test-define` directo, `never` no la ofrece — ver [Política de planificación](#política-de-planificación)) y sugerir crear las `TK-XXX` con `/work-plan` (nunca crear TCs ni tareas directamente desde este skill). Si algún repositorio del campo **Repositorios:** de la cabecera no tiene el harness (`AGENTS.md`/`.sdd-devkit/settings.json`), agregar `/arch-init` como opción adicional en la misma pregunta.
 

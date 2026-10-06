@@ -96,6 +96,8 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Excepción deliberada:** un título o descripción **explícitos del usuario** se respetan literalmente, en el idioma en que los escribió. Cuando el idioma resuelto obliga a traducir el título, el prefijo de ticket (`[US-042]`, `[TK-007]`) se mantiene intacto; los subjects de commits citados en la descripción **no** se traducen: van literales para preservar la trazabilidad. Si `language.md` llega a su paso de preguntar, ofrecer como opción por defecto el idioma predominante de los commits del rango `origin/<destino>..HEAD` — pero preguntar igual, no decidirlo por cuenta propia.
 
+**Enlaces a archivos del proyecto:** DEBES leer y aplicar [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md) — todo archivo o carpeta existente del proyecto que este skill mencione en un artefacto, documento o mensaje (identificadores como `US-XXX` o `WF-XXX`, rutas, índices) se escribe como enlace Markdown que lo abre.
+
 ---
 
 ## Flujo

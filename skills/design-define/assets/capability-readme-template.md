@@ -3,10 +3,8 @@ Convención de placeholders: sustituir manualmente cada {{texto}}; no es un moto
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 Una carpeta por capability: este README.md (índice) + models/ (un archivo por modelo, plantilla model-template.md)
 + apis/ (un archivo por GRUPO de endpoints, plantilla api-template.md) + flows/ (un archivo por flujo, plantilla
-flow-template.md) + diagrams/ (un archivo por diagrama, plantilla diagram-template.md) + wireframes/ (un .md y un
-.svg por pantalla, plantilla wireframe-template.md; los crean requirement-refine y work-define, no design-define)
-+ assets/ (apoyo exportado, solo si hay).
-Los elementos llevan id secuencial por tipo (MD-XXX, API-XXX, FL-XXX, DG-XXX, WF-XXX), estable en el tiempo: no renumerar
+flow-template.md) + diagrams/ (un archivo por diagrama, plantilla diagram-template.md) + assets/ (apoyo exportado, solo si hay).
+Los elementos llevan id secuencial por tipo (MD-XXX, API-XXX, FL-XXX, DG-XXX), estable en el tiempo: no renumerar
 aunque se eliminen elementos (marcar como Obsoleto en su lugar).
 Este README no define elementos: es el índice. Modelos, Grupos de APIs, Flujos y Diagramas viven cada uno en su
 propio archivo, nombrado con el estándar MD-XXX-{slug} / API-XXX-{slug} / FL-XXX-{slug} / DG-XXX-{slug}
@@ -15,9 +13,8 @@ slug kebab-case del nombre, fijado al crear el elemento — renombrar el element
 desde las tablas índice de este README; su referencia es la ruta del archivo, sin ancla.
 Un API-XXX agrupa los endpoints de una misma entidad o funcionalidad (todo el CRUD de proyectos en un archivo;
 login/logout/forgot-password en otro); dentro del archivo cada operación lleva su ancla de método+ruta.
-Las secciones Modelos de datos / APIs / Flujos / Diagramas / Wireframes son opcionales: incluir solo las que la capability necesite.
-Si la carpeta de la capability nace por un wireframe (requirement-refine o work-define la crean antes que design-define),
-el README lleva solo Propósito, Wireframes y Observaciones; design-define añade el resto después sin tocar Wireframes.
+Las secciones Modelos de datos / APIs / Flujos / Diagramas son opcionales: incluir solo las que la capability necesite.
+Los wireframes NO van en la capability: son un recurso del artefacto (SRS / US / WI) y viven en su carpeta.
 -->
 
 # Capability: {{nombre de la capability}}
@@ -61,16 +58,8 @@ el README lleva solo Propósito, Wireframes y Observaciones; design-define añad
 | -- | -------- | ---- | ------- |
 | [DG-001](diagrams/DG-001-{{slug}}.md) | {{nombre del diagrama}} | {{Clases / Contexto (C4) / Contenedores (C4) / Componentes (C4) / Despliegue / Estados / Otro}} | {{una línea}} |
 
-## Wireframes
-
-<!-- Tabla índice: un archivo .md + un .svg por pantalla en wireframes/, con la plantilla wireframe-template.md. Los crean requirement-refine (desde un SRS) o work-define (desde una US); design-define solo conserva estas filas. Enlazar cada archivo; no duplicar aquí su contenido. -->
-
-| Id | Pantalla | Tipo de solución | Origen | Estado de revisión |
-| -- | -------- | ---------------- | ------ | ------------------ |
-| [WF-001](wireframes/WF-001-{{slug}}.md) | {{nombre de la pantalla}} | {{Aplicación web / App nativa / App híbrida / Escritorio}} | {{[SRS-XXX](../../specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md) o [US-XXX](../../specs/changes/user-stories/US-XXX-[nombre-corto]/README.md)}} | {{Pendiente / Revisado con cambios / Aprobado}} |
-
 ## Observaciones
 
 <!-- Lagunas abiertas, decisiones pendientes, datos por confirmar. Si no hay nada: «Sin pendientes documentados». -->
 
-- {{pendiente concreto, indicando el elemento afectado (MD-XXX / API-XXX / FL-XXX / DG-XXX / WF-XXX) y, si aplica, la operación dentro del grupo}}
+- {{pendiente concreto, indicando el elemento afectado (MD-XXX / API-XXX / FL-XXX / DG-XXX) y, si aplica, la operación dentro del grupo}}

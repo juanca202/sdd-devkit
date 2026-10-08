@@ -1,6 +1,6 @@
 # SDD Devkit
 
-![version](https://img.shields.io/badge/version-2.2.9-blue) ![license](https://img.shields.io/badge/license-MIT-green)
+![version](https://img.shields.io/badge/version-2.2.10-blue) ![license](https://img.shields.io/badge/license-MIT-green)
 
 **SDD Devkit** es un plugin de Spec-Driven Development: convierte un requerimiento en documentación (historias de usuario, decisiones de arquitectura, diseño técnico, casos de prueba) y te acompaña hasta un entregable verificado. Incluye skills para:
 
@@ -232,6 +232,7 @@ Recorridos completos que combinan varios skills para una situación concreta.
 | [Corregir un bug](docs/use-cases/fix-a-bug.md)                                          | Diagnóstico → planificación e implementación de la corrección → puertas de calidad → integración/PR |
 | [Refactorizar código](docs/use-cases/refactor.md)                                       | Investigación de factibilidad e impacto → planificación e implementación → puertas de calidad → integración/PR |
 | [Tarea de mantenimiento](docs/use-cases/maintenance-task.md)                            | Planificación directa (sin historia de usuario) → implementación → puertas de calidad → integración/PR |
+| [Spike](docs/use-cases/spike.md)                                                        | Experimento con timebox (WI de tipo `spike`) → informe de resultados → formalización en historia o work item definitivo → ciclo normal; la rama del spike nunca se integra |
 | [Cobertura de pruebas en código existente](docs/use-cases/test-coverage-legacy-code.md) | Descubrir funcionalidades existentes → definir casos de prueba → automatizarlas → puertas de calidad → PR |
 | [Automatización de pruebas desde historias](docs/use-cases/test-automation-from-stories.md) | Sincronizar la historia del gestor → definir casos de prueba → automatizarlos → puertas de calidad → PR/integración |
 

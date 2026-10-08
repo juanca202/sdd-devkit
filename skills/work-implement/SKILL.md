@@ -80,7 +80,7 @@ La senal que distingue los tipos es **el artefacto que el usuario referencia** (
 | Tipo | Como se identifica | Que se implementa | Unidad de confirmacion | Flujo a leer |
 |------|--------------------|-------------------|------------------------|--------------|
 | **Tarea de historia de usuario** | El trabajo referencia una historia `US-XXX` o una tarea `TK-XXX` que cuelga de ella; el artefacto vive bajo `<changesPath>/user-stories/` (o su equivalente archivado, ver la nota de abajo). | El plan tecnico de la TK (codigo de produccion + sus tests) | **Una `TK-XXX`** | `references/user-story-tasks.md` — **leer antes de implementar.** |
-| **Tarea de mantenimiento** | El trabajo referencia un `WI-XXX` (bug, refactor, deuda tecnica, dependencias, operativa) **sin historia asociada**; vive bajo `<changesPath>/work-items/` (o su equivalente archivado, ver la nota de abajo). | El plan del WI (codigo de produccion + sus tests) | **El `WI-XXX` completo** | `references/work-items.md` — **leer antes de implementar.** |
+| **Tarea de mantenimiento** | El trabajo referencia un `WI-XXX` (bug, refactor, deuda tecnica, dependencias, operativa, spike) **sin historia asociada**; vive bajo `<changesPath>/work-items/` (o su equivalente archivado, ver la nota de abajo). | El plan del WI (codigo de produccion + sus tests). **`Tipo: spike`:** el experimento del WI y su `spike-report.md` — codigo desechable en rama `spike/`, sin TDD, sin integracion (ver [Variante spike](references/work-items.md#variante-tipo-spike-experimento-sin-integracion)). | **El `WI-XXX` completo** | `references/work-items.md` — **leer antes de implementar.** |
 | **Caso de prueba** | El trabajo referencia uno o varios `TC-XXX`; viven en la carpeta `test-cases/` de un artefacto padre (`US-XXX`, `WI-XXX` o `FT-XXX`). | **Las pruebas automatizadas de esos `TC-XXX`** | **Un `TC-XXX`** | `references/test-cases.md` — **leer antes de implementar.** |
 | **Feature** | El trabajo referencia un `FT-XXX` — funcionalidad **ya implementada** registrada bajo `<currentPath>/`. | **Las pruebas de todos los `TC-XXX` asociados a los `AC-XXX` que contiene el feature** — nunca funcionalidad nueva | **El `FT-XXX` completo** | `references/test-cases.md` — **leer antes de implementar.** |
 
@@ -202,6 +202,8 @@ Antes de escribir codigo, verificar si el proyecto tiene **algun ADR que defina 
 ## Principios de desarrollo (transversal)
 
 Toda implementacion, sea cual sea el tipo de artefacto, sigue estos dos principios. No son opcionales.
+
+> **Unica excepcion: `WI-XXX` de `Tipo: spike`.** El codigo de un spike es un **experimento desechable** que nunca se integra: no tiene `AC-XXX` que cubrir ni pasa por las puertas de cierre, asi que el ciclo TDD **no es obligatorio** y Clean Architecture se aplica solo en lo que no cueste timebox. Lo que si es obligatorio es la **evidencia**: cada `Q-XX` del WI se responde con una medicion, salida o comportamiento observable guardado en `assets/`. Si en mitad del spike el codigo empieza a parecer la implementacion definitiva, es la senal de parar y redactar el informe: la implementacion definitiva se planifica con sus `AC-XXX` y se hace desde cero con TDD. Reglas completas en [`references/work-items.md` → Variante spike](references/work-items.md#variante-tipo-spike-experimento-sin-integracion).
 
 ### TDD — Test-Driven Development
 
@@ -421,6 +423,8 @@ Todo paso a otra fase del ciclo se realiza **invocando el skill correspondiente*
 Las opciones de cierre se resuelven segun `implementation.handoff` (ver [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md)): con `ask` (comportamiento por defecto), se ofrecen con la herramienta de preguntas estructuradas (ver el Paso 4 de cada referencia) y se espera la eleccion del usuario; con `always`, se invoca directo el primer handoff saliente que aplique, sin presentar el menu. En ambos casos, cada opcion hace handoff **invocando** el skill dueño de esa fase.
 
 > **Excepcion — `WI-XXX` de tipo `bug-fix` / `security-update`.** Al implementarse directamente sobre la rama de integracion, **no hay handoff de cierre**: no queda rama que mergear ni PR que crear, asi que no se ofrecen las opciones ni se invoca `work-integrate` / `pr-create`. El ciclo termina con el commit. Los handoffs de escalado (`work-plan`, `work-define`, `test-define`) siguen vigentes igual.
+>
+> **Excepcion — `WI-XXX` de tipo `spike`.** Su rama `spike/` **nunca se integra ni se le crea PR**: el cierre no ofrece `work-integrate` / `pr-create` sino la **formalizacion del resultado** — `/work-define` (nueva US) o `/work-plan` (WI definitivo o segundo spike acotado) segun el veredicto del `spike-report.md`, o terminar ahi con `Resolucion: Descartado`. Ver el Paso 4 de la [Variante spike](references/work-items.md#variante-tipo-spike-experimento-sin-integracion).
 
 ---
 
@@ -468,6 +472,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 - Codificar con working tree sucio sin avisar y pausar — **salvo** en el modo correccion delegado desde `quality-check`, donde el arbol sucio del cierre es lo esperado.
 - Implementar en `main` u otra rama que no sea la del artefacto sin instruccion explicita — **salvo** los `WI-XXX` de tipo `bug-fix` y `security-update`, que por definicion van en la rama de integracion.
 - Crear una rama `fix/` para un WI de tipo `bug-fix` o `security-update`, u ofrecerles handoff a `work-integrate` / `pr-create` en el cierre: ya estan en la rama de integracion.
+- Ofrecer `work-integrate` / `pr-create` a un `WI` de tipo `spike`, exigirle TDD o `AC-XXX`, seguir experimentando con el timebox agotado, o cerrarlo sin `spike-report.md` con marca `spike:verdict`.
 - Tratar como ejecutable un artefacto que no esta en `Ready` — **salvo** en el modo correccion delegado desde `quality-check`, donde el artefacto ya esta implementado y el estado `Ready` no aplica.
 - Modificar la especificacion de producto (US/TK/WI/TC/FT, ADRs, documentación técnica de capability) durante la implementacion, salvo marcar checkboxes de subtareas completadas en el artefacto activo.
 - En los tipos `TC-XXX` / `FT-XXX`: inventar casos de prueba que `test-define` no documento, automatizar un TC `Manual`, relajar una asercion para forzar el verde, o corregir codigo de produccion por iniciativa propia sin la decision explicita del usuario.

@@ -80,6 +80,7 @@ específico (una salida propia, una excepción de ruta).
 | Glosario | `docs/glossary.md` (opcional) | `design-define` |
 | Investigación | `research/RS-XXX-[slug]/README.md` **dentro de la carpeta del artefacto vinculado**; suelta: `docs/specs/changes/research/RS-XXX-[slug]/README.md` | `work-research` |
 | Progreso de un trabajo | `progress.md` dentro de la carpeta del trabajo (US / WI / FT) | `work-implement` |
+| Informe de resultados de un spike | `spike-report.md` dentro de la carpeta del `WI-XXX` de tipo `spike` (`docs/specs/changes/work-items/WI-XXX-[kebab-case]/spike-report.md`), junto a su `README.md` (la investigación propuesta), `progress.md` y la evidencia en `assets/`; viaja con el WI al archivarse. Marca oculta `spike:verdict` | `work-implement` (lo redacta) · `work-define` / `work-plan` (lo leen para formalizar el desarrollo definitivo) |
 | Registro de automatización de pruebas (solo `implementation.scope: tests`) | `test-cases-automation.md` dentro de la carpeta del artefacto padre (US / WI / FT), **junto a** `test-cases/`, no dentro; sustituye a `progress.md` en repositorios solo de pruebas | `work-implement` (tipos TC / FT) |
 | Archivos de apoyo | `assets/` dentro de la carpeta del artefacto; enlazar con rutas relativas | — |
 | Reporte de trazabilidad | `criteria-coverage.md` dentro de la carpeta del artefacto | `coverage-verify` |

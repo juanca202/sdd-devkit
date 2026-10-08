@@ -4,6 +4,7 @@ Sustituir cada {{…}} a mano (no es un motor). Al publicar: borrar este bloque 
 Repositorios: nombres git separados por coma. work-plan agrupa las TK por este campo.
 INVEST / DoR: derivados de las tablas de Validación, nunca aparte. 🟢 Cumple · 🟡 Parcial · 🔴 No cumple. `/ total` = filas evaluadas (INVEST: 6; DoR: 6 menos No aplica, que no cuentan). Omitir colores a 0. Recalcular al tocar las tablas.
 Requerimiento: solo si la US nació descomponiendo un `SRS-XXX` de requirement-refine — enlace a su README.md; es la trazabilidad inversa de su tabla «Historias de usuario derivadas». Omitir la línea si no proviene de un SRS.
+Spike de origen: solo si la US formaliza el resultado de un `WI-XXX` de tipo spike — enlace a su README.md; el informe y la rama spike/ van en Referencias. Omitir la línea si no proviene de un spike.
 Work Item: omitir la línea si no hay. {{Sistema}} = nombre corto (p. ej. ADO). Lo pobla work-define solo al sincronizar desde el tracker (`sync`); una US redactada aquí no lo lleva salvo que el usuario lo aporte a mano (sí lo poblan siempre TK/WI/TC con tracker vinculado). Si se pone a mano: Criterios de aceptación → campo dedicado del sistema si lo expone; el resto del documento (cabecera incluida Repositorios, y todas las secciones) → descripción del work item, por secciones, para reconstruir la US si se pierde el .md. No omitir secciones.
 -->
 # US-XXX: {{título corto de la historia de usuario}}
@@ -16,6 +17,7 @@ Work Item: omitir la línea si no hay. {{Sistema}} = nombre corto (p. ej. ADO). 
 **INVEST:** {{🟢 N · 🟡 N · 🔴 N / total}}
 **DoR:** {{🟢 N · 🟡 N · 🔴 N / total}}
 **Requerimiento:** {{[SRS-XXX: Título](../../requirements/SRS-XXX-[nombre-corto]/README.md)}}
+**Spike de origen:** {{[WI-XXX: Título](../../work-items/WI-XXX-[slug]/README.md)}}
 **Work Item ({{Sistema}}):** {{enlace markdown}}
 
 ## Descripción
@@ -86,6 +88,7 @@ flows/FL-XXX-{slug}.md o diagrams/DG-XXX-{slug}.md.
 - **Diseño / prototipo:** {{enlace markdown al diseño o prototipo}}
 - **Wireframe:** {{[WF-XXX: pantalla](wireframes/WF-XXX-{slug}.md) — {{Pendiente / Revisado con cambios / Aprobado}}, uno por pantalla; si se hereda del SRS, enlazarlo en su carpeta; omitir si la US no tiene UI}}
 - **Archivo local:** {{enlace markdown al archivo en assets/}}
+- **Spike de origen:** {{[spike-report.md](../../work-items/WI-XXX-[slug]/spike-report.md) · rama `spike/WI-XXX-[slug]` @ sha — referencia de lectura, nunca para mergear; omitir si la US no proviene de un spike}}
 - {{añadir entradas adicionales o indicar «Ninguna por ahora»}}
 
 ## Observaciones

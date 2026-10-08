@@ -15,6 +15,7 @@ de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md
 -->
 **Estado:** {{Draft | Ready}}
 **Tipo:** {{bug | bug-fix | refactor | dependency-update | optimization | security-update | test-improvement | documentation-update | operational-change}}
+<!-- `spike` también es un tipo válido, pero NO usa esta plantilla: se redacta con `work-item-spike-template.md`. -->
 <!--
 Tipos de work item:
 | Tipo | Incluye |
@@ -28,9 +29,10 @@ Tipos de work item:
 | test-improvement | Nuevas pruebas o mejora de las existentes. |
 | documentation-update | Documentación técnica y funcional. |
 | operational-change | Configuración, CI/CD, infraestructura, despliegues y migraciones. |
+| spike | Experimento con timebox para responder una incertidumbre que impide planificar o estimar (viabilidad, rendimiento, complejidad). Su entregable es un informe, nunca código integrable; la rama `spike/` queda como referencia y el desarrollo definitivo se formaliza en una US o en otro WI. **Se redacta con `work-item-spike-template.md`**, no con esta plantilla. |
 -->
 **Repositorio:** {{obligatorio para Ready: nombre del repositorio git al que afecta el work item; inferido del repo (git remote / carpeta) o indicado por el usuario.}}
-**Origen:** {{solo en un `bug-fix` que corrige un hallazgo ya registrado: `WI-XXX (bug)` enlazado por ruta relativa, o el work item del tracker si el bug vive en otro repositorio; omitir línea si no aplica}}
+**Origen:** {{solo en un `bug-fix` que corrige un hallazgo ya registrado —`WI-XXX (bug)` enlazado por ruta relativa, o el work item del tracker si el bug vive en otro repositorio— o en un WI que formaliza el resultado de un spike: `WI-XXX (spike)` enlazado; omitir línea si no aplica}}
 **Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}
 **Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema de seguimiento vinculado — solo si se creó; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica}}
 
@@ -109,6 +111,7 @@ Rutas permitidas: assets/ (recursos propios de este work item) o docs/architectu
 - **Arquitectura:** {{enlace a ADR en `docs/adr/` si el work item depende de decisiones ya registradas; no inventar ADRs nuevos}}
 - **Documentación técnica:** {{enlace si aplica, tal como lo devuelve `design-define`: `docs/architecture/[capability]/models/MD-XXX-{slug}.md` / `apis/API-XXX-{slug}.md` / `flows/FL-XXX-{slug}.md` / `diagrams/DG-XXX-{slug}.md`, añadiendo el ancla de operación `#<método-ruta>` cuando se cita un endpoint concreto (`apis/API-001-facturas.md#post-invoices`); copiar la referencia tal cual, nunca recomponerla del título}}
 - **Diseño:** {{enlace a Figma, wireframe o imagen de alta fidelidad; obligatorio si el work item toca UI}}
+- **Spike de origen:** {{solo si `Origen` es un spike: enlace a su `spike-report.md` y la rama `spike/WI-XXX-{slug}` @ sha — referencia de lectura, nunca para mergear; omitir si no aplica}}
 - **Wireframe:** {{[WF-XXX: pantalla](wireframes/WF-XXX-{slug}.md), uno por pantalla, si el work item tiene wireframes propios (viven en `wireframes/` de esta carpeta, nunca en `docs/architecture/`); omitir si no aplica}}
 
 ## Migración (origen → destino)

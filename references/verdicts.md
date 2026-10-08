@@ -97,7 +97,9 @@ Todo esto son **identificadores**, no contenido:
 - El `result` de `.sdd-devkit/quality-check-run.json`: `PASS` · `FAIL` · `SKIPPED` · `N/A`, y el resto de sus claves.
 - Las claves y los valores de `.sdd-devkit/settings.json`.
 - Las **marcas ocultas** de los artefactos y todas sus claves (`verdict`, `status`, `testType`,
-  `fingerprint`, `spec`, `base`, `mode`, `generated`…).
+  `fingerprint`, `spec`, `base`, `mode`, `generated`…), incluida la marca `spike:verdict` del informe de un
+  spike y sus valores `VIABLE` · `VIABLE_WITH_REWORK` · `NOT_VIABLE` · `INCONCLUSIVE` (consumidores:
+  `work-define`, `work-plan` y el archivado; no es una puerta de cierre).
 - Los **valores** de los campos de estado, aunque su etiqueta visible sí se traduzca:
   `Draft` / `Ready` / `Obsolete` en un TC, `Pending` / `In Progress` / `Done` en `progress.md` y en `test-cases-automation.md`,
   `Unit` / `Integration` / `API Test` / `Visual Test` / `E2E` / `Manual` como tipo de prueba.

@@ -47,6 +47,7 @@ El ciclo normal tiene **dos saltos**, no uno: el trabajo se implementa en una ra
 | 3 | Rama de integración/despliegue | Aguas **arriba**, o la misma | **Parar.** No es una promoción. |
 | 4 | Cualquiera | Rama de implementación | **Parar.** Este skill no abre PRs *hacia* una rama de trabajo. |
 | 5 | Sin prefijo reconocible **y** que no es rama de integración | Cualquiera | **Preguntar** a qué categoría pertenece la rama (`hotfix-cache`, `PROJ-1234`…). Si el usuario la sitúa, aplicar la fila que corresponda; si no, parar. **No** clasificarla como promoción por descarte. |
+| 6 | Prefijo `spike/` (`spike/WI-XXX-…`, la rama de un `WI` de tipo `spike`) | Cualquiera | **Parar, siempre.** Los spikes no se integran ni se les abre PR: su entregable es el `spike-report.md` en la carpeta del WI, y el desarrollo definitivo se formaliza con `/work-define` o `/work-plan` (ver `work-implement/references/work-items.md` → Variante spike). Decirlo con esa razón; no ofrecer alternativa dentro de este skill. |
 
 **La confirmación de la fila 2 no se omite nunca.** Estar parado en `develop` también es lo que ocurre cuando alguien olvidó cambiar de rama —lo típico justo después de `work-integrate`, que deja HEAD en la base—, y ahí el PR correcto es otro. Es la única defensa contra ese error.
 

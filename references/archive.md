@@ -57,7 +57,7 @@ lee el artefacto y compone un **parte de estado**:
 | `SRS-XXX` | `Estado`; tabla «Historias de usuario derivadas» | `Draft`; FR/NFR sin US derivada |
 | `RQ-XXX` | `Estado`; `test-cases/` (criterios sin TC, TC en `Draft`); `criteria-coverage.md` si existe | `Draft`; algún `AC-XXX` sin TC; TC en `Draft`; cobertura `REJECTED` |
 | `US-XXX` | `Estado`; `progress.md` (marca `work:status` y la de cada `TK`); `criteria-coverage.md` (marca `coverage-verify:verdict`); `TK-XXX` en `Draft`; `test-cases/` con TC en `Draft` | `Draft`; sin `progress.md` o con unidades no `Done`; sin cobertura o `REJECTED`; rama `feature/US-XXX-*` aún sin integrar (`git branch --merged <base>` si la base es conocida) |
-| `WI-XXX` | `Estado`; `progress.md`; `criteria-coverage.md`; tipo `bug` → línea `Resolución:` | Igual que la US; un `bug` con `Resolución: Abierto` o `En corrección` |
+| `WI-XXX` | `Estado`; `progress.md`; `criteria-coverage.md`; tipo `bug` → línea `Resolución:`; tipo `spike` → línea `Resolución:` y presencia de `spike-report.md` | Igual que la US; un `bug` con `Resolución: Abierto` o `En corrección`; un `spike` sin `spike-report.md` o con `Resolución: Abierto` (su rama `spike/` **nunca** se integra, así que «rama sin integrar» no es señal de incompleto en un spike) |
 | `RS-XXX` suelto | Referencias vivas desde artefactos **activos** (misma búsqueda que el paso 2 del procedimiento) | ≥ 1 referencia viva |
 
 Un artefacto es **completo** cuando ninguna de esas señales aparece; es el criterio que usa `archive` sin ID
@@ -103,7 +103,7 @@ Reglas de la confirmación:
 | Investigación suelta | `<changesPath>/research/RS-XXX-{slug}/` | `<archivedPath>/research/RS-XXX-{slug}/` |
 
 La carpeta se mueve **completa y tal cual**: `README.md`, `TK-XXX-*.md`, `progress.md`,
-`test-cases-automation.md`, `criteria-coverage.md`, `test-cases/`, `research/` interno, `wireframes/` y `assets/`. No se
+`test-cases-automation.md`, `criteria-coverage.md`, `spike-report.md` (en un `WI` de tipo `spike`), `test-cases/`, `research/` interno, `wireframes/` y `assets/`. No se
 renombra, no se aplana, no se borra nada de dentro.
 
 ---

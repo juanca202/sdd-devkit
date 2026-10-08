@@ -1,6 +1,6 @@
 # Flujo detallado, ejemplos y anti-patrones
 
-Procedimiento paso a paso para **crear** y **actualizar** Historias de Usuario, más ejemplos y anti-patrones. Las anclas de calidad (`#rfc-2119`, `#iso-25010`, `#invest`, `#definition-of-ready-dor`) viven en `[quality-criteria.md](quality-criteria.md)`. La entrada habitual es una necesidad funcional descrita por el usuario; también puede originarse en un `SRS-XXX` de `/requirement-refine` (ver [Flujo: Descomponer un SRS-XXX en historias](#flujo-descomponer-un-srs-xxx-en-historias)) o en una migración investigada por `work-research`.
+Procedimiento paso a paso para **crear** y **actualizar** Historias de Usuario, más ejemplos y anti-patrones. Las anclas de calidad (`#rfc-2119`, `#iso-25010`, `#invest`, `#definition-of-ready-dor`) viven en `[quality-criteria.md](quality-criteria.md)`. La entrada habitual es una necesidad funcional descrita por el usuario; también puede originarse en un `SRS-XXX` de `/requirement-refine` (ver [Flujo: Descomponer un SRS-XXX en historias](#flujo-descomponer-un-srs-xxx-en-historias)) o en una migración investigada por `work-research`, o en el informe de un **spike** (`spike-report.md` de un `WI-XXX` de tipo `spike`, ver [Flujo: Formalizar el resultado de un spike](#flujo-formalizar-el-resultado-de-un-spike-en-una-historia)).
 
 ---
 
@@ -77,6 +77,32 @@ Preguntar `Continuar en esta rama` / `Detenerme aquí`. Si el usuario elige **De
 ---
 
 
+
+## Flujo: Formalizar el resultado de un spike en una historia
+
+Aplica cuando la entrada es el **`spike-report.md`** de un `WI-XXX` de tipo `spike` (lo pasa `work-implement` en su cierre, o el usuario lo indica: «crea la historia a partir del spike WI-014») con veredicto `VIABLE` o `VIABLE_WITH_REWORK` y resultado con **valor de usuario**. Si el resultado es técnico (rendimiento, infraestructura, deuda), el artefacto definitivo es un `WI` de `work-plan`, no una US: remitir allí. El spike **ya respondió** lo que se podía responder experimentando; este flujo convierte ese conocimiento en una historia **sin re-entrevistar lo que el informe cubre**.
+
+1. **Leer completo** el `spike-report.md` y el `README.md` del spike (su `Origen`, sus `Q-XX`). Verificar la marca `<!-- spike:verdict=… -->`: con `NOT_VIABLE` o `INCONCLUSIVE` **parar** — no hay historia que formalizar (el camino se descartó o falta un segundo spike). Si el spike tiene `Origen: US-XXX`, la salida de este flujo es **actualizar esa US** (ver [Flujo: Actualizar](#flujo-actualizar-una-historia-existente)), no crear otra.
+2. **Mapear el informe a la historia** con el [flujo de creación](#flujo-crear-una-historia-nueva) y estas correspondencias:
+
+   | Sección del `spike-report.md` | Sección de la US |
+   |-------------------------------|------------------|
+   | Resumen ejecutivo · Hallazgos | **Contexto** (resumido; se enlaza el informe, no se copia) |
+   | Resultados por pregunta (`Q-XX` en `PASS`) | **Criterios de aceptación** `AC-XXX`: cada umbral validado se convierte en un criterio verificable con palabra RFC 2119 (p. ej. «p95 < 2 s por lote de 500» → «El sistema DEBE procesar un lote de 500 pólizas con p95 inferior a 2 s») |
+   | Hallazgos de comportamiento del dominio | **Reglas de negocio** `BR-XX`, cada una verificada por un `AC-XXX` |
+   | Consideraciones para la implementación definitiva → decisiones **ya tomadas**, dependencias confirmadas | **Criterios de aceptación** / **Contexto** |
+   | Consideraciones → decisiones **aún abiertas**, riesgos sin mitigar | **Observaciones** (decisiones pendientes) — la US nace en `Draft` si bloquean el DoR |
+   | Consideraciones → deuda del prototipo que no debe heredarse | **Fuera de alcance** o **Observaciones**, según corresponda |
+   | Consideraciones → estimación orientativa | **Complejidad sugerida** (justificación: «según el spike WI-XXX») |
+   | Qué reutilizar de la rama · el propio informe · la rama `spike/` @ sha | **Referencias** → línea **Spike de origen** (referencia de lectura; nunca para mergear) |
+   | `Origen` del spike (`RS-XXX`, `ADR-XXX`) | **Referencias** |
+
+   La cabecera lleva **`Spike de origen:`** con el enlace al `README.md` del spike. **Repositorios** se hereda del `Repositorio` del spike salvo que el usuario indique otros.
+3. **Entrevistar solo lo que el informe deja abierto:** actor y valor (el spike rara vez los fija), reglas de negocio que el experimento no tocó, UI si la hay. Lo que el informe responde **no se vuelve a preguntar**.
+4. **Actualizar el spike:** poner `Resolución: Replanificado (US-XXX)` en la línea `Resolución:` del `README.md` del spike — es la única escritura de este skill sobre un `WI`; el resto del spike queda de solo lectura. Si el spike ya está bajo `<archivedPath>`, no se edita: se informa.
+5. **Cierre** como en el flujo de creación (DoR, `createMode`, handoff a `/work-plan`). Recordar en el reporte que la implementación definitiva se hace **desde cero y con TDD**; la rama `spike/` es referencia.
+
+---
 
 ## Flujo: Proponer varias historias en una misma invocación
 
@@ -192,6 +218,7 @@ Solo con la integración con el gestor de proyectos **activada** y el modificado
 - Dependencias con otras US o sistemas identificadas
 - **Artefactos visuales del requerimiento leídos:** si el requerimiento incluye imágenes, enlaces a Figma, o archivos `.md` con diagramas, wireframes o prototipos, **leerlos y cargarlos en el contexto antes de redactar** (no asumir su contenido). Si al revisarlos aparecen lagunas, conflictos con el texto del requerimiento, o algo no queda del todo claro, **incluir esas dudas en las preguntas estructuradas** (recopilación inicial, en tandas de máximo tres por bloque pero **sin limitar el total**: encadenar tandas hasta resolver toda laguna) en lugar de inventar o inferir
 - **Si el origen es un `SRS-XXX`** (ver [Flujo: Descomponer un SRS-XXX en historias](#flujo-descomponer-un-srs-xxx-en-historias)): `README.md` del SRS leído completo, agrupamiento de `FR-XXX`/`NFR-XXX` en historias candidatas resuelto, y repositorios/referencias de diseño/criterios de verificación heredados del SRS en vez de repreguntados
+- **Si el origen es un spike** (ver [Flujo: Formalizar el resultado de un spike](#flujo-formalizar-el-resultado-de-un-spike-en-una-historia)): `spike-report.md` y `README.md` del spike leídos completos; veredicto `VIABLE` / `VIABLE_WITH_REWORK` verificado en la marca oculta; `Q-XX` en `PASS` mapeadas a `AC-XXX`; consideraciones abiertas a Observaciones; `Spike de origen` en cabecera y rama `spike/` @ sha en Referencias; `Resolución` del spike actualizada al terminar
 
 **Validación:**
 
@@ -274,6 +301,7 @@ Solo con la integración con el gestor de proyectos **activada** y el modificado
 
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - Inventar reglas de negocio o exclusiones que el usuario no dio.
+- Al formalizar un spike: re-entrevistar lo que el `spike-report.md` ya responde; crear una historia desde un veredicto `NOT_VIABLE` o `INCONCLUSIVE`; tratar la rama `spike/` como código a integrar o reutilizar tal cual; no actualizar la `Resolución` del spike; crear una US nueva cuando el spike tenía `Origen: US-XXX` (se actualiza esa).
 - Tratar un `#id` o una URL de work item **sin modificador `sync`** como orden de sincronizar, o usar ese número como `US-XXX` de una historia nueva — preguntar siempre qué se espera.
 - Escribir en el gestor de proyectos desde `sync` (estado, criterios renumerados, título), o sincronizar un `Feature`/`Epic`/`Task`/`Bug` como si fuera una historia.
 - Crear una segunda US local para un work item que ya tiene carpeta o `Work Item (<Sistema>)` registrado, en vez de actualizarla.
@@ -312,6 +340,7 @@ Posición: **inicio** del pipeline `work-define` → `work-plan` → `work-imple
 |                              |                                                                                                                                                                                                                                                                                              |
 | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Entrada**                  | Necesidad funcional del usuario (caso por defecto). No requiere US previa. También puede originarse en un `SRS-XXX` de `/requirement-refine` — preferentemente en `Estado: Ready`; uno en `Draft` se acepta con aviso y sus lagunas tienden a trasladarse a las US (ver el paso 1 del [Flujo: Descomponer un SRS-XXX en historias](#flujo-descomponer-un-srs-xxx-en-historias)) — o en una investigación de migración (`RS-XXX` de `work-research`, flujo «Analizar migración») dimensionada como cambio grande y descompuesta en varias US — ver sección **Migración** de la plantilla y el [flujo de varias historias](#flujo-proponer-varias-historias-en-una-misma-invocación) para su orden de creación.                          |
+| **Origen: spike** | Si la US formaliza el resultado de un `WI-XXX` de tipo `spike` (`spike-report.md` con veredicto viable), lleva `Spike de origen:` en la cabecera y el informe + rama `spike/` @ sha en Referencias; los `AC-XXX` salen de las `Q-XX` validadas; al terminar se escribe `Resolución: Replanificado (US-XXX)` en el spike — única escritura de este skill sobre un `WI`. Ver [Flujo: Formalizar el resultado de un spike](#flujo-formalizar-el-resultado-de-un-spike-en-una-historia). |
 | **Origen: requirement-refine** | Si el lote proviene de un `SRS-XXX`, cada US enlaza su SRS de origen en la línea `Requerimiento:` de su cabecera, y al terminar de crear las US se actualiza la tabla **Historias de usuario derivadas** (sección 15) del `README.md` del SRS con cada `US-XXX`, su título y los `FR-XXX` que cubre — es la única escritura de este skill sobre un SRS; el resto del documento queda de solo lectura. |
 | **Origen: gestor de proyectos** | Con integración activa y modificador `sync`, la historia nace o se actualiza desde su work item (`US-<id>`, `Work Item (<Sistema>)` en cabecera). Dirección única tracker → repo: este skill nunca escribe en el tracker; los `TC-XXX`/`TK-XXX` que después cree `test-define`/`work-plan` sí se sincronizan por su propio delta. |
 | **Salida mínima (creación)** | Carpeta `US-XXX-[nombre-corto]/README.md` con actor y valor de negocio; puede quedar en `Estado: Draft` con lagunas en Observaciones.                                                                                                                                                        |

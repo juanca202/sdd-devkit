@@ -242,7 +242,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 ### work-define
 
-**Cuándo:** crear o actualizar una historia de usuario. Puede partir de una necesidad descrita por ti, o de una especificación ya resuelta con `requirement-refine`. Con el gestor de proyectos vinculado, también **sincroniza** una historia que ya existe allí (`sync #id`): la crea localmente si falta o la actualiza si existe — solo con ese modificador explícito; un `#id` suelto no sincroniza nada, pregunta.
+**Cuándo:** crear o actualizar una historia de usuario. Puede partir de una necesidad descrita por ti, de una especificación ya resuelta con `requirement-refine`, o del informe de un spike viable (`spike-report.md`): en ese caso mapea las preguntas validadas a criterios de aceptación sin volver a preguntarte lo que el informe ya responde. Con el gestor de proyectos vinculado, también **sincroniza** una historia que ya existe allí (`sync #id`): la crea localmente si falta o la actualiza si existe — solo con ese modificador explícito; un `#id` suelto no sincroniza nada, pregunta.
 
 **Produce:** una historia de usuario (`<changesPath>/user-stories/`) con criterios de aceptación; si toca UI y no hereda wireframes, los genera en `wireframes/` dentro de la carpeta de la historia (`WF-XXX`).
 
@@ -256,6 +256,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 /work-define actualiza US-003: añade criterio de timeout 3s
 /work-define a partir de RS-002
 /work-define arma las historias de SRS-003
+/work-define crea la historia a partir del spike WI-014
 /work-define sync #4821
 /work-define sync #4821 #4822 #4830
 /work-define sync US-4821
@@ -338,6 +339,7 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 | ------------------------------------- | ------------------------------------------------- |
 | Hay una historia de usuario asociada | Tareas técnicas dentro de esa historia            |
 | No hay historia (bug, deuda, mantenimiento) | Una tarea de mantenimiento independiente     |
+| Hay una incertidumbre que impide planificar o estimar y solo se resuelve construyendo o midiendo («no sabemos si», «¿es viable?», «prueba de concepto») | Un work item de tipo `spike`: pregunta de investigación, hipótesis, preguntas `Q-XX` con criterios de éxito/fallo, timebox y enfoque del experimento; sin `AC-XXX` ni casos de prueba. Su entregable es el `spike-report.md` que `work-implement` deja en la carpeta del WI; después, `work-plan` crea el WI definitivo a partir del informe (o `work-define` la historia) |
 | Hay un hallazgo que reportar (prueba en rojo, defecto observado) | Un work item de tipo `bug`: solo qué está mal, con evidencia; sin plan de corrección (único tipo posible en un repo con `implementation.scope: tests`, donde el documento toma la forma del caso de prueba: sus pasos con lo observado y los comentarios para reproducirlo, los hallazgos y las evidencias de la suite adjuntas en `assets/`) |
 
 **Ejemplos de invocación:**
@@ -348,6 +350,8 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 /work-plan planifica tareas para US-004 agrupadas por repo
 /work-plan WI: actualizar Spring Boot a 3.3
 /work-plan bug: la API devuelve 200 en vez de 422 con tarjeta vencida (TC-4830)
+/work-plan spike: ¿aguanta el motor de reglas 500 pólizas/s? timebox 2 días
+/work-plan WI definitivo a partir del informe del spike WI-014
 /work-plan WI-007 archive
 /work-plan archive
 ```
@@ -372,6 +376,7 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 | ---------------------------------- | ------------------------------------------------------------ |
 | Una tarea técnica de una historia | La funcionalidad de esa tarea (código + pruebas)             |
 | Una tarea de mantenimiento         | La funcionalidad completa de esa tarea (código + pruebas)    |
+| Un spike (WI de tipo `spike`)      | El experimento ejecutado dentro de su timebox en una rama `spike/`, con evidencia, y el `spike-report.md` en la carpeta del WI. No se integra: al cerrar pregunta cómo formalizar el resultado (historia, work item definitivo, descartar o nuevo spike) |
 | Casos de prueba ya documentados    | Las pruebas automatizadas de esos casos                      |
 | Una funcionalidad legacy (FT)      | Las pruebas automatizadas que la cubren                      |
 
@@ -384,6 +389,7 @@ Por defecto implementa de a una unidad, pausando para tu confirmación entre cad
 /work-implement TK-003
 /work-implement US-006
 /work-implement WI-002
+/work-implement WI-014 (spike)
 /work-implement TC-004
 /work-implement US-006 de corrido (sin preguntar entre tareas)
 ```

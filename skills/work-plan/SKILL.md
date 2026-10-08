@@ -1,6 +1,6 @@
 ---
 name: work-plan
-description: "Planifica trabajo sin generar código ni pruebas. Dos tipos de plan: (1) tareas técnicas (TK-XXX) bajo una historia de usuario existente; (2) tareas de mantenimiento (WI-XXX) sin historia — bugs, refactor, deuda técnica, dependencias, tareas operativas. Activar cuando el usuario pida planificar implementación, descomponer trabajo, definir alcance técnico o planificar mantenimiento, aunque no nombre «TK» o «WI». Activar también, por defecto, cuando solo entregue una referencia a una historia («US-004», «planifica US-007»): proponer la descomposición en tareas por repositorio cubriendo los AC-XXX y preguntar si crear planes completos, stubs, ajustar u otro, o cancelar. Selecciona el tipo según haya o no historia y carga su definición desde references/. Cuenta lo archivado en <archivedPath>/ al asignar IDs; lo archivado no se edita. También para archivar tareas de mantenimiento («archiva el WI-007») con el modificador `archive`, que muestra el estado real y pide confirmación."
+description: "Planifica trabajo sin generar código ni pruebas. Tipos de plan: (1) tareas técnicas (TK-XXX) bajo una historia de usuario existente; (2) tareas de mantenimiento (WI-XXX) sin historia — bugs, refactor, deuda técnica, dependencias, tareas operativas, y spikes (experimento con timebox que entrega un informe, no código). Activar cuando el usuario pida planificar implementación, descomponer trabajo, definir alcance técnico o planificar mantenimiento, aunque no nombre «TK» o «WI». Activar también, por defecto, cuando solo entregue una referencia a una historia («US-004», «planifica US-007»): proponer la descomposición en tareas por repositorio cubriendo los AC-XXX y preguntar si crear planes completos o stubs. Selecciona el tipo según haya o no historia y carga su definición desde references/. Cuenta lo archivado al asignar IDs; no lo edita. También para archivar tareas de mantenimiento («archiva el WI-007») con el modificador `archive`, que muestra el estado y pide confirmación."
 license: MIT
 ---
 
@@ -35,7 +35,7 @@ No sustituir una invocación de skill por "hacer el trabajo aquí". El handoff e
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md).
 
-Las reglas de `planning.md` son obligatorias y determinan, vía `specification.testCases.createMode`, si al dejar las tareas del alcance en `Ready` se pregunta si definir los casos de prueba (`ask`, comportamiento por defecto), se invoca `/test-define` automáticamente sin preguntar (`always`), o nunca se sugiere ni se invoca (`never`). La otra clave del objeto, `createDetailsMode`, **no la consume este skill**: la lee `test-define`.
+Las reglas de `planning.md` son obligatorias y determinan, vía `specification.testCases.createMode`, si al dejar las tareas del alcance en `Ready` se pregunta si definir los casos de prueba (`ask`, comportamiento por defecto), se invoca `/test-define` automáticamente sin preguntar (`always`), o nunca se sugiere ni se invoca (`never`). **No aplica a los `WI` de tipo `bug` ni `spike`**: no tienen `AC-XXX` que cubrir. La otra clave del objeto, `createDetailsMode`, **no la consume este skill**: la lee `test-define`.
 
 No continúes hasta haber leído y aplicado `planning.md`.
 
@@ -78,7 +78,7 @@ La señal que distingue los tipos es **si el trabajo tiene una historia de usuar
 | Tipo de plan | Cómo se identifica | Definición a leer |
 |--------------|--------------------|-------------------|
 | **Tarea técnica de historia de usuario** | El trabajo **referencia una historia de usuario**: prefijo de historia `US-XXX` (p. ej. «planifica US-007», «tareas para esta historia»), una historia ubicada bajo el árbol de user-stories del repo, o la edición de una `TK-XXX` que cuelga de una US. | `references/user-story-tasks.md` — **leer antes de redactar.** |
-| **Tarea de mantenimiento** | El trabajo **no tiene una historia de usuario asociada** (corrección de bug, refactor, deuda técnica, actualización de dependencias, tarea operativa), o el usuario pide explícitamente «plan/tarea de mantenimiento». | `references/maintenance-tasks.md` — **leer antes de redactar.** |
+| **Tarea de mantenimiento** | El trabajo **no tiene una historia de usuario asociada** (corrección de bug, refactor, deuda técnica, actualización de dependencias, tarea operativa, spike), o el usuario pide explícitamente «plan/tarea de mantenimiento». Un **spike** es siempre de este tipo aunque lo motive una US: el experimento no es una tarea de la historia, es lo que permite planificarla (la US va en `Origen`). | `references/maintenance-tasks.md` — **leer antes de redactar.** |
 
 Reglas de selección:
 
@@ -100,7 +100,7 @@ Reglas de selección:
 
 Reglas que este skill aplica al archivar:
 
-- **El estado no restringe, pero se informa.** Antes de preguntar, componer el parte de estado: `Estado` del `README.md`; `progress.md`; `criteria-coverage.md`; en un `WI` de tipo `bug`, la línea `Resolución:` (`Abierto`/`En corrección` cuentan como incompleto). Con algo incompleto, la pregunta lo dice explícitamente y el usuario decide.
+- **El estado no restringe, pero se informa.** Antes de preguntar, componer el parte de estado: `Estado` del `README.md`; `progress.md`; `criteria-coverage.md`; en un `WI` de tipo `bug`, la línea `Resolución:` (`Abierto`/`En corrección` cuentan como incompleto); en un `WI` de tipo `spike`, la línea `Resolución:` y la presencia de `spike-report.md` (sin informe o con `Resolución: Abierto` cuenta como incompleto; su rama `spike/` nunca se integra, así que no es señal). Con algo incompleto, la pregunta lo dice explícitamente y el usuario decide.
 - **Siempre se confirma** (herramienta estructurada, una sola tanda para todo el lote), mostrando origen → destino de cada carpeta y las investigaciones sueltas que quedarían huérfanas. Sin canal de respuesta, no se archiva.
 - **Destino:** `<archivedPath>/work-items/<ID>-<slug>/`, con `<archivedPath>` = `specification.archivedPath` de `.sdd-devkit/settings.json` (por defecto `docs/specs/archived/`) y la subcarpeta espejo de `<changesPath>`. `git mv`, guard de destino, reparación de enlaces y cierre con `/git-commit`, tal como describe la referencia.
 - Un artefacto ya bajo `<archivedPath>` se informa y no se toca; un ID suelto **sin** `archive` nunca archiva.
@@ -143,6 +143,8 @@ Solo resultados y lo que el usuario debe saber o decidir. No incluir razonamient
 | `assets/task-template.md` | Plantilla canónica de una tarea de historia de usuario (`TK-XXX`). Leer antes de redactar el documento. |
 | `assets/work-item-template.md` | Plantilla canónica de una tarea de mantenimiento (`WI-XXX`). Leer antes de redactar el documento. |
 | `assets/work-item-tests-template.md` | Plantilla del `WI-XXX` en un repositorio con `implementation.scope: tests`: un `bug` con forma de caso de prueba (pasos del `TC-XXX` con lo observado y comentarios para reproducir, hallazgos y evidencias de la suite adjuntas). **Sustituye** a la anterior en ese modo. |
+| `assets/work-item-spike-template.md` | Plantilla del `WI-XXX` de `Tipo: spike`: pregunta de investigación, hipótesis, `Q-XX` con criterios de éxito/fallo, timebox, enfoque del experimento. **Sustituye** a `work-item-template.md` para ese tipo. |
+| `assets/spike-report-template.md` | Informe final del spike (`spike-report.md`), con marca oculta `spike:verdict`. **La redacta `work-implement`** al cerrar el experimento; este skill la lee al crear el WI definitivo a partir del informe. |
 
 ### Referencias compartidas del plugin
 

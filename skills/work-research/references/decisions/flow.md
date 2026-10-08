@@ -128,6 +128,7 @@ dependencia registrar, qué decisión anotar en Observaciones.
 | `US-XXX`                                  | `work-define`                  | El RS se referencia y el skill dueño actualiza la historia |
 | `TK-XXX` / `WI-XXX`                       | `work-plan` → `work-implement` | El RS se referencia en el TK o WI                          |
 | Cualquiera, si la decisión es estructural | `arch-manage`                  | El RS alimenta la sección «Contexto» del ADR               |
+| Cualquiera, si una decisión **no se puede cerrar leyendo** y hace falta construir o medir algo para recomendar | `work-plan` (`WI` de tipo `spike`) | El RS queda como `Referencias → Investigación previa` del spike y la decisión abierta se convierte en su pregunta de investigación; el spike devuelve un `spike-report.md` |
 
 
 
@@ -138,7 +139,8 @@ dependencia registrar, qué decisión anotar en Observaciones.
 - Guardar el RS en `<changesPath>/research/` en vez de en la carpeta del artefacto.
 - Investigar lagunas que el usuario podía responder en una pregunta.
 - Cerrar una decisión con «depende» sin una recomendación condicionada a criterios
-verificables.
+verificables — si la única forma de recomendar es experimentar, decirlo y proponer un spike
+(`work-plan`, `WI` de tipo `spike`), no disfrazar la incertidumbre de recomendación.
 - Duplicar una investigación previa que ya vive en el `research/` del artefacto.
 - Recomendar una opción que impide cumplir alguno de sus `AC-XXX`.
 

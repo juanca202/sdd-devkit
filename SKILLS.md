@@ -219,7 +219,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** tienes un requerimiento en bruto (idea, ticket, correo, wireframes) y quieres estructurarlo antes de convertirlo en historias de usuario. Paso opcional: si el requerimiento ya está claro, puedes ir directo a `work-define`.
 
-**Produce:** una especificación de requisitos (`<changesPath>/requirements/`) con alcance, requisitos priorizados, stack tecnológico, repositorios y equipo; si hay interfaz, wireframes `WF-XXX` en `wireframes/` dentro de la carpeta del SRS, enlazados desde él.
+**Produce:** una especificación de requisitos (`<changesPath>/requirements/`) con alcance, requisitos priorizados, stack tecnológico, repositorios y equipo; si hay interfaz, wireframes `WF-XXX` en `wireframes/` dentro de la carpeta del SRS, generados y revisados por `design-define` vía subagente y enlazados desde el SRS.
 
 **Estados:** `Draft` (quedan cosas por resolver) · `Ready` (listo para convertir en historias con `work-define`).
 
@@ -244,7 +244,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** crear o actualizar una historia de usuario. Puede partir de una necesidad descrita por ti, de una especificación ya resuelta con `requirement-refine`, o del informe de un spike viable (`spike-report.md`): en ese caso mapea las preguntas validadas a criterios de aceptación sin volver a preguntarte lo que el informe ya responde. Con el gestor de proyectos vinculado, también **sincroniza** una historia que ya existe allí (`sync #id`): la crea localmente si falta o la actualiza si existe — solo con ese modificador explícito; un `#id` suelto no sincroniza nada, pregunta.
 
-**Produce:** una historia de usuario (`<changesPath>/user-stories/`) con criterios de aceptación; si toca UI y no hereda wireframes, los genera en `wireframes/` dentro de la carpeta de la historia (`WF-XXX`).
+**Produce:** una historia de usuario (`<changesPath>/user-stories/`) con criterios de aceptación; si toca UI y no hereda wireframes, los pide a `design-define` vía subagente, que los genera en `wireframes/` dentro de la carpeta de la historia (`WF-XXX`), y los enlaza desde la historia.
 
 **Estados:** `Draft` (quedan cosas por resolver) · `Ready` (lista para planificar tareas o definir casos de prueba).
 
@@ -274,9 +274,9 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 ### design-define
 
-**Cuándo:** documentar el diseño técnico de una historia o tarea — modelos de datos, endpoints, flujos o diagramas — como referencia para implementarla.
+**Cuándo:** documentar el diseño técnico de una historia o tarea — modelos de datos, endpoints, flujos o diagramas — como referencia para implementarla; o generar y revisar los wireframes de pantalla de un SRS, una historia o un work item (normalmente lo invocan `requirement-refine` y `work-define` vía subagente, pero también se puede pedir directo).
 
-**Produce:** documentación técnica (`docs/architecture/`), enlazable desde la historia o tarea correspondiente.
+**Produce:** documentación técnica (`docs/architecture/`), enlazable desde la historia o tarea correspondiente; y wireframes `WF-XXX` (`.md` + `.svg` en escala de grises) en `wireframes/` dentro de la carpeta del SRS/US/WI de origen, revisados con el usuario por lote.
 
 **Ejemplos de invocación:**
 
@@ -286,11 +286,13 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 /design-define diagrama de contenedores para billing
 /design-define detalle técnico de TK-004 (flujo de aprobación)
 /design-define enlázalo desde US-008
+/design-define wireframes de las pantallas de la US-012
 ```
 
 - «Documenta el modelo de datos de Pedido»
 - «Especifica los endpoints REST de autenticación»
 - «Dame más detalle del flujo de reembolso de la TK-004»
+- «Haz el wireframe de la pantalla de login del SRS-003»
 
 ---
 

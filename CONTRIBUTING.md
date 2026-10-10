@@ -48,7 +48,7 @@ Antes de abrir uno nuevo, revisa que no exista ya un issue similar.
 | `agents/` | Agentes reutilizables invocables con la herramienta Task o referenciados desde reglas. |
 | `.claude-plugin/` | Marketplace (`marketplace.json`) y manifiesto del plugin SDD Devkit (`plugin.json`) para Claude Code. |
 | `plugin.json` (raíz) | Manifiesto del plugin SDD Devkit según el estándar abierto [Agent Plugins](https://cursor.com/docs/plugins) — lo consumen Cursor y cualquier otro cliente compatible con la especificación. |
-| `assets/` | Plantillas compartidas por dos o más skills (p. ej. `wireframe-template.md`). |
+| `assets/` | Plantillas compartidas por dos o más skills (hoy vacía; `wireframe-template.md` pasó a `skills/design-define/assets/` cuando `design-define` quedó como único productor de wireframes). |
 | `docs/use-cases/` | Recorridos de extremo a extremo del harness, enlazados desde el README. |
 
 ## Preguntas

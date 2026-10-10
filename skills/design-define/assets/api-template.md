@@ -24,11 +24,8 @@ Formato detallado en references/element-standards.md del skill design-define.
 
 # {{API-XXX}}: {{nombre del grupo — p. ej. Proyectos, Autenticación}}
 
-- **Alcance:** {{entidad o funcionalidad que cubre el grupo y qué queda explícitamente fuera}}
-- **Base:** {{prefijo común de ruta, p. ej. `/api/v1/projects`, o «—» si no hay}}
-- **Autenticación por defecto:** {{mecanismo y permisos/roles comunes al grupo, o «Pública»; cada operación
-  puede sobrescribirlo}}
-- **Modelos relacionados:** {{[MD-XXX](../models/MD-XXX-{{slug}}.md), … o «Ninguno»}}
+{{Descripción, máximo 4 líneas y sin título: qué entidad o funcionalidad cubre el grupo, prefijo de ruta común si lo hay
+(p. ej. `/api/v1/projects`) y qué queda explícitamente fuera. Sin campos de cabecera.}}
 
 ## Operaciones
 
@@ -41,14 +38,13 @@ Formato detallado en references/element-standards.md del skill design-define.
 <a id="{{metodo-ruta}}"></a>
 ### `{{POST /api/v1/recurso}}` — {{operación en verbo, p. ej. Crear proyecto}}
 
-- **Autenticación:** {{mecanismo y permisos/roles requeridos, «Hereda la del grupo» o «Pública»}}
-- **Descripción:** {{qué hace y cuándo se usa}}
+{{Qué hace y cuándo se usa, máximo 2 líneas. Sin campos: lo relativo a autenticación o permisos va en Notas.}}
 
 **Request**
 
 | Parámetro | Ubicación | Tipo | Requerido | Descripción |
 | --------- | --------- | ---- | --------- | ----------- |
-| {{nombre}} | {{path / query / header / body}} | {{tipo o MD-XXX}} | {{Sí/No}} | {{…}} |
+| {{nombre}} | {{path / query / header / body}} | {{tipo, o el modelo enlazado: [MD-XXX](../models/MD-XXX-{{slug}}.md)}} | {{Sí/No}} | {{…}} |
 
 ```json
 {{ejemplo de request body; omitir el bloque si no hay body}}
@@ -58,7 +54,7 @@ Formato detallado en references/element-standards.md del skill design-define.
 
 | Código | Condición | Cuerpo |
 | ------ | --------- | ------ |
-| {{200/201}} | {{caso de éxito}} | {{tipo o MD-XXX}} |
+| {{200/201}} | {{caso de éxito}} | {{tipo, o el modelo enlazado: [MD-XXX](../models/MD-XXX-{{slug}}.md)}} |
 | {{4XX}} | {{condición de error}} | {{estructura de error estándar del proyecto}} |
 
 ```json
@@ -67,6 +63,14 @@ Formato detallado en references/element-standards.md del skill design-define.
 
 <!-- Repetir el bloque anterior (ancla + ###) por cada operación del grupo, en el orden de la tabla. -->
 
-**Notas**
+## Notas
 
-- {{observaciones comunes al grupo: paginación, idempotencia, versionado, cabeceras compartidas; omitir la sección si no hay}}
+- {{Autenticación y permisos: mecanismo y roles del grupo, y las operaciones que difieren (p. ej. «Bearer JWT, rol `billing:read`; `POST` requiere `billing:write`»); «Pública» si no hay — nunca omitirlo}}
+- {{otras observaciones comunes al grupo: paginación, idempotencia, versionado, cabeceras compartidas}}
+
+## Historial de cambios
+
+<!-- Una fila por modificación posterior a la creación; omitir la sección mientras no haya cambios. -->
+| Fecha | Cambio | Origen |
+| ----- | ------ | ------ |
+| {{YYYY-MM-DD}} | {{operación añadida, quitada o corregida (método + ruta) y qué cambió}} | {{US-XXX / TK-XXX / WI-XXX / ADR-XXX o pedido del usuario}} |

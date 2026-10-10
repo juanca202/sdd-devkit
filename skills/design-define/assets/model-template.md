@@ -14,15 +14,29 @@ Formato detallado en references/element-standards.md del skill design-define.
 
 # {{MD-XXX}}: {{nombre del modelo}}
 
-{{descripción breve del modelo y su rol en la capability}}
+{{Descripción, máximo 4 líneas y sin título: qué representa el modelo, su rol en la capability y si es entidad
+persistida, DTO de transporte o proyección/vista.}}
+
+## Campos
 
 | Campo | Tipo | Requerido | Descripción | Validaciones / restricciones |
 | ----- | ---- | --------- | ----------- | ---------------------------- |
-| {{campo}} | {{tipo}} | {{Sí/No}} | {{qué representa}} | {{formato, rango, unicidad, valores permitidos; «—» si no hay}} |
+| {{campo}} | {{tipo, o el modelo enlazado si el campo es una relación: [MD-XXX](MD-XXX-{{slug}}.md), [MD-XXX](MD-XXX-{{slug}}.md)[] o ../../{{otra-capability}}/models/MD-XXX-{{slug}}.md}} | {{Sí/No}} | {{qué representa; en una relación, su cardinalidad}} | {{formato, rango, unicidad, valores permitidos; «—» si no hay}} |
 
-**Relaciones:** {{relaciones con otros modelos (MD-XXX de esta u otra capability) o «Ninguna»}}
+## Relaciones de {{nombre del modelo}}
 
 ```mermaid
 erDiagram
-  {{diagrama ER solo si este modelo se relaciona con otros; omitir el bloque si no aporta}}
+  {{diagrama ER solo si este modelo se relaciona con otros; omitir el título y el bloque si no aporta}}
 ```
+
+## Notas
+
+- {{datos adicionales: índices, ciclo de vida/estados, reglas de negocio que cruzan varios campos, origen del dato; omitir la sección si no hay}}
+
+## Historial de cambios
+
+<!-- Una fila por modificación posterior a la creación; omitir la sección mientras no haya cambios. -->
+| Fecha | Cambio | Origen |
+| ----- | ------ | ------ |
+| {{YYYY-MM-DD}} | {{qué se añadió, quitó o corrigió}} | {{US-XXX / TK-XXX / WI-XXX / ADR-XXX o pedido del usuario}} |

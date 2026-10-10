@@ -23,11 +23,11 @@ fecha/hora que lo confirma. Cada revalidación posterior agrega además una entr
 
 # Informe de Auditoría de Cumplimiento — {{YYYY-MM-DD}}
 
-**Fecha**: {{YYYY-MM-DD}}
-**Repositorio**: {{nombre/ruta del repo o subproyecto auditado}}
-**Alcance**: {{criterios auditados y estándares/requisitos de contexto cubiertos + fuentes AGENTS.md — p. ej. "14 criterios en 4 estándares (Testing, API, Persistence, Security) · 2 en Draft excluidos + AGENTS.md raíz"}}
-**Método**: {{descripción corta de lo que realmente se usó — herramientas de inspección y fitness functions ejecutadas, p. ej. "grep + lectura de package.json/composer.json; runner node scripts/arch/verify.mjs ejecutado". No se corre el build ni la suite completa.}}
 **Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED | `❌` REJECTED | `⚠️` APPROVED_WITH_NOTES}} {{si hubo alguna revalidación, agregar aquí mismo "(revalidado YYYY-MM-DD HH:MM)" con la fecha/hora de la última entrada de ## Revalidaciones; omitir si no hubo ninguna}}
+**Fecha:** {{YYYY-MM-DD}}
+**Repositorio:** {{nombre/ruta del repo o subproyecto auditado}}
+**Alcance:** {{criterios auditados y estándares/requisitos de contexto cubiertos + fuentes AGENTS.md — p. ej. "14 criterios en 4 estándares (Testing, API, Persistence, Security) · 2 en Draft excluidos + AGENTS.md raíz"}}
+**Método:** {{descripción corta de lo que realmente se usó — herramientas de inspección y fitness functions ejecutadas, p. ej. "grep + lectura de package.json/composer.json; runner node scripts/arch/verify.mjs ejecutado". No se corre el build ni la suite completa.}}
 
 ## Resumen
 

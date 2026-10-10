@@ -19,10 +19,10 @@ Reglas:
 # RS-{{XXX}} · Discovery legacy — {{Nombre del código/módulo analizado}}
 
 **Estado:** {{Draft | Ready}}
+**Fecha:** {{YYYY-MM-DD}}
 **Código en alcance:** {{rutas / módulos / entrypoints}}
 **Versión analizada:** {{commit | branch | tag}}
 **Creado por:** {{git config user.name}}
-**Fecha:** {{YYYY-MM-DD}}
 
 ## 1. Artefactos técnicos
 

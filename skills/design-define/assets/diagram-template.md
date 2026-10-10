@@ -12,13 +12,24 @@ Formato detallado en references/element-standards.md del skill design-define.
 
 # {{DG-XXX}}: {{nombre del diagrama — p. ej. Diagrama de clases del dominio, Contexto de la capability}}
 
-- **Tipo:** {{Clases | Contexto (C4) | Contenedores (C4) | Componentes (C4) | Despliegue | Estados | Otro}}
-- **Alcance:** {{qué parte de la capability cubre y qué queda fuera}}
+**Tipo:** {{Clases | Contexto (C4) | Contenedores (C4) | Componentes (C4) | Despliegue | Estados | Otro}}
+
+{{Descripción, máximo 4 líneas y sin título: qué pregunta de implementación responde el diagrama, qué parte de la
+capability cubre y qué queda explícitamente fuera.}}
+
+## Diagrama
 
 ```mermaid
 {{classDiagram, C4Context, C4Container, C4Component, stateDiagram-v2… según el tipo; ver element-standards.md}}
 ```
 
-**Notas**
+## Notas
 
-- {{decisión o aclaración que el diagrama no expresa por sí solo; citar elementos por id (MD-XXX, API-XXX, FL-XXX) cuando aplique; omitir la lista si no hay notas}}
+- {{decisión o aclaración que el diagrama no expresa por sí solo; citar elementos por id (MD-XXX, API-XXX, FL-XXX) cuando aplique; omitir la sección si no hay notas}}
+
+## Historial de cambios
+
+<!-- Una fila por modificación del diagrama después de su creación; omitir la sección mientras no haya cambios. -->
+| Fecha | Cambio | Origen |
+| ----- | ------ | ------ |
+| {{YYYY-MM-DD}} | {{qué se añadió, quitó o corrigió}} | {{US-XXX / TK-XXX / WI-XXX / ADR-XXX o pedido del usuario}} |

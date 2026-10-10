@@ -26,10 +26,10 @@ Reglas de contenido:
 # FT-XXX: {{título corto del feature}}
 
 **Estado:** {{Draft | Ready}}
-**Procedencia:** {{Funcionalidad ya implementada. Origen: "inferido de código legacy (RS-XXX · commit/branch)" | "registro de funcionalidad existente"}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item del feature en el sistema de seguimiento vinculado — solo si se creó manualmente; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica. Ningún skill de esta suite crea o pobla este campo por su cuenta para un FT; si existe, `test-define` lo usa para vincular sus TC al feature padre}}
 **Fecha de creación:** {{YYYY-MM-DD}}
 **Última actualización:** {{YYYY-MM-DD}}
+**Procedencia:** {{Funcionalidad ya implementada. Origen: "inferido de código legacy (RS-XXX · commit/branch)" | "registro de funcionalidad existente"}}
+**Work Item ({{Sistema}}):** {{enlace markdown al work item del feature en el sistema de seguimiento vinculado — solo si se creó manualmente; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica. Ningún skill de esta suite crea o pobla este campo por su cuenta para un FT; si existe, `test-define` lo usa para vincular sus TC al feature padre}}
 
 ## Descripción funcional
 

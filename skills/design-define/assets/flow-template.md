@@ -14,21 +14,37 @@ Formato detallado en references/element-standards.md del skill design-define.
 
 # {{FL-XXX}}: {{nombre del flujo}}
 
-- **Disparador:** {{qué inicia el flujo: acción de usuario, evento, programación}}
-- **Actores / componentes:** {{quiénes participan}}
-- **Resultado:** {{estado final esperado}}
+**Disparador:** {{qué inicia el flujo: acción de usuario, evento, programación}}
+**Actores / componentes:** {{quiénes participan}}
+**Resultado:** {{estado final esperado}}
+
+{{Descripción, máximo 4 líneas y sin título: qué resuelve el flujo, en qué contexto de negocio o técnico ocurre y qué
+queda explícitamente fuera.}}
+
+## Flujo
 
 ```mermaid
 {{sequenceDiagram o flowchart según convenga; ver element-standards.md}}
 ```
 
-**Pasos**
+## Pasos
 
 1. {{paso con actor/componente explícito}}
 2. {{…}}
 
-**Manejo de errores**
+## Manejo de errores
 
 | Paso | Error posible | Comportamiento esperado |
 | ---- | ------------- | ----------------------- |
 | {{n}} | {{condición}} | {{reintento, compensación, mensaje, aborto}} |
+
+## Notas
+
+- {{datos adicionales: concurrencia/idempotencia, tiempos o SLA, dependencias externas, decisiones tomadas con el usuario; citar elementos por id (MD-XXX, API-XXX, DG-XXX) cuando aplique; omitir la sección si no hay}}
+
+## Historial de cambios
+
+<!-- Una fila por modificación del flujo después de su creación; omitir la sección mientras no haya cambios. -->
+| Fecha | Cambio | Origen |
+| ----- | ------ | ------ |
+| {{YYYY-MM-DD}} | {{qué paso, rama o error se añadió, quitó o corrigió}} | {{US-XXX / TK-XXX / WI-XXX / ADR-XXX o pedido del usuario}} |

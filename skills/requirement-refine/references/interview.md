@@ -90,7 +90,7 @@ Regla transversal de redacción, verificada de nuevo en la Ola 3:
 
 - Un **requisito** declara **qué** debe lograr el sistema y **cómo se verifica** (resultado + umbral). Un enunciado que nombra una tecnología, librería, pantalla concreta o estructura interna es una **decisión de diseño** — no va en `FR-XXX`/`NFR-XXX`, **salvo que esa tecnología sea explícitamente una restricción** impuesta (mandato del cliente, integración obligada, estándar corporativo): entonces va en **Restricciones** (o como `NFR-XXX` de compatibilidad), con su porqué.
 - *«El sistema MUST notificar al cliente en menos de 1 minuto tras la aprobación»* es requisito; *«usar WebSockets con Socket.io»* es diseño. *«El backend MUST integrarse con el ERP SAP existente»* es restricción legítima — el sistema con el que se integra no es opcional.
-- Los wireframes de UX son **apoyo de entendimiento** (baja fidelidad, ver paso 4 de `flow.md`), no especificación visual final: el detalle de diseño llega después, fuera de este skill.
+- Los wireframes de UX son **apoyo de entendimiento** (baja fidelidad; los genera y revisa `/design-define` vía subagente, ver paso 4 de `flow.md`), no especificación visual final: el detalle de diseño llega después, fuera de este skill.
 
 ---
 

@@ -4,6 +4,8 @@ Cómo se define cada tipo de elemento de una capability. La estructura exacta de
 
 Reglas comunes a todos los tipos:
 
+- **Misma estructura en todos los archivos de elemento:** título `# ID: Nombre` → cabecera (solo los campos `**Campo:** valor` que la plantilla define; ninguno en modelos y APIs) → descripción (párrafo sin título, máximo 4 líneas) → contenido propio del tipo en secciones `##` → `## Notas` (datos adicionales; opcional) → `## Historial de cambios` (tabla `Fecha | Cambio | Origen`, una fila por modificación posterior a la creación; se omite mientras no haya cambios). El README de la capability sigue el mismo cierre: `## Observaciones` (lagunas) y `## Historial de cambios`.
+
 - **Id estable por tipo:** `MD-XXX`, `API-XXX`, `FL-XXX`, `DG-XXX`, secuencial dentro de la capability (la secuencia es única aunque los elementos vivan en archivos distintos). No renumerar nunca: otros artefactos enlazan por ancla o por nombre de archivo. Si un elemento deja de aplicar, marcarlo `(Obsoleto)` en el título y explicar en qué fue reemplazado, en lugar de borrarlo, mientras existan consumidores que lo referencien.
 - **Dónde vive cada tipo:** cada modelo (`MD-XXX`), cada **grupo de APIs** (`API-XXX`), cada flujo (`FL-XXX`) y cada diagrama (`DG-XXX`) en su propio archivo bajo `models/`, `apis/`, `flows/` y `diagrams/`, **nombrado con el estándar `MD-XXX-{slug}` / `API-XXX-{slug}` / `FL-XXX-{slug}` / `DG-XXX-{slug}`** (`models/MD-001-factura.md`, `apis/API-001-facturas.md`, `flows/FL-001-emision-factura.md`, `diagrams/DG-001-contexto.md`; slug kebab-case del nombre, fijado al crear el elemento) y enlazado desde la tabla índice correspondiente del README. Renombrar el elemento no renombra el archivo: el id es el contrato, igual que en las carpetas `US-XXX-[nombre-corto]`. Su referencia externa es la ruta del archivo, sin ancla. **El `README.md` es el índice de la capability: no define elementos.**
 - **Ancla explícita de operación, derivada de método + ruta** (dentro de un archivo de `apis/`). Un `API-XXX` contiene varias operaciones; cada una lleva **inmediatamente antes** de su encabezado una línea con su ancla, y el encabezado es `### \`MÉTODO /ruta\` — Nombre`:
@@ -56,8 +58,9 @@ Reglas:
 
 - **Tipos concretos**, no genéricos: `string (UUID v4)`, `decimal(12,2)`, `date (ISO 8601)` — no «texto» ni «número». Si el proyecto tiene tipos propios o enums, citarlos por nombre y listar los valores permitidos en Validaciones.
 - **Validaciones verificables:** rangos, formatos (regex si aplica), unicidad, obligatoriedad condicional («requerido si `type = credit`»). Es la columna que las TK y los test cases consumen; una validación vaga («debe ser válido») no sirve.
-- **Relaciones explícitas** con cardinalidad: `Factura 1—N LineaFactura (MD-002)`. Incluir diagrama `erDiagram` de Mermaid solo cuando hay dos o más modelos relacionados; con un modelo aislado el diagrama no aporta.
+- **Relaciones en el campo que las materializa**, no en una sección aparte: el campo lleva en Tipo el modelo enlazado (`[MD-002](MD-002-linea-factura.md)[]`, o la ruta relativa si es de otra capability) y en Descripción la cardinalidad (`1—N`). Incluir diagrama `erDiagram` de Mermaid solo cuando hay dos o más modelos relacionados, precedido de un título en negrita que diga de qué es (`## Relaciones de Factura`); con un modelo aislado el diagrama no aporta.
 - Distinguir en la descripción si el modelo es **entidad persistida**, **DTO de transporte** o **proyección/vista**, porque condiciona qué validaciones aplican y dónde.
+- **Estructura fija:** cabecera (sin campos) → descripción (párrafo sin título, máximo 4 líneas, que dice si es entidad persistida, DTO o proyección) → `## Campos` → `## Relaciones de <modelo>` (solo con `erDiagram`) → `## Notas` (datos adicionales que no caben en la tabla: índices, ciclo de vida/estados, reglas que cruzan varios campos, origen del dato; opcional) → `## Historial de cambios` (una fila por modificación posterior a la creación, con su origen; se omite mientras no haya cambios).
 
 **Ejemplo:**
 
@@ -67,6 +70,8 @@ Archivo `models/MD-001-factura.md`:
 
 Entidad persistida que representa una factura emitida a un cliente.
 
+## Campos
+
 | Campo | Tipo | Requerido | Descripción | Validaciones / restricciones |
 | ----- | ---- | --------- | ----------- | ---------------------------- |
 | id | string (UUID v4) | Sí | Identificador único | Generado por el sistema; inmutable |
@@ -74,8 +79,18 @@ Entidad persistida que representa una factura emitida a un cliente.
 | status | enum | Sí | Estado de la factura | `draft` \| `issued` \| `paid` \| `voided` |
 | total | decimal(12,2) | Sí | Total con impuestos | ≥ 0; suma de líneas + impuestos |
 | issuedAt | datetime (ISO 8601, UTC) | No | Fecha de emisión | Requerido si `status ≠ draft` |
+| lines | `[MD-002](MD-002-linea-factura.md)`[] | Sí | Líneas de la factura (1—N) | Mínimo 1 línea |
 
-**Relaciones:** Factura 1—N LineaFactura (`[MD-002](MD-002-linea-factura.md)`)
+## Relaciones de Factura
+
+```mermaid
+erDiagram
+  Factura ||--|{ LineaFactura : contiene
+```
+
+## Notas
+
+- `total` se recalcula al modificar líneas; una factura `issued` o `paid` no admite cambios en sus líneas.
 
 ---
 
@@ -88,12 +103,14 @@ Reglas:
 - **Un grupo por elemento, no una operación por elemento.** El criterio de agrupación es la **entidad** (todo el CRUD de un recurso y sus endpoints relacionados: `POST /projects`, `GET /projects`, `GET /projects/{id}`, `PATCH /projects/{id}`, `DELETE /projects/{id}`, `POST /projects/{id}/archive`, `GET /projects/{id}/members`) o la **funcionalidad** cuando no hay una entidad clara (`POST /auth/login`, `POST /auth/logout`, `POST /auth/refresh`, `POST /auth/forgot-password`). Un endpoint pertenece a **un solo** grupo: si manipula un recurso, va con ese recurso; si sirve a un proceso transversal, va con ese proceso.
 - **Nombre del grupo en plural cuando es una entidad** (`Proyectos`, `Facturas`), en sustantivo de la funcionalidad cuando no lo es (`Autenticación`, `Reportes`). El slug del archivo se congela al crear el grupo.
 - **Antes de crear un grupo nuevo, revisar los existentes.** Un endpoint de proyecto no abre `API-004: Archivar proyecto`: se añade a `API-001-proyectos.md` como una operación más, y el grupo conserva su id. Abrir un grupo por operación reproduce el problema que esta convención resuelve.
-- **Cabecera del grupo:** alcance, prefijo de ruta común, autenticación por defecto y modelos relacionados — lo que se repetiría en cada operación se declara una vez arriba, y cada operación solo lo sobrescribe si difiere. Tras la cabecera, la **tabla de operaciones** del grupo (ancla, método+ruta, nombre, descripción) precede a los contratos.
+- **Descripción general del grupo** bajo el título, en un párrafo de máximo cuatro líneas (qué cubre, prefijo de ruta común, qué queda fuera): el archivo no lleva campos de cabecera. Los modelos no se listan arriba — cada request/response enlaza el `MD-XXX` que usa en su columna Tipo/Cuerpo. Tras la cabecera, la **tabla de operaciones** del grupo (ancla, método+ruta, nombre, descripción) precede a los contratos.
 - **Ancla de operación obligatoria** en la línea anterior a cada `###`, derivada de método+ruta (ver reglas comunes arriba). Es lo que permite citar un endpoint concreto desde una US/TK/WI o desde un `FL-XXX`.
-- **Request y response tipados contra los modelos:** si el body es un modelo ya definido, referenciar `MD-XXX` en lugar de repetir la tabla de campos; definir inline solo lo que no exista como modelo (y valorar promoverlo a `MD-XXX` si lo consume más de una operación).
+- **Request y response tipados contra los modelos:** si el body es un modelo ya definido, enlazar `[MD-XXX](../models/MD-XXX-{slug}.md)` en la columna Tipo o Cuerpo en lugar de repetir la tabla de campos; definir inline solo lo que no exista como modelo (y valorar promoverlo a `MD-XXX` si lo consume más de una operación).
 - **Responses exhaustivas:** el caso de éxito y **cada** error esperable con su código y condición (validación 400/422, autorización 401/403, no encontrado 404, conflicto 409…). Usar la estructura de error estándar del proyecto si existe; si no existe, preguntarla — no inventarla.
 - **Ejemplos JSON realistas** para éxito y al menos un error, con valores coherentes con las validaciones de los `MD-XXX`.
-- **Autenticación y permisos** siempre declarados, aunque sea «Pública»: la omisión es ambigua. Si el grupo declara una por defecto, cada operación indica «Hereda la del grupo» o la suya propia — en blanco no.
+- **Autenticación y permisos** siempre declarados en `## Notas` del grupo, aunque sea «Pública»: la omisión es ambigua. Se declara el mecanismo y los roles comunes y, en la misma nota, las operaciones que difieren — nunca como campo dentro de cada operación.
+- **Cada operación abre con su descripción** en un párrafo de máximo dos líneas justo debajo del `###` (qué hace y cuándo se usa), sin campos.
+- **Estructura fija:** descripción → `## Operaciones` (tabla índice) → un bloque `<a id>` + `###` por operación (descripción, **Request**, **Responses**) → `## Notas` (autenticación obligatoria, más observaciones comunes) → `## Historial de cambios` (una fila por operación añadida, quitada o corregida, con su origen; se omite mientras no haya cambios).
 - **Operación obsoleta:** marcarla `(Obsoleto)` en su encabezado explicando el reemplazo, sin quitar su ancla mientras tenga consumidores. Un grupo entero obsoleto se marca en su `# API-XXX: Nombre (Obsoleto)`.
 
 **Ejemplo:**
@@ -102,10 +119,7 @@ Archivo `apis/API-001-facturas.md`:
 
 # API-001: Facturas
 
-- **Alcance:** ciclo de vida de la factura (creación, consulta, emisión y anulación). No cubre la conciliación de cobros (ver `[FL-002](../flows/FL-002-conciliacion.md)`).
-- **Base:** `/api/v1/invoices`
-- **Autenticación por defecto:** Bearer JWT; rol `billing:read`
-- **Modelos relacionados:** `[MD-001](../models/MD-001-factura.md)`, `[MD-002](../models/MD-002-linea-factura.md)`
+Ciclo de vida de la factura (creación, consulta, emisión y anulación) bajo `/api/v1/invoices`. No cubre la conciliación de cobros (ver `[FL-002](../flows/FL-002-conciliacion.md)`).
 
 ## Operaciones
 
@@ -119,15 +133,14 @@ Archivo `apis/API-001-facturas.md`:
 <a id="post-invoices"></a>
 ### `POST /api/v1/invoices` — Crear factura
 
-- **Autenticación:** Bearer JWT; rol `billing:write`
-- **Descripción:** Crea una factura en estado `draft` a partir de sus líneas.
+Crea una factura en estado `draft` a partir de sus líneas.
 
 **Request**
 
 | Parámetro | Ubicación | Tipo | Requerido | Descripción |
 | --------- | --------- | ---- | --------- | ----------- |
 | customerId | body | string (UUID v4) | Sí | Cliente a facturar |
-| lines | body | LineaFactura[] (MD-002) | Sí | Mínimo 1 línea |
+| lines | body | `[MD-002](../models/MD-002-linea-factura.md)`[] | Sí | Mínimo 1 línea |
 
 ```json
 { "customerId": "3fa85f64-5717-4562-b3fc-2c963f66afa6", "lines": [{ "productId": "…", "quantity": 2 }] }
@@ -137,15 +150,14 @@ Archivo `apis/API-001-facturas.md`:
 
 | Código | Condición | Cuerpo |
 | ------ | --------- | ------ |
-| 201 | Factura creada | Factura (MD-001) |
+| 201 | Factura creada | `[MD-001](../models/MD-001-factura.md)` |
 | 422 | `lines` vacío o cliente inexistente | Error estándar del proyecto |
 | 403 | Sin rol `billing:write` | Error estándar del proyecto |
 
 <a id="get-invoices-id"></a>
 ### `GET /api/v1/invoices/{id}` — Consultar factura
 
-- **Autenticación:** Hereda la del grupo
-- **Descripción:** Devuelve la factura solicitada con sus líneas.
+Devuelve la factura solicitada con sus líneas.
 
 **Request**
 
@@ -157,8 +169,12 @@ Archivo `apis/API-001-facturas.md`:
 
 | Código | Condición | Cuerpo |
 | ------ | --------- | ------ |
-| 200 | Factura encontrada | Factura (MD-001) |
+| 200 | Factura encontrada | `[MD-001](../models/MD-001-factura.md)` |
 | 404 | No existe una factura con ese id | Error estándar del proyecto |
+
+## Notas
+
+- Autenticación: Bearer JWT; rol `billing:read` para todas las operaciones; `POST /api/v1/invoices` requiere además `billing:write`.
 
 ---
 
@@ -173,6 +189,7 @@ Reglas:
 - **Pasos numerados con actor/componente explícito** en cada paso («El servicio de facturación valida…», no «se valida…»). Los pasos que invocan un endpoint o tocan un modelo lo citan por su grupo y operación (`API-001` → `POST /api/v1/invoices`) o por su id de modelo (`MD-001`).
 - **Cada rama del diagrama aparece en los pasos o en Manejo de errores.** Un rombo del flowchart sin rama documentada es una laguna: preguntarla o registrarla en Observaciones.
 - **Manejo de errores por paso:** qué puede fallar y el comportamiento esperado (reintento, compensación, mensaje al usuario, aborto). Es la parte que más lagunas suele tener — foco del grilling.
+- **Estructura fija:** cabecera (Disparador, Actores / componentes, Resultado) → descripción (párrafo sin título, máximo 4 líneas) → `## Flujo` (diagrama) → `## Pasos` → `## Manejo de errores` → `## Notas` (opcional) → `## Historial de cambios` (una fila por modificación posterior a la creación, con su origen; se omite mientras no haya cambios).
 
 **Ejemplo (diagrama):**
 
@@ -201,11 +218,12 @@ Un `DG-XXX` es un diagrama estructural o de arquitectura de la capability: clase
 
 Reglas:
 
-- **Tipo y alcance siempre declarados.** El tipo determina la notación; el alcance evita diagramas «de todo» que no responden ninguna pregunta concreta. Un buen `DG-XXX` responde una pregunta de implementación: ¿qué clases forman el dominio?, ¿con qué sistemas se integra la capability?, ¿en qué contenedores corre?
+- **Tipo en la cabecera y alcance en la descripción.** El `**Tipo:**` es el único campo de cabecera y determina la notación; la descripción (párrafo sin título, máximo 4 líneas, bajo la cabecera) declara qué cubre y qué queda fuera, y evita diagramas «de todo» que no responden ninguna pregunta concreta. Un buen `DG-XXX` responde una pregunta de implementación: ¿qué clases forman el dominio?, ¿con qué sistemas se integra la capability?, ¿en qué contenedores corre?
 - **Mermaid como notación por defecto:** `classDiagram` para clases, `C4Context`/`C4Container`/`C4Component` para los niveles C4, `stateDiagram-v2` para estados, `flowchart` para despliegue si `C4Deployment` no aporta. Si el diagrama existe como archivo exportado (draw.io, PlantUML renderizado, imagen), guardarlo en `docs/architecture/[capability]/assets/` y enlazarlo desde el archivo del elemento — pero preferir Mermaid porque vive en el propio archivo y se versiona con él.
 - **Nivel de detalle por tipo:** en clases, atributos y relaciones con cardinalidad, métodos solo si son parte del contrato del dominio; en contexto, sistemas externos y actores con la dirección de cada interacción; en contenedores/componentes, tecnología entre corchetes y el protocolo de cada flecha. Una flecha sin etiqueta es una laguna.
 - **Coherencia con los demás elementos:** las clases del `DG-XXX` de clases deben corresponderse con los `MD-XXX` (citarlos en Notas); las interacciones del contexto con los endpoints de los `API-XXX` o los `FL-XXX` que las materializan. Un diagrama que contradice las tablas es peor que ningún diagrama — al actualizar un `MD-XXX`/`API-XXX`/`FL-XXX`, revisar los `DG-XXX` que los citan.
 - **Un diagrama por elemento.** Si hacen falta el contexto y los contenedores, son `DG-001` y `DG-002`, cada uno enlazable por separado.
+- **Estructura fija:** cabecera (`Tipo`) → descripción → `## Diagrama` → `## Notas` → `## Historial de cambios` (una fila por modificación posterior a la creación, con su origen; se omite mientras no haya cambios).
 
 **Ejemplo:**
 
@@ -213,8 +231,11 @@ Archivo `diagrams/DG-001-contexto.md`:
 
 # DG-001: Contexto de la capability facturación
 
-- **Tipo:** Contexto (C4)
-- **Alcance:** sistemas y actores que interactúan con facturación; no incluye el detalle interno de los servicios.
+**Tipo:** Contexto (C4)
+
+Sistemas y actores que interactúan con facturación y en qué dirección; no incluye el detalle interno de los servicios.
+
+## Diagrama
 
 ```mermaid
 C4Context
@@ -227,17 +248,32 @@ C4Context
   Rel(facturacion, pagos, "Registra cobro", "FL-001")
 ```
 
-**Notas**
+## Notas
 
 - La interacción con la pasarela se detalla en `[FL-001](../flows/FL-001-emision-factura.md)`; el contrato de emisión en `[API-001 · POST /api/v1/invoices/{id}/issue](../apis/API-001-facturas.md#post-invoices-id-issue)`.
 
 ---
 
-## Wireframes (WF-XXX) — insumo, no elemento de la capability
+## Wireframes (WF-XXX)
 
-Un `WF-XXX` es el wireframe de una pantalla: un documento `wireframes/WF-XXX-{slug}.md` (objetivo, componentes, estados, historial de revisión) y su SVG hermano `wireframes/WF-XXX-{slug}.svg`. **No es documentación de arquitectura**: es un recurso del artefacto de implementación que lo origina y vive en la carpeta de ese artefacto (`SRS-XXX-…/wireframes/`, `US-XXX-…/wireframes/` o `WI-XXX-…/wireframes/`), con id secuencial dentro de ella. La carpeta de capability no tiene `wireframes/` ni tabla índice de wireframes.
+Un `WF-XXX` es el wireframe de una pantalla: un documento `wireframes/WF-XXX-{slug}.md` (objetivo, componentes, estados, historial de revisión) y su SVG hermano `wireframes/WF-XXX-{slug}.svg`, con molde en `assets/wireframe-template.md`. **Lo produce y revisa `design-define`** ([Flujo: Wireframes](flow.md#flujo-wireframes-wf-xxx)), casi siempre en modo delegado: lo invocan `requirement-refine` (paso 4 de su flujo, en un `SRS-XXX`) y `work-define` (paso 3 de su flujo, en una `US-XXX` que toca UI y no hereda wireframes), que **nunca escriben el `.md` ni el `.svg`**: pasan el contexto, reciben rutas + estado + impacto en requisitos, y lo indexan en su artefacto.
 
-Los producen `requirement-refine` (paso 4 de su flujo, en un `SRS-XXX`) y `work-define` (en una `US-XXX` que toca UI y no hereda wireframes), porque el wireframe se valida con el usuario en lenguaje de experiencia, no de implementación. `design-define` **no crea, renumera, mueve ni revisa** wireframes: los lee como insumo cuando el artefacto que motiva el diseño los trae (una pantalla aprobada suele anticipar el `FL-XXX` y las `API-XXX` que la sirven) y puede enlazarlos en Notas cuando un flujo o un endpoint los materializa. Su estado de revisión (`Pendiente` / `Revisado con cambios` / `Aprobado`) lo gobierna el artefacto de origen.
+**Ubicación — la única excepción a `docs/architecture/`.** A diferencia de `MD/API/FL/DG`, un `WF-XXX` **no es documentación de arquitectura**: es un recurso del artefacto de implementación que lo origina y vive en la carpeta de ese artefacto (`SRS-XXX-…/wireframes/`, `US-XXX-…/wireframes/` o `WI-XXX-…/wireframes/`, en `<changesPath>`; layout completo en `${PLUGIN_ROOT}/references/artifacts.md`), con id secuencial de 3 dígitos dentro de esa carpeta y slug kebab-case fijado al crear. Se archiva con su artefacto. La carpeta de capability **no** tiene `wireframes/` ni tabla índice de wireframes; la fila de índice vive en el artefacto de origen (sección 11 del SRS, Referencias de la US/WI) y la escribe el skill dueño del artefacto. Una US derivada de un SRS **enlaza** los wireframes del SRS, no los copia ni genera otros para la misma pantalla.
+
+**Fidelidad.** Mockup visual de baja/media fidelidad para validar alcance con el usuario, en lenguaje de experiencia — no un diseño visual definitivo:
+
+- Proporciones razonablemente realistas de cada región (encabezado, navegación, contenido, acciones, pie) y de sus componentes (campos, botones, tarjetas, listas).
+- Contenido de ejemplo/placeholder, nunca el copy final; etiquetas dentro de cada componente que digan qué es («Botón: Guardar», «Campo: Correo electrónico»).
+- Paleta en **escala de grises** para distinguir tipos de elemento (claro para contenedores, medio para botones/inputs, oscuro para texto); tipografía genérica del sistema. **Sin colores de marca, tipografía real ni medidas pixel-perfect.**
+- `viewBox` según el **tipo de solución** que trae el llamador: retrato angosto para app nativa o responsivo en móvil (p. ej. `0 0 375 812`); horizontal ancho para web/escritorio (p. ej. `0 0 1280 800`).
+- Una pantalla con estados relevantes (vacío, error, carga, sin permisos) se divide en varios SVG con el mismo id y un sufijo (`WF-XXX-{slug}-vacio.svg`), enlazados desde la sección Estados del `.md`, antes que en un solo diagrama saturado.
+- El SVG se **enlaza** desde el `.md` (`![…](./WF-XXX-{slug}.svg)`); nunca se pega su código en el documento ni en la respuesta al usuario.
+
+**Cabecera del `.md`.** Origen (enlace al README del SRS/US/WI), tipo de solución y responsividad, **Estado de revisión** (`Pendiente` / `Revisado con cambios` / `Aprobado`) y su marca oculta `<!-- wireframe:review-status=pending|revised|approved -->` (claves y valores en inglés, como `srs:status`). El estado lo fija `design-define` según lo que el usuario respondió en la revisión por lote, y el artefacto de origen lo replica tal cual en su tabla índice: ambos deben decir lo mismo. Nada se marca `Aprobado` sin respuesta del usuario.
+
+**Revisión e impacto.** Todas las pantallas se generan de una vez, se presentan juntas (nombre + enlace + imagen embebida si el entorno la renderiza) y se aprueban con **una sola pregunta por vuelta**; cada cambio pedido actualiza el SVG y se registra en la tabla **Historial de cambios** del `.md`. Cuando una observación implica un requisito nuevo o modificado, `design-define` la **reporta** al llamador con el `FR-XXX`/`AC-XXX` afectado; crearlo o modificarlo es del skill dueño del artefacto — un cambio de wireframe sin reflejo en requisitos, o un requisito cambiado sin constancia en el Historial, son el mismo error visto desde cada lado.
+
+**Como insumo.** Al documentar una capability, `design-define` lee los wireframes del artefacto que motiva el diseño: una pantalla aprobada suele anticipar el `FL-XXX` y las `API-XXX` que la sirven, y puede enlazarse en Notas cuando un flujo o un endpoint la materializa.
 
 ---
 

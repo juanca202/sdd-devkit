@@ -29,8 +29,6 @@ funcional → comportamiento de la solución, riesgo, complejidad, cómo organiz
 **Repositorio:** {{obligatorio para Ready: nombre del repositorio git donde se ejecuta el experimento}}
 **Origen:** {{artefacto o decisión que espera el resultado: `US-XXX`, `WI-XXX`, `RS-XXX` o `ADR-XXX` enlazado por ruta relativa; «Petición directa» si no hay ninguno}}
 **Timebox:** {{obligatorio para Ready: duración máxima del experimento, p. ej. `2 días` · `8 h` · `1 sprint`}}
-**Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema de seguimiento vinculado — solo si se creó; omitir línea si no aplica}}
 **Resolución:** {{Abierto | Replanificado (US-YYY) | Replanificado (WI-YYY) | Re-espigado (WI-YYY) | Descartado — motivo}}
 <!--
 Arranca en `Abierto`. La actualiza el skill que crea el artefacto definitivo (`work-define` → `Replanificado (US-YYY)`;
@@ -38,6 +36,8 @@ Arranca en `Abierto`. La actualiza el skill que crea el artefacto definitivo (`w
 `work-implement` al descartar tras un veredicto NOT_VIABLE. Un spike con `Resolución` distinta de `Abierto`
 cuenta como completo para `/work-plan archive`.
 -->
+**Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}
+**Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema de seguimiento vinculado — solo si se creó; omitir línea si no aplica}}
 
 ## Pregunta de investigación
 

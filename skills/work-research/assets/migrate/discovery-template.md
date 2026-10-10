@@ -11,8 +11,8 @@ El informe principal (README.md) lo enlaza en su sección "Archivos adicionales"
 # Descubrimiento de Migración
 
 **Estado:** {{Draft | Ready}}
-**Investigación:** [README.md](./README.md)
 **Fecha:** {{YYYY-MM-DD}}
+**Investigación:** [README.md](./README.md)
 **Proyecto origen:** {{nombre / stack principal del origen}}
 **Proyecto destino:** {{nombre / stack principal del destino}}
 

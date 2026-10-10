@@ -13,11 +13,11 @@ Ver ../../references/verdicts.md.
 
 # Verificaciones automatizadas — {{US-XXX-nombre-corto | WI-XXX-nombre | FT-XXX-slug | nombre del artefacto}}
 
+**Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED | `❌` REJECTED | `⚠️` INCOMPLETE}}
 **Fecha:** {{YYYY-MM-DD HH:MM}}
 **Rama:** {{rama}}
 **Commit:** {{sha-corto}}
 **Modo:** {{default | blocking-only | only nombre-del-check | no-tests | …}}  <!-- `tests-only` no produce este informe: su único artefacto es quality-check-run.json -->
-**Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED | `❌` REJECTED | `⚠️` INCOMPLETE}}
 
 ## Resumen
 

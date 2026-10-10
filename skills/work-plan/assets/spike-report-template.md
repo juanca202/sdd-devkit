@@ -25,12 +25,12 @@ valores SIEMPRE en inglés; la etiqueta visible del veredicto va en el idioma re
 | NOT_VIABLE           | ❌      | Alguna Q-XX determinante en fallo; el camino se descarta con sustento            | Resolución: Descartado; ADR vía arch-manage si la decisión es estructural |
 | INCONCLUSIVE         | ⏸️      | Timebox agotado con Q-XX sin responder                                           | Segundo spike más acotado (Re-espigado) o descartar |
 -->
-**Spike:** [WI-XXX: {{título}}](README.md)
 **Veredicto:** {{✅ Viable | ⚠️ Viable con trabajo | ❌ No viable | ⏸️ No concluyente}}
 **Subtipo:** {{técnico | funcional}}
+**Fecha:** {{YYYY-MM-DD}}
+**Spike:** [WI-XXX: {{título}}](README.md)
 **Timebox:** {{planificado}} · consumido: {{real}}
 **Rama de referencia:** `spike/WI-XXX-{{slug}}` @ `{{sha-corto}}` — no integrar
-**Fecha:** {{YYYY-MM-DD}}
 **Autor:** {{git config user.name}} / {{agente}}
 
 ## Resumen ejecutivo

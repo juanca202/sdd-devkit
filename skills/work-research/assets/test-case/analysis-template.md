@@ -18,12 +18,12 @@ recomendación» del README; el detalle vive aquí.
 # Análisis del caso de prueba {{TC-XXX}} — {{título del TC}}
 
 **Veredicto:** {{TC correcto · implementación correcta | TC correcto · implementación incorrecta | TC incorrecto | TC incompleto | TC acoplado a la implementación | Falso negativo | Requisito ambiguo o mal definido | Sin cobertura automatizada}}
+**Fecha:** {{YYYY-MM-DD}}
 **Caso de prueba:** {{[TC-XXX](ruta/al/TC-XXX-slug.md)}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item del caso de prueba en el sistema de seguimiento vinculado — solo si el TC existe allí; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica}}
 **Artefacto padre:** {{US-XXX | WI-XXX | FT-XXX | N/A}}
 **Requisito verificado:** {{AC-XXX | BR-XX | ⚠️ sin traza declarada}}
 **Prueba automatizada:** {{`ruta/al/test › nombre del caso` | ⚠️ no existe}}
-**Fecha:** {{YYYY-MM-DD}}
+**Work Item ({{Sistema}}):** {{enlace markdown al work item del caso de prueba en el sistema de seguimiento vinculado — solo si el TC existe allí; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica}}
 
 ---
 

@@ -25,11 +25,11 @@ Plantilla canónica del reporte de trazabilidad (coverage-verify).
 
 # Reporte de cobertura — {{US-XXX-nombre-corto | WI-XXX-nombre | FT-XXX-slug | nombre del artefacto}}
 
+**Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED | `❌` REJECTED | `⚠️` APPROVED_WITH_NOTES}}
 **Fecha:** {{YYYY-MM-DD HH:MM}}
 **Rama:** {{rama}}
 **Commit:** {{sha-corto}}
 **Trabajo:** [{{US-XXX | WI-XXX | FT-XXX | identificador del artefacto}}]({{./README.md | ruta relativa al artefacto}})
-**Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED | `❌` REJECTED | `⚠️` APPROVED_WITH_NOTES}}
 
 ## Resumen
 

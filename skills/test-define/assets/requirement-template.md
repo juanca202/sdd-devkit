@@ -26,10 +26,10 @@ Reglas de contenido:
 # RQ-XXX: {{título corto del requerimiento}}
 
 **Estado:** {{Draft | Ready}}
-**Procedencia:** {{origen del requerimiento: "texto entregado por el usuario" | "documento <nombre>" | "ticket/correo <referencia>"}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item del requerimiento en el gestor de proyectos — solo si el requerimiento se entregó como un work item existente; omitir línea si no aplica. test-define no crea este work item}}
 **Fecha de creación:** {{YYYY-MM-DD}}
 **Última actualización:** {{YYYY-MM-DD}}
+**Procedencia:** {{origen del requerimiento: "texto entregado por el usuario" | "documento <nombre>" | "ticket/correo <referencia>"}}
+**Work Item ({{Sistema}}):** {{enlace markdown al work item del requerimiento en el gestor de proyectos — solo si el requerimiento se entregó como un work item existente; omitir línea si no aplica. test-define no crea este work item}}
 
 ## Descripción funcional
 

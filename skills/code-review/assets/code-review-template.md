@@ -13,12 +13,12 @@ publicado — es la clave de frescura que lee el Paso 0 de la próxima revisión
 
 # Code Review — {{US-XXX-nombre-corto | WI-XXX-nombre | FT-XXX-slug | nombre del artefacto}}
 
+**Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED / `❌` REJECTED / `⚠️` INCOMPLETE}} — {{justificación en una línea}}
 **Fecha:** {{YYYY-MM-DD HH:MM}}
 **Rama:** {{rama}}
 **Commit:** {{sha-corto}}
 **Modo:** {{default / blocking-only}}
 **Diff:** {{rama base}} @{{sha-corto}} — {{N archivos, +X/−Y líneas}}
-**Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED / `❌` REJECTED / `⚠️` INCOMPLETE}} — {{justificación en una línea}}
 
 ## Resumen
 

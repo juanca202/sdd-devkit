@@ -237,9 +237,10 @@ Sección opcional — incluir solo si el requerimiento involucra una interfaz de
 se infiere del objetivo funcional y los FR-XXX (solo se pregunta al usuario si la inferencia es ambigua) —
 ver flow.md, paso 4. Eliminar la sección por completo (incluida la marca oculta) si no aplica — p. ej. un
 servicio o API sin UI.
-Cada fila enlaza a un wireframe generado con la plantilla compartida del plugin (assets/wireframe-template.md en su raíz), uno por pantalla,
-guardado en wireframes/WF-XXX-[pantalla-slug].md (+ su .svg hermano) DENTRO DE LA CARPETA DE ESTE SRS
-— los wireframes son un recurso del SRS, nunca van en docs/architecture/ (ver flow.md, paso 4, punto 3).
+Cada fila enlaza a un wireframe generado y revisado por /design-define (vía subagente; es el dueño de la plantilla
+wireframe-template.md y del lote de revisión), uno por pantalla, guardado en wireframes/WF-XXX-[pantalla-slug].md
+(+ su .svg hermano) DENTRO DE LA CARPETA DE ESTE SRS — los wireframes son un recurso del SRS, nunca van en
+docs/architecture/ (ver flow.md, paso 4, puntos 3-4). La ruta y el estado se copian tal cual de lo que devuelve design-define.
 El SRS no se declara Ready mientras alguna pantalla siga
 "Pendiente": las observaciones de la revisión deben quedar reflejadas aquí y en los FR-XXX afectados
 antes de cerrar.

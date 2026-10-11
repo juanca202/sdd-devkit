@@ -1,9 +1,11 @@
 # Debug — {{título corto del defecto}}
 
+<!-- diagnosis:status={{Draft|Ready}} -->
+<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que us:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
 **Estado:** {{Draft | Ready}}
 **Fecha:** {{YYYY-MM-DD}}
 **Severidad:** {{Crítico | Alto | Medio | Bajo}} — {{a quién y a qué afecta}}
-**Reproducibilidad:** {{Siempre | Intermitente ({{frecuencia}}) | No reproducible}}
+**Reproducibilidad:** {{Always | Intermittent ({{frecuencia}}) | Not Reproducible}}
 **Repositorio:** `{{nombre del repo afectado}}`
 **Historia de usuario:** {{enlace por ruta relativa al `README.md` de la `US-XXX` a la que pertenece el comportamiento defectuoso + su título (o el `WI-XXX` / `FT-XXX` si el artefacto relacionado no es una historia); con tracker vinculado, añadir el enlace a su work item. `N/A` solo si se buscó y no existe}}
 **Caso de prueba:** {{enlace por ruta relativa al `TC-XXX-{slug}.md` que detectó el bug o que cubre el comportamiento afectado + el `AC-XXX` que verifica; varios separados por coma. Omitir la línea si no hay ningún TC}}
@@ -22,7 +24,7 @@ proyectos, resumir lo que aportó y señalar qué se completó por investigació
 
 ## Reproducción
 
-**Veredicto:** {{Reproducida y verificada | Definida, no verificada | No reproducible}}
+**Veredicto:** {{Reproduced and Verified | Defined, Not Verified | Not Reproducible}}
 
 **Precondiciones:** {{estado de datos y fixtures, configuración, flags, permisos, zona horaria, locale}}
 

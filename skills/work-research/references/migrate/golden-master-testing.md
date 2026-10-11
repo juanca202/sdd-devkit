@@ -111,9 +111,9 @@ Los casos preparados se documentan en `validation.md` con dos partes.
 
 | ID     | Componente     | Estrategia           | Fuente de datos  | Recursos             | Estado    |
 | ------ | -------------- | -------------------- | ---------------- | -------------------- | --------- |
-| GM-001 | InvoiceService | Comparación JSON     | Ejemplos usuario | ./validation/gm-001/ | Listo     |
-| GM-002 | MonthlyReport  | Comparación PDF      | Sistema origen   | ./validation/gm-002/ | Pendiente |
-| GM-003 | CustomerImport | Comparación DB State | Datos históricos | ./validation/gm-003/ | Pendiente |
+| GM-001 | InvoiceService | Comparación JSON     | Ejemplos usuario | ./validation/gm-001/ | Ready     |
+| GM-002 | MonthlyReport  | Comparación PDF      | Sistema origen   | ./validation/gm-002/ | Pending   |
+| GM-003 | CustomerImport | Comparación DB State | Datos históricos | ./validation/gm-003/ | Pending   |
 
 ### 2. Detalle por cada caso
 

@@ -24,7 +24,7 @@ Elegir la categoría de **primer nivel** que mejor encaje. Si un criterio abarca
 
 ## INVEST
 
-Tabla con las seis dimensiones (I, N, V, E, S, T); valor de cada una: `Cumple` / `No cumple` / `Parcial` con nota. Si alguna dimensión falla, documentarlo sin disimular.
+Tabla con las seis dimensiones (I, N, V, E, S, T); valor de cada una: `Met` / `Not Met` / `Partial` con nota. Si alguna dimensión falla, documentarlo sin disimular.
 
 | Letra | Criterio      | Qué validar |
 | ----- | ------------- | ----------- |
@@ -41,7 +41,7 @@ Si INVEST no es completamente valorable con la información disponible, la histo
 
 ## Definition of Ready (DoR)
 
-Tabla con los seis criterios de la plantilla. Para cada uno: `Cumple` / `No cumple` / `Parcial` (el criterio **Referencias de UI** admite además `No aplica`).
+Tabla con los seis criterios de la plantilla. Para cada uno: `Met` / `Not Met` / `Partial` (el criterio **Referencias de UI** admite además `N/A`).
 
 | Criterio DoR                       | Qué exige |
 | ---------------------------------- | --------- |
@@ -49,7 +49,7 @@ Tabla con los seis criterios de la plantilla. Para cada uno: `Cumple` / `No cump
 | Inputs/outputs claros              | Entradas y salidas funcionales bien definidas. |
 | Repositorios definidos             | Campo **Repositorios:** de la cabecera poblado con el/los repositorio(s) git afectados, separados por coma. |
 | Sin decisiones técnicas pendientes | No quedan decisiones técnicas abiertas que condicionen el alcance. |
-| Referencias de UI                  | Para US de UI: enlaces de diseño presentes — diseño/Figma aportado, o wireframes `WF-XXX` heredados del SRS (`wireframes/` de su carpeta) o generados por `/design-define` vía subagente (`wireframes/` de la US) y **aprobados** (uno `Pendiente` deja el criterio en `Parcial`) (`No aplica` si no hay UI propia). |
+| Referencias de UI                  | Para US de UI: enlaces de diseño presentes — diseño/Figma aportado, o wireframes `WF-XXX` heredados del SRS (`wireframes/` de su carpeta) o generados por `/design-define` vía subagente (`wireframes/` de la US) y **aprobados** (uno `Proposed` deja el criterio en `Partial`) (`N/A` si no hay UI propia). |
 | Sin aclaraciones pendientes        | Observaciones vacías o «Ninguna»; nada pendiente con usuario/producto. |
 
 El estado **Ready** requiere todos los datos sin excepción: Criterios de aceptación completos (al menos un `AC-XXX`), DoR completado, repositorios afectados identificados y Observaciones sin pendientes abiertos.

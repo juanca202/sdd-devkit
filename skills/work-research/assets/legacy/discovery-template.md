@@ -18,6 +18,8 @@ Reglas:
 
 # RS-{{XXX}} · Discovery legacy — {{Nombre del código/módulo analizado}}
 
+<!-- discovery:status={{Draft|Ready}} -->
+<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que us:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
 **Estado:** {{Draft | Ready}}
 **Fecha:** {{YYYY-MM-DD}}
 **Código en alcance:** {{rutas / módulos / entrypoints}}

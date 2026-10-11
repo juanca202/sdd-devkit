@@ -60,7 +60,7 @@ Distinto del `Estado: Draft/Ready` del documento completo (ver [Definition of Re
 | **Propuesto** | El agente lo redactó a partir de una inferencia o un valor por defecto que el usuario todavía no confirmó explícitamente. |
 | **Aprobado** | El usuario confirmó el enunciado — al responder la pregunta que lo originó, ya lo está aprobando; no hace falta una confirmación aparte. |
 
-Un SRS puede llegar a `Estado: Ready` con requisitos en `Propuesto` **solo si** esa laguna quedó documentada y aceptada en Observaciones; en general, `Ready` implica que todos los `FR-XXX`/`NFR-XXX` relevantes están `Aprobado`.
+Un SRS puede llegar a `Estado: Ready` con requisitos en `Proposed` **solo si** esa laguna quedó documentada y aceptada en Observaciones; en general, `Ready` implica que todos los `FR-XXX`/`NFR-XXX` relevantes están `Approved`.
 
 ---
 
@@ -108,22 +108,22 @@ Ambos modos pueden dejar **Decisiones pendientes** si alguna capa queda sin reso
 
 ## Definition of Ready (DoR) del SRS
 
-Tabla con los trece criterios de la plantilla. Para cada uno: `Cumple` / `No cumple` / `Parcial` (los criterios marcados abajo admiten además `No aplica`, en las condiciones que se indican).
+Tabla con los trece criterios de la plantilla. Para cada uno: `Met` / `Not Met` / `Partial` (los criterios marcados abajo admiten además `N/A`, en las condiciones que se indican).
 
 | Criterio DoR | Qué exige |
 | ------------ | --------- |
 | Stack tecnológico resuelto | `srs:stack-mode` fijado y sin decisiones pendientes: investigado con `RS-XXX` enlazado, o decidido explícitamente por el usuario en todas las capas relevantes. |
 | Repositorios y proyecto base definidos | Al menos un repositorio identificado; cada uno con su **tipo** resuelto (`Nuevo` / `Existente (con cambios)`) y su proyecto base resuelto cuando aplica (uno concreto o «desde cero» si es nuevo; «No aplica» si es existente). |
-| Requisitos funcionales completos y priorizados | Al menos un `FR-XXX` con categoría, prioridad, estado `Aprobado` y enunciado RFC 2119; cubren el alcance descrito en la Introducción sin huecos evidentes. |
-| Requisitos no funcionales revisados y priorizados (`No aplica` si ninguna característica ISO 25010 aplica, justificado) | Cada característica ISO 25010 relevante tiene un `NFR-XXX` con prioridad y estado, o quedó marcada «No aplica» con justificación — cubre explícitamente Seguridad, Rendimiento (Eficiencia de rendimiento), Fiabilidad y su subcaracterística Disponibilidad. |
-| Interfaces externas revisadas (`No aplica` por subsección si esa interfaz no existe) | Las cuatro subsecciones (usuario, hardware, software, comunicaciones) fueron consideradas; las que no aplican lo declaran explícitamente en vez de omitirse en silencio. |
-| Requisitos de datos formalizados (`No aplica` si el requerimiento no maneja datos propios) | Las entidades de datos relevantes están identificadas con retención/privacidad y volumen, o la sección se marcó «No aplica». |
-| Cumplimiento normativo trazado (`No aplica` si no hay normativa identificada) | Cada normativa aplicable enlaza al `FR-XXX`/`NFR-XXX` que la satisface; ninguna fila queda sin ese enlace. |
-| Diseño de interfaz revisado (`No aplica` si `srs:ui-required=false`) | Si `srs:ui-required=true`: el **tipo de solución** y si debe ser **responsiva** están definidos, y cada fila de la tabla de pantallas está en `Aprobado`, con sus observaciones ya reflejadas en los `FR-XXX` afectados. Ninguna pantalla puede quedar `Pendiente` o `Revisado con cambios` sin resolver. |
+| Requisitos funcionales completos y priorizados | Al menos un `FR-XXX` con categoría, prioridad, estado `Approved` y enunciado RFC 2119; cubren el alcance descrito en la Introducción sin huecos evidentes. |
+| Requisitos no funcionales revisados y priorizados (`N/A` si ninguna característica ISO 25010 aplica, justificado) | Cada característica ISO 25010 relevante tiene un `NFR-XXX` con prioridad y estado, o quedó marcada «No aplica» con justificación — cubre explícitamente Seguridad, Rendimiento (Eficiencia de rendimiento), Fiabilidad y su subcaracterística Disponibilidad. |
+| Interfaces externas revisadas (`N/A` por subsección si esa interfaz no existe) | Las cuatro subsecciones (usuario, hardware, software, comunicaciones) fueron consideradas; las que no aplican lo declaran explícitamente en vez de omitirse en silencio. |
+| Requisitos de datos formalizados (`N/A` si el requerimiento no maneja datos propios) | Las entidades de datos relevantes están identificadas con retención/privacidad y volumen, o la sección se marcó «No aplica». |
+| Cumplimiento normativo trazado (`N/A` si no hay normativa identificada) | Cada normativa aplicable enlaza al `FR-XXX`/`NFR-XXX` que la satisface; ninguna fila queda sin ese enlace. |
+| Diseño de interfaz revisado (`N/A` si `srs:ui-required=false`) | Si `srs:ui-required=true`: el **tipo de solución** y si debe ser **responsiva** están definidos, y cada fila de la tabla de pantallas está en `Approved`, con sus observaciones ya reflejadas en los `FR-XXX` afectados. Ninguna pantalla puede quedar `Proposed` sin resolver. |
 | Verificación y trazabilidad completas | Todo `FR-XXX`/`NFR-XXX` tiene fila en la sección 12 con origen, método de verificación y criterio de verificación concretos — ver [Verificabilidad](#verificabilidad). |
 | Riesgos identificados | La sección 13 existe con al menos una fila, o se dejó explícitamente «Ninguno identificado» — no se omite sin más. |
 | Alcance y fuera de alcance claros | La sección 1.2 delimita qué cubre el requerimiento y qué queda explícitamente fuera. |
 | Sin aclaraciones pendientes | Observaciones vacías o «Ninguna»; nada pendiente con usuario/producto. |
 | Validación final (Ola 3) superada | El análisis de gaps, la revisión cruzada PO+UX+ARCH y la **validación con subagente sin contexto de sesión** (ver [`interview.md`](interview.md#ola-3-en-detalle-paso-11-de-flowmd)) se ejecutaron sobre el documento redactado, sin hallazgos pendientes: lo no resuelto vive en Observaciones y bloquea Ready vía el criterio anterior. |
 
-El estado **Ready** requiere todos los criterios sin excepción (los marcados `No aplica` cuentan como satisfechos cuando la condición de exclusión aplica y está declarada). Si falta cualquiera, el SRS permanece en `Estado: Draft` con las lagunas documentadas en Observaciones — nunca se declara Ready «con reservas».
+El estado **Ready** requiere todos los criterios sin excepción (los marcados `N/A` cuentan como satisfechos cuando la condición de exclusión aplica y está declarada). Si falta cualquiera, el SRS permanece en `Estado: Draft` con las lagunas documentadas en Observaciones — nunca se declara Ready «con reservas».

@@ -51,6 +51,8 @@ que las tres puertas: un informe de auditoría se lee con el mismo vocabulario q
 | **Texto visible del documento** — títulos de sección, etiquetas de campo del encabezado, celdas, leyendas, prosa | **Idioma resuelto.** Es contenido que lee una persona. | `**Veredicto:** ✅ Aprobado` · `**Estado:** Ready` |
 | **Marcas ocultas y frontmatter** — comentarios HTML que otro skill parsea, claves de frontmatter | **Siempre en inglés.** Son identificadores, no contenido. | `<!-- code-review:verdict=APPROVED · mode=default -->` |
 
+Todo artefacto con `**Estado:**` lleva, justo debajo de su título, la marca `<!-- <prefijo>:status=… -->` con el mismo valor que la etiqueta visible: `srs`, `us`, `tk`, `wi`, `tc`, `rq`, `ft`, `rs`, `diagnosis`, `discovery`, `validation` y `wireframe:status`. Es lo que leen los demás skills; la línea visible nunca.
+
 > **La etiqueta visible nunca es el ancla de parseo.** `**Veredicto:**` se llamará `**Verdict:**` en un repo
 > en inglés y `**Verdикт:**` en otro idioma: comparar contra ella se rompe en cuanto cambia el idioma del
 > repo. Lo que se compara es siempre la **marca oculta**, cuyas claves y valores son estables.
@@ -102,7 +104,17 @@ Todo esto son **identificadores**, no contenido:
   `work-define`, `work-plan` y el archivado; no es una puerta de cierre).
 - Los **valores** de los campos de estado, aunque su etiqueta visible sí se traduzca:
   `Draft` / `Ready` / `Obsolete` en un TC, `Pending` / `In Progress` / `Done` en `progress.md` y en `test-cases-automation.md`,
-  `Unit` / `Integration` / `API Test` / `Visual Test` / `E2E` / `Manual` como tipo de prueba.
+  `Unit` / `Integration` / `API Test` / `Visual Test` / `E2E` / `Manual` como tipo de prueba,
+  `Proposed` / `Approved` como estado de revisión de un `WF-XXX`, `Proposed` / `Approved` como estado de un
+  `FR-XXX`/`NFR-XXX`, `Open` / `Fixing (…)` / `Fixed (…)` / `Discarded` y `Open` / `Replanned (…)` / `Re-spiked (…)` /
+  `Discarded` en la `Resolución` de un WI, `Pending` / `Ready` en los casos golden master, `Always` / `Intermittent` /
+  `Not Reproducible` como reproducibilidad, y los veredictos de los informes de investigación (`Reproduced and Verified` /
+  `Defined, Not Verified` / `Not Reproducible` en un diagnóstico; `TC OK · Implementation OK`, `TC Wrong`, `False Negative`…
+  en un análisis de TC) y los estados por criterio de `arch-audit` (`COMPLIANT` / `PARTIAL` / `NON_COMPLIANT` / `UNVERIFIABLE`).
+  `Met` / `Partial` / `Not Met` / `N/A` en las tablas INVEST y DoR, `Direct` / `Adaptation` / `Redesign` / `Remove` / `Pending`
+  como equivalencia de migración.
+  **Regla general: toda opción de un campo de estado, veredicto o resolución en una plantilla se escribe en inglés**; la
+  etiqueta visible del campo (`**Estado:**`) sí se traduce.
 - Los nombres de los modificadores de invocación y los identificadores de suite.
 - Los identificadores de artefactos y documentos (`US-XXX`, `TK-XXX`, `WI-XXX`, `TC-XXX`, `FT-XXX`, `ADR-XXX`,
   `AC-XXX`, `BR-XX`, `CR-XXX`, `RS-XXX`) y los nombres de skill.

@@ -316,7 +316,9 @@ es una hipótesis: se marca como tal y se verifica o se descarta.
    qué cambiar. Dejar explícito en el mensaje que **todavía no se ha escrito nada**.
    - **Sí** → Paso 5: escribir en disco el contenido tal como se presentó, con
      `Estado: Ready` —o `Draft` si el flujo declara pendientes abiertos; su referencia
-     dice cuándo aplica.
+     dice cuándo aplica. La marca oculta de la plantilla (`rs:status`, `ft:status`,
+     `diagnosis:status`, `discovery:status`, `validation:status`) lleva **siempre el mismo
+     valor** que la línea visible `**Estado:**`; cambiar uno sin el otro es un error.
    - **Profundizar** → investigación adicional y volver al punto 1 de este paso.
    - **Ajuste pedido en respuesta libre** → aplicar los cambios y **volver a presentar el
      contenido completo** antes de preguntar de nuevo. Nunca escribir una versión que el

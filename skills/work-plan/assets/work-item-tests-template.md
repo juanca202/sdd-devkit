@@ -32,7 +32,7 @@ de abajo sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
 **Prueba automatizada:** {{nombre del caso tal como lo reporta el runner (incluye el ID del TC) — `ruta/al/spec.ext`; omitir línea si la ejecución fue manual}}
 **Ambiente:** {{nombre del ambiente (nunca la URL ni valores del `.env`) · build/versión del sistema si se conoce · navegador/dispositivo si aplica}}
 **Fecha de ejecución:** {{YYYY-MM-DD HH:mm}}
-**Frecuencia:** {{Siempre | Intermitente (N de M ejecuciones)}}
+**Frecuencia:** {{Always | Intermittent (N de M ejecuciones)}}
 **Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}
 **Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema de seguimiento vinculado — solo si se creó; omitir línea si no aplica}}
 
@@ -113,7 +113,7 @@ Un artefacto que no se adjunta (contiene datos de sesión, pesa demasiado, no ex
 **Severidad:** {{Crítico (bloquea el flujo o corrompe datos) | Alto (sin alternativa razonable) | Medio (con alternativa) | Bajo (cosmético)}}
 **Alcance:** {{a quién o qué afecta: actores, módulos, ambientes; otros `TC-XXX` bloqueados por este hallazgo}}
 **Origen del hallazgo:** {{automatización de `TC-XXX` (work-implement) | ejecución manual de `TC-XXX` | `coverage-verify` | quality-check | otro}}
-**Resolución:** {{Abierto | En corrección (<work item del repositorio de la aplicación>) | Corregido (<work item>) | Descartado — motivo}}
+**Resolución:** {{Open | Fixing (<work item del repositorio de la aplicación>) | Fixed (<work item>) | Discarded — motivo}}
 
 ## Observaciones
 

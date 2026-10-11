@@ -74,7 +74,7 @@ el comportamiento correcto, nunca la solución.
 **Severidad:** {{Crítico (bloquea el flujo o corrompe datos) | Alto (sin alternativa razonable) | Medio (con alternativa) | Bajo (cosmético)}}
 **Alcance:** {{a quién o qué afecta: actores, módulos, ambientes}}
 **Origen del hallazgo:** {{automatización de `TC-XXX` (work-implement) | ejecución manual de `TC-XXX` | `coverage-verify` | quality-check | producción | otro}}
-**Resolución:** {{Abierto | En corrección (WI-YYY) | Corregido (WI-YYY) | Descartado — motivo}}
+**Resolución:** {{Open | Fixing (WI-YYY) | Fixed (WI-YYY) | Discarded — motivo}}
 
 ## Contexto
 

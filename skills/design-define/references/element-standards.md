@@ -58,7 +58,7 @@ Reglas:
 
 - **Tipos concretos**, no genéricos: `string (UUID v4)`, `decimal(12,2)`, `date (ISO 8601)` — no «texto» ni «número». Si el proyecto tiene tipos propios o enums, citarlos por nombre y listar los valores permitidos en Validaciones.
 - **Validaciones verificables:** rangos, formatos (regex si aplica), unicidad, obligatoriedad condicional («requerido si `type = credit`»). Es la columna que las TK y los test cases consumen; una validación vaga («debe ser válido») no sirve.
-- **Relaciones en el campo que las materializa**, no en una sección aparte: el campo lleva en Tipo el modelo enlazado (`[MD-002](MD-002-linea-factura.md)[]`, o la ruta relativa si es de otra capability) y en Descripción la cardinalidad (`1—N`). Incluir diagrama `erDiagram` de Mermaid solo cuando hay dos o más modelos relacionados, precedido de un título en negrita que diga de qué es (`## Relaciones de Factura`); con un modelo aislado el diagrama no aporta.
+- **Relaciones en el campo que las materializa:** el campo lleva en Tipo el modelo enlazado (`[MD-002](MD-002-linea-factura.md)[]`, o la ruta relativa si es de otra capability) y en Descripción la cardinalidad (`1—N`). Cuando hay dos o más modelos relacionados, la sección `## Relaciones de <modelo>` contiene el `erDiagram` y debajo **una viñeta por relación** (cardinalidad, modelo enlazado, campo, comportamiento de borrado) — sin rótulo `**Relaciones:**` ni prosa corrida: el título de la sección ya lo dice, y repetirlo es redundante. Con un modelo aislado la sección se omite.
 - Distinguir en la descripción si el modelo es **entidad persistida**, **DTO de transporte** o **proyección/vista**, porque condiciona qué validaciones aplican y dónde.
 - **Estructura fija:** cabecera (sin campos) → descripción (párrafo sin título, máximo 4 líneas, que dice si es entidad persistida, DTO o proyección) → `## Campos` → `## Relaciones de <modelo>` (solo con `erDiagram`) → `## Notas` (datos adicionales que no caben en la tabla: índices, ciclo de vida/estados, reglas que cruzan varios campos, origen del dato; opcional) → `## Historial de cambios` (una fila por modificación posterior a la creación, con su origen; se omite mientras no haya cambios).
 
@@ -87,6 +87,8 @@ Entidad persistida que representa una factura emitida a un cliente.
 erDiagram
   Factura ||--|{ LineaFactura : contiene
 ```
+
+- 1—N `LineaFactura` (`[MD-002](MD-002-linea-factura.md)`) vía `lines` — borrado en cascada: eliminar la factura elimina sus líneas
 
 ## Notas
 

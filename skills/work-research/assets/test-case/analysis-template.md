@@ -17,7 +17,7 @@ recomendación» del README; el detalle vive aquí.
 
 # Análisis del caso de prueba {{TC-XXX}} — {{título del TC}}
 
-**Veredicto:** {{TC correcto · implementación correcta | TC correcto · implementación incorrecta | TC incorrecto | TC incompleto | TC acoplado a la implementación | Falso negativo | Requisito ambiguo o mal definido | Sin cobertura automatizada}}
+**Veredicto:** {{TC OK · Implementation OK | TC OK · Implementation Wrong | TC Wrong | TC Incomplete | TC Coupled to Implementation | False Negative | Ambiguous Requirement | No Automated Coverage}}
 **Fecha:** {{YYYY-MM-DD}}
 **Caso de prueba:** {{[TC-XXX](ruta/al/TC-XXX-slug.md)}}
 **Artefacto padre:** {{US-XXX | WI-XXX | FT-XXX | N/A}}
@@ -67,7 +67,7 @@ recomendación» del README; el detalle vive aquí.
 | 4 | ¿Verifica comportamiento o detalles de implementación? | {{Comportamiento / Implementación}} | {{aserción concreta}} |
 | 5 | ¿Podría estar pasando aunque exista un bug? | {{No / **Sí**}} | {{aserción débil, mock que oculta, fixture que evita la rama, expectativa congelada, test en skip, error tragado}} |
 
-> **⚠️ Falso negativo** {{— solo si la pregunta 5 es «Sí». La suite miente sobre este
+> **⚠️ False Negative** {{— solo si la pregunta 5 es «Sí». La suite miente sobre este
 > escenario: severidad alta. Indicar si el mismo patrón aparece en tests vecinos.
 > Borrar este bloque si no aplica.}}
 

@@ -10,6 +10,8 @@ El informe principal (README.md) lo enlaza en su sección "Archivos adicionales"
 
 # Descubrimiento de Migración
 
+<!-- discovery:status={{Draft|Ready}} -->
+<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que us:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
 **Estado:** {{Draft | Ready}}
 **Fecha:** {{YYYY-MM-DD}}
 **Investigación:** [README.md](./README.md)
@@ -34,11 +36,11 @@ Si no existe equivalente, se deja una nota explícita en la columna de destino.
 
 | Elemento tecnológico | Origen (con versión)    | Destino (equivalente o nota)    | Equivalencia |
 | -------------------- | ----------------------- | ------------------------------- | ------------ |
-| {{p. ej. Framework}}   | {{p. ej. Express 4.18}}   | {{p. ej. Fastify 4.x}}            | Adaptación   |
-| {{p. ej. ORM}}         | {{p. ej. Sequelize 6.32}} | {{p. ej. Prisma 5.x}}             | Adaptación   |
-| {{p. ej. Utilidad}}    | {{p. ej. Moment 2.29}}    | {{p. ej. date-fns 3.x}}           | Directa      |
-| {{p. ej. Validación}}  | {{p. ej. Joi 17.9}}       | ⚠️ Sin equivalente identificado | Rediseño     |
-| {{p. ej. Polyfill}}    | {{p. ej. core-js 3.x}}    | No necesario en destino         | Eliminar     |
+| {{p. ej. Framework}}   | {{p. ej. Express 4.18}}   | {{p. ej. Fastify 4.x}}            | Adaptation   |
+| {{p. ej. ORM}}         | {{p. ej. Sequelize 6.32}} | {{p. ej. Prisma 5.x}}             | Adaptation   |
+| {{p. ej. Utilidad}}    | {{p. ej. Moment 2.29}}    | {{p. ej. date-fns 3.x}}           | Direct       |
+| {{p. ej. Validación}}  | {{p. ej. Joi 17.9}}       | ⚠️ Sin equivalente identificado | Redesign     |
+| {{p. ej. Polyfill}}    | {{p. ej. core-js 3.x}}    | No necesario en destino         | Remove       |
 
 ## Estrategia de Verificación Existente
 

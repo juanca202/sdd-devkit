@@ -16,7 +16,7 @@ US/WI, no en este skill.
 - Mantener origen y destino **coexistiendo** durante la transición.
 - Cuidado con la **paridad de funcionalidad** ciega: replicar 1:1 puede arrastrar
   funciones infladas u obsoletas. Confirma con el usuario qué debe conservarse y
-  qué puede simplificarse o eliminarse (alinéalo con la columna `Eliminar` del
+  qué puede simplificarse o eliminarse (alinéalo con la columna `Remove` del
   mapeo del discovery).
 
 ## Patrones de ejecución

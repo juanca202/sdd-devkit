@@ -68,7 +68,7 @@ submódulo), que se resuelve en la [Fase 0](#fase-0--raíz-de-arquitectura-nueva
 de arquitectura, en el sentido de *arquitectura evolutiva*), **ejecutarla**: su resultado es la evidencia
 primaria del cumplimiento de ese criterio. No se corre el build ni la suite completa, solo los chequeos
 de arquitectura detectados. Si un criterio no puede confirmarse ni por inspección ni por una fitness
-function, se marca *No verificable* y se anota qué evidencia haría falta — nunca inventar un veredicto.
+function, se marca `UNVERIFIABLE` y se anota qué evidencia haría falta — nunca inventar un veredicto.
 Para cada criterio, el skill evalúa si es **apto** para una fitness function (cumplimiento objetivo y
 automatizable — normalmente ya declarado en su columna `Automatizable: yes`), comprueba si ya existe y la
 ejecuta; si es apto pero no existe (`Verificación: Pending`), **sugiere crearla**.
@@ -276,7 +276,7 @@ cumplimiento es **objetivo y automatizable**. Normalmente el criterio ya lo decl
 `Automatizable` (`yes`); usarla y, si falta o es un ADR sin criterio, evaluarlo:
 
 - **Apto** — se puede escribir un chequeo determinista que pase/falle sin juicio humano. Ejemplos: "las APIs son GraphQL, no REST", "la capa de dominio no importa infraestructura", "ningún módulo excede X dependencias", "cobertura ≥ 80%", "no se usa `any`".
-- **No apto** — depende de criterio humano o evidencia externa al repo. Ejemplos: "el código debe ser legible", "las decisiones se toman por consenso", "usar TLS en producción". Estos se auditan por inspección o se marcan *No verificable*; **no** se sugiere fitness function.
+- **No apto** — depende de criterio humano o evidencia externa al repo. Ejemplos: "el código debe ser legible", "las decisiones se toman por consenso", "usar TLS en producción". Estos se auditan por inspección o se marcan `UNVERIFIABLE`; **no** se sugiere fitness function.
 
 Registrar la aptitud de cada criterio — se usa en la Fase 2B y en la sección de fitness functions del informe.
 
@@ -301,15 +301,15 @@ el tipo de regla:
 Guías de verificación:
 - **Cuantificar cuando sea posible:** "92% del código usa GraphQL; 3 endpoints REST nuevos". Los porcentajes y conteos hacen el hallazgo accionable.
 - **Recolectar rutas exactas** de los archivos infractores — son la parte más útil del informe.
-- **No correr el build ni la suite completa.** La única ejecución permitida son las fitness functions detectadas (Fase 2B). Si una regla solo se puede confirmar mirando un entorno externo (p. ej. "TLS en producción"), marcarla **❔ No verificable** y anotar qué evidencia haría falta.
-- **No inventar incumplimientos.** Si no hay evidencia en contra, el estado es ✅ Cumplido.
+- **No correr el build ni la suite completa.** La única ejecución permitida son las fitness functions detectadas (Fase 2B). Si una regla solo se puede confirmar mirando un entorno externo (p. ej. "TLS en producción"), marcarla **❔ `UNVERIFIABLE`** y anotar qué evidencia haría falta.
+- **No inventar incumplimientos.** Si no hay evidencia en contra, el estado es ✅ `COMPLIANT`.
 
 ### Estados de cada criterio
 
-- **✅ Cumplido** — sin evidencia en contra (o la fitness function pasa).
-- **⚠️ Parcialmente cumplido** — mayoría cumple pero hay excepciones (como el ejemplo de `api/CR-001`, el criterio de protocolo del requisito `api/api-protocol`).
-- **❌ Incumplido** — la regla no se respeta o hay infracciones sustanciales (o la fitness function falla).
-- **❔ No verificable** — no se puede determinar por inspección estática ni con una fitness function ejecutable.
+- **✅ `COMPLIANT`** — sin evidencia en contra (o la fitness function pasa).
+- **⚠️ `PARTIAL`** — mayoría cumple pero hay excepciones (como el ejemplo de `api/CR-001`, el criterio de protocolo del requisito `api/api-protocol`).
+- **❌ `NON_COMPLIANT`** — la regla no se respeta o hay infracciones sustanciales (o la fitness function falla).
+- **❔ `UNVERIFIABLE`** — no se puede determinar por inspección estática ni con una fitness function ejecutable.
 
 ### Prioridad de cada hallazgo
 
@@ -323,12 +323,12 @@ El **`Enfoque`** del criterio modula la prioridad, a igualdad de término RFC 21
 `bloqueante` incumplido pesa más (tiende a Alta/Media) que un criterio `warning` incumplido (tiende a
 Media/Baja), coherente con que un `warning` no cambia el veredicto ejecutable (ver Fase 2B).
 
-Un criterio en estado ✅ Cumplido no genera un **hallazgo** (no lleva su propia entrada bajo
+Un criterio en estado ✅ `COMPLIANT` no genera un **hallazgo** (no lleva su propia entrada bajo
 🔴/🟡/⚪ en la Fase 3), pero sí cuenta en la tabla del **Resumen**. Para ubicarlo en una fila de esa
 tabla (Alta/Media/Baja), usar la **prioridad potencial** del criterio — la que tendría si estuviera
 incumplido, según los mismos criterios de arriba (término RFC 2119, `Enfoque`, alcance e impacto) —
 no la prioridad de un hallazgo real, que no existe en este caso. Lo mismo aplica a un criterio
-❔ No verificable: se ubica por su prioridad potencial, y además se detalla aparte en la sección
+❔ `UNVERIFIABLE`: se ubica por su prioridad potencial, y además se detalla aparte en la sección
 `## Reglas no verificables por inspección estática`.
 
 ---
@@ -408,7 +408,7 @@ flujo de `Comportamiento en Revalidación` descrito en la Fase 0 — no se reesc
    - **Resumen** con la tabla de conteos por prioridad y estado, seguida de 1-3 frases con la lectura global de la salud arquitectónica del repo.
    - Hallazgos **agrupados por prioridad** (alta → media → baja). Por cada hallazgo: el criterio (con su referencia `<estándar>/CR-XXX`, el requisito que lo agrupa, el nombre de su estándar de dominio, su ADR de origen y su `Enfoque` bloqueante/warning) o la regla de AGENTS.md incumplida, `Estado`, `Evidencias` (✔ a favor / ✖ en contra), `Incumplimientos` (rutas de archivos), y `Acción sugerida`. Si el criterio tiene fitness function, incluir en `Evidencias` el resultado de ejecutarla (PASS/FAIL/WARN + comando).
    - **Fitness functions**: indicar si existe el **runner** (`scripts/arch/verify.<ext>`, en el lenguaje del stack del repo) y su resultado conjunto (criterios PASS / WARN / FAIL); una sub-tabla de las **existentes** (criterio `CR-XXX`, enfoque, herramienta, comando, si está registrada en el archivo de checks de su estándar, resultado PASS/FAIL/WARN/No ejecutable) y una lista de las **sugeridas** (criterio apto sin fitness function → qué medir, herramienta y esbozo). Si hay dos o más fitness functions sueltas y no existe el runner, recomendarlo aquí.
-   - Sección de reglas **No verificables**.
+   - Sección de reglas **`UNVERIFIABLE`**.
    - Sección de **Decisiones sin criterio** (opcional): ADR `Accepted` con regla enforceable que no fijó ningún criterio (`emits: []`) → sugerir emitirlo vía `arch-manage`.
    - Sección de **Observaciones** (opcional): notas operativas que no son un hallazgo de incumplimiento (fitness function no registrada en el archivo de checks de su estándar, runner o checks escritos en un lenguaje ajeno al stack del repo, estándar/ADR fuera de la convención de `arch-manage`, dependencia rechazada en la Fase 3.5, etc.) — es el destino de cualquier "señalar/anotar como observación" mencionado en las fases anteriores.
 4. **Nunca sobrescribir** un informe anterior: el nombre lleva la fecha para conservar el histórico. Si ya existe un `arch-audit-<hoy>.md`, **no se sobrescribe**: una auditoría nueva del mismo día se guarda como `arch-audit-<hoy>-<HHMM>.md`, y una revalidación añade su entrada en `## Revalidaciones` del informe existente. Al buscar la auditoría previa, desempatar por el sufijo horario y, si no lo hay, por la fecha de modificación.

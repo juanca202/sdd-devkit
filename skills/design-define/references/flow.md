@@ -99,16 +99,16 @@ Produce, para cada pantalla de un artefacto con UI, el par `wireframes/WF-XXX-{s
 2. **Leer lo existente**
    - Listar `wireframes/` del artefacto: ids ya usados (los nuevos continúan la secuencia, sin renumerar) y pantallas que ya tienen `WF-XXX` (se **actualizan**, nunca se duplican, conservando id y slug). Si el artefacto es una US derivada de un SRS cuyos wireframes cubren la pantalla, no generar uno nuevo: reportarlo al llamador para que enlace el del SRS.
 3. **Generar todo el lote de una vez**, sin pedir feedback entre una pantalla y otra
-   - Por pantalla: `WF-XXX-{slug}.svg` con un **mockup visual de baja/media fidelidad** — proporciones razonablemente realistas de cada región y componente, contenido de ejemplo, paleta en **escala de grises** para distinguir contenedores/botones/campos/texto, tipografía genérica, etiquetas dentro de cada componente («Botón: Guardar»), `viewBox` acorde al tipo de solución — **sin colores de marca, tipografía real ni medidas pixel-perfect**; y `WF-XXX-{slug}.md` con `assets/wireframe-template.md` (cabecera con Origen, tipo de solución y `Estado de revisión: Pendiente`; marca oculta `wireframe:review-status=pending`; descripción sin título de máximo 4 líneas citando los `FR-XXX`/`AC-XXX` que cubre; el SVG **enlazado** a continuación, nunca pegado; Componentes; Estados si aplica — un SVG adicional por estado con sufijo, p. ej. `WF-XXX-{slug}-vacio.svg`; Notas si hay datos adicionales; Historial de cambios vacío).
+   - Por pantalla: `WF-XXX-{slug}.svg` con un **mockup visual de baja/media fidelidad** — proporciones razonablemente realistas de cada región y componente, contenido de ejemplo, paleta en **escala de grises** para distinguir contenedores/botones/campos/texto, tipografía genérica, etiquetas dentro de cada componente («Botón: Guardar»), `viewBox` acorde al tipo de solución — **sin colores de marca, tipografía real ni medidas pixel-perfect**; y `WF-XXX-{slug}.md` con `assets/wireframe-template.md` (cabecera con Origen, tipo de solución y `Estado de revisión: Proposed`; marca oculta `wireframe:status=Proposed`; descripción sin título de máximo 4 líneas citando los `FR-XXX`/`AC-XXX` que cubre; el SVG **enlazado** a continuación, nunca pegado; Componentes; Estados si aplica — un SVG adicional por estado con sufijo, p. ej. `WF-XXX-{slug}-vacio.svg`; Notas si hay datos adicionales; Historial de cambios vacío).
    - El id es secuencial de 3 dígitos dentro de `wireframes/` del artefacto; el slug es kebab-case del nombre de la pantalla, fijado al crear — renombrar la pantalla después no renombra los archivos.
 4. **Presentar el lote completo en una sola respuesta**, dirigida al usuario (es la única salida de este skill que no es dato para el llamador): por pantalla, `WF-XXX`, nombre, enlace al `.md` y al `.svg` para abrirlos con facilidad, y la imagen embebida (`![…](ruta)`) junto al enlace si el entorno renderiza imágenes en markdown. Nunca pegar código SVG en la respuesta ni mostrar una imagen sin decir a qué archivo corresponde.
 5. **Preguntar una sola vez**, con todo el lote ya listado, si hay cambios: `[Aprobar todos tal cual]` / `[Hay cambios que hacer]`. Con más de una pantalla y respuesta «hay cambios», usar **selección múltiple** para que el usuario señale en qué pantalla(s) (ver [`${PLUGIN_ROOT}/references/asking.md`](../../../references/asking.md)); con una sola pantalla, pasar directo al siguiente punto.
 6. **Por cada pantalla señalada**, capturar la descripción del cambio (respuesta libre) y aplicarlo: actualizar el SVG, registrar la observación textual y su resolución en la tabla **Historial de cambios** del `.md`, y **anotar si la observación implica un requisito nuevo o modificado** (`FR-XXX`/`AC-XXX`) — anotarlo, no aplicarlo: la edición del artefacto de origen es del skill llamador.
-7. **Volver a presentar el lote actualizado** (solo las pantallas que cambiaron) y repetir la pregunta hasta `[Aprobar todos tal cual]` o hasta que el usuario indique que deja algo pendiente. Fijar en la cabecera de cada `.md` el estado final (`Aprobado` / `Revisado con cambios` / `Pendiente`) y su marca oculta (`approved` / `revised` / `pending`).
-   - **Sin canal de respuesta** (sesión desatendida, o subagente sin interacción): generar el lote, dejar todos en `Pendiente` y devolverlos así; nunca marcar aprobado lo que nadie aprobó.
+7. **Volver a presentar el lote actualizado** (solo las pantallas que cambiaron) y repetir la pregunta hasta `[Aprobar todos tal cual]` o hasta que el usuario indique que deja algo pendiente. Fijar en la cabecera de cada `.md` el estado final (`Approved` / `Proposed`) y su marca oculta (`Approved` / `Proposed`).
+   - **Sin canal de respuesta** (sesión desatendida, o subagente sin interacción): generar el lote, dejar todos en `Proposed` y devolverlos así; nunca marcar aprobado lo que nadie aprobó.
 8. **Devolver** (modo delegado) o **resumir** (modo directo): por cada `WF-XXX`, nombre de pantalla, ruta del `.md` (copiable tal cual, relativa a la carpeta del artefacto: `wireframes/WF-001-login.md`), ruta del `.svg`, estado de revisión y, si las hay, las observaciones con impacto en requisitos (texto de la observación + a qué `FR-XXX`/`AC-XXX` afecta o que es uno nuevo). El llamador indexa las rutas en su artefacto (sección 11 del SRS, Referencias de la US/WI) con el **mismo estado** que la cabecera del `.md`, y aplica el impacto en sus requisitos. En modo directo, ofrecer añadir la fila de índice al artefacto, sin editarlo sin confirmación.
 
-**Cambio sobre un wireframe ya aprobado** (el usuario pide un ajuste de UI después): misma mecánica desde el punto 6 con el `WF-XXX` existente — nunca un id nuevo para la misma pantalla —, el estado vuelve a `Revisado con cambios` hasta re-aprobación, y la observación queda en su Historial.
+**Cambio sobre un wireframe ya aprobado** (el usuario pide un ajuste de UI después): misma mecánica desde el punto 6 con el `WF-XXX` existente — nunca un id nuevo para la misma pantalla —, el estado vuelve a `Proposed` hasta re-aprobación, y la observación queda en su Historial.
 
 ---
 
@@ -136,8 +136,8 @@ pendientes:
 ```
 artefacto: docs/specs/changes/requirements/SRS-003-portal-proveedores/
 wireframes:
-  - WF-001: Carga de facturas → wireframes/WF-001-carga-facturas.md (svg: wireframes/WF-001-carga-facturas.svg) · Aprobado
-  - WF-002: Consulta de estado → wireframes/WF-002-consulta-estado.md (svg: wireframes/WF-002-consulta-estado.svg) · Revisado con cambios
+  - WF-001: Carga de facturas → wireframes/WF-001-carga-facturas.md (svg: wireframes/WF-001-carga-facturas.svg) · Approved
+  - WF-002: Consulta de estado → wireframes/WF-002-consulta-estado.md (svg: wireframes/WF-002-consulta-estado.svg) · Proposed
 impacto-en-requisitos:
   - WF-002: «el filtro por fecha debe permitir rango, no solo día» → modifica FR-004
   - WF-002: «mostrar el motivo de rechazo en la fila» → requisito nuevo (sin FR aún)
@@ -218,7 +218,7 @@ no-generados:
 **Ejemplo 7 — Wireframes delegados desde requirement-refine**
 
 - *Entrada:* `requirement-refine` cierra el SRS-003 «portal de proveedores», infiere «Aplicación web, responsiva» y dos pantallas (carga de facturas, consulta de estado); delega vía subagente con la carpeta del SRS, el tipo de solución, la lista de pantallas y los `FR-XXX` que cubre cada una.
-- *Comportamiento:* design-define lista `wireframes/` del SRS (vacía), genera `WF-001-carga-facturas` y `WF-002-consulta-estado` (`.md` + `.svg`, `viewBox` ancho) de una vez, presenta el lote con enlaces e imágenes, pregunta una sola vez; el usuario pide en WF-002 un filtro por rango de fechas; aplica el cambio al SVG, lo registra en el Historial, re-presenta WF-002 y obtiene la aprobación. Devuelve las dos rutas con estado `Aprobado` y la observación «filtro por rango → modifica FR-004». `requirement-refine` escribe la tabla de la sección 11 con esas rutas y estados y actualiza FR-004.
+- *Comportamiento:* design-define lista `wireframes/` del SRS (vacía), genera `WF-001-carga-facturas` y `WF-002-consulta-estado` (`.md` + `.svg`, `viewBox` ancho) de una vez, presenta el lote con enlaces e imágenes, pregunta una sola vez; el usuario pide en WF-002 un filtro por rango de fechas; aplica el cambio al SVG, lo registra en el Historial, re-presenta WF-002 y obtiene la aprobación. Devuelve las dos rutas con estado `Approved` y la observación «filtro por rango → modifica FR-004». `requirement-refine` escribe la tabla de la sección 11 con esas rutas y estados y actualiza FR-004.
 ---
 
 ## Anti-patrones
@@ -239,7 +239,7 @@ no-generados:
 - **Wireframes:** guardarlos en `docs/architecture/`, en `assets/` del artefacto o en cualquier ruta distinta de `wireframes/` de la carpeta del artefacto de origen; indexarlos en el README de una capability; nombrarlos sin `WF-XXX`; generar un id nuevo para una pantalla que ya tiene wireframe (en la carpeta o en el SRS de origen).
 - **Wireframes:** alta fidelidad (colores de marca, tipografía real, copy final, pixel-perfect) en vez de escala de grises con contenido de ejemplo; `viewBox` que no corresponde al tipo de solución; pegar el SVG como código en el `.md` o en la respuesta; dar solo el enlace sin la imagen embebida cuando el entorno sí renderiza.
 - **Wireframes:** presentar una pantalla por turno o preguntar aprobación pantalla por pantalla, en lugar de generar todo el lote y preguntar una sola vez; omitir el enlace de alguna pantalla al presentar.
-- **Wireframes:** aplicar un cambio al SVG sin registrarlo en el Historial de cambios; marcar `Aprobado` sin respuesta del usuario; crear o editar `FR-XXX`/`AC-XXX` del artefacto de origen desde aquí en vez de reportar el impacto al llamador.
+- **Wireframes:** aplicar un cambio al SVG sin registrarlo en el Historial de cambios; marcar `Approved` sin respuesta del usuario; crear o editar `FR-XXX`/`AC-XXX` del artefacto de origen desde aquí en vez de reportar el impacto al llamador.
 
 ---
 

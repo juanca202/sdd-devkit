@@ -69,7 +69,7 @@ mínimo (observado, esperado y disparador) — ver Paso 0.
 
 1. **Sin reproducción no hay diagnóstico.** Si no se puede reproducir el bug ni
    definir un procedimiento determinista de reproducción, el flujo **no avanza** al
-   Paso 2: se declara `No reproducible` y se pide al usuario lo que falta (datos,
+   Paso 2: se declara `Not Reproducible` y se pide al usuario lo que falta (datos,
    entorno, logs, versión, pasos exactos).
 2. **La prueba primero, siempre.** La remediación se propone como ciclo rojo→verde:
    una prueba que **falla** demostrando el bug **antes** de tocar el código de
@@ -126,7 +126,7 @@ observado>* y qué prueba lo demuestra?».
    fixture).
 3. **Verificar la reproducción** cuando el entorno lo permita (ejecutar el caso,
    depurar, leer logs/trazas). Si no es posible ejecutarla, marcar la reproducción
-   como `Definida, no verificada` y decirlo explícitamente.
+   como `Defined, Not Verified` y decirlo explícitamente.
 4. **Aislar la causa raíz.** Reducir al punto exacto del código donde el
    comportamiento diverge de lo esperado; citar archivo y símbolo. Distinguir:
    - **Defecto de lógica** (condición, cálculo, orden de operaciones)

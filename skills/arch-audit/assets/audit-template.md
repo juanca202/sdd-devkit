@@ -31,7 +31,7 @@ fecha/hora que lo confirma. Cada revalidación posterior agrega además una entr
 
 ## Resumen
 
-| Prioridad | Cumplido ✅ | Parcial ⚠️ | Incumplido ❌ | No verificable ❔ |
+| Prioridad | ✅ COMPLIANT | ⚠️ PARTIAL | ❌ NON_COMPLIANT | ❔ UNVERIFIABLE |
 |-----------|:----------:|:---------:|:------------:|:-----------------:|
 | 🔴 Alta   | {{n}}      | {{n}}     | {{n}}        | {{n}}             |
 | 🟡 Media  | {{n}}      | {{n}}     | {{n}}        | {{n}}             |
@@ -57,7 +57,7 @@ Repetir el bloque siguiente por cada hallazgo. Si no hay hallazgos, escribir "Si
 **Decisión de origen:** {{ADR-012 (docs/adr/ADR-012-graphql.md) | N/A si es regla de AGENTS.md}}
 **Enfoque:** {{bloqueante | warning | N/A si es regla de AGENTS.md}}
 **Regla auditada (RFC 2119):** {{enunciado con su palabra clave — p. ej. "Toda API expuesta **MUST** implementarse en GraphQL"}}
-**Estado:** {{✅ Cumplido | ⚠️ Parcialmente cumplido | ❌ Incumplido | ❔ No verificable}}
+**Estado:** {{símbolo + etiqueta en el idioma resuelto: `✅` COMPLIANT | `⚠️` PARTIAL | `❌` NON_COMPLIANT | `❔` UNVERIFIABLE}}
 
 **Evidencias:**
 - ✔ {{evidencia a favor — p. ej. "92% del código usa GraphQL"}}

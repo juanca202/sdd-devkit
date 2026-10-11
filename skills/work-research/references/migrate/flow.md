@@ -110,11 +110,11 @@ columnas: **Elemento**, **Origen (con versión)**, **Destino (equivalente o nota
 
 | Equivalencia | Significado |
 | ------------ | ----------- |
-| Directa | Existe reemplazo casi 1:1 |
-| Adaptación | Existe reemplazo pero requiere cambios |
-| Rediseño | No existe reemplazo directo; debe rediseñarse |
-| Eliminar | Ya no es necesario en destino |
-| Pendiente | Aún no decidido |
+| Direct | Existe reemplazo casi 1:1 |
+| Adaptation | Existe reemplazo pero requiere cambios |
+| Redesign | No existe reemplazo directo; debe rediseñarse |
+| Remove | Ya no es necesario en destino |
+| Pending | Aún no decidido |
 
 ### 3. Documentar la estrategia de verificación existente
 
@@ -139,15 +139,15 @@ Tabla: **Riesgo**, **Impacto** (Alto/Medio/Bajo) y **Mitigación** concreta
 ### 6. Cerrar lagunas con preguntas estructuradas
 
 Antes de fijar el estado, intenta resolver cualquier **laguna** del discovery
-(stack sin identificar, equivalencias en `Pendiente`, viabilidad de Golden Master
+(stack sin identificar, equivalencias en `Pending`, viabilidad de Golden Master
 sin confirmar, supuestos faltantes) con la herramienta de preguntas estructuradas.
 El objetivo es dejar el discovery en **`Ready`**. Si no se resuelven todas, queda en
 **`Draft`** y en `Notas` se listan todos los pendientes.
 
 ### 7. Determinar el estado y escribir `discovery.md`
 
-- **Ready**: sin pendientes en `Notas` y ninguna equivalencia en **Pendiente**.
-- **Draft**: hay pendientes en `Notas`, alguna equivalencia **Pendiente**, o
+- **Ready**: sin pendientes en `Notas` y ninguna equivalencia en **Pending**.
+- **Draft**: hay pendientes en `Notas`, alguna equivalencia **Pending**, o
   información incompleta.
 
 Compón el `discovery.md` a partir de `assets/migrate/discovery-template.md` siguiendo
@@ -174,7 +174,7 @@ Solo empieza con el discovery en **`Ready`**. Para cada caso/oportunidad sigue
    preferencia: (a) reutilizar artefactos de validación existentes del origen (unit,
    integración, E2E, UAT, datos históricos, ejemplos documentados); (b) capturar la
    salida del sistema origen cuando sea ejecutable. Cada caso tiene su propio
-   `Estado` (**`Pendiente`** = faltan insumos; **`Listo`** = golden master listo),
+   `Estado` (**`Pending`** = faltan insumos; **`Ready`** = golden master listo),
    distinto del estado del documento.
 
    > El Golden Master captura el comportamiento **actual**, que puede incluir
@@ -191,7 +191,7 @@ Solo empieza con el discovery en **`Ready`**. Para cada caso/oportunidad sigue
    referencia, capturas, diagramas) se almacenan en `validation/` dentro de la
    carpeta `RS-XXX-{slug}/` y se referencian desde `validation.md`. Cobertura mínima
    por caso: un escenario exitoso, un caso límite y un caso de error/validación.
-5. **Estado de `validation.md`.** **Ready** si no hay casos en `Pendiente` ni
+5. **Estado de `validation.md`.** **Ready** si no hay casos en `Pending` ni
    pendientes en `Notas`; **Draft** en caso contrario.
 
 Compón el `validation.md` a partir de `assets/migrate/validation-template.md`. Enlaza
@@ -228,7 +228,7 @@ recomendado. Enlaza `discovery.md` y `validation.md` en "Archivos adicionales".
 Evalúa el tamaño y la complejidad de la migración a partir del discovery. Señales
 de **cambio grande** (→ `work-define`, varias US):
 
-- Muchos elementos en el mapeo, o varios con equivalencia **Rediseño**.
+- Muchos elementos en el mapeo, o varios con equivalencia **Redesign**.
 - Afecta múltiples módulos, contratos o dependientes; o el destino está
   **fragmentado** en varios proyectos.
 - Requiere una estrategia incremental por fases (Strangler Fig, Branch by
@@ -238,7 +238,7 @@ de **cambio grande** (→ `work-define`, varias US):
 
 Señales de **cambio pequeño** (→ `work-plan`, un `WI-XXX`):
 
-- Pocos elementos, mayormente equivalencia **Directa** o **Adaptación**.
+- Pocos elementos, mayormente equivalencia **Direct** o **Adaptation**.
 - Superficie de impacto acotada a un módulo o dependencia, sin fragmentación.
 - Se puede ejecutar como una sola unidad de mantenimiento autocontenida.
 

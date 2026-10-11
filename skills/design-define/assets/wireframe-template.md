@@ -20,9 +20,9 @@ no son responsabilidad de este skill; eso lo define diseño visual más adelante
 -->
 # {{WF-XXX}}: {{nombre de la pantalla}}
 
-<!-- wireframe:review-status={{pending|revised|approved}} -->
+<!-- wireframe:status={{Proposed|Approved}} -->
 <!-- Marca oculta; claves y valores en inglés siempre, igual criterio que srs:status. -->
-**Estado:** {{Pendiente | Revisado con cambios | Aprobado}}
+**Estado:** {{Proposed | Approved}}
 **Tipo de solución:** {{Aplicación web / App nativa (iOS) / App nativa (Android) / App híbrida / Aplicación de escritorio}} — {{responsiva | no responsiva | no aplica}}
 **Origen:** [{{SRS-XXX: título | US-XXX: título | WI-XXX: título}}](../README.md)
 **Requisitos relacionados:** {{FR-XXX, FR-XXX | AC-XXX, AC-XXX}}

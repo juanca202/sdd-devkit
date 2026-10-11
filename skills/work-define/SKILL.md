@@ -183,7 +183,7 @@ Promover a **Ready** solo si se cumplen todos; el detalle de cada criterio está
 
 - Sección **Criterios de aceptación** completa: al menos un `AC-XXX` con categoría entre paréntesis y enunciado RFC 2119 en MAYÚSCULAS.
 - **DoR** completado según la plantilla (Dependencias listas, Inputs/outputs claros, Repositorios definidos, sin decisiones técnicas pendientes, Referencias de UI cuando aplique, sin aclaraciones pendientes).
-- **INVEST** sin dimensiones en `No cumple`.
+- **INVEST** sin dimensiones en `Not Met`.
 - **Repositorios afectados** identificados.
 - **Observaciones** sin aclaraciones ni pendientes abiertos.
 

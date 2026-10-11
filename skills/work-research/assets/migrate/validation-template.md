@@ -10,6 +10,8 @@ El informe principal (README.md) lo enlaza en su sección "Archivos adicionales"
 
 # Preparación de Validación
 
+<!-- validation:status={{Draft|Ready}} -->
+<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que us:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
 **Estado:** {{Draft | Ready}}
 **Fecha:** {{YYYY-MM-DD}}
 **Investigación:** [README.md](./README.md)
@@ -27,9 +29,9 @@ referencia). Estos casos servirán para implementar las pruebas durante el plan.
 
 | ID     | Componente     | Estrategia           | Fuente de datos  | Recursos              | Estado    |
 | ------ | -------------- | -------------------- | ---------------- | --------------------- | --------- |
-| GM-001 | InvoiceService | Comparación JSON     | Ejemplos usuario | ./validation/gm-001/  | Listo     |
-| GM-002 | MonthlyReport  | Comparación PDF      | Sistema origen   | ./validation/gm-002/  | Pendiente |
-| GM-003 | CustomerImport | Comparación DB State | Datos históricos | ./validation/gm-003/  | Pendiente |
+| GM-001 | InvoiceService | Comparación JSON     | Ejemplos usuario | ./validation/gm-001/  | Ready     |
+| GM-002 | MonthlyReport  | Comparación PDF      | Sistema origen   | ./validation/gm-002/  | Pending   |
+| GM-003 | CustomerImport | Comparación DB State | Datos históricos | ./validation/gm-003/  | Pending   |
 
 Detalle por cada caso (formato simple recomendado; para APIs o UI usa las
 variantes de `references/migrate/golden-master-testing.md`):
@@ -75,7 +77,7 @@ ser JSON, imágenes, flujos en Mermaid, etc.
 
 ## Notas
 
-Pendientes para completar la preparación de validación: casos en `Pendiente`
+Pendientes para completar la preparación de validación: casos en `Pending`
 (sin insumos), preguntas abiertas al usuario y extracciones por hacer (p. ej. vía
 MCP de Chrome desde la URL del ambiente de pruebas registrada en el discovery).
 **Mientras exista algún caso pendiente, este documento permanece en `Draft`.**

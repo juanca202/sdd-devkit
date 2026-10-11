@@ -111,7 +111,7 @@ Responder las cinco preguntas, **cada una con evidencia**:
 |---|----------|-----------|--------------------------|
 | 1 | **¿El escenario corresponde realmente al requisito?** | Comparar precondiciones y pasos contra el enunciado del `AC-XXX` | El TC verifica otra cosa: escenario incorrecto |
 | 2 | **¿El resultado esperado está correctamente definido?** | ¿Es observable, único y verificable? ¿Coincide con el requisito, no con la salida actual del sistema? | Resultado esperado mal definido o copiado del comportamiento real |
-| 3 | **¿Falta algún caso?** | Límites, valor nulo/vacío, error, permisos, concurrencia, variantes del `AC-XXX` no cubiertas por ningún otro TC | TC incompleto |
+| 3 | **¿Falta algún caso?** | Límites, valor nulo/vacío, error, permisos, concurrencia, variantes del `AC-XXX` no cubiertas por ningún otro TC | TC Incomplete |
 | 4 | **¿Verifica comportamiento o detalles de implementación?** | Aserciones sobre estructura interna, llamadas a colaboradores, orden de invocación, campos privados | Test acoplado a la implementación |
 | 5 | **¿Podría estar pasando aunque exista un bug?** | Aserción ausente o débil; aserción sobre el valor equivocado; mock que devuelve el resultado correcto en vez de ejercitar el código; fixture que nunca alcanza la rama; expectativa congelada (snapshot regenerado); test en *skip*/filtrado/fuera del glob; error tragado (`catch` sin rethrow, promesa sin `await`) | **Falso negativo** — el hallazgo más grave de este flujo |
 
@@ -143,14 +143,14 @@ secundarios):
 
 | Veredicto | Cuándo | Handoff |
 |-----------|--------|---------|
-| **TC correcto · implementación correcta** | El TC verifica el requisito y el código lo cumple | Ninguno. Si el TC no tiene prueba automatizada, `coverage-verify` para confirmar la cobertura |
-| **TC correcto · implementación incorrecta** | El TC está bien planteado y el código no lo satisface | Flujo **Analizar issue** de este mismo skill: hay un defecto que diagnosticar y corregir con el ciclo 🔴→🟢 |
-| **TC incorrecto** | El escenario no corresponde al requisito, o el resultado esperado está mal definido (preguntas 1-2) | `test-define` para corregirlo |
-| **TC incompleto** | Cubre el requisito solo en parte; faltan casos (pregunta 3) | `test-define` para ampliarlo o añadir TCs hermanos |
-| **TC acoplado a la implementación** | Verifica detalles internos en lugar de comportamiento (pregunta 4) | `test-define` para reformularlo; si el arreglo es de la prueba automatizada, `work-plan` (WI `test-improvement`) |
-| **Falso negativo** | El TC pasa pese a existir un defecto (pregunta 5) | **Dos** handoffs: flujo **Analizar issue** para el defecto, y `test-define` (o WI `test-improvement`) para el test que no lo detecta |
-| **Requisito ambiguo o mal definido** | La discrepancia nace del `AC-XXX`, no del test ni del código | Flujo **Analizar decisiones pendientes** o `work-define`; no es un bug |
-| **Sin cobertura automatizada** | El TC está bien pero nadie lo ejecuta | `coverage-verify` para dimensionar el hueco y, después, escribir la prueba |
+| **TC OK · Implementation OK** | El TC verifica el requisito y el código lo cumple | Ninguno. Si el TC no tiene prueba automatizada, `coverage-verify` para confirmar la cobertura |
+| **TC OK · Implementation Wrong** | El TC está bien planteado y el código no lo satisface | Flujo **Analizar issue** de este mismo skill: hay un defecto que diagnosticar y corregir con el ciclo 🔴→🟢 |
+| **TC Wrong** | El escenario no corresponde al requisito, o el resultado esperado está mal definido (preguntas 1-2) | `test-define` para corregirlo |
+| **TC Incomplete** | Cubre el requisito solo en parte; faltan casos (pregunta 3) | `test-define` para ampliarlo o añadir TCs hermanos |
+| **TC Coupled to Implementation** | Verifica detalles internos en lugar de comportamiento (pregunta 4) | `test-define` para reformularlo; si el arreglo es de la prueba automatizada, `work-plan` (WI `test-improvement`) |
+| **False Negative** | El TC pasa pese a existir un defecto (pregunta 5) | **Dos** handoffs: flujo **Analizar issue** para el defecto, y `test-define` (o WI `test-improvement`) para el test que no lo detecta |
+| **Ambiguous Requirement** | La discrepancia nace del `AC-XXX`, no del test ni del código | Flujo **Analizar decisiones pendientes** o `work-define`; no es un bug |
+| **No Automated Coverage** | El TC está bien pero nadie lo ejecuta | `coverage-verify` para dimensionar el hueco y, después, escribir la prueba |
 
 El `README.md` del RS resume el veredicto en su **Conclusión y recomendación**; el
 `analysis.md` guarda el detalle (respuestas a las cinco preguntas, comparación
@@ -167,7 +167,7 @@ implementación vs. esperado, evidencia).
 - Analizar el TC sin haber leído el `AC-XXX` que dice verificar — o inventarle una
   traza que no tiene.
 - Corregir el TC o el código desde este flujo: solo se emite el veredicto.
-- Confundir «TC incorrecto» con «implementación incorrecta»: hay que decidir cuál de
+- Confundir «TC Wrong» con «implementación incorrecta»: hay que decidir cuál de
   los dos discrepa del requisito, y sostenerlo con evidencia.
 - Registrar un falso negativo como simple «test incompleto»: la severidad es distinta.
 - Omitir los tests vecinos y quedarse solo con el TC de entrada — los solapamientos y

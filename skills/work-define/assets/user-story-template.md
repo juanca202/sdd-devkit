@@ -2,7 +2,7 @@
 Sustituir cada {{…}} a mano (no es un motor). Al publicar: borrar este bloque y todos los {{…}}.
 `us:status` (abajo) se CONSERVA: claves/valores en inglés SIEMPRE; Estado en el idioma resuelto. Ver ../../references/verdicts.md.
 Repositorios: nombres git separados por coma. work-plan agrupa las TK por este campo.
-INVEST / DoR: derivados de las tablas de Validación, nunca aparte. 🟢 Cumple · 🟡 Parcial · 🔴 No cumple. `/ total` = filas evaluadas (INVEST: 6; DoR: 6 menos No aplica, que no cuentan). Omitir colores a 0. Recalcular al tocar las tablas.
+INVEST / DoR: derivados de las tablas de Validación, nunca aparte. 🟢 Met · 🟡 Partial · 🔴 Not Met. `/ total` = filas evaluadas (INVEST: 6; DoR: 6 menos No aplica, que no cuentan). Omitir colores a 0. Recalcular al tocar las tablas.
 Requerimiento: solo si la US nació descomponiendo un `SRS-XXX` de requirement-refine — enlace a su README.md; es la trazabilidad inversa de su tabla «Historias de usuario derivadas». Omitir la línea si no proviene de un SRS.
 Spike de origen: solo si la US formaliza el resultado de un `WI-XXX` de tipo spike — enlace a su README.md; el informe y la rama spike/ van en Referencias. Omitir la línea si no proviene de un spike.
 Work Item: omitir la línea si no hay. {{Sistema}} = nombre corto (p. ej. ADO). Lo pobla work-define solo al sincronizar desde el tracker (`sync`); una US redactada aquí no lo lleva salvo que el usuario lo aporte a mano (sí lo poblan siempre TK/WI/TC con tracker vinculado). Si se pone a mano: Criterios de aceptación → campo dedicado del sistema si lo expone; el resto del documento (cabecera incluida Repositorios, y todas las secciones) → descripción del work item, por secciones, para reconstruir la US si se pierde el .md. No omitir secciones.
@@ -86,7 +86,7 @@ operación #<método-ruta> cuando se cita un endpoint concreto, p. ej. apis/API-
 flows/FL-XXX-{slug}.md o diagrams/DG-XXX-{slug}.md.
 -->
 - **Diseño / prototipo:** {{enlace markdown al diseño o prototipo}}
-- **Wireframe:** {{[WF-XXX: pantalla](wireframes/WF-XXX-{slug}.md) — {{Pendiente / Revisado con cambios / Aprobado}}, uno por pantalla; si se hereda del SRS, enlazarlo en su carpeta; omitir si la US no tiene UI}}
+- **Wireframe:** {{[WF-XXX: pantalla](wireframes/WF-XXX-{slug}.md) — {{Proposed / Approved}}, uno por pantalla; si se hereda del SRS, enlazarlo en su carpeta; omitir si la US no tiene UI}}
 - **Archivo local:** {{enlace markdown al archivo en assets/}}
 - **Spike de origen:** {{[spike-report.md](../../work-items/WI-XXX-[slug]/spike-report.md) · rama `spike/WI-XXX-[slug]` @ sha — referencia de lectura, nunca para mergear; omitir si la US no proviene de un spike}}
 - {{añadir entradas adicionales o indicar «Ninguna por ahora»}}
@@ -111,20 +111,20 @@ flows/FL-XXX-{slug}.md o diagrams/DG-XXX-{slug}.md.
 
 | Letra | Criterio      | Resultado                      | Notas         |
 | ----- | ------------- | ------------------------------ | ------------- |
-| **I** | Independiente | {{Cumple / No cumple / Parcial}} | {{explicación}} |
-| **N** | Negociable    | {{Cumple / No cumple / Parcial}} | {{explicación}} |
-| **V** | Valiosa       | {{Cumple / No cumple / Parcial}} | {{explicación}} |
-| **E** | Estimable     | {{Cumple / No cumple / Parcial}} | {{explicación}} |
-| **S** | Pequeña       | {{Cumple / No cumple / Parcial}} | {{explicación}} |
-| **T** | Testeable     | {{Cumple / No cumple / Parcial}} | {{explicación}} |
+| **I** | Independiente | {{Met / Not Met / Partial}} | {{explicación}} |
+| **N** | Negociable    | {{Met / Not Met / Partial}} | {{explicación}} |
+| **V** | Valiosa       | {{Met / Not Met / Partial}} | {{explicación}} |
+| **E** | Estimable     | {{Met / Not Met / Partial}} | {{explicación}} |
+| **S** | Pequeña       | {{Met / Not Met / Partial}} | {{explicación}} |
+| **T** | Testeable     | {{Met / Not Met / Partial}} | {{explicación}} |
 
 ### Definition of Ready (DoR)
 
 | Criterio DoR                       | Estado                                     | Notas                                                                        |
 | ---------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------- |
-| Dependencias listas                | {{Cumple / No cumple / Parcial}}             | {{explicación}}                                                                |
-| Inputs/outputs claros              | {{Cumple / No cumple / Parcial}}             | {{explicación}}                                                                |
-| Repositorios definidos             | {{Cumple / No cumple / Parcial}}             | {{explicación}}                                                                |
-| Sin decisiones técnicas pendientes | {{Cumple / No cumple / Parcial}}             | {{explicación}}                                                                |
-| Referencias de UI                  | {{Cumple / No cumple / Parcial / No aplica}} | {{explicación}}                                                                |
-| Sin aclaraciones pendientes        | {{Cumple / No cumple / Parcial}}             | {{vacío o «Ninguna» en Observaciones; nada pendiente con usuario/producto}}    |
+| Dependencias listas                | {{Met / Not Met / Partial}}             | {{explicación}}                                                                |
+| Inputs/outputs claros              | {{Met / Not Met / Partial}}             | {{explicación}}                                                                |
+| Repositorios definidos             | {{Met / Not Met / Partial}}             | {{explicación}}                                                                |
+| Sin decisiones técnicas pendientes | {{Met / Not Met / Partial}}             | {{explicación}}                                                                |
+| Referencias de UI                  | {{Met / Not Met / Partial / N/A}} | {{explicación}}                                                                |
+| Sin aclaraciones pendientes        | {{Met / Not Met / Partial}}             | {{vacío o «Ninguna» en Observaciones; nada pendiente con usuario/producto}}    |

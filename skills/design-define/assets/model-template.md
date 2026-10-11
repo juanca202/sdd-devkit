@@ -25,10 +25,18 @@ persistida, DTO de transporte o proyección/vista.}}
 
 ## Relaciones de {{nombre del modelo}}
 
+<!--
+Solo si el modelo se relaciona con otros; omitir la sección entera si no. El título ya dice de qué va: NO repetir
+«Relaciones:» ni ningún otro rótulo dentro de la sección. Contenido: el diagrama y, debajo, una viñeta por relación
+(cardinalidad, modelo enlazado, campo que la materializa y comportamiento de borrado/cascada si aplica). Lo que no
+sea una relación — decisiones, pendientes — va en Notas o en Observaciones del README, no aquí.
+-->
 ```mermaid
 erDiagram
-  {{diagrama ER solo si este modelo se relaciona con otros; omitir el título y el bloque si no aporta}}
+  {{Modelo}} ||--o{ {{OtroModelo}} : {{verbo}}
 ```
+
+- {{N—1 | 1—N | N—N}} `{{OtroModelo}}` ([MD-XXX](MD-XXX-{{slug}}.md)) vía `{{campo}}`{{, opcional}} — {{comportamiento de borrado: cascada / restringido / sin FK, en una frase}}
 
 ## Notas
 

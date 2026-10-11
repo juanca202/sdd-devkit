@@ -138,8 +138,8 @@ Id secuencial FR-001, FR-002, … Cada fila indica su categoría, prioridad y el
 clave RFC 2119 en MAYÚSCULAS en el idioma de preferencia.
 Categorías: Reglas de negocio · Casos de uso · Flujos de proceso · Procesamiento de datos · Integraciones · Interacción de usuario · Salidas del sistema
 Detalle en ${PLUGIN_ROOT}/references/requirement-criteria.md (RFC 2119 y Categorías).
-Prioridad: Esencial · Alta · Media · Baja — ver quality-criteria.md#prioridad. Estado: Propuesto (inferido
-por el agente, aún sin confirmación explícita) · Aprobado (el usuario ya lo confirmó) — ver
+Prioridad: Esencial · Alta · Media · Baja — ver quality-criteria.md#prioridad. Estado: Proposed (inferido
+por el agente, aún sin confirmación explícita) · Approved (el usuario ya lo confirmó) — ver
 quality-criteria.md#estado-por-requisito.
 Estos FR-XXX son de alto nivel: se descomponen en AC-XXX de una o más US al pasar por /work-define; no se
 renumeran aunque una US termine cubriendo solo una parte de un FR. Su origen, dependencias y método de
@@ -148,7 +148,7 @@ duplicar el identificador en dos lugares con datos que se puedan desincronizar.
 -->
 | ID | Categoría | Prioridad | Estado | Enunciado |
 | -- | --------- | --------- | ------ | --------- |
-| FR-001 | {{categoría}} | {{Esencial / Alta / Media / Baja}} | {{Propuesto / Aprobado}} | {{enunciado con palabra clave RFC 2119 en MAYÚSCULAS; p. ej. «El sistema DEBE…»}} |
+| FR-001 | {{categoría}} | {{Esencial / Alta / Media / Baja}} | {{Proposed / Approved}} | {{enunciado con palabra clave RFC 2119 en MAYÚSCULAS; p. ej. «El sistema DEBE…»}} |
 | FR-002 | {{…}} | {{…}} | {{…}} | {{…}} |
 
 ## 6. Requisitos no funcionales
@@ -166,7 +166,7 @@ NFR-XXX (categoría Seguridad) y desde ahí se referencia, no al revés.
 -->
 | ID | Categoría | Prioridad | Estado | Enunciado |
 | -- | --------- | --------- | ------ | --------- |
-| NFR-001 | {{característica ISO 25010}} | {{Esencial / Alta / Media / Baja}} | {{Propuesto / Aprobado}} | {{enunciado con palabra clave RFC 2119 en MAYÚSCULAS}} |
+| NFR-001 | {{característica ISO 25010}} | {{Esencial / Alta / Media / Baja}} | {{Proposed / Approved}} | {{enunciado con palabra clave RFC 2119 en MAYÚSCULAS}} |
 | NFR-002 | {{…}} | {{…}} | {{…}} | {{…}} |
 
 ## 7. Reglas de negocio
@@ -260,7 +260,7 @@ wireframes, incluido el `viewBox` de cada SVG (retrato para móvil, ancho para w
 
 | Pantalla | Wireframe | Estado de revisión | Observaciones ya incorporadas |
 | -------- | --------- | --------------------- | -------------------------------- |
-| {{nombre de la pantalla}} | {{[WF-XXX](wireframes/WF-XXX-[pantalla-slug].md)}} | {{Pendiente / Revisado con cambios / Aprobado}} | {{resumen de los cambios pedidos y en qué FR-XXX quedaron reflejados; «Ninguna» si se aprobó sin cambios}} |
+| {{nombre de la pantalla}} | {{[WF-XXX](wireframes/WF-XXX-[pantalla-slug].md)}} | {{Proposed / Approved}} | {{resumen de los cambios pedidos y en qué FR-XXX quedaron reflejados; «Ninguna» si se aprobó sin cambios}} |
 
 ## 12. Verificación y trazabilidad
 
@@ -315,16 +315,16 @@ derivadas), que se completa después del handoff y por eso no puede ir aquí.
 
 | Criterio DoR | Estado | Notas |
 | ------------ | ------ | ----- |
-| Stack tecnológico resuelto | {{Cumple / No cumple / Parcial}} | {{explicación}} |
-| Repositorios y proyecto base definidos | {{Cumple / No cumple / Parcial}} | {{explicación}} |
-| Requisitos funcionales completos y priorizados | {{Cumple / No cumple / Parcial}} | {{explicación}} |
-| Requisitos no funcionales revisados y priorizados | {{Cumple / No cumple / Parcial / No aplica}} | {{explicación; cubre explícitamente Seguridad, Rendimiento, Fiabilidad y Disponibilidad}} |
-| Interfaces externas revisadas | {{Cumple / No cumple / Parcial / No aplica}} | {{explicación; usuario, hardware, software, comunicaciones}} |
-| Requisitos de datos formalizados | {{Cumple / No cumple / Parcial / No aplica}} | {{explicación}} |
-| Cumplimiento normativo trazado | {{Cumple / No cumple / Parcial / No aplica}} | {{explicación}} |
-| Diseño de interfaz revisado | {{Cumple / No cumple / Parcial / No aplica}} | {{explicación; No aplica si el requerimiento no tiene UI propia}} |
-| Verificación y trazabilidad completas | {{Cumple / No cumple / Parcial}} | {{explicación; todo FR-XXX/NFR-XXX con método de verificación y origen}} |
-| Riesgos identificados | {{Cumple / No cumple / Parcial}} | {{explicación; «Ninguno» es una respuesta válida}} |
-| Alcance y fuera de alcance claros | {{Cumple / No cumple / Parcial}} | {{explicación}} |
-| Sin aclaraciones pendientes | {{Cumple / No cumple / Parcial}} | {{vacío o «Ninguna» en Observaciones; nada pendiente con usuario/producto}} |
-| Validación final (Ola 3) superada | {{Cumple / No cumple / Parcial}} | {{gaps, revisión cruzada y validación con subagente sin contexto ejecutadas sin hallazgos pendientes}} |
+| Stack tecnológico resuelto | {{Met / Not Met / Partial}} | {{explicación}} |
+| Repositorios y proyecto base definidos | {{Met / Not Met / Partial}} | {{explicación}} |
+| Requisitos funcionales completos y priorizados | {{Met / Not Met / Partial}} | {{explicación}} |
+| Requisitos no funcionales revisados y priorizados | {{Met / Not Met / Partial / N/A}} | {{explicación; cubre explícitamente Seguridad, Rendimiento, Fiabilidad y Disponibilidad}} |
+| Interfaces externas revisadas | {{Met / Not Met / Partial / N/A}} | {{explicación; usuario, hardware, software, comunicaciones}} |
+| Requisitos de datos formalizados | {{Met / Not Met / Partial / N/A}} | {{explicación}} |
+| Cumplimiento normativo trazado | {{Met / Not Met / Partial / N/A}} | {{explicación}} |
+| Diseño de interfaz revisado | {{Met / Not Met / Partial / N/A}} | {{explicación; No aplica si el requerimiento no tiene UI propia}} |
+| Verificación y trazabilidad completas | {{Met / Not Met / Partial}} | {{explicación; todo FR-XXX/NFR-XXX con método de verificación y origen}} |
+| Riesgos identificados | {{Met / Not Met / Partial}} | {{explicación; «Ninguno» es una respuesta válida}} |
+| Alcance y fuera de alcance claros | {{Met / Not Met / Partial}} | {{explicación}} |
+| Sin aclaraciones pendientes | {{Met / Not Met / Partial}} | {{vacío o «Ninguna» en Observaciones; nada pendiente con usuario/producto}} |
+| Validación final (Ola 3) superada | {{Met / Not Met / Partial}} | {{gaps, revisión cruzada y validación con subagente sin contexto ejecutadas sin hallazgos pendientes}} |

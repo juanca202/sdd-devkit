@@ -29,11 +29,11 @@ funcional → comportamiento de la solución, riesgo, complejidad, cómo organiz
 **Repositorio:** {{obligatorio para Ready: nombre del repositorio git donde se ejecuta el experimento}}
 **Origen:** {{artefacto o decisión que espera el resultado: `US-XXX`, `WI-XXX`, `RS-XXX` o `ADR-XXX` enlazado por ruta relativa; «Petición directa» si no hay ninguno}}
 **Timebox:** {{obligatorio para Ready: duración máxima del experimento, p. ej. `2 días` · `8 h` · `1 sprint`}}
-**Resolución:** {{Abierto | Replanificado (US-YYY) | Replanificado (WI-YYY) | Re-espigado (WI-YYY) | Descartado — motivo}}
+**Resolución:** {{Open | Replanned (US-YYY) | Replanned (WI-YYY) | Re-spiked (WI-YYY) | Discarded — motivo}}
 <!--
-Arranca en `Abierto`. La actualiza el skill que crea el artefacto definitivo (`work-define` → `Replanificado (US-YYY)`;
-`work-plan` → `Replanificado (WI-YYY)`, o `Re-espigado (WI-YYY)` al crear un segundo spike más acotado), o
-`work-implement` al descartar tras un veredicto NOT_VIABLE. Un spike con `Resolución` distinta de `Abierto`
+Arranca en `Open`. La actualiza el skill que crea el artefacto definitivo (`work-define` → `Replanned (US-YYY)`;
+`work-plan` → `Replanned (WI-YYY)`, o `Re-spiked (WI-YYY)` al crear un segundo spike más acotado), o
+`work-implement` al descartar tras un veredicto NOT_VIABLE. Un spike con `Resolución` distinta de `Open`
 cuenta como completo para `/work-plan archive`.
 -->
 **Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}

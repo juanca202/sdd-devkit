@@ -25,6 +25,8 @@ Reglas de contenido:
 
 # RQ-XXX: {{título corto del requerimiento}}
 
+<!-- rq:status={{Draft|Ready}} -->
+<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que us:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
 **Estado:** {{Draft | Ready}}
 **Fecha de creación:** {{YYYY-MM-DD}}
 **Última actualización:** {{YYYY-MM-DD}}

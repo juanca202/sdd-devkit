@@ -424,7 +424,7 @@ Las opciones de cierre se resuelven segun `implementation.handoff` (ver [`${PLUG
 
 > **Excepcion — `WI-XXX` de tipo `bug-fix` / `security-update`.** Al implementarse directamente sobre la rama de integracion, **no hay handoff de cierre**: no queda rama que mergear ni PR que crear, asi que no se ofrecen las opciones ni se invoca `work-integrate` / `pr-create`. El ciclo termina con el commit. Los handoffs de escalado (`work-plan`, `work-define`, `test-define`) siguen vigentes igual.
 >
-> **Excepcion — `WI-XXX` de tipo `spike`.** Su rama `spike/` **nunca se integra ni se le crea PR**: el cierre no ofrece `work-integrate` / `pr-create` sino la **formalizacion del resultado** — `/work-define` (nueva US) o `/work-plan` (WI definitivo o segundo spike acotado) segun el veredicto del `spike-report.md`, o terminar ahi con `Resolucion: Descartado`. Ver el Paso 4 de la [Variante spike](references/work-items.md#variante-tipo-spike-experimento-sin-integracion).
+> **Excepcion — `WI-XXX` de tipo `spike`.** Su rama `spike/` **nunca se integra ni se le crea PR**: el cierre no ofrece `work-integrate` / `pr-create` sino la **formalizacion del resultado** — `/work-define` (nueva US) o `/work-plan` (WI definitivo o segundo spike acotado) segun el veredicto del `spike-report.md`, o terminar ahi con `Resolucion: Discarded`. Ver el Paso 4 de la [Variante spike](references/work-items.md#variante-tipo-spike-experimento-sin-integracion).
 
 ---
 

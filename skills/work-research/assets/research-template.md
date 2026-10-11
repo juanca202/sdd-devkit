@@ -25,6 +25,8 @@ Archivos adicionales (solo si el flujo los define, en la misma carpeta):
 
 # RS-{{XXX}} — {{Título descriptivo de la investigación}}
 
+<!-- rs:status={{Draft|Ready}} -->
+<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que us:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
 **Estado:** {{Draft | Ready}}
 **Fecha:** {{YYYY-MM-DD}}
 **Flujo:** {{Investigación libre | Analizar decisiones pendientes | Analizar test case | Analizar legado | Analizar migración}}

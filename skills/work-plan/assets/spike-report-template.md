@@ -22,10 +22,10 @@ valores SIEMPRE en inglés; la etiqueta visible del veredicto va en el idioma re
 |----------------------|---------|--------------------------------------------------------------------------------|----------------------------------------------------|
 | VIABLE               | ✅      | Todas las Q-XX con criterio de éxito cumplido; el enfoque sirve tal como se probó | work-define (US) o work-plan (WI definitivo)       |
 | VIABLE_WITH_REWORK   | ⚠️      | El enfoque sirve, pero el prototipo revela trabajo o decisiones que la implementación definitiva debe resolver | Igual, cargando Diagnóstico y Consideraciones |
-| NOT_VIABLE           | ❌      | Alguna Q-XX determinante en fallo; el camino se descarta con sustento            | Resolución: Descartado; ADR vía arch-manage si la decisión es estructural |
+| NOT_VIABLE           | ❌      | Alguna Q-XX determinante en fallo; el camino se descarta con sustento            | Resolución: Discarded; ADR vía arch-manage si la decisión es estructural |
 | INCONCLUSIVE         | ⏸️      | Timebox agotado con Q-XX sin responder                                           | Segundo spike más acotado (Re-espigado) o descartar |
 -->
-**Veredicto:** {{✅ Viable | ⚠️ Viable con trabajo | ❌ No viable | ⏸️ No concluyente}}
+**Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` VIABLE | `⚠️` VIABLE_WITH_REWORK | `❌` NOT_VIABLE | `⏸️` INCONCLUSIVE}}
 **Subtipo:** {{técnico | funcional}}
 **Fecha:** {{YYYY-MM-DD}}
 **Spike:** [WI-XXX: {{título}}](README.md)
@@ -54,7 +54,7 @@ assets/ de este WI (mediciones, capturas, logs sanitizados). Nunca pegar tokens,
 -->
 | `Q-XX` | Criterio de éxito | Resultado observado | Resultado | Evidencia |
 |--------|-------------------|---------------------|-----------|-----------|
-| Q-01 | {{umbral del README}} | {{valor o comportamiento medido, literal}} | {{✅ Cumple | ❌ No cumple | ⏸️ No concluyente}} | {{[EV-01](assets/EV-01-…)}} |
+| Q-01 | {{umbral del README}} | {{valor o comportamiento medido, literal}} | {{símbolo + etiqueta en el idioma resuelto: `✅` PASS | `❌` FAIL | `⏸️` INCONCLUSIVE}} | {{[EV-01](assets/EV-01-…)}} |
 | Q-02 | {{…}} | {{…}} | {{…}} | {{…}} |
 
 ## Hallazgos

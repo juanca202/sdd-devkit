@@ -127,7 +127,7 @@ Las **claves** son en inglés (estándar); el usuario puede nombrarlas en españ
 - **Solo `RQ-XXX`.** Con un `US`/`WI`/`SRS`/`RS`, parar e indicar el skill que lo archiva (`work-define`, `work-plan`, `requirement-refine`, `work-research`). Los `TC-XXX` no se archivan por separado: viajan con su padre.
 - **El estado no restringe, pero se informa.** Parte de estado antes de preguntar: `Estado` del `README.md`, criterios sin TC, TCs en `Draft` y —si existe— el veredicto de `criteria-coverage.md`. Señales de incompleto: `Draft`, algún `AC-XXX` sin TC, algún TC en `Draft`, cobertura `REJECTED`.
 - **Siempre se confirma** (herramienta estructurada, una sola tanda para todo el lote), mostrando origen → destino. Sin canal de respuesta, no se archiva.
-- **Destino:** `<archivedPath>/requirements/RQ-XXX-{slug}/`; la carpeta se mueve completa (`README.md`, `assets/`, `test-cases/`). `git mv`, guard de destino, reparación de enlaces y cierre con `/git-commit`, tal como describe la referencia.
+- **Destino:** `<archivedPath>/requirements/RQ-XXX-{slug}/`; la carpeta se mueve completa (`README.md`, `assets/`, `test-cases/`). `git mv`, guard de destino, reparación de enlaces y cierre con un commit directo `docs(specs): archivar RQ-XXX`, tal como describe la referencia.
 - Un `RQ` ya bajo `<archivedPath>` se informa y no se toca; un ID suelto **sin** `archive` nunca archiva.
 
 ---

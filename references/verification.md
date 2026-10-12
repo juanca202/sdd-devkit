@@ -88,9 +88,9 @@ if (verification) {
 > tiene efecto: `coverage-verify` no aplica correcciones por sí mismo, solo reporta y delega la ejecución
 > de pruebas en `quality-check`, ya de forma automática.
 
-> **Esto no relaja las demás condiciones del merge.** Working tree limpio, unidades en `Done`, rama base
-> resoluble, delta distinto de cero y el resto de la validación previa de `work-integrate` siguen
-> aplicando igual.
+> **Esto no relaja las demás condiciones del merge.** Working tree limpio antes del merge (lo pendiente se
+> comitea una sola vez tras las puertas), unidades en `Done`, rama base resoluble, delta distinto de cero y
+> el resto de la validación previa de `work-integrate` siguen aplicando igual.
 
 > **Omitida ≠ aprobada.** Una puerta con `enabled: false` deja el merge sin esa evidencia. No bloquea,
 > pero **debe reportarse explícitamente** como omitida, con el motivo (`policy`), en el resumen del cierre

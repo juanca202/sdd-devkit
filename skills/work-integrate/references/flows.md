@@ -56,7 +56,7 @@ Cuando reflog y config no concluyen, o existen varios candidatos plausibles.
 - [ ] Idioma resuelto según la sección «Resolución de idioma» de `SKILL.md`
 
 **Validación:**
-- [ ] `git status --porcelain` sin salida (working tree limpio); si había cambios pendientes, se resolvieron invocando automáticamente `git-commit` (sin preguntar al usuario si convenía invocarlo — `git-commit` sí pudo pausar para confirmar una propuesta de división, o detenerse ante rama protegida o hook fallido)
+- [ ] `git status --porcelain` sin salida antes del merge (working tree limpio); todo lo pendiente —trabajo previo, correcciones e informes de las puertas— se resolvió invocando automáticamente `git-commit` **una sola vez, después de las puertas** (sin preguntar al usuario si convenía invocarlo — `git-commit` sí pudo pausar para confirmar una propuesta de división, o detenerse ante rama protegida o hook fallido)
 - [ ] `progress.md` existe en la ubicación del tipo
 - [ ] **Todas** las unidades del trabajo de la rama en estado `Done` (leídas del `progress.md` en la carpeta del trabajo)
 - [ ] Rama base resuelta contra `integrationBranches`; si su `commitPolicy` es `pull_request`, el flujo paró y se ofreció `pr-create`
@@ -83,7 +83,7 @@ Cuando reflog y config no concluyen, o existen varios candidatos plausibles.
 - [ ] `progress.md` del trabajo con el **estado del trabajo** en `Done` (encabezado `**Estado:**` y marca `<!-- work:… status=Done -->`) y `Ultima actualizacion` puesta al día
 - [ ] **Nada archivado**: el archivado no forma parte del cierre; si el usuario lo pide, remitir a `/work-define US-XXX archive` o `/work-plan WI-XXX archive` (ver `${PLUGIN_ROOT}/references/archive.md`)
 
-- [ ] **Un solo commit de cierre en la rama base** (`chore(<ID>): cerrar trabajo`) vía `git-commit`, con el `progress.md` en `Done` — **separado del commit de merge**
+- [ ] **Un solo commit de cierre en la rama base** (`chore(<ID>): cerrar trabajo`) como **commit directo** (mecánico, sin `git-commit`), con el `progress.md` en `Done` — **separado del commit de merge**
 - [ ] Hash del commit de cierre capturado para el reporte
 
 **Cierre:**

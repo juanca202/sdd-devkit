@@ -102,6 +102,28 @@ Los archivos del harness que **ya existan** en el proyecto se revisan en el Paso
 
 ---
 
+## Argumentos de entrada
+
+`/arch-init` acepta, opcionalmente, una o más URLs o rutas de repositorio (`https://…`, `git@…`, `ssh://…`, con o sin `.git`, o un directorio local con `.git`), cada una precedida por un indicador que dice qué es ese repositorio para el proyecto. El resto del texto es contexto libre que prellena las preguntas siguientes (situación, stack, descripción), como cualquier descripción inicial del usuario.
+
+```text
+/arch-init base <url|ruta>                    # Monorepo: parte de un proyecto base
+/arch-init existing <url|ruta>                # Monorepo: el repo del proyecto ya existe
+/arch-init base <url1> existing <url2> …      # Multirepo: un indicador por repositorio
+/arch-init base <url> <texto libre>
+```
+
+| Indicador | Qué es ese repositorio | Dónde se resuelve |
+| --------- | ---------------------- | ----------------- |
+| `base` | **Proyecto base** (plantilla, starter, semilla corporativa): punto de partida, **no** el repo del proyecto. Queda como remote `upstream`. | Caso 1 del [Paso 1.1](#11-repositorio-git); en Multirepo, *Parte de un proyecto base* en `references/multi-repo.md § 2.3`. |
+| `existing` | **Proyecto existente**: la URL **es** el repo del proyecto. Se usa sin reconfigurar remotos. | Caso 2 del [Paso 1.1](#11-repositorio-git); en Multirepo, *Ya existe* en `references/multi-repo.md § 2.3`. |
+
+Reglas fijas, sin repreguntar:
+
+- **Cantidad de URLs = topología.** Una → Monorepo; dos o más → Multirepo, donde cada URL es un submódulo del repositorio de especificaciones. En ambos casos el Paso 1.0 **no pregunta** la topología. Ninguna URL → flujo normal (se pregunta la topología y se trabaja sobre el directorio de invocación).
+- **Indicador = caso decidido.** No preguntar qué es la URL ni ofrecer la distinción base/existente.
+- **URL sin indicador** (`/arch-init <url>` a secas, o una URL en texto libre): preguntar **solo por esa URL**, con la herramienta de preguntas estructuradas: *"¿`<url>` es un proyecto base o el repositorio existente del proyecto?"* — opciones `Proyecto base (queda como upstream)` / `Proyecto existente (es el repo del proyecto)`. Es una pregunta distinta de la de topología; nunca se funden en un solo enunciado.
+
 ## Paso 1 — Identificar el punto de partida
 
 Leer `references/stack-detection.md` completo antes de este paso.
@@ -109,11 +131,16 @@ Leer `references/stack-detection.md` completo antes de este paso.
 ### 1.0 Topología del proyecto (repo único vs. multi-repo)
 
 Leer `references/multi-repo.md` completo antes de continuar. Antes de resolver el repositorio git, decidir
-si la solución abarca **uno** o **más de un** repositorio: preguntar al usuario — no hay señal de código
-que lo infiera con confianza, a diferencia de la clasificación del 1.2.
+si la solución abarca **uno** o **más de un** repositorio. **Si `/arch-init` recibió URLs como argumento**,
+la topología ya está decidida por su cantidad (una → Monorepo, dos o más → Multirepo; ver
+[Argumentos de entrada](#argumentos-de-entrada)) y **no se pregunta**. Si no, preguntar al usuario — no hay
+señal de código que lo infiera con confianza, a diferencia de la clasificación del 1.2.
 
-- **Uno solo** → sin cambios de comportamiento. Continuar en el 1.1 sobre el directorio de invocación.
-- **Más de uno** → crear (o usar, si ya existe) un **repositorio de especificaciones** que pasa a ser la
+Las opciones de la pregunta son, con estas etiquetas exactas: `Monorepo (Repositorio único)` /
+`Multirepo (Múltiples repositorios + repositorio de especificaciones)`.
+
+- **Monorepo** → sin cambios de comportamiento. Continuar en el 1.1 sobre el directorio de invocación.
+- **Multirepo** → crear (o usar, si ya existe) un **repositorio de especificaciones** que pasa a ser la
   raíz principal para todo el resto del flujo, y agregar cada repositorio adicional como submódulo en su
   raíz. El detalle completo — cómo preguntar nombre/ubicación, cómo distinguir repos existentes de nuevos,
   los comandos de `git submodule`, y cómo se repiten los Pasos 1.2, 1.3, 2, 4 y 5.2 por cada submódulo —
@@ -127,7 +154,9 @@ que lo infiera con confianza, a diferencia de la clasificación del 1.2.
   1. **Proyecto base** (plantilla, starter, semilla corporativa): ese repositorio **no es** el repo del proyecto, solo su punto de partida. Clonarlo y dejarlo como remote **`upstream`** del repo del proyecto: `git clone <url-base> <destino> && git -C <destino> remote rename origin upstream`. `origin` se agrega cuando exista el remoto propio del proyecto (`git remote add origin <url>`); mientras tanto, las actualizaciones del base se traen con `git fetch upstream` sin confundir ambos repos.
   2. **Proyecto existente**: la URL o ruta dada **es** el repo del proyecto. Usarlo tal cual (clonarlo si aún no está local), sin reconfigurar remotos — aplica la regla anterior de no tocar la configuración existente.
 
-  Ante una URL sin contexto, **preguntar cuál de los dos es** en vez de asumir.
+  **Qué caso es:** lo decide el indicador del argumento (`base` → 1, `existing` → 2; ver [Argumentos de entrada](#argumentos-de-entrada)). Ante una URL sin indicador, hacer la pregunta definida allí en vez de asumir.
+
+  **Destino del clone** (ambos casos): si el directorio de invocación está vacío (o solo contiene archivos ajenos al proyecto, p. ej. `.DS_Store`), clonar ahí mismo (`git clone <url> .`) — es el caso habitual al invocar `/arch-init base <url>` desde la carpeta recién creada para el proyecto; si no está vacío y no es ya el repo del proyecto, preguntar la carpeta. Tras el clone, el directorio de trabajo del resto del flujo es ese destino.
 - **Multi-repo:** este paso ya se resolvió al crear/usar el repositorio de especificaciones en el 1.0; no
   se repite aquí.
 
@@ -384,6 +413,7 @@ No confirmar el cierre antes de que `AGENTS.md` tenga el stack ya escrito.
 
 ## Anti-patterns
 
+- Preguntar qué es una URL que vino con indicador (`base` / `existing`), o la topología cuando la cantidad de URLs ya la decide; y, al revés, **asumir** base o existente para una URL sin indicador. Tampoco fundir la pregunta base/existente con la de topología en un solo enunciado: son dos preguntas distintas, cada una con sus etiquetas fijas.
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - Rellenar `# Stack tecnológico` en `AGENTS.md` antes del Paso 5, aunque el stack ya se conozca desde el Paso 1 o el Paso 2.
 - Escribir el stack (o duplicarlo) en `.agents/MEMORY.md` — ese archivo no lleva sección de stack; `AGENTS.md` es la única fuente.

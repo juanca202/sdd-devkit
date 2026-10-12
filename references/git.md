@@ -107,6 +107,34 @@ if (git) {
 > Una rama que **no** está en la lista no es rama de integración: no recibe trato especial, y un flujo que
 > exija una la resuelve contra la lista, nunca inventándola.
 
+## Commit directo
+
+> **Cuándo un skill comitea sin invocar `git-commit`.** `git-commit` existe para
+> **inferir** tipo, scope, mensaje y agrupación a partir del diff. Cuando nada de eso hay que inferir, invocarlo
+> es puro coste: el skill ejecuta `git commit` directo. Un commit es **mecánico** solo si cumple las cuatro
+> condiciones a la vez:
+>
+> 1. **El mensaje lo fija la referencia del skill**, literalmente (p. ej. `chore(<ID>): cerrar trabajo`,
+>    `docs(specs): archivar <ID>`), sin nada que deducir del contenido.
+> 2. **El alcance es una lista explícita de rutas** que ese mismo skill acaba de escribir o mover —no «lo que
+>    haya pendiente»—. Se stagea solo esa lista (`git add -A -- <rutas>`, que conserva un `git mv` previo) y,
+>    antes de commitear, se comprueba con `git diff --cached --name-only` que el índice contiene **exactamente**
+>    esas rutas: si hay algo más stageado, no es mecánico — retirar lo propio del índice y delegar todo en
+>    `git-commit`.
+> 3. **Solo documentación y artefactos del harness** (`docs/specs/`, `progress.md`, informes): nunca código de
+>    producto ni fuentes de prueba.
+> 4. **`commitPolicy` de la rama lo admite**: nunca sobre una rama `pull_request`; sobre una `merge` o una rama de
+>    trabajo no hay confirmación extra.
+>
+> Si el hook falla, **parar e informar** con el mensaje del hook, sin corregir ni reintentar — no hay inferencia
+> de respaldo que valga la pena cargar; el usuario puede resolverlo o invocar `/git-commit`. Todo commit que no
+> cumpla las cuatro condiciones —cualquier cambio de código, cualquier alcance que haya que decidir, cualquier
+> mensaje que dependa del diff— sigue delegándose en `git-commit`. Casos mecánicos hoy: el cierre del trabajo en
+> la rama base (`work-integrate`, paso 11.2), el archivado (`archive.md`, paso 4) y los commits de un subagente
+> en su worktree (`work-implement`, modo paralelo).
+
+## Reglas de la invocación delegada
+
 > **`push` no aplica en invocación delegada.** Cuando `git-commit` se ejecuta invocado por otro skill
 > (`work-integrate`, `pr-create`), el commit queda **siempre local** — el invocador decide qué sigue
 > (merge, PR, y en qué momento hace push). `commitConfirmation` sí se resuelve igual que en invocación directa.

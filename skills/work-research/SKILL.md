@@ -123,7 +123,7 @@ Reglas que este skill aplica al archivar:
 
 - **El estado no restringe, pero se informa.** Antes de preguntar, componer el parte de estado: referencias vivas desde artefactos activos de `<changesPath>` y `<currentPath>` (≥ 1 cuenta como incompleto: otro trabajo aún la enlaza). Con algo incompleto, la pregunta lo dice explícitamente y el usuario decide.
 - **Siempre se confirma** (herramienta estructurada, una sola tanda para todo el lote), mostrando origen → destino de cada carpeta y las investigaciones sueltas que quedarían huérfanas. Sin canal de respuesta, no se archiva.
-- **Destino:** `<archivedPath>/research/<ID>-<slug>/`, con `<archivedPath>` = `specification.archivedPath` de `.sdd-devkit/settings.json` (por defecto `docs/specs/archived/`) y la subcarpeta espejo de `<changesPath>`. `git mv`, guard de destino, reparación de enlaces y cierre con `/git-commit`, tal como describe la referencia.
+- **Destino:** `<archivedPath>/research/<ID>-<slug>/`, con `<archivedPath>` = `specification.archivedPath` de `.sdd-devkit/settings.json` (por defecto `docs/specs/archived/`) y la subcarpeta espejo de `<changesPath>`. `git mv`, guard de destino, reparación de enlaces y cierre con un commit directo `docs(specs): archivar <ID>`, tal como describe la referencia.
 - Un artefacto ya bajo `<archivedPath>` se informa y no se toca; un ID suelto **sin** `archive` nunca archiva.
 - Solo aplica a las investigaciones **sueltas** de `<changesPath>/research/`; las que viven dentro de un artefacto (`US-XXX/research/`) se archivan con él.
 

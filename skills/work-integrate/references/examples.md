@@ -36,7 +36,7 @@ Referencias del skill **work-integrate**. Cubren los dos tipos de trabajo (`US-X
 **Ejemplo 5 — Working tree sucio**
 
 - *Entrada:* Rama `feature/US-051-...`, dos archivos modificados sin commitear, `progress.md` íntegro en `Done`.
-- *Salida:* El skill invoca automáticamente el flujo de `git-commit` sobre esos cambios (sin preguntar si conviene invocarlo) — `git-commit` solo pausaría si propusiera una división en varios commits; un commit único lo ejecuta sin confirmar — y, una vez el working tree queda limpio, continúa con el resto de la validación y el merge con normalidad.
+- *Salida:* El skill anota los cambios pendientes y **no los comitea todavía**: ejecuta las puertas sobre commit + working tree y, tras ellas, invoca **una sola vez** `git-commit` sobre todo lo pendiente (trabajo, correcciones e informes) — `git-commit` solo pausaría si propusiera una división en varios commits; un commit único lo ejecuta sin confirmar — y, con el working tree limpio, continúa con el merge con normalidad.
 
 **Ejemplo 6 — Conflicto en el merge**
 
@@ -81,7 +81,8 @@ Referencias del skill **work-integrate**. Cubren los dos tipos de trabajo (`US-X
 - Usar merge fast-forward por defecto cuando el historial de la rama se perdería; preservar con `--no-ff` salvo petición explícita del usuario.
 - Hacer push de la rama base o borrar la rama del trabajo sin que el usuario lo pida explícitamente fuera del skill.
 - Mergear desde una rama que no encaja con el patrón de su tipo.
-- Parar a preguntarle al usuario si desea commitear los cambios pendientes en vez de invocar directamente el flujo de `git-commit`; el working tree sucio no detiene el submit — la invocación es automática (aunque `git-commit` pueda a su vez pausar para confirmar una propuesta de división, o detenerse ante rama protegida o hook fallido).
+- Parar a preguntarle al usuario si desea commitear los cambios pendientes, o invocar `git-commit` **antes** de las puertas y otra vez después: el working tree sucio no detiene el submit — se comitea una sola vez, tras las puertas, de forma automática (aunque `git-commit` pueda a su vez pausar para confirmar una propuesta de división, o detenerse ante rama protegida o hook fallido).
+- Invocar `git-commit` para el commit de cierre `chore(<ID>): cerrar trabajo` de la rama base: es un commit mecánico y se hace directo.
 - Cerrar varios trabajos en una sola pasada del skill; este flujo cubre un trabajo por ejecución.
 - Reintentar el merge tras un conflicto sin nueva instrucción del usuario.
 - Narrar el trabajo realizado en el mensaje al usuario («leí progress.md», «detecté la rama»); solo reportar resultados y pendientes.
@@ -97,7 +98,7 @@ Posición: **cierre local** — último paso de los pipelines de trabajo (sin pu
 
 | | |
 |--|--|
-| **Entrada** | Rama del trabajo (`feature/US-XXX-...`, o `feature/`\|`fix/`\|`chore/`\|`refactor/` + `WI-XXX-...`); working tree con cambios pendientes se resuelve automáticamente invocando **`git-commit`** (sin preguntar si conviene invocarlo — `git-commit` sí puede pausar para confirmar una propuesta de división, o detenerse ante rama protegida o hook fallido); `progress.md` con cada unidad del trabajo en `Done`; puertas de cierre en aprobado: `quality-check` `APPROVED`, `code-review` `APPROVED` y `coverage-verify` `APPROVED`. |
+| **Entrada** | Rama del trabajo (`feature/US-XXX-...`, o `feature/`\|`fix/`\|`chore/`\|`refactor/` + `WI-XXX-...`); working tree con cambios pendientes se resuelve automáticamente invocando **`git-commit` una sola vez, después de las puertas** (sin preguntar si conviene invocarlo — `git-commit` sí puede pausar para confirmar una propuesta de división, o detenerse ante rama protegida o hook fallido); `progress.md` con cada unidad del trabajo en `Done`; puertas de cierre en aprobado: `quality-check` `APPROVED`, `code-review` `APPROVED` y `coverage-verify` `APPROVED`. |
 | **Salida** | Merge `--no-ff` a la rama base local, **sin los informes de las puertas** (`docs/audits/quality-check.md` y `code-review.md` se retiran antes de cerrar el commit de merge); reporte con hash de merge. Sin push ni borrado de rama. |
 | **Siguiente paso (fuera del skill)** | Push de la rama base y CI — decisión del usuario. |
 | **PR/MR de implementación (`pr-create`)** | **Ruta alternativa a este skill, no complementaria.** Son las dos formas de integrar el mismo trabajo: el PR lo cierra con un merge **en la plataforma**, este skill con un merge **local**. Elegir una. Hacer las dos integra dos veces y, además, el merge de la plataforma propaga a la base los informes que este skill retira. Si se opta por el PR, abrirlo estando en la rama del trabajo, sin correr `work-integrate`. |

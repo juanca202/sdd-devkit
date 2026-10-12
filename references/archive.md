@@ -160,9 +160,16 @@ Enlaces absolutos desde la raíz (`docs/specs/...`): actualizar el prefijo.
 
 ### 4 — Commitear
 
-El `git mv` queda **stageado sin commitear**. Cerrar invocando **`/git-commit`** sobre esos cambios
-(un solo cambio lógico: «archivar <ID>»), salvo que el usuario indique que commitea él. No ejecutar
-`git add`/`git commit` directos ni revertir el `git mv` si `git-commit` se detiene: parar e informar.
+Es un **commit mecánico** (ver [Commit directo](git.md#commit-directo) en `git.md`): el mensaje y el
+alcance están fijados, así que **no se invoca `git-commit`**. Salvo que el usuario indique que commitea él:
+
+1. `git add -A -- <archivedPath>/<tipo>/<ID>-<slug> <changesPath>/<tipo>/<ID>-<slug>` (recoge el `git mv`
+   ya stageado) y, uno a uno, cada archivo cuyos enlaces se repuntaron en el paso 3.
+2. `git diff --cached --name-only` debe listar **solo** esas rutas. Si aparece cualquier otra cosa (cambios ajenos
+   al archivado que ya estaban stageados), `git restore --staged` de lo propio y delegar **todo** en `/git-commit`.
+3. `git commit -m "docs(specs): archivar <ID>"`.
+
+Si el hook falla: parar e informar con su mensaje, **sin revertir el `git mv`** ni reintentar.
 
 ---
 
@@ -262,4 +269,4 @@ que evitar es dar por vacía la ruta activa sin comprobar el archivo y **restabl
 - Arrastrar artefactos de frameworks de terceros al archivado.
 - Archivar un `FT-XXX`, un `TK-XXX` o un `TC-XXX` sueltos.
 - Asumir `docs/specs/archived/` como literal en vez de resolver `specification.archivedPath`.
-- Commitear el `git mv` con `git add`/`git commit` directos en vez de `git-commit`.
+- Invocar `git-commit` para el commit del archivado (es mecánico: mensaje y alcance fijos), o hacer el commit directo con el índice conteniendo algo más que el renombrado y los enlaces repuntados.

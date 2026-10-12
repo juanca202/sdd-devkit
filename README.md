@@ -1,6 +1,6 @@
 # SDD Devkit
 
-![version](https://img.shields.io/badge/version-2.2.12-blue) ![license](https://img.shields.io/badge/license-MIT-green)
+![version](https://img.shields.io/badge/version-2.2.13-blue) ![license](https://img.shields.io/badge/license-MIT-green)
 
 **SDD Devkit** es un plugin de Spec-Driven Development: convierte un requerimiento en documentación (historias de usuario, decisiones de arquitectura, diseño técnico, casos de prueba) y te acompaña hasta un entregable verificado. Incluye skills para:
 
@@ -45,6 +45,23 @@ La primera vez que uses el plugin en un proyecto, `/arch-init` crea `.sdd-devkit
 
 Detalle de cada opción en [SETTINGS.md](SETTINGS.md).
 
+### Empezar desde un repositorio
+
+`/arch-init` puede recibir las URLs (o rutas) de los repositorios con los que arranca el proyecto, cada una con un indicador que dice qué es:
+
+```text
+/arch-init base https://github.com/mi-org/plantilla-api.git        # proyecto base: se clona y queda como remote upstream
+/arch-init existing https://github.com/mi-org/pedidos-api.git      # repo existente: se clona tal cual, origin intacto
+/arch-init existing <url-backend> base <url-plantilla-frontend>    # varios repos → multirepo
+```
+
+- `base`: una plantilla, starter o semilla corporativa. No es el repo del proyecto, solo su punto de partida; queda como remote `upstream` y `origin` se agrega cuando exista el remoto propio.
+- `existing`: el repositorio del proyecto ya existe; se usa sin reconfigurar remotos.
+- Una URL → monorepo. Dos o más → multirepo: se crea un repositorio de especificaciones y cada URL se agrega como submódulo.
+- Sin indicador, el skill pregunta si la URL es un proyecto base o el repo existente. Sin URLs, pregunta la topología (monorepo / multirepo) y trabaja sobre el directorio actual.
+
+Más detalle en [SKILLS.md](SKILLS.md#arch-init).
+
 
 
 ## Skills incluidos
@@ -58,7 +75,7 @@ Skills que preparan y mantienen la base del proyecto — arquitectura y control 
 
 | Skill                                    | Uso                                                                                                                                                                                                        |
 | ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [arch‑init](SKILLS.md#arch-init)         | Prepara el proyecto para trabajar con el plugin: repositorio git, archivos base, stack tecnológico y una compuerta de calidad mínima. Funciona con uno o varios repositorios.                           |
+| [arch‑init](SKILLS.md#arch-init)         | Prepara el proyecto para trabajar con el plugin: repositorio git (el actual, o clonado desde un proyecto base `base` o un repo existente `existing`), archivos base, stack tecnológico y una compuerta de calidad mínima. Funciona con uno o varios repositorios.                           |
 | [plugin‑migrate](SKILLS.md#plugin-migrate) | Normaliza el contenido producido con versiones anteriores del plugin a la estructura vigente: rutas, plantillas y formatos, con confirmación y mapeo de cambios.                                        |
 | [arch‑manage](SKILLS.md#arch-manage)     | Crea o actualiza decisiones de arquitectura (ADRs) y estándares del proyecto (`docs/adr/`, `docs/standards/`).                                                                                            |
 | [arch‑discover](SKILLS.md#arch-discover) | Analiza un repositorio existente y propone qué decisiones y estándares documentar a partir de lo que ya está implementado.                                                                               |
@@ -100,7 +117,7 @@ flowchart TD
     class DONE exitPoint
 ```
 
-1. Todo empieza con `arch-init`: prepara la base y el stack (si hay varios repositorios, uno de ellos agrupa a los demás).
+1. Todo empieza con `arch-init`: prepara la base y el stack, partiendo del directorio actual o de los repositorios que le pases (`base` / `existing`; si hay varios, uno de especificaciones agrupa a los demás como submódulos).
 2. Si el proyecto ya tiene código, `arch-init` te lleva a descubrir su arquitectura (`arch-discover`) y, si quieres, sus funcionalidades (`work-research`) y casos de prueba (`test-define`).
 3. Se configura la compuerta de calidad.
 4. Se documentan o actualizan los ADRs/estándares (`arch-manage`); opcionalmente se audita el cumplimiento (`arch-audit`).

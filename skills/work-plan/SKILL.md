@@ -102,7 +102,7 @@ Reglas que este skill aplica al archivar:
 
 - **El estado no restringe, pero se informa.** Antes de preguntar, componer el parte de estado: `Estado` del `README.md`; `progress.md`; `criteria-coverage.md`; en un `WI` de tipo `bug`, la línea `Resolución:` (`Open`/`En corrección` cuentan como incompleto); en un `WI` de tipo `spike`, la línea `Resolución:` y la presencia de `spike-report.md` (sin informe o con `Resolución: Open` cuenta como incompleto; su rama `spike/` nunca se integra, así que no es señal). Con algo incompleto, la pregunta lo dice explícitamente y el usuario decide.
 - **Siempre se confirma** (herramienta estructurada, una sola tanda para todo el lote), mostrando origen → destino de cada carpeta y las investigaciones sueltas que quedarían huérfanas. Sin canal de respuesta, no se archiva.
-- **Destino:** `<archivedPath>/work-items/<ID>-<slug>/`, con `<archivedPath>` = `specification.archivedPath` de `.sdd-devkit/settings.json` (por defecto `docs/specs/archived/`) y la subcarpeta espejo de `<changesPath>`. `git mv`, guard de destino, reparación de enlaces y cierre con `/git-commit`, tal como describe la referencia.
+- **Destino:** `<archivedPath>/work-items/<ID>-<slug>/`, con `<archivedPath>` = `specification.archivedPath` de `.sdd-devkit/settings.json` (por defecto `docs/specs/archived/`) y la subcarpeta espejo de `<changesPath>`. `git mv`, guard de destino, reparación de enlaces y cierre con un commit directo `docs(specs): archivar <ID>`, tal como describe la referencia.
 - Un artefacto ya bajo `<archivedPath>` se informa y no se toca; un ID suelto **sin** `archive` nunca archiva.
 - Solo se archivan `WI-XXX`; las `TK-XXX` viajan con su historia (`/work-define US-XXX archive`).
 

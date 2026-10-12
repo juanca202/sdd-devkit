@@ -36,7 +36,12 @@ Skills que preparan y mantienen la base del proyecto — arquitectura y control 
 /arch-init
 /arch-init este repo ya tiene código; completa lo que falte
 /arch-init la solución tendrá un backend y un frontend en repos separados
+/arch-init base https://github.com/mi-org/plantilla-api.git
+/arch-init existing https://github.com/mi-org/pedidos-api.git
+/arch-init existing https://github.com/mi-org/pedidos-api.git base https://github.com/mi-org/plantilla-web.git
 ```
+
+**Si pasas URLs como argumento**, cada una lleva un indicador: `base` es un proyecto base (plantilla o semilla) — se clona y queda como remote `upstream`, no como `origin` —; `existing` es el repositorio del proyecto, que se clona tal cual. Una URL → monorepo; dos o más → multirepo (cada una es un submódulo del repo de especificaciones). Sin indicador, el skill pregunta cuál de los dos es.
 
 - «Inicializa el proyecto para agentes»
 - «Prepara este repo: AGENTS.md, MEMORY y arquitectura»

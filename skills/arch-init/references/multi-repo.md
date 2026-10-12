@@ -13,12 +13,14 @@ sí vale la pena revisar el contexto ya disponible (la descripción de la necesi
 o varios directorios hermanos con su propio `.git` junto al punto de invocación) para **prellenar** la
 pregunta, no para saltarla en silencio.
 
-Preguntar con la herramienta de preguntas estructuradas: *"¿Cuántos repositorios de código componen esta
-solución?"* — opciones `Uno solo` / `Más de uno (voy a necesitar un repo de especificaciones)`.
+**Si `/arch-init` recibió URLs como argumento, no preguntar**: una URL → Monorepo, dos o más → Multirepo
+(ver *Argumentos de entrada* en `SKILL.md`). En cualquier otro caso, preguntar con la herramienta de
+preguntas estructuradas: *"¿Qué topología de repositorios tiene esta solución?"* — opciones, **con estas etiquetas exactas**: `Monorepo (Repositorio único)` /
+`Multirepo (Múltiples repositorios + repositorio de especificaciones)`.
 
-- **Uno solo** → sin cambios de comportamiento. Continuar en el Paso 1.1 tal cual, sobre el directorio
+- **Monorepo** → sin cambios de comportamiento. Continuar en el Paso 1.1 tal cual, sobre el directorio
   desde el que se invocó el skill. El resto de esta referencia no aplica.
-- **Más de uno** → seguir con § 2. El resto del flujo (Pasos 1.1 en adelante) pasa a operar sobre el
+- **Multirepo** → seguir con § 2. El resto del flujo (Pasos 1.1 en adelante) pasa a operar sobre el
   **repositorio de especificaciones**, no sobre el directorio de invocación.
 
 ## 2. Crear el repositorio de especificaciones
@@ -63,9 +65,16 @@ falta `git init`) ya quedó resuelto por este mismo paso: no se repite.
 
 ### 2.3 Identificar cada repositorio adicional
 
-Por cada repositorio que la solución vaya a usar (además del de especificaciones), preguntar — agrupando
-todos en la misma tanda si son varios — si **ya existe o hay que crearlo**, mismo patrón que usa el resto
-del catálogo para esta distinción (p. ej. `/requirement-refine` con "nuevo o existente"):
+**Repositorios que vinieron como argumento de `/arch-init`** (`base <url>` / `existing <url>`, ver
+*Argumentos de entrada* en `SKILL.md`): cada uno ya es un submódulo con opción y URL decididas —
+`existing` ≡ *Ya existe*, `base` ≡ *Parte de un proyecto base* — así que **no** pasan por la pregunta de
+abajo. Para ellos se pide, en una sola tanda: el **nombre** de cada submódulo (proponer el del remoto), su
+**rol** en la solución y, una única vez, si hay **más repositorios** que crear desde cero. Una URL que
+llegó sin indicador sí pasa por la pregunta, con la URL ya conocida.
+
+Por cada repositorio restante que la solución vaya a usar (además del de especificaciones), preguntar —
+agrupando todos en la misma tanda si son varios — si **ya existe o hay que crearlo**, mismo patrón que usa
+el resto del catálogo para esta distinción (p. ej. `/requirement-refine` con "nuevo o existente"):
 
 *"¿El repositorio `<nombre>` ya existe (local o remoto), parte de un proyecto base, o hay que crearlo
 desde cero?"* — opciones `Ya existe` / `Parte de un proyecto base` / `Hay que crearlo`.

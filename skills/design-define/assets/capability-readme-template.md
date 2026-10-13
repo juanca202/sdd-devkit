@@ -66,7 +66,7 @@ Los wireframes NO van en la capability: son un recurso del artefacto (SRS / US /
 
 ## Historial de cambios
 
-<!-- Una fila por cambio en la capability posterior a su creación (elemento añadido, modificado u obsoleto); omitir la sección mientras no haya cambios. Mantener «Última actualización» de la cabecera al día. -->
+<!-- SOLO si hay cambios posteriores a la creación de la capability (elemento añadido, modificado u obsoleto). Al crear el README, NO incluir esta sección (ni el encabezado ni la tabla); se añade completa con el primer cambio, una fila por cambio. Mantener «Última actualización» de la cabecera al día. -->
 | Fecha | Cambio | Origen |
 | ----- | ------ | ------ |
 | {{YYYY-MM-DD}} | {{elemento (MD-XXX / API-XXX / FL-XXX / DG-XXX) añadido, modificado u obsoleto y qué cambió}} | {{US-XXX / TK-XXX / WI-XXX / ADR-XXX o pedido del usuario}} |

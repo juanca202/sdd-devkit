@@ -154,7 +154,7 @@ no-generados:
 **Ubicación y estructura:**
 
 - Una sola carpeta para la capability; nombre kebab-case correcto
-- Plantillas respetadas; en el README solo las secciones de elementos que aplican; todo archivo de elemento sigue la estructura común (cabecera → descripción ≤ 4 líneas sin título → contenido → `## Notas` → `## Historial de cambios`) y las modificaciones de esta pasada tienen su fila de historial (elemento y, si aplica, README)
+- Plantillas respetadas; en el README solo las secciones de elementos que aplican; todo archivo de elemento sigue la estructura común (cabecera → descripción ≤ 4 líneas sin título → contenido → `## Notas` opcional → `## Historial de cambios` **solo si hubo modificaciones posteriores a la creación**) y las modificaciones de esta pasada tienen su fila de historial (elemento y, si aplica, README); ningún archivo recién creado lleva un `## Historial de cambios` vacío
 - El README no contiene contratos de API ni definiciones de modelos, flujos o diagramas: solo propósito, tablas índice y Observaciones; ids secuenciales por tipo sin renumeraciones
 - Cada modelo en `models/MD-XXX-{slug}.md`, cada grupo de APIs en `apis/API-XXX-{slug}.md`, cada flujo en `flows/FL-XXX-{slug}.md` y cada diagrama en `diagrams/DG-XXX-{slug}.md` (id + slug fijado al crear), con su fila en la tabla índice del README enlazando el archivo — sin elementos huérfanos
 - Cada `API-XXX` agrupa por entidad o funcionalidad: ningún endpoint del mismo recurso quedó en un grupo aparte, y ningún grupo nuevo duplica uno existente
@@ -222,6 +222,8 @@ no-generados:
 ---
 
 ## Anti-patrones
+
+- Escribir `## Historial de cambios` con la tabla vacía (o con una fila de «creación») en un archivo recién creado — elemento, README de capability o `WF-XXX`. La sección aparece con la primera modificación real; hasta entonces no existe.
 
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - Inventar tipos, códigos de error, validaciones o ramas de flujo que nadie confirmó, en lugar de preguntar o dejar la laguna en Observaciones.

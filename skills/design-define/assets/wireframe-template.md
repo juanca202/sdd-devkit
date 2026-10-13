@@ -75,7 +75,7 @@ relevante, con el mismo id y un sufijo (p. ej. `WF-XXX-{slug}-vacio.svg`).
 
 ## Historial de cambios
 
-<!-- Se completa en cada vuelta de revisión con el usuario. Cada fila registra una observación y dónde quedó resuelta. -->
+<!-- SOLO si hubo vueltas de revisión con el usuario. Al generar el wireframe, NO incluir esta sección (ni el encabezado ni la tabla). Se añade completa con la primera observación; una fila por observación y dónde quedó resuelta. -->
 | Fecha | Observación del usuario | Resuelto en |
 | ----- | ------------------------- | ------------ |
 | {{YYYY-MM-DD}} | {{cambio pedido, textual}} | {{«SVG actualizado» y/o `FR-XXX`/`AC-XXX` actualizado/creado}} |

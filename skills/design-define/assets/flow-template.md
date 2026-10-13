@@ -44,7 +44,7 @@ queda explícitamente fuera.}}
 
 ## Historial de cambios
 
-<!-- Una fila por modificación del flujo después de su creación; omitir la sección mientras no haya cambios. -->
+<!-- SOLO si hay modificaciones posteriores a la creación. Al crear el archivo, NO incluir esta sección (ni el encabezado ni la tabla). Se añade completa con la primera modificación; una fila por cambio. -->
 | Fecha | Cambio | Origen |
 | ----- | ------ | ------ |
 | {{YYYY-MM-DD}} | {{qué paso, rama o error se añadió, quitó o corrigió}} | {{US-XXX / TK-XXX / WI-XXX / ADR-XXX o pedido del usuario}} |

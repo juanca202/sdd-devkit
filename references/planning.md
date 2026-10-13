@@ -41,10 +41,12 @@ const settingsPath = (() => {
 })();
 
 let specification = null;
+let scope = 'code';
 if (fs.existsSync(settingsPath)) {
   try {
     const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
     if (settings && settings.specification) specification = settings.specification;
+    if (settings && settings.implementation && settings.implementation.scope === 'tests') scope = 'tests';
   } catch (e) {}
 }
 
@@ -80,6 +82,12 @@ if (specification) {
   console.log('- **testCases.createMode = ask**: preguntar si se definen los casos de prueba al cerrar la planificacion, tanto en work-define como en work-plan.');
   console.log('- **testCases.createDetailsMode = ask**: test-define hace su entrevista de clarificacion antes de generar los TC.');
   console.log('**No decidir este valor por cuenta propia** ni ofrecer escribirlo: arch-init es quien crea el archivo.');
+}
+console.log('');
+if (scope === 'tests') {
+  console.log('- implementation.scope = tests -> test-define: este repositorio solo contiene pruebas contra un sistema desplegado cuyo codigo NO esta aqui. Tipo de prueba permitido: Manual, o una combinacion de API Test / Visual Test / E2E. Unit e Integration NO existen en este repo (son pruebas de desarrollo, viven junto al codigo): no asignarlos, no ofrecerlos y no preguntar por ellos. Un criterio que solo se podria verificar desde dentro del codigo se cubre por su efecto observable (API/E2E) o queda Manual con la razon en Observaciones.');
+} else {
+  console.log('- implementation.scope = code -> test-define: los cinco tipos de prueba (Unit, Integration, API Test, Visual Test, E2E) estan disponibles.');
 }
 "
 ```

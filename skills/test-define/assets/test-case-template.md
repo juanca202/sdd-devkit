@@ -22,7 +22,7 @@ El nombre del archivo y, si hay un tracker externo vinculado, el título usado a
 
 <!-- tc:status={{Draft|Ready|Obsolete}} · testType={{Manual|Unit|Integration|API Test|Visual Test|E2E, separados por coma}} · criterion={{identificador verbatim del criterio}} · parent={{US-XXX|WI-XXX|FT-XXX}} -->
 **Estado:** {{Draft | Ready | Obsolete}}
-**Tipo de prueba:** {{Manual | Tipo[, Tipo…]}}  <!-- intención de diseño. Tipo ∈ {Unit | Integration | API Test | Visual Test | E2E}; uno o varios separados por coma, en ESE orden (de menor a mayor nivel; p. ej. Unit, E2E). Manual solo cuando el caso no se automatiza por diseño; no se combina con tipos. -->
+**Tipo de prueba:** {{Manual | Tipo[, Tipo…]}}  <!-- intención de diseño. Tipo ∈ {Unit | Integration | API Test | Visual Test | E2E}; uno o varios separados por coma, en ESE orden (de menor a mayor nivel; p. ej. Unit, E2E). Manual solo cuando el caso no se automatiza por diseño; no se combina con tipos. Con implementation.scope: tests, solo Manual | API Test | Visual Test | E2E (nunca Unit ni Integration). -->
 **Fecha:** {{YYYY-MM-DD}}
 **Perspectiva:** {{Happy Path | Error | Límite}}
 **Prioridad:** {{Alta | Media | Baja}}

@@ -70,7 +70,7 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md).
 
-De ese bloque, este skill consume **`specification.testCases.createDetailsMode`** y **`specification.testCases.createMode`**:
+De ese bloque, este skill consume **`specification.testCases.createDetailsMode`**, **`specification.testCases.createMode`** y **`implementation.scope`**:
 
 | Clave | Valor | Comportamiento |
 |-------|-------|----------------|
@@ -78,8 +78,10 @@ De ese bloque, este skill consume **`specification.testCases.createDetailsMode`*
 | `createDetailsMode` | `never` | **No preguntar nada** en el Paso 2: aplicar los [valores por defecto](#valores-por-defecto-createdetailsmode-never) y dejar constancia de los supuestos en los propios TC. |
 | `createMode` | `always` | **No pedir aceptación final** en el [Paso 4, punto 5](#paso-4--guardar-y-reportar): mostrar el resumen, dar el resultado por aceptado y cerrar el skill directamente. |
 | `createMode` | `ask` / `never` (o sin `settings.json`) | Pedir aceptación final como hoy (Paso 4, punto 5). |
+| `implementation.scope` | `tests` | Repositorio **solo de pruebas** contra un sistema desplegado. El campo **Tipo de prueba** solo admite `Manual` o combinaciones de `API Test`, `Visual Test`, `E2E`: `Unit` e `Integration` **no se asignan, no se ofrecen ni se preguntan** — ver **Tipo de prueba** en el [Paso 3](#paso-3--generar-casos-de-prueba). |
+| `implementation.scope` | `code` (o sin la clave) | Los cinco tipos de prueba están disponibles. |
 
-Ambas claves se aplican igual venga este skill invocado por la planificación o directamente por el usuario.
+Las tres claves se aplican igual venga este skill invocado por la planificación o directamente por el usuario.
 **Ninguna afecta al alcance:** con cualquier valor, los TC cubren **todos** los criterios de aceptación.
 
 ---
@@ -295,6 +297,8 @@ Usar `assets/test-case-template.md` para todos los campos. Reglas de llenado:
     | ¿Debe validar la experiencia completa del usuario de punta a punta? | E2E |
 
     El valor final del campo es la lista de tipos marcados como aplicables, escrita de menor a mayor nivel según el orden de la tabla (`Unit, Integration, API Test, Visual Test, E2E`). Si ninguna pregunta aplica, reconsiderar si el caso es en realidad `Manual`. Para los TC `Manual` no aplica ningún tipo (el campo queda solo en `Manual`).
+
+    **Con `implementation.scope: tests`** las dos primeras filas (`Unit`, `Integration`) **no se evalúan**: son pruebas de desarrollo que viven junto al código, y el código no está en este repositorio. Un criterio que a primera vista "necesita verificar la interacción real entre componentes" se cubre aquí por su **efecto observable desde fuera** — la respuesta del endpoint (`API Test`) o el recorrido del usuario (`E2E`) — y, si no es observable desde fuera, queda `Manual` con la razón en Observaciones. Nunca `Integration`.
 - **Work Item (<sistema>):** enlace markdown al work item creado — solo si el TC se creó vía el tracker vinculado (etiqueta y formato exactos en su archivo de referencia, p. ej. `Work Item (ADO)` en `references/azure-devops.md`); omitir la línea si no aplica.
 - **Prioridad:** derivar del impacto del criterio en el negocio: Alta si el criterio es bloqueante o afecta seguridad/datos; Media si es funcional importante; Baja si es edge case o cosmético. Si no hay suficiente contexto, preguntar al usuario.
 - **Creado por:** usar `git config user.name` del repositorio. Si no está disponible, dejar el campo vacío.
@@ -422,6 +426,8 @@ La trazabilidad inversa (de un criterio a sus TCs) se obtiene buscando el identi
 ---
 
 ## Anti-patterns
+
+- Asignar, ofrecer o preguntar `Unit` o `Integration` en un repositorio con `implementation.scope: tests`: ahí solo existen `Manual`, `API Test`, `Visual Test` y `E2E`. Que un criterio involucre varios componentes no lo convierte en prueba de integración — se verifica por su efecto observable desde fuera del sistema.
 
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - Generar TCs sin haber completado la entrevista del Paso 2 (incluso si parece obvio) **cuando `createDetailsMode` es `ask`**.

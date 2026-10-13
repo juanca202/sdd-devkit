@@ -13,7 +13,7 @@ El trazado primario es para **historias de usuario** (`US-XXX`) con sus **criter
 
 > **Qué hace:** lee, mapea, **obtiene los resultados de pruebas delegando en `quality-check`** y reporta. Es una actividad de **verificación**, no de desarrollo.
 >
-> **No ejecuta pruebas por sí mismo.** La ejecución de la batería de pruebas se **delega en `quality-check`**: si existe una corrida previa fresca de `quality-check` (sin cambios en el código desde entonces), se **reutilizan** sus resultados; si no, se invoca `quality-check` en modo `tests-only` para producirlos. Ver [Resultados de pruebas: delegación en quality-check](#resultados-de-pruebas-delegación-en-quality-check).
+> **No ejecuta pruebas por sí mismo.** La ejecución de la batería de pruebas se **delega en `quality-check`**: si existe una corrida previa fresca de `quality-check` (sin cambios en el código desde entonces), se **reutilizan** sus resultados; si no, se invoca `quality-check` en modo `tests-only` para producirlos. Ver [Resultados de pruebas: delegación en quality-check](#resultados-de-pruebas-delegación-en-quality-check). **Repositorio solo de pruebas (`implementation.scope: tests`).** Allí `quality-check` **no ejecuta** los specs contra el sistema desplegado (API, E2E, Visual) —validan otro sistema, no el repo—, así que `quality-check-run.json` no trae sus resultados y **no se le invoca en `tests-only` para obtenerlos**. La fuente de ejecución es **`test-cases-automation.md`** del artefacto padre, que `work-implement` dejó al cerrar la unidad: cada archivo de `Pruebas` es evidencia; una línea en `Hallazgos` para el `TC-XXX` significa `Resultado = FAIL`; sin hallazgo, `PASS`. En la matriz, `Ejecución = work-implement`. **Ese `FAIL` no descubre el criterio:** existe una prueba fiel al TC, así que el criterio queda `COVERED`, y el fallo se reporta como hallazgo del sistema bajo prueba en «Observaciones y pendientes», con el `WI-XXX` de seguimiento si lo hay. Detectar ese rojo es el objetivo del repo, no una deuda de cobertura, y no degrada el veredicto. Con `scope: code` o sin la clave, esta nota no aplica.
 >
 > **Reporte idempotente.** Si no han cambiado ni el código, ni las pruebas, ni los criterios y casos de prueba del artefacto desde la última vez que se generó el `criteria-coverage.md`, **no se genera un documento nuevo**: se devuelven los mismos resultados del reporte existente. Ver [Reutilización del reporte (idempotencia)](#reutilización-del-reporte-idempotencia).
 >
@@ -162,7 +162,7 @@ Los valores de la columna `Estado` son **canónicos**: en el reporte se escribe 
 | `PARTIAL` | `⚠️` | El criterio está cubierto solo en parte: hay prueba pero no abarca todo el criterio, el artefacto existe pero no se pudo ejecutar, el resultado fue parcial, existe solo validación manual **no declarada como tal** (TC automatizable aún sin automatizar), o la suite que agrupa su test dio `FAIL` pero no se pudo aislar si el test específico del criterio fue el que falló (ver «Mapeo a la matriz» más abajo). Detallar el límite en Observaciones. |
 | `UNCOVERED` | `❌` | No existe caso de prueba ni artefacto que valide el criterio, o la prueba asociada **falló** y se pudo aislar que fue la suya. |
 
-> **Cobertura ≠ ejecución.** Que exista prueba que valida el criterio es una cosa; que haya corrido y con qué resultado, otra. Un criterio cuya prueba **falló** —y se pudo aislar que fue la suya— se reporta `UNCOVERED` con el fallo en Observaciones; si la suite falló pero no se puede aislar el test, es `PARTIAL` (ver «Mapeo a la matriz»).
+> **Cobertura ≠ ejecución.** Que exista prueba que valida el criterio es una cosa; que haya corrido y con qué resultado, otra. Un criterio cuya prueba **falló** —y se pudo aislar que fue la suya— se reporta `UNCOVERED` con el fallo en Observaciones (**salvo en un repositorio solo de pruebas**, `implementation.scope: tests`: ahí es `COVERED` con `Resultado = FAIL` y el hallazgo en Observaciones, ver la nota del encabezado); si la suite falló pero no se puede aislar el test, es `PARTIAL` (ver «Mapeo a la matriz»).
 >
 > **El `status` del TC filtra la cobertura.** La fuente primaria es la **columna `Estado` del índice** `test-cases/README.md`; si el índice no la trae, abrir el `TC-XXX-*.md` y leer su campo `Estado`, con la marca oculta `<!-- tc:status=Draft|Ready|Obsolete · testType=… -->` como desempate. Los **valores** (`Draft`/`Ready`/`Obsolete`) son canónicos y no se traducen; lo que va en el idioma resuelto es la etiqueta del campo. Un TC **`Obsolete`** no cuenta como cobertura (dejar Observación); uno **`Draft`** cuenta como cobertura `PARTIAL` (aún no está listo para respaldar el criterio); solo los **`Ready`** cuentan como cobertura plena. Si el TC no trae el campo, tratarlo como `Ready`. Esto es distinto del `Estado:` del **artefacto**, que este skill no exige (ver «Cuándo bloquear»).
 >
@@ -207,7 +207,7 @@ Semántica de las columnas:
 | **TC** | Caso de prueba que produjo `test-define` | `TC-XXX` · `—` si el criterio no tiene TC documentado (fila **derivada** de un test hallado, o hueco total) |
 | **Tipo** | El `Tipo de prueba` **declarado en el TC**; en filas derivadas, el tipo del artefacto hallado | `Manual` · `Unit` · `Integration` · `API Test` · `Visual Test` · `E2E` · `—` (sin TC y sin artefacto) |
 | **Evidencia** | La prueba concreta que respalda la fila | Ruta del artefacto automatizado · ruta del TC para filas `Manual` · `—` si esa intención no está materializada |
-| **Ejecución** | **Quién** produjo el resultado | `quality-check` · `Manual` · `—` (no se ejecutó) |
+| **Ejecución** | **Quién** produjo el resultado | `quality-check` · `work-implement` (solo en `scope: tests`: resultado leído de `test-cases-automation.md`) · `Manual` · `—` (no se ejecutó) |
 | **Resultado** | Qué dio esa prueba. Valores **canónicos**; en el reporte va la etiqueta en el idioma resuelto | `PASS` · `FAIL` · `NOT_RUN` (hay artefacto, no corrió) · `UNCOVERED` (no hay evidencia para ese tipo) · `N/A` (manual por diseño) |
 
 > **Por qué se eliminó la columna `Automática`.** Un `Sí` no decía nada útil: no revelaba qué tipo de prueba
@@ -229,7 +229,7 @@ Semántica de las columnas:
 
 | # | Filas del criterio | Estado |
 |---|--------------------|--------|
-| 1 | **Ninguna** fila aporta cobertura — todas en `UNCOVERED`, o el criterio no tiene TC ni artefacto, o sus únicos TCs son `Obsolete` — **o** alguna fila dio `FAIL` **aislado a su test** | `UNCOVERED` |
+| 1 | **Ninguna** fila aporta cobertura — todas en `UNCOVERED`, o el criterio no tiene TC ni artefacto, o sus únicos TCs son `Obsolete` — **o** alguna fila dio `FAIL` **aislado a su test** (no en `scope: tests`, donde ese `FAIL` es hallazgo y el criterio sigue cubierto) | `UNCOVERED` |
 | 2 | **Alguna** fila en `UNCOVERED`/`NOT_RUN`, algún TC en `Draft` u `Obsolete` conviviendo con cobertura válida, o un `FAIL` de suite **no aislable** | `PARTIAL` |
 | 3 | **Todas** con `Resultado` ∈ {`PASS`, `N/A`} y todos los TCs en `Ready` (o sin campo `Estado`) | `COVERED` |
 

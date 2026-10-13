@@ -28,11 +28,12 @@ hallazgos (comportamiento del sistema distinto al documentado en el TC). Nunca c
 ## Unidades
 
 <!--
-Una unidad por `FT-XXX` (entrada feature) o por `TC-XXX` (entrada test cases sueltos), igual que en
-`work-implement/references/test-cases.md`. El encabezado `### <ID>: …` identifica la unidad y su
-`**Estado:**` es lo que se verifica en `Done` antes de integrar.
+En modo pruebas la unidad es SIEMPRE el artefacto padre (`FT-XXX` / `US-XXX` / `WI-XXX`), aunque la
+entrada hayan sido TC sueltos — ver `work-implement/references/test-cases.md` § Modo pruebas. Normalmente
+hay una sola unidad por archivo. El encabezado `### <ID>: …` identifica la unidad y su `**Estado:**` es lo
+que se verifica en `Done` antes de integrar.
 -->
-### {{FT-XXX | TC-XXX}}: {{titulo corto}}
+### {{FT-XXX | US-XXX | WI-XXX}}: {{titulo corto}}
 
 **Estado:** {{Pending | In Progress | Done}}
 **Iniciado:** {{YYYY-MM-DD HH:mm}}
@@ -49,6 +50,6 @@ Una unidad por `FT-XXX` (entrada feature) o por `TC-XXX` (entrada test cases sue
 **Cobertura de test cases:** 
 []
 
-<!-- Hallazgos: una linea por prueba fiel al TC que sale en rojo contra el sistema: `TC-XXX — esperado: … · observado: … · prueba marcada: skip|todo · seguimiento: WI-XXX | <work item del tracker> | sin registrar`. Nunca pegar valores del .env, tokens ni datos personales en la evidencia. -->
+<!-- Hallazgos: una linea por prueba fiel al TC que sale en rojo contra el sistema: `TC-XXX — esperado: … · observado: … · spec: <ruta> (en rojo, sin marcar) · seguimiento: WI-XXX | <work item del tracker> | sin registrar`. La prueba NO se marca skip/todo/fixme: el fallo debe verse en el reporte del runner; esta linea es la que coverage-verify lee como `FAIL` del TC. Nunca pegar valores del .env, tokens ni datos personales en la evidencia. -->
 **Hallazgos:** 
 []

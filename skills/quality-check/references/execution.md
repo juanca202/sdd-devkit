@@ -304,6 +304,7 @@ estaba sucio, `workingTreeClean: false` queda registrado como señal para el con
 | Coverage bajo umbral configurado | `FAIL` (`❌`). |
 | Coverage sin umbrales configurados y exit 0 | `PASS` (`✅`). |
 | E2E **Condicional** con config presente pero tool ausente/rota | `SKIPPED` → `INCOMPLETE`. |
+| Repositorio solo de pruebas (`implementation.scope: tests`) con specs API/E2E/Visual contra un sistema externo | **No ejecutarlos y no listarlos**: `N/A` por política, nunca `SKIPPED`, aunque el estándar de testing los declare. Solo corren tipado, linter, build y `unit`/`coverage` del código propio del repo. Un rojo de esos specs no es `FAIL` de este repo: es un hallazgo registrado en `test-cases-automation.md` (ver `work-implement/references/test-cases.md` § Modo pruebas). |
 | E2E sin config ni script de e2e | `N/A`: **omitir la fila** del informe y no emitir entrada en `suites[]`. No afecta veredicto. **Salvo** que el estándar de testing declare e2e — entonces es `SKIPPED` y sí lleva fila (ver la fila de suite declarada no ejecutable). |
 | Build **N/A** (Python sin empaquetado) | Omitir fila; no afecta veredicto. |
 | `sonar-scanner` no disponible o falta `sonar-project.properties` | `N/A`. No afecta veredicto. |

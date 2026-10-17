@@ -10,6 +10,8 @@ Guía general para **planificar trabajo** produciendo documentos de especificaci
 
 > **Qué no hace este skill (cualquier tipo):** no implementa código, no ejecuta pruebas, no crea ADRs. Lo que no está acordado va a **Observaciones** o se pregunta al usuario — nunca se inventa.
 
+> **Repositorio solo de pruebas (`implementation.scope: tests`).** Aquí **no hay trabajo de implementación que planificar**: este skill produce **exclusivamente `WI-XXX` de tipo `bug`** — el reporte de un hallazgo detectado por un `TC-XXX` contra el sistema bajo prueba, con `assets/work-item-tests-template.md` (ver [`references/maintenance-tasks.md § Variante modo pruebas`](references/maintenance-tasks.md#variante-modo-pruebas-implementationscope-tests)). **No se crean tareas `TK-XXX` de historias**, ni WI de tipo `bug-fix`, `refactor`, `spike` o `test-improvement`; si el usuario pide planificar la corrección, remitirlo al repositorio de la aplicación. Tampoco se delega a `design-define` por «elementos técnicos sin especificación»: lo que haga falta saber del sistema bajo prueba se **solicita al usuario** y se documenta tal cual. Contrato en [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
+
 ---
 
 ## Regla de handoff (transversal)

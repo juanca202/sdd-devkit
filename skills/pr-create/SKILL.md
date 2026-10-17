@@ -136,7 +136,7 @@ Antes de cualquier push o creación de PR se ejecutan las puertas **que aplican 
 |--------|----------------------|-----------------|
 | 4.1 `quality-check` | Obligatoria | **Obligatoria** |
 | 4.2 `code-review` | Obligatoria | No aplica |
-| 4.3 `coverage-verify` | Obligatoria | No aplica |
+| 4.3 `coverage-verify` | Obligatoria (**No aplica** en un repositorio con `implementation.scope: tests`: se reporta `N/A`) | No aplica |
 | 4.4 Definition of Done | Si existe el archivo | Si existe el archivo |
 
 **4.1 — `quality-check` (siempre).** Invocar el flujo de `quality-check` (verificaciones automatizadas: tipado, linter, validaciones de arquitectura, unit, coverage, build, e2e, sonar, más las suites que declare el estándar de testing) sobre la rama. **En un repositorio solo de pruebas** (`implementation.scope: tests`) esa batería cubre solo el código propio del repo: los specs contra el sistema desplegado no se ejecutan ni cuentan en el veredicto —sus rojos son hallazgos registrados en `test-cases-automation.md`, no fallos del PR— y `coverage-verify` (4.3) lee su ejecución de ese archivo.
@@ -154,6 +154,7 @@ Antes de cualquier push o creación de PR se ejecutan las puertas **que aplican 
 **4.3 — `coverage-verify` (solo en PR de implementación).** Resolver el **trabajo** a validar (`US-XXX` o `WI-XXX`) del patrón de la rama, del prefijo de los commits, o de la ruta de trabajo. `coverage-verify` traza los **criterios de aceptación** `AC-XXX` del trabajo (mismo formato en US y WI). Si no se puede determinar el trabajo, preguntar al usuario cuál validar; si no lo provee, la puerta **no** puede quedar aprobada → detener. Invocar `coverage-verify` sobre ese trabajo. Reutiliza el `quality-check-run.json` producido por `4.1` (misma rama, sin cambios) y, si el `criteria-coverage.md` ya estaba fresco, lo devuelve sin regenerarlo.
 - Aprobado = `verdict=APPROVED` en la marca de pie → continuar. El `⚠️` de esta puerta es `APPROVED_WITH_NOTES` y **también** se considera aprobado, pero se **muestran las observaciones al usuario** antes de seguir.
 - Rechazado = `verdict=REJECTED` → detener.
+- **Excepción — repositorio solo de pruebas (`implementation.scope: tests`):** `coverage-verify` **no es puerta y no se invoca**. Trazaría los `AC-XXX` del **sistema bajo prueba** ↔ `TC-XXX` de este repo, es decir, validaría la aplicación probada y no este repositorio, así que no aporta nada al cierre. Se reporta `N/A` (`—`) con el motivo «repositorio solo de pruebas», visible en el resumen final, igual que en una promoción. Las puertas de este PR son `4.1` y `4.2`. Si el usuario quiere el informe de cobertura, lo pide a mano fuera de este flujo. Contrato en [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
 
 **4.4 — Definition of Done (solo si existe el archivo).** Comprobar si existe `docs/policies/definition-of-done.md` en la raíz del repo (`test -f docs/policies/definition-of-done.md`).
 
@@ -346,11 +347,11 @@ La rama ya tiene un PR/MR abierto hacia `develop`. Devolver la URL existente con
 - **Clasificar como promoción una rama que no encaja en nada** (`hotfix-cache`, `PROJ-1234`) por descarte, en lugar de preguntar (fila 5).
 - A la inversa: **dar por hecho que es una promoción sin confirmarlo**. El mismo estado se da cuando alguien olvidó cambiar de rama —típicamente justo después de `work-integrate`, que deja HEAD en la base—, y ahí el PR correcto es otro.
 - **Marcar `code-review` o `coverage-verify` como aprobadas en una promoción**, u omitirlas en silencio: se reportan como `N/A` (`—`) con el motivo «PR de promoción», con el motivo visible en el PR.
-- Saltarse `code-review` o `coverage-verify` en un PR de **implementación** con el argumento de que «ya se revisó»: ahí sí aplican, sin excepción.
+- Saltarse `code-review` o `coverage-verify` en un PR de **implementación** con el argumento de que «ya se revisó»: ahí sí aplican, sin excepción (la única omisión legítima de `coverage-verify` es la de un repositorio con `implementation.scope: tests`, reportada como `N/A`).
 - Dar por cumplida una puerta a partir del veredicto de otra (p. ej. asumir `code-review` aprobado porque `quality-check` lo está): son skills independientes con veredictos propios.
 - Pedir confirmación de título o descripción (flujo no interactivo).
-- Crear el PR con `quality-check` o `code-review` en `REJECTED`/`INCOMPLETE`, con `coverage-verify` en `REJECTED`, o con la Definition of Done incumplida.
-- En un PR de implementación, saltarse `coverage-verify` por no encontrar el trabajo (US/WI) en lugar de preguntarlo al usuario — o declararlo «promoción» para esquivar la puerta.
+- Crear el PR con `quality-check` o `code-review` en `REJECTED`/`INCOMPLETE`, con `coverage-verify` en `REJECTED` (en un repositorio con `implementation.scope: tests` `coverage-verify` no se invoca y se reporta `N/A`), o con la Definition of Done incumplida.
+- En un PR de implementación, saltarse `coverage-verify` por no encontrar el trabajo (US/WI) en lugar de preguntarlo al usuario — o declararlo «promoción» para esquivar la puerta. A la inversa: **invocarlo en un repositorio con `implementation.scope: tests`** como si fuera puerta.
 - **Archivar u ofrecer archivar el artefacto desde este skill**: el archivado no forma parte del PR; lo pide el usuario al skill que produjo el artefacto.
 - Commitear `docs/audits/quality-check.md` en un PR de promoción: el origen ya es una rama de integración y ese informe acabaría en la de despliegue sin nadie que lo limpie. Se borra del árbol antes del commit; si la rama ya lo traía trackeado, se retira del índice y ese borrado sí se commitea.
 - Intentar «excluir un archivo» del commit delegando en `git-commit`: su alcance lo decide él, no se le impone desde fuera. O se borra antes, o entra.

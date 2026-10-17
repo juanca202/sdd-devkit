@@ -138,7 +138,7 @@
         },
         "scope": {
           "type": "string",
-          "description": "Dónde vive el código bajo prueba. code (por defecto si se omite): en este repositorio, flujo habitual. tests: este repositorio contiene solo pruebas contra un sistema desplegado cuyo código no está aquí; work-implement aplica el modo pruebas (solo tipos TC/FT, sin corrección de código de producción, URLs y credenciales desde .env, registro en test-cases-automation.md en lugar de progress.md).",
+          "description": "Dónde vive el código bajo prueba. code (por defecto si se omite): en este repositorio, flujo habitual. tests: este repositorio contiene solo pruebas contra un sistema desplegado cuyo código no está aquí; work-implement aplica el modo pruebas (solo tipos TC/FT, sin corrección de código de producción, URLs y credenciales desde .env, registro en test-cases-automation.md en lugar de progress.md). El modo afecta a todo el catálogo: no se diseña ni implementa código funcional, work-define no crea TK, work-plan solo crea WI de tipo bug, coverage-verify no es puerta de cierre y pr-create/work-integrate no lo invocan (N/A), quality-check y code-review auditan solo el código propio, y el diseño o la arquitectura del sistema bajo prueba se solicita al usuario y se documenta tal cual (ver references/implementation.md § Modo pruebas).",
           "enum": [
             "code",
             "tests"

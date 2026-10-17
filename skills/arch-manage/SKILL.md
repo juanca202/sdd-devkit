@@ -21,6 +21,8 @@ license: MIT
 Crea y actualiza los dos documentos de arquitectura del proyecto — **ADRs** y **estándares de dominio** —
 siguiendo el flujo de este documento.
 
+> **Repositorio solo de pruebas (`implementation.scope: tests`).** Los ADRs y estándares que se gestionan aquí son los **del repositorio de pruebas** (elección de runner, estrategia de page objects, política de datos de prueba, manejo de credenciales). **No se redactan decisiones ni estándares del sistema bajo prueba**, ni se proponen cambios a su arquitectura; si el usuario aporta documentación de ese sistema, se guarda como material de referencia tal cual, marcando el origen, no como ADR propio. Contrato en [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
+
 > **Este SKILL.md es el router.** El detalle de consulta puntual (catálogo de dominios, convenciones de
 > frontmatter, fitness functions/runner, instalación de dependencias) vive en `references/` y se lee
 > **solo cuando aplica** — ver [Archivos del skill](#archivos-del-skill-contexto-progresivo) al final.

@@ -10,6 +10,8 @@ Analiza la estructura y el código de un repositorio para identificar **arquitec
 elecciones de tecnología, patrones, convenciones o compromisos que están vivos en el código pero
 nunca se documentaron formalmente.
 
+> **Repositorio solo de pruebas (`implementation.scope: tests`).** Lo que se descubre es la arquitectura **del repositorio de pruebas** (runner, organización de specs, page objects, clientes, fixtures, configuración, manejo de credenciales). **No se infiere ni se documenta la arquitectura del sistema bajo prueba** a partir de lo que las pruebas observan (respuestas de API, pantallas): si hace falta describirla como referencia, se **pide al usuario** y se documenta tal cual, marcando el origen. Contrato en [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
+
 Cada hallazgo se traduce en artefactos de dos tipos (ver el skill `arch-manage` para la distinción completa):
 
 - Un **ADR** — la *decisión* histórica: por qué se eligió algo. Todo hallazgo relevante produce un ADR candidato.

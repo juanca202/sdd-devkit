@@ -13,6 +13,8 @@ Skill **genérico** de investigación. Recopila información, la sintetiza y la 
 > artefactos existentes ni genera código. Tampoco genera el plan de
 > implementación: ese paso lo continúan `work-define` o `work-plan`.
 
+> **Repositorio solo de pruebas (`implementation.scope: tests`).** La investigación se limita a **cómo probar** el sistema bajo prueba: herramientas y estrategias de automatización, datos y entornos de prueba, acceso (MCP, credenciales vía `.env`), reproducción y análisis de un hallazgo para documentarlo como `bug`. **No se investigan soluciones técnicas, de diseño ni de arquitectura del sistema bajo prueba** (cómo debería implementarse un endpoint, qué modelo conviene, cómo corregir el defecto): eso pertenece al repositorio de la aplicación y allí se remite al usuario. Si para probar hace falta conocer un contrato de API, un flujo o un modelo, se **pide al usuario** y se documenta tal cual lo entrega, marcando el origen. Contrato en [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
+
 Este archivo contiene **solo lo transversal**. El procedimiento de cada flujo vive en su propio archivo de `references/`, que se carga **únicamente** cuando ese flujo se selecciona.
 
 ---

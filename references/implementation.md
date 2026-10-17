@@ -86,7 +86,7 @@ if (impl) {
   }
 
   if (scope === 'tests') {
-    console.log('- scope = tests -> **sistema bajo prueba externo**: este repositorio contiene solo pruebas contra una aplicacion desplegada cuyo codigo NO esta aqui. Solo aplican los tipos TC-XXX y FT-XXX de work-implement (un TK/WI no se implementa en este repo). Reglas del modo: no hay codigo de produccion que corregir (una prueba en rojo contra el sistema es un hallazgo: se queda en rojo, nunca se marca skip/todo/fixme ni se corrige, y quality-check NO la ejecuta ni la cuenta en su veredicto — solo audita tipado, lint, build y unit del codigo propio del repo; coverage-verify lee su ejecucion de test-cases-automation.md), URLs y credenciales salen del .env via el modulo de configuracion del proyecto, no se crea ni se toca progress.md (el registro va a test-cases-automation.md del padre), la unidad de confirmacion y de commit es el ARTEFACTO PADRE (US/WI/FT) completo y no cada TC (varios padres => un commit por padre), y las e2e/API se ejecutan aisladas en cada iteracion. Ver work-implement/references/test-cases.md § Modo pruebas.');
+    console.log('- scope = tests -> **sistema bajo prueba externo**: este repositorio contiene solo pruebas contra una aplicacion desplegada cuyo codigo NO esta aqui. Solo aplican los tipos TC-XXX y FT-XXX de work-implement (un TK/WI no se implementa en este repo). Reglas del modo: no hay codigo de produccion que corregir (una prueba en rojo contra el sistema es un hallazgo: se queda en rojo, nunca se marca skip/todo/fixme ni se corrige, y quality-check NO la ejecuta ni la cuenta en su veredicto — solo audita tipado, lint, build y unit del codigo propio del repo; coverage-verify lee su ejecucion de test-cases-automation.md), URLs y credenciales salen del .env via el modulo de configuracion del proyecto, no se crea ni se toca progress.md (el registro va a test-cases-automation.md del padre), la unidad de confirmacion y de commit es el ARTEFACTO PADRE (US/WI/FT) completo y no cada TC (varios padres => un commit por padre), y las e2e/API se ejecutan aisladas en cada iteracion. El modo afecta a TODO el catalogo, no solo a work-implement: no se disena ni implementa codigo funcional, work-define no crea TK, work-plan solo crea WI de tipo bug (reportes de hallazgos), coverage-verify NO es puerta de cierre y pr-create / work-integrate NO lo invocan (se reporta N/A por politica; solo corre si el usuario lo pide a mano, como informe de cobertura AC<->TC del sistema bajo prueba), quality-check y code-review auditan solo el codigo propio del repo, y cualquier wireframe, diseno o documento de arquitectura del sistema bajo prueba se SOLICITA al usuario y se documenta tal cual, nunca se disena. Ver la seccion **Modo pruebas — contrato para el catalogo** de esta referencia y work-implement/references/test-cases.md § Modo pruebas.');
   } else {
     console.log('- scope = code -> el codigo bajo prueba vive en este repositorio (comportamiento por defecto). Sin cambios respecto al flujo habitual.');
   }
@@ -147,3 +147,35 @@ if (impl) {
 > ejecutan. Lo que se le dice al usuario es el **resultado** —lo que se produjo, lo que debe decidir y lo
 > que queda pendiente—, más las preguntas que el propio flujo exija. Si un valor resuelto cambia lo que el
 > usuario va a ver, se menciona **al reportar**, no al resolverlo.
+
+## Modo pruebas (`implementation.scope: tests`) — contrato para el catálogo
+
+Un repositorio con `scope: tests` **no es un proyecto de implementación**: existe exclusivamente para
+**automatizar pruebas** contra un sistema desplegado cuyo código vive en otro lugar (el *sistema bajo
+prueba*). Esa frontera reordena el catálogo entero. La regla general es una sola — **en este repositorio no
+se diseña ni se implementa código funcional, ni del sistema bajo prueba ni «de apoyo»; solo pruebas y lo
+que las sostiene (runner, clientes, page objects, fixtures, configuración)** — y cada skill la aplica así:
+
+| Skill | En modo pruebas |
+|---|---|
+| `arch-init` | Clasifica el proyecto y escribe `"scope": "tests"`. Handoff del Paso 5.3 hacia `test-define` / `work-define sync`, nunca hacia `work-plan` o `requirement-refine` como arranque de desarrollo. |
+| `arch-discover` · `arch-audit` · `arch-manage` | Describen, auditan y gestionan **la arquitectura del repositorio de pruebas** (estructura de specs, page objects, configuración, estándares). La arquitectura del **sistema bajo prueba** (modelos, diagramas, flujos, contratos de API) **no se diseña ni se infiere**: si hace falta para escribir pruebas, se **solicita al usuario** y se documenta **tal cual la entrega** en `docs/` como material de referencia, marcando su origen. |
+| `design-define` | **No produce wireframes ni diseño de alta fidelidad.** Si una prueba visual o E2E necesita conocer la UI, se piden al usuario los wireframes/diseños existentes (o acceso al Figma / al sistema desplegado vía MCP) y se referencian; nunca se dibujan ni se proponen. |
+| `requirement-refine` | Formaliza `RQ-XXX` del sistema bajo prueba **como insumo para `test-define`**, con criterios de aceptación verificables; no deriva de ellos trabajo de implementación. |
+| `work-define` | Crea o sincroniza `US-XXX` con sus `AC-XXX` **como fuente de los casos de prueba**. **No crea `TK-XXX`**: no hay tareas de implementación que planificar. Al quedar `Ready`, el único handoff es `test-define`. |
+| `work-research` | Investiga **cómo probar** (herramientas, estrategias de automatización, datos de prueba, acceso al sistema). **No investiga soluciones técnicas ni de diseño del sistema bajo prueba**; si el usuario las necesita, se le remite al repositorio de la aplicación. |
+| `work-plan` | **Solo crea `WI-XXX` de tipo `bug`**: el reporte de un hallazgo detectado por un `TC-XXX`, con la plantilla `work-item-tests-template.md`. Nunca `bug-fix`, `refactor`, `spike`, `test-improvement`, ni tareas de historias. La remediación se planifica en el repositorio de la aplicación. |
+| `test-define` | Único skill que **diseña** en este repo: los `TC-XXX`. Tipos admitidos `Manual` / `API Test` / `Visual Test` / `E2E` (nunca `Unit` ni `Integration`). |
+| `work-implement` | Solo tipos `TC-XXX` / `FT-XXX`: traduce casos de prueba a código. Una prueba en rojo contra el sistema **se queda en rojo** y se registra como hallazgo; no se corrige producción ni se relaja la prueba. Registro en `test-cases-automation.md` (sin `progress.md`). Detalle en `work-implement/references/test-cases.md § Modo pruebas`. |
+| `quality-check` | Audita **solo el código propio del repositorio** (tipado, lint, build, unit de helpers). Los specs contra el sistema externo son el producto, no suites a ejecutar: `N/A` en su veredicto. **Sí es puerta de cierre** del repo propio. |
+| `code-review` | Revisa **solo el código propio del repositorio** (specs, page objects, helpers, configuración): fidelidad al `TC-XXX`, aislamiento, manejo de credenciales desde `.env`, estabilidad. No evalúa ni propone cambios al sistema bajo prueba. **Sí es puerta de cierre** del repo propio. |
+| `coverage-verify` | **No es puerta de cierre y el cierre no lo invoca.** Lo que trazaría es la cobertura **AC-XXX ↔ TC-XXX del sistema bajo prueba** —valida la aplicación probada, no este repositorio—, así que `pr-create` y `work-integrate` **no lo ejecutan** y lo reportan `N/A` por política (igual que en un PR de promoción). Solo corre **a mano, a petición expresa del usuario**, como informe de cobertura, leyendo la ejecución de `test-cases-automation.md` (un `FAIL` fiel al TC cuenta como criterio cubierto con hallazgo). |
+| `pr-create` · `work-integrate` | Cierre del repo propio con **dos** puertas: `quality-check` + `code-review`. `coverage-verify` **no se invoca** (`N/A`, motivo «repositorio solo de pruebas»). Unidad `Done` a verificar: el artefacto padre en `test-cases-automation.md`. |
+
+> **Qué hacer cuando algo exige diseñar.** Si una tarea en este repositorio solo puede completarse
+> diseñando o implementando algo del sistema bajo prueba (un endpoint que falta, una pantalla que no
+> existe, un modelo que hay que suponer), **parar**, explicar la frontera y ofrecer: (a) pedir al usuario el
+> artefacto o la información que falta y documentarla tal cual; (b) registrar el hueco como hallazgo
+> (`WI-XXX` de tipo `bug`, o nota en `Hallazgos` de `test-cases-automation.md`); (c) remitir al repositorio
+> de la aplicación. Nunca la opción «lo diseño yo».
+

@@ -23,6 +23,8 @@ Checking*: no descubre arquitectura nueva (eso lo hace `arch-discover`) ni la do
 `arch-manage`); aquí se toman las normas **ya existentes** como el "deber ser" y se comparan contra
 el "ser" del repositorio.
 
+> **Repositorio solo de pruebas (`implementation.scope: tests`).** Se audita el **código propio del repositorio de pruebas** contra sus normas (estructura de specs, aislamiento, credenciales desde `.env`, convenciones del runner). **No se audita el sistema bajo prueba**: una discrepancia observada en él no es una brecha de arquitectura de este repo, sino un hallazgo que se reporta vía `work-plan` como `WI-XXX` de tipo `bug`. Contrato en [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
+
 ## Qué es normativo aquí: el criterio de cumplimiento (CR), no el ADR
 
 La distinción entre ADR y estándar (ver `arch-manage`) determina qué se audita. **La unidad auditable

@@ -463,6 +463,8 @@ Precedencia: `REJECTED` > `APPROVED_WITH_NOTES` > `APPROVED`. Es decir, `APPROVE
 
 > **En el cierre, este `⚠️` no bloquea** (a diferencia del `INCOMPLETE` de `quality-check` y `code-review`, que sí): `work-integrate` y `pr-create` continúan mostrando las observaciones al usuario. Por eso cada caveat debe quedar enumerado y ser legible por sí solo — es lo único que el usuario verá antes de integrar.
 
+> **Repositorio solo de pruebas (`implementation.scope: tests`): este skill NO es puerta de cierre y el cierre NO lo invoca.** Aquí la cobertura que se trazaría es la de los `AC-XXX` del **sistema bajo prueba** (otro repositorio) contra los `TC-XXX` de este, con la ejecución leída de `test-cases-automation.md`. Ese veredicto habla de la aplicación probada, no de la calidad de este repositorio, así que `pr-create` y `work-integrate` **no lo ejecutan** y lo reportan `N/A` por política; las puertas del repo propio son `quality-check` y `code-review`. Este skill solo corre **a mano, a petición expresa del usuario**, como informe de cobertura del sistema bajo prueba, y su veredicto nunca condiciona un PR ni un merge. Un `FAIL` fiel al TC cuenta como criterio cubierto con hallazgo (es el objetivo del repo detectarlo). Contrato completo en [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
+
 ---
 
 ## Handoffs del ciclo

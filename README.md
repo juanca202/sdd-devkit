@@ -2,13 +2,12 @@
 
 ![version](https://img.shields.io/badge/version-2.3.0-blue) ![license](https://img.shields.io/badge/license-MIT-green)
 
-**SDD Devkit** es un plugin de Spec-Driven Development: convierte un requerimiento en documentación (historias de usuario, decisiones de arquitectura, diseño técnico, casos de prueba) y te acompaña hasta un entregable verificado. Incluye skills para:
+**SDD Devkit** es un framework de SDD (Spec-Driven Development), distribuido como [Agent Plugin](https://agent-plugins.org/), cuyo objetivo es ayudarte en la preparación, planificación e implementación de proyectos de desarrollo. Su flujo:
 
-- Documentar arquitectura (ADRs, estándares) y auditar su cumplimiento.
-- Crear historias de usuario, planificar e implementar tareas.
-- Definir y trazar casos de prueba.
-- Investigar producto, arquitectura o aspectos técnicos.
-- Revisar código, integrar cambios y crear Pull Requests con puertas de calidad.
+1. **Prepara el harness** del proyecto: los archivos base, el stack tecnológico, las decisiones de arquitectura (ADRs), los estándares y una compuerta de calidad para que los agentes trabajen con contexto.
+2. **Refina el requerimiento y lo descompone** hasta el detalle que pide una implementación sin ambigüedades: modelos, diagramas, flujos, wireframes y planes de implementación (historias de usuario o tareas de mantenimiento).
+3. **Orquesta la implementación** con worktrees, de modo que cada plan se implementa de forma independiente.
+4. **Cierra con puertas de calidad**: revisión de código, pruebas, cobertura de los criterios de aceptación e integración o Pull Request.
 
 
 

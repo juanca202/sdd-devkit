@@ -5,6 +5,13 @@ Estructura alineada a ISO/IEC/IEEE 29148:2018 (outline de Software Requirements 
 secciones propias del harness (Stack tecnológico, Repositorios, Diseño de interfaz)
 insertadas donde corresponde al flujo de este skill. Ver references/flow.md para el procedimiento
 completo y references/quality-criteria.md para los criterios normativos de cada campo.
+
+Este es el README.md de un SRS-XXX: responde «qué debe hacer el sistema exactamente, con qué calidad,
+dónde y cómo se verifica». Su número sale del secuencial ÚNICO de requirements/ (compartido con RQ-XXX
+y PRD-XXX). Un SRS puede nacer directamente, o por PROMOCIÓN de un PRD-XXX (prd-template.md, misma
+numeración de secciones): en ese caso la carpeta se renombra con el MISMO número, los ids
+FR/NFR/BR/AC/OB/SC se conservan y solo se completa el bloque de ingeniería (3, 4, 6 con umbral,
+8.2-8.4, 9 entidades, 10 «cómo», método de verificación en 12, riesgos técnicos en 13).
 -->
 
 # SRS-XXX: {{título corto del requerimiento}}
@@ -18,6 +25,7 @@ de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md
 **Estado:** {{Draft | Ready}}
 **Fecha de creación:** {{YYYY-MM-DD}}
 **Última actualización:** {{YYYY-MM-DD}}
+**Promovido a SRS:** {{YYYY-MM-DD, desde `PRD-XXX` (mismo número) — solo si nació como PRD y se completó el bloque de ingeniería; omitir la línea si no aplica}}
 
 ## 1. Introducción
 
@@ -39,7 +47,18 @@ de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md
 - **Glosario:** {{enlace a `docs/glossary.md`, si existe}}
 - {{término o acrónimo}}: {{definición breve, solo si no está en el glosario}}
 
-### 1.4 Referencias
+### 1.4 Objetivos y métricas de éxito
+
+<!--
+Obligatoria si el SRS nació como PRD (se hereda); recomendada si se creó directamente como SRS.
+2-4 objetivos de negocio. Cada uno con una métrica medible y, si el negocio la tiene, un valor objetivo;
+si no la tiene, una métrica proxy («reducir el tiempo del proceso X») es válida y se marca como tal.
+-->
+| ID | Objetivo de negocio | Métrica | Valor objetivo | Plazo |
+| -- | ------------------- | ------- | -------------- | ----- |
+| OB-01 | {{resultado que el negocio espera}} | {{cómo se mide; «proxy» si no hay medición directa}} | {{valor, o «Por definir (proxy)»}} | {{fecha / versión}} |
+
+### 1.5 Referencias
 
 <!--
 Documentos o estándares EXTERNOS a los que este SRS remite (guías de estilo, contratos, normativa,
@@ -67,9 +86,17 @@ Sección opcional. Eliminar si no aplica.
 
 - {{restricción; p. ej. presupuesto, fecha límite, compatibilidad con sistema legado, normativa aplicable (ver sección 10)}}
 
-### 2.4 Características de los usuarios
+### 2.4 Características de los usuarios y escenarios de uso
 
 - {{tipo de actor/usuario}}: {{rol, nivel técnico, frecuencia de uso — lo relevante para decisiones de diseño}}
+
+<!--
+Escenarios clave narrativos (qué intenta lograr cada actor, en qué contexto y cómo se ve el éxito) —
+NO son historias de usuario ni AC. Se heredan del PRD si lo hubo; opcionales si ya existen US derivadas.
+-->
+| ID | Actor | Escenario | Resultado esperado | FR-XXX relacionados |
+| -- | ----- | --------- | ------------------ | ------------------- |
+| SC-01 | {{actor}} | {{situación y lo que hace, en 1-3 frases}} | {{cómo sabe el actor que lo logró}} | {{FR-XXX, …}} |
 
 ### 2.5 Supuestos y dependencias
 
@@ -100,7 +127,15 @@ este SRS" sí debe tener su FR-XXX correspondiente en la sección 5. Eliminar la
 | --------- | ------------------------- | ------------------ |
 | {{FR-XXX / NFR-XXX}} | {{por qué no entra en esta versión}} | {{si se conoce, o «Por definir»}} |
 
+### 2.7 Fases de entrega
+
+<!-- Sección opcional. Incluir si el negocio decidió qué va en la primera versión y qué después. -->
+| Fase | Contenido (FR-XXX) | Criterio de salida | Fecha objetivo |
+| ---- | ------------------ | ------------------ | -------------- |
+| {{v1 / MVP}} | {{FR-001, FR-002, …}} | {{qué debe cumplirse para cerrar la fase}} | {{si se conoce}} |
+
 ## 3. Stack tecnológico
+
 
 <!-- srs:stack-mode={{researched|decided}} -->
 <!--
@@ -154,6 +189,8 @@ duplicar el identificador en dos lugares con datos que se puedan desincronizar.
 ## 6. Requisitos no funcionales
 
 <!--
+Todo NFR-XXX lleva umbral o medida concreta. Si el SRS viene de un PRD, los NFR cualitativos heredados
+se cuantifican aquí conservando su id; un NFR sin umbral es una laguna en un SRS.
 Misma mecánica que Requisitos funcionales, id NFR-001, NFR-002, … Categorías ISO/IEC 25010, mismo
 detalle que las categorías no funcionales de work-define (ver enlace arriba): Idoneidad funcional ·
 Eficiencia de rendimiento · Compatibilidad · Usabilidad · Fiabilidad · Seguridad · Mantenibilidad ·
@@ -161,7 +198,7 @@ Portabilidad. «Disponibilidad» es una subcaracterística de Fiabilidad — no 
 «No aplica» es una respuesta válida si se justifica por qué esa característica no es relevante para
 este requerimiento.
 Consolidar aquí TODO requisito de seguridad — no dispersarlo en Restricciones (2.3) ni en Interfaces
-(9): si una restricción o interfaz tiene una implicación de seguridad verificable, se redacta como
+(8): si una restricción o interfaz tiene una implicación de seguridad verificable, se redacta como
 NFR-XXX (categoría Seguridad) y desde ahí se referencia, no al revés.
 -->
 | ID | Categoría | Prioridad | Estado | Enunciado |
@@ -186,27 +223,28 @@ no aplique en vez de dejarla vacía. Es existencia y propósito de la interfaz, 
 (endpoints, payloads, protocolos exactos) — eso lo redacta design-define (API-XXX) a nivel de US o TK.
 -->
 
-### 9.1 Interfaces de usuario
+### 8.1 Interfaces de usuario
 
 <!-- Canales de interacción humana: web, móvil, CLI, voz, kiosco, etc. Si hay UI propia, el detalle de pantallas vive en la sección 11 (Diseño de interfaz); aquí solo el canal y sus lineamientos generales. -->
 - {{canal}}: {{lineamientos generales — guía de estilo a seguir, accesibilidad requerida, dispositivos soportados}}
 
-### 9.2 Interfaces de hardware
+### 8.2 Interfaces de hardware
 
 <!-- Sección opcional. Dispositivos físicos con los que interactúa el software (sensores, impresoras, POS, lectores). «No aplica» si el requerimiento no interactúa con hardware específico. -->
 - {{dispositivo}}: {{naturaleza de la interacción}}
 
-### 9.3 Interfaces de software
+### 8.3 Interfaces de software
 
 <!-- Sistemas, APIs o componentes de terceros con los que se integra (nombre y versión si se conoce). A nivel de existencia — el contrato detallado lo redacta design-define. -->
 - {{sistema o API externa}}: {{qué se espera de la integración, a alto nivel}}
 
-### 9.4 Interfaces de comunicaciones
+### 8.4 Interfaces de comunicaciones
 
 <!-- Sección opcional. Protocolos de red o formatos de mensajería (REST, GraphQL, gRPC, colas, webhooks, sockets). «No aplica» si no hay requisitos de comunicación propios más allá del stack ya elegido. -->
 - {{protocolo o mecanismo}}: {{propósito, con quién se comunica}}
 
 ## 9. Requisitos de datos
+
 
 <!--
 Sección opcional — incluir si el requerimiento crea, modifica o retiene datos propios. Formaliza la
@@ -219,6 +257,7 @@ de solo lectura).
 | {{nombre de la entidad; p. ej. Factura, Perfil de proveedor}} | {{qué representa}} | {{cuánto tiempo se conserva; si contiene datos personales o sensibles}} | {{orden de magnitud esperado, si se conoce}} |
 
 ## 10. Cumplimiento normativo
+
 
 <!--
 Sección opcional — incluir si aplica alguna normativa, regulación o estándar externo (protección de
@@ -273,10 +312,23 @@ defecto; una referencia a un archivo específico de references/ si vino de una v
 de" es opcional — vacío o «Ninguna» si no hay dependencia entre requisitos.
 Esta tabla NO registra qué US-XXX cubre cada requisito — eso vive en la sección 15 (Historias de usuario
 derivadas), que se completa después del handoff y por eso no puede ir aquí.
+
+CRITERIOS DE ACEPTACIÓN (AC-XXX). Cada criterio lleva id secuencial AC-001, AC-002, … global en el
+documento (un FR/NFR puede tener varios AC; un AC pertenece a un solo FR/NFR). Son inmutables como los
+FR: los nuevos toman el siguiente libre. Dos consumidores los usan tal cual:
+  - test-define: genera TC-XXX de aceptación del requerimiento sobre estos AC (TCs en test-cases/ de
+    esta carpeta, padre SRS-XXX) — sin pasar por un RQ.
+  - work-define: los hereda como punto de partida de los AC de cada US, trazando cada AC de la US al
+    AC-XXX de origen; los TC de una US cubren solo lo específico del incremento, no repiten estos.
+Si el SRS viene de un PRD, los AC-XXX se heredan con su id y aquí se les fija el método y se afina el
+criterio; ningún AC puede quedar con método «Pendiente» en un SRS.
 -->
-| ID | Origen | Depende de | Método de verificación | Criterio de verificación |
-| -- | ------ | ----------- | -------------------------- | --------------------------- |
-| FR-001 | {{`references/raw-requirement.md` u otro archivo puntual}} | {{FR-XXX / «Ninguna»}} | {{Inspección / Análisis / Demostración / Prueba}} | {{condición observable que demuestra que el requisito se cumple}} |
+| ID | AC | Origen | Depende de | Método de verificación | Criterio de aceptación / verificación |
+| -- | -- | ------ | ----------- | -------------------------- | --------------------------- |
+| FR-001 | AC-001 | {{`references/raw-requirement.md` u otro archivo puntual}} | {{FR-XXX / «Ninguna»}} | {{Inspección / Análisis / Demostración / Prueba}} | {{condición observable que demuestra que el requisito se cumple}} |
+| FR-001 | AC-002 | {{…}} | {{…}} | {{…}} | {{segundo criterio del mismo requisito, si lo hay}} |
+
+<!-- test-define añade bajo esta tabla la línea «Casos de prueba:» por AC al generar TCs; no editarla a mano. -->
 
 ## 13. Riesgos
 
@@ -287,7 +339,7 @@ derivadas), que se completa después del handoff y por eso no puede ir aquí.
 
 ## 14. Enlaces y archivos de apoyo
 
-<!-- Archivos propios de esta carpeta del SRS — no confundir con la sección 1.4 (referencias a documentos o estándares externos). Solo enlaces a recursos ya almacenados; nunca pegar archivos, imágenes ni descripciones directamente aquí. -->
+<!-- Archivos propios de esta carpeta del SRS — no confundir con la sección 1.5 (referencias a documentos o estándares externos). Solo enlaces a recursos ya almacenados; nunca pegar archivos, imágenes ni descripciones directamente aquí. -->
 - **Requerimiento original:** {{enlace markdown a `references/[archivo]`, dentro de esta misma carpeta}}
 - **Investigación de stack:** {{enlace a `research/RS-XXX-{slug}/README.md`, si se investigó}}
 - **Wireframes:** {{[`wireframes/`](wireframes/), si el requerimiento tiene UI — el detalle por pantalla está en la sección 11}}
@@ -295,7 +347,7 @@ derivadas), que se completa después del handoff y por eso no puede ir aquí.
 
 ## 15. Historias de usuario derivadas
 
-<!-- Se completa después del handoff a /work-define, a medida que el requerimiento se descompone. Vacía al crear el SRS. -->
+<!-- Se completa después del handoff a /work-define, a medida que el requerimiento se descompone. Vacía al crear el SRS; si viene de un PRD, se hereda tal cual. -->
 | US-XXX | Título | FR-XXX cubiertos |
 | ------ | ------ | ----------------- |
 | {{US-XXX}} | {{título}} | {{FR-001, FR-003, …}} |
@@ -313,18 +365,21 @@ derivadas), que se completa después del handoff y por eso no puede ir aquí.
 
 ### Definition of Ready (DoR)
 
+<!-- Detalle de cada criterio en references/quality-criteria.md#definition-of-ready-dor-del-srs. -->
 | Criterio DoR | Estado | Notas |
 | ------------ | ------ | ----- |
 | Stack tecnológico resuelto | {{Met / Not Met / Partial}} | {{explicación}} |
 | Repositorios y proyecto base definidos | {{Met / Not Met / Partial}} | {{explicación}} |
+| Objetivos y métricas de éxito definidos | {{Met / Not Met / Partial / N/A}} | {{obligatorio si nació como PRD; N/A admitido si se creó directamente como SRS}} |
 | Requisitos funcionales completos y priorizados | {{Met / Not Met / Partial}} | {{explicación}} |
-| Requisitos no funcionales revisados y priorizados | {{Met / Not Met / Partial / N/A}} | {{explicación; cubre explícitamente Seguridad, Rendimiento, Fiabilidad y Disponibilidad}} |
+| Requisitos no funcionales revisados, priorizados y con umbral | {{Met / Not Met / Partial / N/A}} | {{explicación; cubre explícitamente Seguridad, Rendimiento, Fiabilidad y Disponibilidad}} |
 | Interfaces externas revisadas | {{Met / Not Met / Partial / N/A}} | {{explicación; usuario, hardware, software, comunicaciones}} |
 | Requisitos de datos formalizados | {{Met / Not Met / Partial / N/A}} | {{explicación}} |
 | Cumplimiento normativo trazado | {{Met / Not Met / Partial / N/A}} | {{explicación}} |
 | Diseño de interfaz revisado | {{Met / Not Met / Partial / N/A}} | {{explicación; No aplica si el requerimiento no tiene UI propia}} |
-| Verificación y trazabilidad completas | {{Met / Not Met / Partial}} | {{explicación; todo FR-XXX/NFR-XXX con método de verificación y origen}} |
+| Criterios de aceptación (AC-XXX) completos | {{Met / Not Met / Partial}} | {{todo FR-XXX/NFR-XXX con al menos un AC-XXX verificable y origen}} |
+| Método de verificación asignado | {{Met / Not Met / Partial}} | {{todo AC-XXX con método; ninguno «Pendiente»}} |
 | Riesgos identificados | {{Met / Not Met / Partial}} | {{explicación; «Ninguno» es una respuesta válida}} |
 | Alcance y fuera de alcance claros | {{Met / Not Met / Partial}} | {{explicación}} |
 | Sin aclaraciones pendientes | {{Met / Not Met / Partial}} | {{vacío o «Ninguna» en Observaciones; nada pendiente con usuario/producto}} |
-| Validación final (Ola 3) superada | {{Met / Not Met / Partial}} | {{gaps, revisión cruzada y validación con subagente sin contexto ejecutadas sin hallazgos pendientes}} |
+| Validación final (Ola 3) superada | {{Met / Not Met / Partial}} | {{gaps, revisión cruzada PO+UX+ARCH y validación con subagente sin contexto ejecutadas sin hallazgos pendientes}} |

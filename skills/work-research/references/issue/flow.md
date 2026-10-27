@@ -6,10 +6,13 @@ reproducirlo**, localiza la **causa raíz**, diagnostica **en qué situación es
 suite de pruebas** frente a ese escenario y propone la remediación como un ciclo
 **rojo → verde**. La ejecución de esa remediación **no ocurre aquí**: se hace
 *handoff* a `work-plan` (que crea un `WI` de tipo `bug-fix`) y luego a
-`work-implement`.
+`work-implement`. **En un repositorio solo de pruebas (`implementation.scope: tests`)**
+no hay código que corregir ni `bug-fix` que planificar: el *handoff* a `work-plan` es
+para **registrar el incidente `BUG-XXX`** (qué está mal, con la reproducción y la
+evidencia reunidas aquí) — ver [Salida según el scope](#salida-según-el-scope).
 
 ```text
-Descripción del bug  ─ o ─  WI-XXX de tipo `bug` (hallazgo registrado)  ─ o ─  Código del bug en el gestor de proyectos (MCP)
+Descripción del bug  ─ o ─  BUG-XXX (incidente registrado)  ─ o ─  Código del bug en el gestor de proyectos (MCP)
     │
     ▼
 Normalizar el reporte           ┐
@@ -40,12 +43,16 @@ Corregir código                 │
     │
     ▼
 Handoff → work-plan (WI tipo bug-fix) → work-implement
+   (scope: tests → Handoff → work-plan (incidente BUG-XXX); fin)
 ```
 
 **Entregable:** un `WI` de tipo `bug-fix` en
 `<changesPath>/work-items/WI-XXX-{kebab-case}/README.md`, creado por `work-plan` a partir
 del **dossier de bug** que produce este flujo con
-[`assets/issue/diagnosis-template.md`](../../assets/issue/diagnosis-template.md).
+[`assets/issue/diagnosis-template.md`](../../assets/issue/diagnosis-template.md). Si el
+bug ya estaba registrado como incidente `BUG-XXX`, el `bug-fix` lo cita en `Origen`. Con
+`implementation.scope: tests`, el entregable es el **incidente `BUG-XXX`** en
+`<changesPath>/incidents/BUG-XXX-{kebab-case}/README.md`, también creado por `work-plan`.
 
 **Pregunta de investigación:** «¿Por qué ocurre *<comportamiento observado>* y qué
 prueba lo demuestra?». Antes de confirmarla hay que tener el **reporte normalizado**
@@ -59,8 +66,9 @@ mínimo (observado, esperado y disparador) — ver Paso 0.
 > `bug-fix` con su plan de implementación.
 
 > **Excepción de salida: este flujo no crea un `RS-XXX`.** A diferencia del resto de
-> flujos, aquí el artefacto entregable es el **`WI`**: el detalle del bug, el diagnóstico
-> y la remediación viven en el `WI-XXX-{kebab-case}/README.md` que crea `work-plan`.
+> flujos, aquí el artefacto entregable es el **`WI`** (o el **`BUG-XXX`** en modo pruebas):
+> el detalle del bug, el diagnóstico y la remediación viven en el documento que crea
+> `work-plan`.
 > Guardar además un RS solo si el usuario lo pide explícitamente (p. ej. la
 > investigación produjo hallazgos reutilizables más allá de este bug); en ese caso se
 > guarda en `<changesPath>/research/RS-XXX-{slug}/` y el WI lo referencia.
@@ -93,7 +101,8 @@ La entrada puede venir de dos sitios:
 | Entrada | Qué hacer |
 |---------|-----------|
 | **Descripción en prosa** del usuario | Normalizarla al formato de reporte (abajo). Lo que falte, preguntarlo. |
-| **Código/ID de un bug** del gestor de proyectos (p. ej. `#4821`, `BUG-4821`) | Resolver la vinculación siguiendo «Entrada desde el gestor de proyectos» de `SKILL.md` y **leer el work item vía MCP** (título, descripción, pasos de reproducción, severidad, entorno, adjuntos, comentarios). Ver [`references/azure-devops.md`](../azure-devops.md) para Azure DevOps. |
+| **Incidente local** `BUG-XXX` (`<changesPath>/incidents/`, o `<archivedPath>/incidents/`) | Leerlo completo: su esperado/observado, pasos, evidencia (`EV-XX`; en modo pruebas también los hallazgos `H-XX`) y cabecera (US, TC, work item) **son** el reporte normalizado; no re-preguntar lo que ya documenta. El `bug-fix` resultante lo citará en `Origen`. |
+| **Código/ID de un bug** del gestor de proyectos (p. ej. `#4821`) | Resolver la vinculación siguiendo «Entrada desde el gestor de proyectos» de `SKILL.md` y **leer el work item vía MCP** (título, descripción, pasos de reproducción, severidad, entorno, adjuntos, comentarios). Ver [`references/azure-devops.md`](../azure-devops.md) para Azure DevOps. Si existe un `BUG-XXX` local con ese `Work Item`, usarlo como entrada. |
 
 **Reporte normalizado** — mínimo para continuar:
 
@@ -111,6 +120,22 @@ La entrada puede venir de dos sitios:
 Con el reporte normalizado, **confirmar la pregunta de investigación** con el usuario
 antes de continuar (Paso 1 de `SKILL.md`): «¿Por qué ocurre *<comportamiento
 observado>* y qué prueba lo demuestra?».
+
+---
+
+## Salida según el scope
+
+Antes del Paso 1, resolver `implementation.scope` con
+[`${PLUGIN_ROOT}/references/implementation.md`](../../../../references/implementation.md):
+
+| `scope` | Qué hace este flujo | *Handoff* |
+|---------|---------------------|-----------|
+| `code` (o sin clave) | Los cuatro pasos completos: reproducción, causa raíz en el código, matriz de pruebas, ciclo rojo→verde | `work-plan` → `WI` de tipo `bug-fix` (con `Origen: BUG-XXX` si el bug ya estaba registrado como incidente) |
+| `tests` | **Solo el Paso 0 y el Paso 1.1–1.3** (reporte normalizado y reproducción determinista contra el sistema desplegado). **No** se aísla causa raíz (el código no está aquí), **no** hay matriz de pruebas sobre el código ni ciclo rojo→verde: la prueba fiel al TC ya está en rojo y así se queda | `work-plan` → **incidente `BUG-XXX`** (tipo de plan *Incidente*, plantilla con forma de caso de prueba). La corrección se planifica en el repositorio de la aplicación citando ese incidente o el work item `Bug` del tracker. Si el incidente ya existe (`BUG-XXX` como entrada), el flujo no crea otro: actualiza su evidencia vía `work-plan` y termina |
+
+En modo pruebas el dossier se reduce a **Problema**, **Reproducción** (pasos con lo observado y
+los comentarios para reproducirlo, evidencias del runner) y **Riesgos**; las secciones de causa
+raíz, situación de las pruebas y corrección se marcan `N/A — repositorio solo de pruebas`.
 
 ---
 
@@ -246,10 +271,15 @@ Añadir además:
    **No escribir nada en disco en este punto** — ni el dossier, ni un `RS-XXX`, ni el
    `WI`.
 2. Preguntar con la herramienta estructurada: «¿El diagnóstico es correcto?»
-   Opciones: `[Sí, crear el WI de corrección]` / `[Profundizar]` / `[Descartar]`.
+   Opciones: `[Sí, crear el WI de corrección]` (con `scope: tests`: `[Sí, registrar el incidente]`) / `[Profundizar]` / `[Descartar]`.
    Dejar explícito que todavía no se ha creado ningún artefacto.
-3. **Sí** → *handoff* a `work-plan` (tipo de plan: tarea de mantenimiento,
-   `Tipo: bug-fix`) pasando el dossier completo. El mapeo a las secciones del WI:
+3. **Sí** → *handoff* a `work-plan` pasando el dossier completo. Con `scope: code`, tipo de
+   plan **tarea de mantenimiento**, `Tipo: bug-fix` (si la entrada fue un `BUG-XXX`, pasar
+   su ruta para `Origen`; si el bug ya existe en el tracker, su `ado_id` y URL). Con
+   `scope: tests`, tipo de plan **incidente**: `work-plan` mapea *Problema* → Descripción y
+   Esperado/Observado, *Reproducción* → Pasos con lo observado, evidencias → `EV-XX`, y las
+   secciones `N/A` se omiten — ver `work-plan/references/incidents.md`. El mapeo al WI
+   `bug-fix`:
 
 | Sección del dossier | Sección del `WI-XXX/README.md` |
 |---------------------|-------------------------------|
@@ -298,6 +328,7 @@ Añadir además:
 
 | Situación | Flujo correcto |
 |-----------|----------------|
+| Solo se quiere **dejar registrado** el defecto, sin diagnosticarlo todavía | `work-plan` directamente (incidente `BUG-XXX`); este flujo entra después, sobre ese incidente |
 | El código hace lo especificado y lo especificado está mal | `work-define` (corregir la US/criterios), no un bug-fix |
 | No hay reporte de un comportamiento defectuoso, sino código sin documentar ni probar | Flujo **Analizar legado** |
 | El «bug» es una carencia funcional (falta una capacidad) | `work-define` (nueva US) o `work-plan` (WI de otro tipo) |
@@ -324,8 +355,10 @@ Añadir además:
   actual, no demuestra el bug.
 - Mezclar el fix con refactors, renombrados o mejoras de estilo en el mismo cambio.
 - Cerrar en 🟢 verificando solo la prueba nueva sin correr el resto de la suite.
-- Crear un `RS-XXX` para el bug en lugar del `WI`: el entregable de este flujo es el WI.
-- Crear el WI directamente desde este skill en vez de hacer *handoff* a `work-plan`.
+- Crear un `RS-XXX` para el bug en lugar del `WI`: el entregable de este flujo es el WI (o el `BUG-XXX` en modo pruebas).
+- Crear el WI o el incidente directamente desde este skill en vez de hacer *handoff* a `work-plan`.
+- En modo pruebas, proponer un `bug-fix`, aislar causa raíz en código ajeno o aplicar la matriz de pruebas: ahí el entregable es el incidente.
+- Registrar un segundo incidente cuando la entrada ya era un `BUG-XXX`.
 - Escribir código de prueba o de producción dentro de este flujo — `work-research`
   investiga; `work-implement` implementa.
 - Duplicar en el gestor de proyectos un bug que ya existe allí, en lugar de reutilizar su ID.

@@ -1,6 +1,6 @@
 ---
 name: work-plan
-description: "Planifica trabajo sin generar código ni pruebas. Tipos de plan: (1) tareas técnicas (TK-XXX) bajo una historia de usuario existente; (2) tareas de mantenimiento (WI-XXX) sin historia — bugs, refactor, deuda técnica, dependencias, tareas operativas, y spikes (experimento con timebox que entrega un informe, no código). Activar cuando el usuario pida planificar implementación, descomponer trabajo, definir alcance técnico o planificar mantenimiento, aunque no nombre «TK» o «WI». Activar también, por defecto, cuando solo entregue una referencia a una historia («US-004», «planifica US-007»): proponer la descomposición en tareas por repositorio cubriendo los AC-XXX y preguntar si crear planes completos o stubs. Selecciona el tipo según haya o no historia y carga su definición desde references/. Cuenta lo archivado al asignar IDs; no lo edita. También para archivar tareas de mantenimiento («archiva el WI-007») con el modificador `archive`, que muestra el estado y pide confirmación."
+description: "Planifica trabajo sin generar código ni pruebas. Tipos de plan: (1) tareas técnicas (TK-XXX) bajo una historia existente; (2) tareas de mantenimiento (WI-XXX) sin historia — bug-fix, refactor, deuda técnica, dependencias, tareas operativas y spikes (experimento con timebox, entrega un informe); (3) incidentes (BUG-XXX): registro de un hallazgo —prueba en rojo, defecto observado— con evidencia y sin plan de corrección, único documento que produce con implementation.scope: tests. Activar al pedir planificar implementación, descomponer trabajo, definir alcance técnico, planificar mantenimiento o registrar un bug o hallazgo, aunque no nombre TK, WI o BUG. Ante una sola referencia a una historia («planifica US-007»), proponer la descomposición por repositorio cubriendo los AC-XXX. Carga la definición del tipo desde references/. Cuenta lo archivado al asignar IDs sin editarlo. Archiva WI y BUG («archiva el WI-007») con el modificador `archive`, mostrando el estado y pidiendo confirmación."
 license: MIT
 ---
 
@@ -10,7 +10,7 @@ Guía general para **planificar trabajo** produciendo documentos de especificaci
 
 > **Qué no hace este skill (cualquier tipo):** no implementa código, no ejecuta pruebas, no crea ADRs. Lo que no está acordado va a **Observaciones** o se pregunta al usuario — nunca se inventa.
 
-> **Repositorio solo de pruebas (`implementation.scope: tests`).** Aquí **no hay trabajo de implementación que planificar**: este skill produce **exclusivamente `WI-XXX` de tipo `bug`** — el reporte de un hallazgo detectado por un `TC-XXX` contra el sistema bajo prueba, con `assets/work-item-tests-template.md` (ver [`references/maintenance-tasks.md § Variante modo pruebas`](references/maintenance-tasks.md#variante-modo-pruebas-implementationscope-tests)). **No se crean tareas `TK-XXX` de historias**, ni WI de tipo `bug-fix`, `refactor`, `spike` o `test-improvement`; si el usuario pide planificar la corrección, remitirlo al repositorio de la aplicación. Tampoco se delega a `design-define` por «elementos técnicos sin especificación»: lo que haga falta saber del sistema bajo prueba se **solicita al usuario** y se documenta tal cual. Contrato en [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
+> **Repositorio solo de pruebas (`implementation.scope: tests`).** Aquí **no hay trabajo de implementación que planificar**: este skill produce **exclusivamente incidentes `BUG-XXX`** — el reporte de un hallazgo detectado por un `TC-XXX` contra el sistema bajo prueba, con `assets/incident-tests-template.md` (ver [`references/incidents.md § Variante modo pruebas`](references/incidents.md#variante-modo-pruebas-implementationscope-tests)). **No se crean tareas `TK-XXX` de historias ni `WI-XXX` de ningún tipo** (`bug-fix`, `refactor`, `spike`, `test-improvement`…); si el usuario pide planificar la corrección, remitirlo al repositorio de la aplicación. Tampoco se delega a `design-define` por «elementos técnicos sin especificación»: lo que haga falta saber del sistema bajo prueba se **solicita al usuario** y se documenta tal cual. Contrato en [`${PLUGIN_ROOT}/references/implementation.md`](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
 
 ---
 
@@ -37,7 +37,7 @@ No sustituir una invocación de skill por "hacer el trabajo aquí". El handoff e
 
 Antes de ejecutar este skill, DEBES leer [`${PLUGIN_ROOT}/references/planning.md`](../../references/planning.md).
 
-Las reglas de `planning.md` son obligatorias y determinan, vía `specification.testCases.createMode`, si al dejar las tareas del alcance en `Ready` se pregunta si definir los casos de prueba (`ask`, comportamiento por defecto), se invoca `/test-define` automáticamente sin preguntar (`always`), o nunca se sugiere ni se invoca (`never`). **No aplica a los `WI` de tipo `bug` ni `spike`**: no tienen `AC-XXX` que cubrir. La otra clave del objeto, `createDetailsMode`, **no la consume este skill**: la lee `test-define`.
+Las reglas de `planning.md` son obligatorias y determinan, vía `specification.testCases.createMode`, si al dejar las tareas del alcance en `Ready` se pregunta si definir los casos de prueba (`ask`, comportamiento por defecto), se invoca `/test-define` automáticamente sin preguntar (`always`), o nunca se sugiere ni se invoca (`never`). **No aplica a los incidentes `BUG-XXX` ni a los `WI` de tipo `spike`**: no tienen `AC-XXX` que cubrir. La otra clave del objeto, `createDetailsMode`, **no la consume este skill**: la lee `test-define`.
 
 No continúes hasta haber leído y aplicado `planning.md`.
 
@@ -75,15 +75,17 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 **Antes de cualquier otra cosa**, identificar qué tipo de plan corresponde y cargar su definición. No mezclar tipos en una misma ejecución.
 
-La señal que distingue los tipos es **si el trabajo tiene una historia de usuario asociada o no**.
+La primera señal es **si lo que se pide es registrar un hallazgo o planificar trabajo**; la segunda, **si el trabajo tiene una historia de usuario asociada o no**.
 
 | Tipo de plan | Cómo se identifica | Definición a leer |
 |--------------|--------------------|-------------------|
+| **Incidente** | Se pide **registrar un hallazgo**, no planificar su corrección: un defecto observado, una prueba en rojo fiel a su `TC-XXX`, «registra el bug», «abre un incidente», un *handoff* de `work-implement` o `work-research` con lo observado, o la edición de un `BUG-XXX` existente. Con `implementation.scope: tests` es el **único** tipo posible. | `references/incidents.md` — **leer antes de redactar.** |
 | **Tarea técnica de historia de usuario** | El trabajo **referencia una historia de usuario**: prefijo de historia `US-XXX` (p. ej. «planifica US-007», «tareas para esta historia»), una historia ubicada bajo el árbol de user-stories del repo, o la edición de una `TK-XXX` que cuelga de una US. | `references/user-story-tasks.md` — **leer antes de redactar.** |
-| **Tarea de mantenimiento** | El trabajo **no tiene una historia de usuario asociada** (corrección de bug, refactor, deuda técnica, actualización de dependencias, tarea operativa, spike), o el usuario pide explícitamente «plan/tarea de mantenimiento». Un **spike** es siempre de este tipo aunque lo motive una US: el experimento no es una tarea de la historia, es lo que permite planificarla (la US va en `Origen`). | `references/maintenance-tasks.md` — **leer antes de redactar.** |
+| **Tarea de mantenimiento** | El trabajo **no tiene una historia de usuario asociada** (corrección de un bug —`bug-fix`—, refactor, deuda técnica, actualización de dependencias, tarea operativa, spike), o el usuario pide explícitamente «plan/tarea de mantenimiento». Un **spike** es siempre de este tipo aunque lo motive una US: el experimento no es una tarea de la historia, es lo que permite planificarla (la US va en `Origen`). | `references/maintenance-tasks.md` — **leer antes de redactar.** |
 
 Reglas de selección:
 
+- **¿Registrar qué está mal, o planificar qué hacer?** Lo primero es un incidente (`BUG-XXX`), aunque el usuario diga «bug» o «work item»; lo segundo, una TK o un WI. «Corrige el bug» / «planifica la corrección del BUG-004» es un WI de tipo `bug-fix`; «registra el bug» / «la prueba falla y quiero dejarlo documentado» es un incidente. Ante la duda, preguntar.
 - **Hay historia asociada → tarea de historia de usuario. No la hay → mantenimiento.** Leer la referencia correspondiente y seguir **únicamente** su flujo.
 - **Una US archivada sigue siendo una US.** Antes de concluir que «no hay historia asociada», buscarla también bajo `<archivedPath>/user-stories/`: el usuario puede haberla archivado con `/work-define US-XXX archive`. Si aparece ahí, el tipo **es** tarea de historia de usuario y su referencia dirá que hay que parar por estar archivada — degradarla a `WI-XXX` por no encontrarla en la ruta activa crearía un artefacto nuevo para trabajo que ya existe. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo).
 - Si no está claro **si existe o no** una historia asociada (p. ej. una referencia ambigua que podría apuntar a una US), **preguntar al usuario** antes de continuar; no asumir la existencia de una US ni inventarla.
@@ -91,22 +93,22 @@ Reglas de selección:
 
 ---
 
-## Modificador `archive` (archivar tareas de mantenimiento `WI-XXX`)
+## Modificador `archive` (archivar tareas de mantenimiento `WI-XXX` e incidentes `BUG-XXX`)
 
 **Archiva este skill, no los de cierre.** `work-integrate` y `pr-create` no archivan: siempre hay una revisión humana antes, y el usuario lo pide aquí cuando decide. Procedimiento, destinos, reglas de confirmación y contrato para el resto del catálogo: [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md) — leerlo antes de mover nada.
 
 | Invocación | Alcance |
 |------------|---------|
-| `/work-plan archive WI-XXX` · `/work-plan WI-XXX archive` (uno o varios IDs; el orden es indiferente) | Los artefactos indicados, **estén como estén**. |
-| `/work-plan archive` (sin ID) | **Todos** los `WI-XXX` de `<changesPath>/work-items/` que ya estén **completos**; los incompletos se listan aparte con su estado y no se mueven. |
+| `/work-plan archive WI-XXX` · `/work-plan BUG-XXX archive` (uno o varios IDs de ambos prefijos; el orden es indiferente) | Los artefactos indicados, **estén como estén**. |
+| `/work-plan archive` (sin ID) | **Todos** los `WI-XXX` de `<changesPath>/work-items/` y los `BUG-XXX` de `<changesPath>/incidents/` que ya estén **completos**; los incompletos se listan aparte con su estado y no se mueven. |
 
 Reglas que este skill aplica al archivar:
 
-- **El estado no restringe, pero se informa.** Antes de preguntar, componer el parte de estado: `Estado` del `README.md`; `progress.md`; `criteria-coverage.md`; en un `WI` de tipo `bug`, la línea `Resolución:` (`Open`/`En corrección` cuentan como incompleto); en un `WI` de tipo `spike`, la línea `Resolución:` y la presencia de `spike-report.md` (sin informe o con `Resolución: Open` cuenta como incompleto; su rama `spike/` nunca se integra, así que no es señal). Con algo incompleto, la pregunta lo dice explícitamente y el usuario decide.
+- **El estado no restringe, pero se informa.** Antes de preguntar, componer el parte de estado: `Estado` del `README.md`; `progress.md`; `criteria-coverage.md`; en un `BUG-XXX`, solo `Estado` y la línea `Resolución:` (`Open`/`Fixing (…)` cuentan como incompleto; no tiene `progress.md` ni cobertura); en un `WI` de tipo `spike`, la línea `Resolución:` y la presencia de `spike-report.md` (sin informe o con `Resolución: Open` cuenta como incompleto; su rama `spike/` nunca se integra, así que no es señal). Con algo incompleto, la pregunta lo dice explícitamente y el usuario decide.
 - **Siempre se confirma** (herramienta estructurada, una sola tanda para todo el lote), mostrando origen → destino de cada carpeta y las investigaciones sueltas que quedarían huérfanas. Sin canal de respuesta, no se archiva.
-- **Destino:** `<archivedPath>/work-items/<ID>-<slug>/`, con `<archivedPath>` = `specification.archivedPath` de `.sdd-devkit/settings.json` (por defecto `docs/specs/archived/`) y la subcarpeta espejo de `<changesPath>`. `git mv`, guard de destino, reparación de enlaces y cierre con un commit directo `docs(specs): archivar <ID>`, tal como describe la referencia.
+- **Destino:** `<archivedPath>/work-items/<ID>-<slug>/` para un WI y `<archivedPath>/incidents/<ID>-<slug>/` para un incidente, con `<archivedPath>` = `specification.archivedPath` de `.sdd-devkit/settings.json` (por defecto `docs/specs/archived/`) y la subcarpeta espejo de `<changesPath>`. `git mv`, guard de destino, reparación de enlaces y cierre con un commit directo `docs(specs): archivar <ID>`, tal como describe la referencia.
 - Un artefacto ya bajo `<archivedPath>` se informa y no se toca; un ID suelto **sin** `archive` nunca archiva.
-- Solo se archivan `WI-XXX`; las `TK-XXX` viajan con su historia (`/work-define US-XXX archive`).
+- Solo se archivan `WI-XXX` y `BUG-XXX`; las `TK-XXX` viajan con su historia (`/work-define US-XXX archive`).
 
 ---
 
@@ -118,7 +120,7 @@ Las reglas de `project-management.md` son obligatorias y tienen prioridad para d
 
 No continúes hasta haber leído y aplicado `project-management.md`.
 
-**Delta de este skill:** la integración solo aplica a los tipos de plan que crean work items.
+**Delta de este skill:** la integración aplica a los tres tipos de plan: todos crean work items (un incidente se crea como `Bug`; todo lo demás como `Task`).
 
 - **Desactivada** → continuar con el flujo del tipo de plan usando **ID secuencial local**; no leer ninguna referencia de proveedor.
 - **Activada** → además de la referencia compartida del proveedor, cargar `references/<proveedor>.md` de este skill (p. ej. [`references/azure-devops.md`](references/azure-devops.md)) y seguir **únicamente** sus pasos antes de crear cualquier archivo local. Si este skill no tiene referencia para ese proveedor, informar al usuario y continuar con ID secuencial local.
@@ -141,10 +143,12 @@ Solo resultados y lo que el usuario debe saber o decidir. No incluir razonamient
 |---------|---------------|
 | `references/user-story-tasks.md` | Tipo de plan = tarea técnica de historia de usuario. Contiene modos de invocación, ubicaciones, flujos (stub, TK completa, actualizar, planificar desde US), checklist, ejemplos y anti-patrones. |
 | `references/maintenance-tasks.md` | Tipo de plan = tarea de mantenimiento. |
+| `references/incidents.md` | Tipo de plan = incidente (`BUG-XXX`): registro de un hallazgo con evidencia, ubicación, `Resolución`, variante modo pruebas, handoffs. |
 | `references/<proveedor>.md` (p. ej. `azure-devops.md`) | Solo si `project-management.md` resolvió la integración como activada; el archivo concreto depende del `provider` resuelto. |
 | `assets/task-template.md` | Plantilla canónica de una tarea de historia de usuario (`TK-XXX`). Leer antes de redactar el documento. |
 | `assets/work-item-template.md` | Plantilla canónica de una tarea de mantenimiento (`WI-XXX`). Leer antes de redactar el documento. |
-| `assets/work-item-tests-template.md` | Plantilla del `WI-XXX` en un repositorio con `implementation.scope: tests`: un `bug` con forma de caso de prueba (pasos del `TC-XXX` con lo observado y comentarios para reproducir, hallazgos y evidencias de la suite adjuntas). **Sustituye** a la anterior en ese modo. |
+| `assets/incident-template.md` | Plantilla canónica de un incidente (`BUG-XXX`): esperado/observado, pasos para reproducir, evidencia `EV-XX`, impacto y `Resolución`; sin plan. Leer antes de redactar el documento. |
+| `assets/incident-tests-template.md` | Plantilla del incidente en un repositorio con `implementation.scope: tests`: con forma de caso de prueba (pasos del `TC-XXX` con lo observado y comentarios para reproducir, hallazgos `H-XX` y evidencias de la suite adjuntas). **Sustituye** a la anterior en ese modo. |
 | `assets/work-item-spike-template.md` | Plantilla del `WI-XXX` de `Tipo: spike`: pregunta de investigación, hipótesis, `Q-XX` con criterios de éxito/fallo, timebox, enfoque del experimento. **Sustituye** a `work-item-template.md` para ese tipo. |
 | `assets/spike-report-template.md` | Informe final del spike (`spike-report.md`), con marca oculta `spike:verdict`. **La redacta `work-implement`** al cerrar el experimento; este skill la lee al crear el WI definitivo a partir del informe. |
 

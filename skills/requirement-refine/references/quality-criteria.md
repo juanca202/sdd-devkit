@@ -106,9 +106,52 @@ Ambos modos pueden dejar **Decisiones pendientes** si alguna capa queda sin reso
 
 ---
 
+## Tipos de documento: RQ, PRD y SRS
+
+Este skill produce tres documentos. La elección se hace al inicio (ver [`flow.md` — Paso 0](flow.md#paso-0--tipo-de-documento)) y determina qué secciones, qué roles de la entrevista y qué DoR aplican.
+
+| | `RQ-XXX` — requerimiento externo | `PRD-XXX` — documento de producto | `SRS-XXX` — especificación de requisitos |
+|---|---|---|---|
+| **Pregunta que responde** | ¿Qué se certifica de lo que otro definió? | ¿Por qué, para quién y qué resultado? | ¿Qué debe hacer el sistema exactamente, con qué calidad, dónde y cómo se verifica? |
+| **Dueño de la definición** | Un tercero (cliente, otro proveedor, documento ya aprobado) | Este equipo con negocio | Este equipo con negocio e ingeniería |
+| **Lector** | QA y el dueño del documento | Negocio: cliente, PO, sponsor | Equipo de implementación y agentes |
+| **Roles de la entrevista** | Ninguno (no hay entrevista de producto): solo confirmación de `AC-XXX` y de la Cobertura de la fuente | PO + UX (Olas 1-3 sin el bloque ARCH) | PO + UX + ARCH |
+| **Contiene** | Resumen, historial del documento fuente, `BR-XX`, `AC-XXX` con fuente, Cobertura de la fuente | Problema, objetivos y métricas (`OB-XX`), actores y escenarios (`SC-XX`), alcance, `FR-XXX` priorizados, `BR-XX`, `NFR-XXX` cualitativos, interfaz de usuario y wireframes, obligaciones de datos y normativa, `AC-XXX` de negocio, riesgos de producto, fases | Todo lo del PRD más: stack, repositorios, `NFR-XXX` con umbral, interfaces hw/sw/comunicaciones, entidades de datos, cómo se cumple la normativa, método de verificación por `AC-XXX`, riesgos técnicos |
+| **`Ready` significa** | El dueño de la definición puede firmar qué se certifica | Negocio aprobó alcance, prioridades y criterios | Se puede implementar sin repreguntar |
+| **Consumidores** | `test-define` → `TC-XXX` | `work-define` → `US-XXX` · `test-define` → `TC-XXX` de aceptación · promoción a SRS | `work-define` · `work-plan` · `arch-init` · `design-define` · `test-define` |
+| **Plantilla** | [`assets/rq-template.md`](../assets/rq-template.md) | [`assets/prd-template.md`](../assets/prd-template.md) — misma numeración 1-15 que el SRS | [`assets/srs-template.md`](../assets/srs-template.md) |
+
+**Identificadores:** los tres prefijos comparten **un único secuencial** sobre `<changesPath>/requirements/` + `<archivedPath>/requirements/` (carpetas `RQ-*`, `PRD-*` y `SRS-*` juntas): el siguiente número libre es el mayor de todos + 1, sea cual sea el tipo. **Promoción PRD → SRS:** mismo número, mismos `FR-XXX`/`NFR-XXX`/`BR-XX`/`AC-XXX` (inmutables; los nuevos toman el siguiente libre); la carpeta `PRD-XXX-slug` se renombra a `SRS-XXX-slug` (`git mv`), el documento pasa a la estructura de `srs-template.md` (misma numeración, así que es completar secciones, no reescribirlas) y se reparan los enlaces entrantes. Se completan solo las secciones marcadas «Pendiente — se completa al promover a SRS», se registra la fecha y el origen en **Promovido a SRS** y se repite la Ola 3 con el rol ARCH. **No existe promoción RQ → PRD/SRS:** si el caso cambia y se va a implementar, se crea el PRD/SRS desde el mismo insumo, se enlaza el RQ en `references/` y se archiva el RQ cuando el usuario lo decida.
+
+## Definition of Ready (DoR) del PRD
+
+Un `PRD-XXX` es **Ready** cuando cumple la tabla DoR de `prd-template.md`; las secciones «solo SRS» quedan «Pendiente — se completa al promover a SRS» y no bloquean. En concreto:
+
+- **Objetivos y métricas** (1.4): al menos un `OB-XX` con métrica directa o proxy declarada.
+- **Actores y escenarios** (2.4): cada actor con al menos un `SC-XX`.
+- **`FR-XXX`** completos, priorizados y `Approved`; **`NFR-XXX`** cualitativos revisados (sin umbral es válido en PRD).
+- **Interfaz de usuario** (8.1) y **wireframes** (11) igual que en un SRS: si hay UI, tipo de solución y pantallas aprobadas.
+- **Obligaciones de datos** (9) y **normativa aplicable** (10) identificadas, sin el «cómo».
+- **`AC-XXX`** (12): todo `FR-XXX`/`NFR-XXX` con al menos un criterio de aceptación verificable en términos de negocio; método de verificación `Pendiente`.
+- **Riesgos de producto**, **alcance** y **Ola 3 con PO+UX** igual que en un SRS.
+- **Problema y evidencia** (1.1) descritos, y **aprobación de negocio** registrada en la cabecera (quién y cuándo).
+- **Observaciones:** solo la línea «Para promover a SRS falta» — que es obligatoria y no cuenta como pendiente.
+
+## Definition of Ready (DoR) del RQ
+
+Un `RQ-XXX` es **Ready** cuando:
+
+- **Encabezado** completo: dueño de la definición, documento fuente con versión y enlace a `references/`, work item del dueño si existe.
+- **`AC-XXX`**: todos confirmados por el usuario, con identificador, categoría, enunciado RFC 2119 y **fuente** (fragmento del documento del dueño).
+- **`BR-XX`**: cada una verificada por al menos un `AC-XXX`.
+- **Cobertura de la fuente**: sin filas en `Pendiente`; cada ítem del documento fuente es `Cubierto`, `Sin criterio (no verificable)` con motivo, o `Fuera del alcance de certificación` con motivo.
+- **Historial del documento fuente** con la versión vigente registrada.
+
+El RQ no tiene Ola 3 ni validación con subagente: su contrato es la Cobertura de la fuente, que firma el dueño de la definición.
+
 ## Definition of Ready (DoR) del SRS
 
-Tabla con los trece criterios de la plantilla. Para cada uno: `Met` / `Not Met` / `Partial` (los criterios marcados abajo admiten además `N/A`, en las condiciones que se indican).
+Tabla con los criterios de la plantilla (columna «Aplica a» = SRS). Para cada uno: `Met` / `Not Met` / `Partial` (los criterios marcados abajo admiten además `N/A`, en las condiciones que se indican).
 
 | Criterio DoR | Qué exige |
 | ------------ | --------- |
@@ -120,10 +163,12 @@ Tabla con los trece criterios de la plantilla. Para cada uno: `Met` / `Not Met` 
 | Requisitos de datos formalizados (`N/A` si el requerimiento no maneja datos propios) | Las entidades de datos relevantes están identificadas con retención/privacidad y volumen, o la sección se marcó «No aplica». |
 | Cumplimiento normativo trazado (`N/A` si no hay normativa identificada) | Cada normativa aplicable enlaza al `FR-XXX`/`NFR-XXX` que la satisface; ninguna fila queda sin ese enlace. |
 | Diseño de interfaz revisado (`N/A` si `srs:ui-required=false`) | Si `srs:ui-required=true`: el **tipo de solución** y si debe ser **responsiva** están definidos, y cada fila de la tabla de pantallas está en `Approved`, con sus observaciones ya reflejadas en los `FR-XXX` afectados. Ninguna pantalla puede quedar `Proposed` sin resolver. |
-| Verificación y trazabilidad completas | Todo `FR-XXX`/`NFR-XXX` tiene fila en la sección 12 con origen, método de verificación y criterio de verificación concretos — ver [Verificabilidad](#verificabilidad). |
+| Objetivos y métricas de éxito definidos (solo si nació como PRD) | Al menos un `OB-XX` con métrica directa o proxy. Un SRS creado directamente como SRS puede dejarlos «No definidos», pero se recomienda completarlos. |
+| Criterios de aceptación (`AC-XXX`) completos | Todo `FR-XXX`/`NFR-XXX` tiene al menos un `AC-XXX` en la sección 12 con origen y criterio concreto — ver [Verificabilidad](#verificabilidad). Los ids son inmutables. |
+| Método de verificación asignado | Todo `AC-XXX` de la sección 12 tiene método (`Inspección` / `Análisis` / `Demostración` / `Prueba`); ninguno queda `Pendiente`. |
 | Riesgos identificados | La sección 13 existe con al menos una fila, o se dejó explícitamente «Ninguno identificado» — no se omite sin más. |
 | Alcance y fuera de alcance claros | La sección 1.2 delimita qué cubre el requerimiento y qué queda explícitamente fuera. |
 | Sin aclaraciones pendientes | Observaciones vacías o «Ninguna»; nada pendiente con usuario/producto. |
 | Validación final (Ola 3) superada | El análisis de gaps, la revisión cruzada PO+UX+ARCH y la **validación con subagente sin contexto de sesión** (ver [`interview.md`](interview.md#ola-3-en-detalle-paso-11-de-flowmd)) se ejecutaron sobre el documento redactado, sin hallazgos pendientes: lo no resuelto vive en Observaciones y bloquea Ready vía el criterio anterior. |
 
-El estado **Ready** requiere todos los criterios sin excepción (los marcados `N/A` cuentan como satisfechos cuando la condición de exclusión aplica y está declarada). Si falta cualquiera, el SRS permanece en `Estado: Draft` con las lagunas documentadas en Observaciones — nunca se declara Ready «con reservas».
+El estado **Ready** de un SRS requiere todos los criterios sin excepción (los marcados `N/A` cuentan como satisfechos cuando la condición de exclusión aplica y está declarada). Si falta cualquiera, el SRS permanece en `Estado: Draft` con las lagunas documentadas en Observaciones — nunca se declara Ready «con reservas».

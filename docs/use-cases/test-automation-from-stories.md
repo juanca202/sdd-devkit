@@ -2,7 +2,7 @@
 
 Recorrido end-to-end para crear pruebas automatizadas de una historia de usuario que vive en el gestor de proyectos, usando SDD Devkit desde la sincronización de la historia hasta el entregable. La funcionalidad bajo prueba **ya está implementada**: este flujo entrega pruebas, no funcionalidad nueva.
 
-> **Si el repositorio es solo de pruebas (`implementation.scope: tests`)**, la frontera es estricta: no se diseña ni implementa nada del sistema bajo prueba; `work-define` no crea tareas; `work-plan` solo reporta hallazgos como `WI-XXX` de tipo `bug`; `coverage-verify` no se ejecuta en el cierre (no es puerta); y cualquier wireframe, diseño o documento de arquitectura que haga falta se pide al usuario y se documenta tal cual. Ver el [contrato del modo pruebas](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
+> **Si el repositorio es solo de pruebas (`implementation.scope: tests`)**, la frontera es estricta: no se diseña ni implementa nada del sistema bajo prueba; `work-define` no crea tareas; `work-plan` solo registra hallazgos como incidentes `BUG-XXX` (nunca work items); `coverage-verify` no se ejecuta en el cierre (no es puerta); y cualquier wireframe, diseño o documento de arquitectura que haga falta se pide al usuario y se documenta tal cual. Ver el [contrato del modo pruebas](../../references/implementation.md#modo-pruebas-implementationscope-tests--contrato-para-el-catálogo).
 
 ```mermaid
 flowchart TD
@@ -55,7 +55,7 @@ flowchart TD
 | Un criterio cambió en el gestor después de definir los casos | `sync US-XXX` y luego `test-define` para ajustar los `TC-XXX` afectados (los marca `Draft` u `Obsolete`) |
 | La historia aún no está implementada | Planificar e implementar primero con `work-plan` + `work-implement` (tareas `TK-XXX`, con sus pruebas en TDD); este flujo solo automatiza sobre código existente |
 | El código no tiene requisitos escritos, ni historia en el gestor | [Cobertura de pruebas en código existente](test-coverage-legacy-code.md) |
-| Una prueba fiel al `TC-XXX` revela un defecto real | [Fix a bug](fix-a-bug.md), tras diagnosticarlo con `work-research` (flujo *Analizar issue*) |
+| Una prueba fiel al `TC-XXX` revela un defecto real | Registrarlo como incidente `BUG-XXX` con `work-plan` y seguir [Fix a bug](fix-a-bug.md) para su diagnóstico y corrección (en un repo solo de pruebas, la corrección se planifica en el repositorio de la aplicación) |
 | La historia está archivada en `<archivedPath>/` | El trabajo está cerrado: desarchivarla antes de definir casos o escribir dentro de ella |
 
 Detalle de la sincronización (`sync`): [`skills/work-define/references/flow.md`](../../skills/work-define/references/flow.md#flujo-sincronizar-una-historia-desde-el-gestor-de-proyectos-sync). Detalle del tipo caso de prueba de `work-implement` (solo pruebas, nunca funcionalidad nueva): [`skills/work-implement/references/test-cases.md`](../../skills/work-implement/references/test-cases.md).

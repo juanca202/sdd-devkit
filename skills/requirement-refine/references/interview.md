@@ -6,6 +6,10 @@ Guion que gobierna **cómo se conduce la entrevista** de `requirement-refine`: e
 
 ---
 
+## Alcance de la entrevista según el tipo de documento
+
+El guion completo aplica a un **`SRS-XXX`**. Un **`PRD-XXX`** recorre las mismas etapas **sin el rol ARCH**: las etapas 11-13 se levantan con PO/UX en su lenguaje (expectativas de calidad cualitativas, obligaciones sobre los datos, qué normativa aplica) y lo técnico queda «Pendiente — se completa al promover a SRS»; la Ola 3 corre con PO+UX. Al **promover** un PRD, se ejecuta solo el bloque ARCH (etapas 11-13 cuantificadas, más stack/repositorios) y la Ola 3 completa. Un **RQ** no tiene entrevista de producto: solo la confirmación de `AC-XXX` y de la Cobertura de la fuente (ver [`flow.md`](flow.md#flujo-crear-un-rq-requerimiento-externo)). Las etapas 02-04 producen además, en PRD y SRS, el problema con evidencia (1.1), los `OB-XX` (objetivos con métrica, 1.4) y los `SC-XX` (escenarios por actor, 2.4).
+
 ## La secuencia (columna vertebral)
 
 Todo levantamiento recorre estas etapas, en este orden. Cada etapa alimenta secciones concretas del SRS y tiene un rol dueño; el paso de `flow.md` donde se ejecuta está en la última columna.
@@ -20,7 +24,7 @@ Todo levantamiento recorre estas etapas, en este orden. Cada etapa alimenta secc
 | 06 | **Resultado deseado** | Cómo se ve el proceso cuando esto exista; qué queda fuera | PO | Alcance / fuera de alcance | 3 (Ola 1) |
 | 07 | **Reglas de negocio** | Restricciones del dominio independientes de la solución | PO | `BR-XX` | 3 (Ola 1) |
 | 08 | **Requisitos funcionales** | Qué debe hacer el sistema (capacidades, no pantallas ni tablas) | PO | `FR-XXX` | 3 (Ola 2) |
-| 09 | **Criterios de aceptación** | Cómo sabrá el negocio que cada requisito se cumplió | PO | Criterio de verificación por `FR-XXX` | 5 (Ola 2) |
+| 09 | **Criterios de aceptación** | Cómo sabrá el negocio que cada requisito se cumplió | PO | `AC-XXX` por `FR-XXX`/`NFR-XXX` (sección 12) | 5 (Ola 2) |
 | 10 | **Experiencia de usuario** | Pantallas, flujos de interacción, tipo de solución, responsividad | UX | 12. Diseño de interfaz, wireframes | 4 (Ola 2) |
 | 11 | **Requisitos de calidad** | Rendimiento, seguridad, fiabilidad, usabilidad medibles | ARCH | `NFR-XXX` | 3 (Ola 2) |
 | 12 | **Restricciones técnicas** | Límites impuestos: tecnología obligada, infra, presupuesto, plazos | ARCH | Restricciones; insumo de pasos 7-9 | 3 (Ola 2) |

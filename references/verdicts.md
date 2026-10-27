@@ -106,8 +106,8 @@ Todo esto son **identificadores**, no contenido:
   `Draft` / `Ready` / `Obsolete` en un TC, `Pending` / `In Progress` / `Done` en `progress.md` y en `test-cases-automation.md`,
   `Unit` / `Integration` / `API Test` / `Visual Test` / `E2E` / `Manual` como tipo de prueba,
   `Proposed` / `Approved` como estado de revisión de un `WF-XXX`, `Proposed` / `Approved` como estado de un
-  `FR-XXX`/`NFR-XXX`, `Open` / `Fixing (…)` / `Fixed (…)` / `Discarded` y `Open` / `Replanned (…)` / `Re-spiked (…)` /
-  `Discarded` en la `Resolución` de un WI, `Pending` / `Ready` en los casos golden master, `Always` / `Intermittent` /
+  `FR-XXX`/`NFR-XXX`, `Open` / `Fixing (…)` / `Fixed (…)` / `Discarded` en la `Resolución` de un incidente `BUG-XXX` y `Open` / `Replanned (…)` / `Re-spiked (…)` /
+  `Discarded` en la `Resolución` de un WI de tipo `spike`, `Pending` / `Ready` en los casos golden master, `Always` / `Intermittent` /
   `Not Reproducible` como reproducibilidad, y los veredictos de los informes de investigación (`Reproduced and Verified` /
   `Defined, Not Verified` / `Not Reproducible` en un diagnóstico; `TC OK · Implementation OK`, `TC Wrong`, `False Negative`…
   en un análisis de TC) y los estados por criterio de `arch-audit` (`COMPLIANT` / `PARTIAL` / `NON_COMPLIANT` / `UNVERIFIABLE`).

@@ -10,7 +10,7 @@ mensajes al usuario.
 abra**, nunca solo una etiqueta en código (`` `WF-001` ``), un identificador suelto o una ruta en
 texto plano. Aplica a:
 
-- **Identificadores de artefactos y documentos** — `SRS-XXX`, `US-XXX`, `TK-XXX`, `WI-XXX`, `FT-XXX`,
+- **Identificadores de artefactos y documentos** — `SRS-XXX`, `PRD-XXX`, `US-XXX`, `TK-XXX`, `WI-XXX`, `FT-XXX`,
   `RS-XXX`, `RQ-XXX`, `TC-XXX`, `ADR-XXX`, `MD-XXX`, `API-XXX`, `FL-XXX`, `DG-XXX`, `WF-XXX`: el
   identificador es el **texto** del enlace y el archivo que lo define es el **destino**.
 - **Rutas de archivos** — código fuente, pruebas, configuración, informes (`quality-check.md`,

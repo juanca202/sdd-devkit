@@ -2,8 +2,10 @@
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
-En un repositorio con `implementation.scope: tests` NO se usa esta plantilla: el WI (siempre `bug`) se
-redacta con `work-item-tests-template.md`, que tiene la forma del caso de prueba que detectó el hallazgo.
+En un repositorio con `implementation.scope: tests` NO se usa esta plantilla: allí `work-plan` no crea WI,
+solo incidentes (`BUG-XXX`, plantilla `incident-tests-template.md`). Un hallazgo (qué está mal, con
+evidencia) tampoco es un WI con `scope: code`: es un incidente (`incident-template.md`); el WI que lo
+corrige es de tipo `bug-fix` y lo cita en `Origen`.
 -->
 # WI-XXX: {{título corto del work item}}
 
@@ -14,14 +16,13 @@ documento esté en otro idioma: es el ancla que otros skills parsean, no conteni
 de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
 -->
 **Estado:** {{Draft | Ready}}
-**Tipo:** {{bug | bug-fix | refactor | dependency-update | optimization | security-update | test-improvement | documentation-update | operational-change}}
+**Tipo:** {{bug-fix | refactor | dependency-update | optimization | security-update | test-improvement | documentation-update | operational-change}}
 <!-- `spike` también es un tipo válido, pero NO usa esta plantilla: se redacta con `work-item-spike-template.md`. -->
 <!--
 Tipos de work item:
 | Tipo | Incluye |
 |---|---|
-| bug | Registro de un comportamiento incorrecto, defecto o incidencia detectada. Describe **qué está mal**, no cómo solucionarlo. No se implementa: es el reporte del que después puede nacer un `bug-fix`. Único tipo admitido en un repositorio con `implementation.scope: tests`, donde se redacta con `work-item-tests-template.md`. |
-| bug-fix | Corrección de errores: el plan de remediación de un bug (propio o registrado como WI de tipo `bug`). |
+| bug-fix | Corrección de errores: el plan de remediación de un defecto, normalmente registrado antes como incidente `BUG-XXX` (que se cita en `Origen`). El registro del hallazgo en sí NO es un WI: es un incidente (`incident-template.md`). |
 | refactor | Refactorización, limpieza de código y reducción de deuda técnica. |
 | dependency-update | Actualización de librerías, frameworks y SDKs. |
 | optimization | Rendimiento, escalabilidad y consumo de recursos. |
@@ -32,49 +33,13 @@ Tipos de work item:
 | spike | Experimento con timebox para responder una incertidumbre que impide planificar o estimar (viabilidad, rendimiento, complejidad). Su entregable es un informe, nunca código integrable; la rama `spike/` queda como referencia y el desarrollo definitivo se formaliza en una US o en otro WI. **Se redacta con `work-item-spike-template.md`**, no con esta plantilla. |
 -->
 **Repositorio:** {{obligatorio para Ready: nombre del repositorio git al que afecta el work item; inferido del repo (git remote / carpeta) o indicado por el usuario.}}
-**Origen:** {{solo en un `bug-fix` que corrige un hallazgo ya registrado —`WI-XXX (bug)` enlazado por ruta relativa, o el work item del tracker si el bug vive en otro repositorio— o en un WI que formaliza el resultado de un spike: `WI-XXX (spike)` enlazado; omitir línea si no aplica}}
+**Origen:** {{solo en un `bug-fix` que corrige un incidente ya registrado —`BUG-XXX` enlazado por ruta relativa, o el work item del tracker si el incidente vive en otro repositorio— o en un WI que formaliza el resultado de un spike: `WI-XXX (spike)` enlazado; omitir línea si no aplica}}
 **Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}
 **Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema de seguimiento vinculado — solo si se creó; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica}}
 
 ## Descripción
 
-<!--
-SOLO PARA Tipo: bug — la sección Descripción responde «qué está mal» y se completa con las cuatro
-secciones siguientes (Comportamiento esperado / observado, Pasos para reproducir, Evidencia, Impacto).
-Un bug NO lleva Archivos afectados ni Plan de implementación: eliminarlas. Criterios de aceptación es
-opcional en un bug (el comportamiento esperado ya es el criterio de cierre); si se rellena, describe
-el comportamiento correcto, nunca la solución.
--->
-{{qué motiva el work item: el problema, la necesidad o el comportamiento esperado — el *qué*, no el cómo. Para un bug: qué falla y cómo se reproduce. Para un refactor / deuda técnica: qué situación se quiere mejorar y por qué. Sin diseño técnico aquí}}
-
-## Comportamiento esperado / observado
-
-<!-- SOLO PARA Tipo: bug. Eliminar esta sección en cualquier otro tipo. -->
-**Esperado:** {{qué debería ocurrir, citando la fuente si existe: `AC-XXX` del artefacto, `TC-XXX`, documentación}}
-**Observado:** {{qué ocurre en realidad, literal: mensaje, código HTTP, estado en pantalla, valor devuelto}}
-
-## Pasos para reproducir
-
-<!-- SOLO PARA Tipo: bug. Eliminar esta sección en cualquier otro tipo. Pasos concretos y mínimos, en orden; precondiciones y datos usados (sin credenciales ni valores del .env). -->
-**Precondiciones:** {{estado del sistema, usuario/rol, datos previos}}
-1. {{acción}}
-2. {{acción}}
-3. {{acción → aquí se observa el fallo}}
-
-## Evidencia
-
-<!-- SOLO PARA Tipo: bug. Eliminar esta sección en cualquier otro tipo. Al menos una fila para Ready. Adjuntos (capturas, logs, HAR) van en assets/ de este WI y se enlazan; nunca pegar tokens, cookies ni credenciales. -->
-| Tipo | Referencia | Notas |
-|------|------------|-------|
-| {{Caso de prueba \| Prueba automatizada \| Prueba manual \| Log \| Captura \| Reporte de cobertura}} | {{`TC-XXX` · nombre de la prueba y ruta · `assets/…` · `criteria-coverage.md`}} | {{fecha, ambiente (nombre, no URL), build/versión, frecuencia: siempre / intermitente}} |
-
-## Impacto
-
-<!-- SOLO PARA Tipo: bug. Eliminar esta sección en cualquier otro tipo. -->
-**Severidad:** {{Crítico (bloquea el flujo o corrompe datos) | Alto (sin alternativa razonable) | Medio (con alternativa) | Bajo (cosmético)}}
-**Alcance:** {{a quién o qué afecta: actores, módulos, ambientes}}
-**Origen del hallazgo:** {{automatización de `TC-XXX` (work-implement) | ejecución manual de `TC-XXX` | `coverage-verify` | quality-check | producción | otro}}
-**Resolución:** {{Open | Fixing (WI-YYY) | Fixed (WI-YYY) | Discarded — motivo}}
+{{qué motiva el work item: el problema, la necesidad o el comportamiento esperado — el *qué*, no el cómo. Para un bug-fix: qué falla (resumen del incidente citado en `Origen`, sin duplicarlo) y qué comportamiento debe quedar. Para un refactor / deuda técnica: qué situación se quiere mejorar y por qué. Sin diseño técnico aquí}}
 
 ## Contexto
 

@@ -50,6 +50,6 @@ que se verifica en `Done` antes de integrar.
 **Cobertura de test cases:** 
 []
 
-<!-- Hallazgos: una linea por prueba fiel al TC que sale en rojo contra el sistema: `TC-XXX — esperado: … · observado: … · spec: <ruta> (en rojo, sin marcar) · seguimiento: WI-XXX | <work item del tracker> | sin registrar`. La prueba NO se marca skip/todo/fixme: el fallo debe verse en el reporte del runner; esta linea es la que coverage-verify lee como `FAIL` del TC. Nunca pegar valores del .env, tokens ni datos personales en la evidencia. -->
+<!-- Hallazgos: una linea por prueba fiel al TC que sale en rojo contra el sistema: `TC-XXX — esperado: … · observado: … · spec: <ruta> (en rojo, sin marcar) · seguimiento: BUG-XXX | <work item del tracker> | sin registrar`. La prueba NO se marca skip/todo/fixme: el fallo debe verse en el reporte del runner; esta linea es la que coverage-verify lee como `FAIL` del TC. Nunca pegar valores del .env, tokens ni datos personales en la evidencia. -->
 **Hallazgos:** 
 []

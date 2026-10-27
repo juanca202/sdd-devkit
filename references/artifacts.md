@@ -9,9 +9,12 @@ específico (una salida propia, una excepción de ruta).
 > en una implementación: requerimientos (`SRS-XXX`), historias de usuario (`US-XXX`) con sus tareas
 > (`TK-XXX`), tareas de mantenimiento (`WI-XXX`), features (`FT-XXX`) e investigaciones (`RS-XXX`), más
 > sus casos de prueba (`TC-XXX`). Viven bajo `docs/specs/` y son lo que se numera con `XXX`, se archiva
-> y se traza. Todo lo demás — la documentación técnica de capability (`docs/architecture/`), el glosario,
-> los ADRs, los estándares, los informes y las políticas — es **documentación**: describe, gobierna o
-> verifica, pero no deriva una implementación por sí misma.
+> y se traza. Los **incidentes** (`BUG-XXX`) viven junto a ellos bajo `docs/specs/`, se numeran y se
+> archivan igual, pero **no son implementables**: registran un hallazgo (qué está mal, con evidencia) y
+> son el **insumo** de un `WI-XXX` de tipo `bug-fix`, que es el artefacto que sí se implementa. Todo lo
+> demás — la documentación técnica de capability (`docs/architecture/`), el glosario, los ADRs, los
+> estándares, los informes y las políticas — es **documentación**: describe, gobierna o verifica, pero
+> no deriva una implementación por sí misma.
 
 > **Notación de placeholders.** `[nombre-corto]`, `[kebab-case]`, `[slug]`, `[capability]`, `XXX`.
 > **Notación de rutas configurables.** `<changesPath>`, `<currentPath>` y `<archivedPath>` son las tres claves de
@@ -39,9 +42,9 @@ específico (una salida propia, una excepción de ruta).
 >
 > | Clave | Default (literal en el catálogo) | Qué cuelga de ella |
 > |-------|----------------------------------|--------------------|
-> | `specification.changesPath` | `docs/specs/changes/` | Lo que **cambia** el sistema: `user-stories/US-XXX-…/` (con `TK-XXX`, `test-cases/`, `research/`, `progress.md`), `work-items/WI-XXX-…/`, `requirements/SRS-XXX-…/` y `requirements/RQ-XXX-…/` (con `test-cases/`), `research/RS-XXX-…/` (investigaciones sueltas). |
+> | `specification.changesPath` | `docs/specs/changes/` | Lo que **cambia** el sistema: `user-stories/US-XXX-…/` (con `TK-XXX`, `test-cases/`, `research/`, `progress.md`), `work-items/WI-XXX-…/`, `incidents/BUG-XXX-…/`, `requirements/RQ-XXX-…/`, `requirements/PRD-XXX-…/` y `requirements/SRS-XXX-…/` (los tres con `test-cases/`, un solo secuencial), `research/RS-XXX-…/` (investigaciones sueltas). |
 > | `specification.currentPath` | `docs/specs/current/` | El sistema **tal como está**: `FT-XXX-[slug]/` directamente bajo la raíz, sin subcarpeta. |
-> | `specification.archivedPath` | `docs/specs/archived/` | Trabajo **cerrado** movido por `work-integrate`/`pr-create`, espejando las subcarpetas de `changesPath` (`user-stories/`, `work-items/`, `research/`). |
+> | `specification.archivedPath` | `docs/specs/archived/` | Trabajo **cerrado** movido por `work-integrate`/`pr-create`, espejando las subcarpetas de `changesPath` (`user-stories/`, `work-items/`, `incidents/`, `research/`). |
 >
 > **Antes de leer, escribir, mover o escanear IDs bajo cualquiera de estas rutas**, leer las tres claves:
 > si el repo declaró un valor distinto del default, sustituir la raíz literal por ese valor conservando
@@ -49,7 +52,7 @@ específico (una salida propia, una excepción de ruta).
 > `specs/user-stories/US-042-…`). Si no hay `settings.json`, o la clave falta, aplica el default. Las tres
 > son independientes: pueden apuntar a raíces distintas (incluso fuera de `docs/specs/`), pero
 > `archivedPath` siempre espeja la estructura de `changesPath`. Lo que **no** es configurable son los
-> nombres de las subcarpetas (`user-stories/`, `work-items/`, `requirements/`, `research/`, `test-cases/`)
+> nombres de las subcarpetas (`user-stories/`, `work-items/`, `incidents/`, `requirements/`, `research/`, `test-cases/`)
 > ni el patrón `PREFIJO-XXX-[slug]/` de las carpetas de artefacto.
 >
 > Versiones anteriores del plugin usaban `basePath` (`docs/specs/`) y `archivePath` (`docs/archive/`),
@@ -68,18 +71,20 @@ específico (una salida propia, una excepción de ruta).
 | Estándar de dominio | `<raíz-arq>/docs/standards/[slug].md` (o `<raíz-arq>/docs/standards/[slug]/README.md`) | `arch-manage` · índice `<raíz-arq>/docs/standards/README.md`: lo crea `arch-init`, lo mantiene `arch-manage` |
 | Fitness functions | `<raíz-arq>/scripts/arch/verify.<ext>` + `<raíz-arq>/scripts/arch/checks/[slug-estándar].<ext>` | `arch-manage` |
 | Definition of Done | `docs/policies/definition-of-done.md` | **Ninguno — lo escribe y lo mantiene el equipo.** Los skills lo leen; ningún skill del plugin lo genera ni ofrece generarlo. |
-| Especificación de requisitos (SRS) | `docs/specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md` | `requirement-refine` |
-| Requerimiento formalizado para pruebas (RQ) | `docs/specs/changes/requirements/RQ-XXX-[slug]/README.md` | `test-define` (cuando recibe un requerimiento en bruto; el original queda en `assets/`) |
+| Documento de producto (PRD) | `docs/specs/changes/requirements/PRD-XXX-[nombre-corto]/README.md` | `requirement-refine` (el insumo original queda en `references/`; `test-define` añade `test-cases/`). Al promoverse pasa a `SRS-XXX-…` con el mismo número |
+| Especificación de requisitos (SRS) | `docs/specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md` | `requirement-refine` (idem) |
+| Requerimiento externo (RQ) — solo certificar lo que un tercero definió | `docs/specs/changes/requirements/RQ-XXX-[slug]/README.md` | `requirement-refine` (tipo RQ; el documento fuente queda en `references/`, una copia por versión; `test-define` añade `test-cases/`) |
 | Historia de usuario | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/README.md` | `work-define` |
 | Tarea técnica de una US | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` | `work-plan` |
 | Tarea de mantenimiento | `docs/specs/changes/work-items/WI-XXX-[kebab-case]/README.md` | `work-plan` |
+| Incidente (registro de un hallazgo: qué está mal, con evidencia; **no implementable**, insumo de un `WI` de tipo `bug-fix`) | `docs/specs/changes/incidents/BUG-XXX-[kebab-case]/README.md` (evidencias en `assets/`) | `work-plan` (tipo de plan *Incidente*; lo piden `work-implement` o `work-research` vía handoff, o el usuario; en `implementation.scope: tests` es el **único** documento que `work-plan` produce) |
 | Feature ya implementada | `docs/specs/current/FT-XXX-[slug]/README.md` | `work-research` (flujo *Analizar legado*) |
 | Casos de prueba | `test-cases/TC-XXX-[slug].md` **dentro de la carpeta del artefacto padre**, con índice `test-cases/README.md` | `test-define` |
 | Documentación técnica de capability | `docs/architecture/[capability]/` — `README.md` (índice), `models/MD-XXX-[slug].md`, `apis/API-XXX-[slug].md` (un archivo por **grupo** de endpoints: entidad o funcionalidad), `flows/FL-XXX-[slug].md`, `diagrams/DG-XXX-[slug].md`, apoyo en `assets/` | `design-define` |
 | Wireframes de pantalla | `wireframes/WF-XXX-[slug].md` + `WF-XXX-[slug].svg` (SVG hermano, enlazado) **dentro de la carpeta del artefacto que los origina** (`SRS-XXX-…/`, `US-XXX-…/` o `WI-XXX-…/`), indexados en la tabla de wireframes del `README.md` de ese artefacto. **Los escribe únicamente `design-define`** (flujo «Wireframes», plantilla en su `assets/`), invocado vía subagente por `requirement-refine` o `work-define`, que solo indexan las rutas y estados devueltos. Son un **recurso del artefacto de implementación, no documentación de arquitectura**: nunca van bajo `docs/architecture/`. `WF-XXX` es secuencial **dentro de esa carpeta**; un artefacto derivado (una US de un SRS) los **enlaza** en la carpeta de origen, no los copia; se archivan con su artefacto | `design-define` (flujo «Wireframes», plantilla en `skills/design-define/assets/wireframe-template.md`), invocado vía subagente por `requirement-refine` (en un SRS) o `work-define` (en una US que toca UI y no hereda wireframes); en un WI, los que aporte el usuario |
 | Glosario | `docs/glossary.md` (opcional) | `design-define` |
 | Investigación | `research/RS-XXX-[slug]/README.md` **dentro de la carpeta del artefacto vinculado**; suelta: `docs/specs/changes/research/RS-XXX-[slug]/README.md` | `work-research` |
-| Progreso de un trabajo | `progress.md` dentro de la carpeta del trabajo (US / WI / FT) | `work-implement` |
+| Progreso de un trabajo | `progress.md` dentro de la carpeta del trabajo (US / WI / FT) — un `BUG-XXX` no lo tiene: no se implementa | `work-implement` |
 | Informe de resultados de un spike | `spike-report.md` dentro de la carpeta del `WI-XXX` de tipo `spike` (`docs/specs/changes/work-items/WI-XXX-[kebab-case]/spike-report.md`), junto a su `README.md` (la investigación propuesta), `progress.md` y la evidencia en `assets/`; viaja con el WI al archivarse. Marca oculta `spike:verdict` | `work-implement` (lo redacta) · `work-define` / `work-plan` (lo leen para formalizar el desarrollo definitivo) |
 | Registro de automatización de pruebas (solo `implementation.scope: tests`) | `test-cases-automation.md` dentro de la carpeta del artefacto padre (US / WI / FT), **junto a** `test-cases/`, no dentro; sustituye a `progress.md` en repositorios solo de pruebas | `work-implement` (tipos TC / FT) |
 | Archivos de apoyo | `assets/` dentro de la carpeta del artefacto; enlazar con rutas relativas | — |
@@ -151,16 +156,19 @@ runner de fitness functions, versionados junto a su código.
 | Prefijo | Artefacto | Alcance del secuencial |
 |---------|-----------|------------------------|
 | `ADR-XXX` | Architecture Decision Record | Global, sobre el `docs/adr/` **de su raíz de arquitectura** |
-| `SRS-XXX` | Especificación de requisitos de software | Global, sobre `docs/specs/changes/requirements/` |
-| `RQ-XXX` | Requerimiento formalizado como origen de casos de prueba | Global, sobre las carpetas `RQ-*` de `docs/specs/changes/requirements/` **+ el archivo** (independiente de `SRS-XXX`) |
+| `RQ-XXX` · `PRD-XXX` · `SRS-XXX` | Requerimiento externo · Documento de producto · Especificación de requisitos | **Un solo secuencial** compartido por los tres prefijos, sobre todas las carpetas `RQ-*`, `PRD-*` y `SRS-*` de `docs/specs/changes/requirements/` **+ el archivo**. Un PRD promovido conserva el número como `SRS-XXX`; un número nunca se reutiliza |
+| `AC-XXX` | Criterio de aceptación | Por documento padre (`US`, `WI`, `FT`, `RQ`, `SRS`); inmutable. Un `BUG-XXX` no tiene `AC-XXX` |
+| `H-XX` · `EV-XX` | Hallazgo · Evidencia de un incidente | Por documento `BUG-XXX` |
+| `OB-XX` · `SC-XX` | Objetivo con métrica · Escenario de uso (PRD/SRS) | Por documento `PRD-XXX`/`SRS-XXX` |
 | `US-XXX` | Historia de usuario | Global, sobre `docs/specs/changes/user-stories/` **+ el archivo** |
 | `TK-XXX` | Tarea técnica | Por historia de usuario padre |
 | `WI-XXX` | Tarea de mantenimiento | Global, sobre `docs/specs/changes/work-items/` **+ el archivo** |
+| `BUG-XXX` | Incidente | Global, sobre `docs/specs/changes/incidents/` **+ el archivo** |
 | `FT-XXX` | Feature ya implementada | Global, sobre `docs/specs/current/` |
 | `TC-XXX` | Caso de prueba | Por artefacto padre, sobre su `test-cases/` |
 | `RS-XXX` | Informe de investigación | Por carpeta base de destino, **+ el archivo** cuando la base es `docs/specs/changes/research/` |
 
-Los alcances «global» de esta tabla se calculan sobre la raíz **resuelta** (`changesPath` para SRS/US/WI/RS, `currentPath` para FT, `archivedPath` para el archivo), no sobre el literal.
+Los alcances «global» de esta tabla se calculan sobre la raíz **resuelta** (`changesPath` para SRS/US/WI/BUG/RS, `currentPath` para FT, `archivedPath` para el archivo), no sobre el literal.
 | `CR-XXX` | Criterio de cumplimiento de un estándar | Por estándar (y por tanto por raíz de arquitectura); se referencia como `<estándar>/CR-XXX` |
 
 Reglas comunes:
@@ -181,7 +189,7 @@ Reglas comunes:
 ## Archivado
 
 El archivado lo hace **el skill que produce el artefacto**, a petición explícita del usuario con el modificador
-`archive` (`/work-define US-042 archive`, `/work-plan archive`, `/requirement-refine SRS-003 archive`,
+`archive` (`/work-define US-042 archive`, `/work-plan archive`, `/work-plan BUG-003 archive`, `/requirement-refine SRS-003 archive`,
 `/work-research RS-003 archive`); `work-integrate` y `pr-create` **no archivan**. El estado del artefacto no lo
 restringe, pero se valida y se informa antes de pedir confirmación. Destino: `<archivedPath>` espejando la
 subcarpeta de `<changesPath>`:
@@ -191,6 +199,7 @@ subcarpeta de `<changesPath>`:
 | `<changesPath>/requirements/SRS-XXX-[nombre-corto]/` | `<archivedPath>/requirements/SRS-XXX-[nombre-corto]/` |
 | `<changesPath>/user-stories/US-XXX-[nombre-corto]/` | `<archivedPath>/user-stories/US-XXX-[nombre-corto]/` |
 | `<changesPath>/work-items/WI-XXX-[kebab-case]/` | `<archivedPath>/work-items/WI-XXX-[kebab-case]/` |
+| `<changesPath>/incidents/BUG-XXX-[kebab-case]/` | `<archivedPath>/incidents/BUG-XXX-[kebab-case]/` |
 | `<changesPath>/research/RS-XXX-[slug]/` (investigación suelta huérfana) | `<archivedPath>/research/RS-XXX-[slug]/` |
 
 **Contrato para el resto del catálogo** — archivar **no** libera el identificador ni hace invisible el

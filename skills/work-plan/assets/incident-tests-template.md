@@ -1,10 +1,10 @@
 <!--
-Plantilla de un WI en un repositorio SOLO DE PRUEBAS (`implementation.scope: tests`). Sustituye a
-`work-item-template.md` en ese modo; con `scope: code` (o sin la clave) NO se usa.
+Plantilla de un INCIDENTE (BUG-XXX) en un repositorio SOLO DE PRUEBAS (`implementation.scope: tests`).
+Sustituye a `incident-template.md` en ese modo; con `scope: code` (o sin la clave) NO se usa.
 
-En modo pruebas el único tipo de WI es `bug` (el reporte de un hallazgo), así que el documento tiene la
-forma del caso de prueba que lo detectó (`test-define/assets/test-case-template.md`): mismas secciones y
-mismo orden — Precondiciones, Datos de prueba, Pasos de ejecución, Resultado esperado final —, cada una
+En modo pruebas el incidente es el único documento que produce `work-plan` (el reporte de un hallazgo), y
+nace de ejecutar un caso de prueba, así que tiene la forma del caso de prueba que lo detectó
+(`test-define/assets/test-case-template.md`): mismas secciones y mismo orden — Precondiciones, Datos de prueba, Pasos de ejecución, Resultado esperado final —, cada una
 ampliada con lo que ocurrió al ejecutarlo: lo observado, los comentarios necesarios para reproducirlo, los
 hallazgos y las evidencias que registró la suite.
 
@@ -14,16 +14,15 @@ Eliminar este bloque y sustituir todos los {{…}} al publicar el documento fina
 Nunca incluir credenciales, tokens, cookies ni valores del `.env`: los ambientes y las variables se citan
 por NOMBRE. El documento describe qué está mal, nunca cómo corregirlo.
 -->
-# WI-XXX: {{título corto del hallazgo}}
+# BUG-XXX: {{título corto del hallazgo}}
 
-<!-- wi:status={{Draft|Ready}} -->
+<!-- bug:status={{Draft|Ready}} -->
 <!--
 Esta marca se CONSERVA al publicar. Sus claves y sus valores van en inglés SIEMPRE, aunque el resto del
 documento esté en otro idioma: es el ancla que otros skills parsean, no contenido. La etiqueta visible
 de abajo sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
 -->
 **Estado:** {{Draft | Ready}}
-**Tipo:** bug
 **Repositorio:** {{obligatorio para Ready: nombre del sistema bajo prueba tal como lo declara `AGENTS.md`}}
 **Caso de prueba:** {{enlace por ruta relativa al `TC-XXX-{slug}.md` que detectó el hallazgo + su título; si el hallazgo no nace de un TC, `N/A — {{cómo se observó}}`}}
 **Criterio de aceptación:** {{identificador verbatim del criterio que el TC verifica (AC-XXX, 1.1, R-3, …) + título corto; omitir línea si no hay TC}}
@@ -33,8 +32,8 @@ de abajo sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
 **Ambiente:** {{nombre del ambiente (nunca la URL ni valores del `.env`) · build/versión del sistema si se conoce · navegador/dispositivo si aplica}}
 **Fecha de ejecución:** {{YYYY-MM-DD HH:mm}}
 **Frecuencia:** {{Always | Intermittent (N de M ejecuciones)}}
-**Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema de seguimiento vinculado — solo si se creó; omitir línea si no aplica}}
+**Reportado por:** {{indicado por el usuario; si no, `git config user.name`}}
+**Work Item ({{Sistema}}):** {{enlace markdown al work item `Bug` creado en el sistema de seguimiento vinculado — solo si se creó; omitir línea si no aplica}}
 
 ## Descripción
 
@@ -85,7 +84,7 @@ en Comentarios: no se renumera el TC.
 Uno por comportamiento incorrecto distinto observado en la ejecución. Id secuencial H-01, H-02, … dentro
 del documento. Solo QUÉ está mal — nunca la causa supuesta como hecho ni la solución (una hipótesis, si el
 usuario la aporta, va en Observaciones marcada como hipótesis). Si los hallazgos son defectos
-independientes entre sí, proponer al usuario un WI por defecto en lugar de acumularlos aquí.
+independientes entre sí, proponer al usuario un incidente por defecto en lugar de acumularlos aquí.
 Severidad (obligatoria, solo estos cuatro valores): Crítico = bloquea el flujo o corrompe datos · Alto = sin
 alternativa razonable · Medio = con alternativa · Bajo = cosmético. La `Severidad` de Impacto es la más
 alta de esta columna.
@@ -98,7 +97,7 @@ alta de esta columna.
 
 <!--
 Los artefactos que la SUITE registró para esta prueba en la ejecución fallida (capturas, video, traza,
-reporte del runner, log, respuesta de la API, diff visual), COPIADOS a `assets/` de este WI y enlazados
+reporte del runner, log, respuesta de la API, diff visual), COPIADOS a `assets/` de este incidente y enlazados
 por ruta relativa — no se enlaza la carpeta de salida del runner, que suele estar en `.gitignore` y se
 sobrescribe en la siguiente ejecución. Id secuencial EV-01, EV-02, … Al menos una fila para Ready.
 Un artefacto que no se adjunta (contiene datos de sesión, pesa demasiado, no existe) se lista igual, con

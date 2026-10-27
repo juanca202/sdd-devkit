@@ -16,7 +16,7 @@ Skills que preparan y mantienen la base del proyecto — arquitectura y control 
 
 **Cuándo:** preparar un proyecto (nuevo o existente, uno o varios repositorios) para trabajar con el plugin.
 
-**Produce:** los archivos base del proyecto (`AGENTS.md`, memoria, configuración, índices de arquitectura) y una compuerta de calidad mínima. Al terminar sugiere el siguiente paso: en un proyecto de código, iniciar un requerimiento (`requirement-refine`), `work-define` o `work-plan`; en un proyecto de pruebas (`implementation.scope: tests`), conectar el gestor de proyectos (con su URL) para traer historias y planificar sus casos de prueba, o crear casos de prueba desde un requerimiento (`test-define`).
+**Produce:** los archivos base del proyecto (`AGENTS.md`, memoria, configuración, índices de arquitectura) y una compuerta de calidad mínima. Al terminar sugiere el siguiente paso: en un proyecto de código, iniciar un requerimiento (`requirement-refine`), `work-define` o `work-plan`; en un proyecto de pruebas (`implementation.scope: tests`), conectar el gestor de proyectos (con su URL) para traer historias y planificar sus casos de prueba, o crear casos de prueba desde un requerimiento (`requirement-refine` tipo RQ → `test-define`).
 
 **Según el punto de partida:**
 
@@ -191,7 +191,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 | ------------------------------------ | ------------------------------------------------------------------------------------------------------- |
 | Un tema o pregunta abierta          | Hallazgos de producto, arquitectura, técnica, o el impacto de un cambio                                  |
 | Una historia o tarea con lagunas    | Qué falta decidir antes de continuar                                                                     |
-| Un bug o defecto                    | Reproducción, causa raíz y una tarea de corrección lista para planificar                                 |
+| Un bug o defecto (o un incidente `BUG-XXX`) | Reproducción, causa raíz y una tarea de corrección lista para planificar; en un repo solo de pruebas, el incidente para registrar |
 | Un caso de prueba existente         | Un veredicto sobre si está bien planteado                                                                |
 | Código legado sin documentación     | Las funcionalidades que descubre, listas para definirles casos de prueba                                 |
 | Una migración entre proyectos       | Un plan de qué migrar y cómo validarlo                                                                   |
@@ -203,6 +203,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 /work-research US-004
 /work-research TK-012 ¿qué falta por decidir antes de implementar?
 /work-research el bug #4821
+/work-research diagnostica el BUG-004
 /work-research revisa TC-001-user-login
 /work-research migrar ../legacy-app → este repo
 /work-research analiza el módulo src/billing (legacy)
@@ -222,24 +223,37 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 ### requirement-refine
 
-**Cuándo:** tienes un requerimiento en bruto (idea, ticket, correo, wireframes) y quieres estructurarlo antes de convertirlo en historias de usuario. Paso opcional: si el requerimiento ya está claro, puedes ir directo a `work-define`.
+**Cuándo:** tienes un requerimiento en bruto (idea, ticket, correo, wireframes, documento del cliente) y quieres formalizarlo. **Es el único punto de entrada de requerimientos**: `test-define` no formaliza nada por su cuenta. Paso opcional para implementar: si el requerimiento ya está claro, puedes ir directo a `work-define`.
 
-**Produce:** una especificación de requisitos (`<changesPath>/requirements/`) con alcance, requisitos priorizados, stack tecnológico, repositorios y equipo; si hay interfaz, wireframes `WF-XXX` en `wireframes/` dentro de la carpeta del SRS, generados y revisados por `design-define` vía subagente y enlazados desde el SRS.
+**Produce** uno de tres documentos en `<changesPath>/requirements/`, elegido al inicio con una pregunta (o fijado con el modificador `rq` / `prd` / `srs`):
 
-**Estados:** `Draft` (quedan cosas por resolver) · `Ready` (listo para convertir en historias con `work-define`).
+| | ¿Para qué? | `Ready` significa | Siguiente |
+|---|---|---|---|
+| **`RQ-XXX` — solo certificar** | La definición es de un tercero (cliente, documento aprobado); solo se prueba. `AC-XXX` trazados a la fuente + Cobertura de la fuente. | El dueño del documento puede firmar qué se certifica | `test-define` |
+| **`PRD-XXX` — aprobar producto** | Problema, objetivos y métricas, actores y escenarios, alcance, `FR-XXX` priorizados y `AC-XXX` de negocio; sin decisiones técnicas. | Negocio aprobó alcance y prioridades | `work-define`, `test-define`, promover a SRS |
+| **`SRS-XXX` — implementar** | PRD + stack, repositorios, NFR con umbral, interfaces, datos, método de verificación. | Se puede implementar sin repreguntar | `work-define`, `work-plan`, `test-define`, `arch-init` |
+
+Cada tipo tiene su plantilla; PRD y SRS comparten numeración de secciones. Si hay interfaz, wireframes `WF-XXX` en `wireframes/` dentro de la carpeta del documento, generados y revisados por `design-define` vía subagente. Los tres prefijos comparten **un solo secuencial**; un PRD se **promueve** a SRS completando solo el bloque de ingeniería y conservando el número (`PRD-004` → `SRS-004`). Los tres se archivan aquí.
+
+**Estados:** `Draft` (quedan cosas por resolver) · `Ready` (según el DoR de cada tipo).
 
 **Ejemplos de invocación:**
 
 ```text
 /requirement-refine
 /requirement-refine portal de proveedores para subir facturas
+/requirement-refine prd app de disputas de cargos para socios
+/requirement-refine rq <adjuntar DTG-003 del cliente>
+/requirement-refine srs PRD-004          ← promover a SRS-004
 /requirement-refine actualiza SRS-002: cambia el stack a Auth0
 /requirement-refine estructura este requerimiento: <pegar ticket>
 /requirement-refine SRS-003 archive
+/requirement-refine archive RQ-001
 ```
 
 - «Refina este requerimiento antes de armar las historias»
-- «Necesito una especificación para esta idea, no sé todavía con qué la vamos a construir»
+- «Necesito que el comité apruebe el alcance antes de definir con qué lo construimos» (→ PRD)
+- «El cliente ya definió esto; solo necesito certificarlo» (→ RQ)
 
 ---
 
@@ -307,7 +321,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 
 **Cuándo:** documentar casos de prueba a partir de los criterios de aceptación de una historia, tarea o funcionalidad. No implementa ni ejecuta las pruebas — solo las documenta.
 
-**Produce:** casos de prueba junto al artefacto de origen (historia, tarea de mantenimiento o funcionalidad). Si recibe un requerimiento en texto crudo (o un documento adjunto que no vive en el proyecto), primero lo formaliza como `RQ-XXX-{slug}` en `requirements/` —con el original guardado en `assets/` y enlazado— y crea los casos de prueba sobre ese documento; un documento que ya existe en el proyecto se procesa en su sitio. Los `RQ-XXX` se archivan con `/test-define archive`.
+**Produce:** casos de prueba junto al artefacto de origen (historia, tarea de mantenimiento, funcionalidad, o un `RQ-XXX`/`SRS-XXX` de `requirement-refine` — en un PRD/SRS, sobre los `AC-XXX` de su sección 12, como pruebas de aceptación del requerimiento). Si recibe un requerimiento en texto crudo (o un documento adjunto que no vive en el proyecto) **no lo formaliza**: hace handoff a `/requirement-refine`, que elige con el usuario RQ/PRD/SRS, y vuelve con el ID. Un documento que ya existe en el proyecto se procesa en su sitio. No archiva nada (`requirement-refine archive`).
 
 Cada criterio se cubre desde varios ángulos (camino esperado, error, límites — el que aplique) y se marca si la prueba es manual o automatizable.
 
@@ -319,8 +333,9 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 /test-define WI-003
 /test-define FT-002
 /test-define RQ-001
-/test-define archive RQ-001
-/test-define el cliente pide que el login bloquee la cuenta tras 5 intentos fallidos
+/test-define PRD-004
+/test-define SRS-004
+/test-define el cliente pide que el login bloquee la cuenta tras 5 intentos fallidos   ← handoff a requirement-refine
 /test-define US-005 solo criterios AC-001 y AC-003
 /test-define sync #4821
 /test-define sync #4830 #4831
@@ -337,7 +352,7 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 
 ### work-plan
 
-**Cuándo:** planificar el trabajo técnico antes de implementarlo, sin escribir código ni pruebas todavía.
+**Cuándo:** planificar el trabajo técnico antes de implementarlo, sin escribir código ni pruebas todavía; o registrar un hallazgo (prueba en rojo, defecto observado) como incidente.
 
 **Produce:**
 
@@ -345,9 +360,9 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 | Situación                          | Qué crea                                        |
 | ------------------------------------- | ------------------------------------------------- |
 | Hay una historia de usuario asociada | Tareas técnicas dentro de esa historia            |
-| No hay historia (bug, deuda, mantenimiento) | Una tarea de mantenimiento independiente     |
+| No hay historia (bug-fix, deuda, mantenimiento) | Una tarea de mantenimiento independiente (`WI-XXX`); un `bug-fix` cita el incidente que corrige en `Origen: BUG-XXX` |
 | Hay una incertidumbre que impide planificar o estimar y solo se resuelve construyendo o midiendo («no sabemos si», «¿es viable?», «prueba de concepto») | Un work item de tipo `spike`: pregunta de investigación, hipótesis, preguntas `Q-XX` con criterios de éxito/fallo, timebox y enfoque del experimento; sin `AC-XXX` ni casos de prueba. Su entregable es el `spike-report.md` que `work-implement` deja en la carpeta del WI; después, `work-plan` crea el WI definitivo a partir del informe (o `work-define` la historia) |
-| Hay un hallazgo que reportar (prueba en rojo, defecto observado) | Un work item de tipo `bug`: solo qué está mal, con evidencia; sin plan de corrección (único tipo posible en un repo con `implementation.scope: tests`, donde el documento toma la forma del caso de prueba: sus pasos con lo observado y los comentarios para reproducirlo, los hallazgos y las evidencias de la suite adjuntas en `assets/`) |
+| Hay un hallazgo que reportar (prueba en rojo, defecto observado) | Un **incidente** `BUG-XXX` en `<changesPath>/incidents/`: solo qué está mal, con evidencia; sin plan de corrección. No es implementable: es el insumo de un `WI` de tipo `bug-fix`. Único documento que produce en un repo con `implementation.scope: tests`, donde toma la forma del caso de prueba: sus pasos con lo observado y los comentarios para reproducirlo, los hallazgos y las evidencias de la suite adjuntas en `assets/`. Con la integración activa, es lo único que se crea como `Bug` en el tracker |
 
 **Ejemplos de invocación:**
 
@@ -356,10 +371,12 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 /work-plan US-007
 /work-plan planifica tareas para US-004 agrupadas por repo
 /work-plan WI: actualizar Spring Boot a 3.3
-/work-plan bug: la API devuelve 200 en vez de 422 con tarjeta vencida (TC-4830)
+/work-plan registra el bug: la API devuelve 200 en vez de 422 con tarjeta vencida (TC-4830)
+/work-plan planifica la corrección del BUG-004
 /work-plan spike: ¿aguanta el motor de reglas 500 pólizas/s? timebox 2 días
 /work-plan WI definitivo a partir del informe del spike WI-014
 /work-plan WI-007 archive
+/work-plan BUG-003 archive
 /work-plan archive
 ```
 
@@ -367,6 +384,7 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 - «Tareas para esta historia»
 - «Plan de mantenimiento: refactor del módulo de auth»
 - «Descompón el bug de timeouts en una tarea»
+- «Registra el incidente: la prueba TC-005 falla contra QA»
 
 ---
 

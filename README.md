@@ -1,6 +1,6 @@
 # SDD Devkit
 
-![version](https://img.shields.io/badge/version-2.3.0-blue) ![license](https://img.shields.io/badge/license-MIT-green)
+![version](https://img.shields.io/badge/version-2.4.0-blue) ![license](https://img.shields.io/badge/license-MIT-green)
 
 **SDD Devkit** es un framework de SDD (Spec-Driven Development), distribuido como [Agent Plugin](https://agent-plugins.org/), cuyo objetivo es ayudarte en la preparación, planificación e implementación de proyectos de desarrollo. Su flujo:
 
@@ -132,11 +132,11 @@ Skills del ciclo de vida de un requerimiento: de la idea al Pull Request mergead
 | Skill                                              | Uso                                                                                                                                     |
 | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
 | [work‑research](SKILLS.md#work-research)           | Investiga y resume hallazgos en un informe: viabilidad de una idea, decisiones pendientes, diagnóstico de un bug, análisis de código legado o de una migración. |
-| [requirement‑refine](SKILLS.md#requirement-refine) | Convierte un requerimiento en bruto en una especificación clara (SRS): alcance, stack, repositorios. Paso opcional antes de `work-define`. |
+| [requirement‑refine](SKILLS.md#requirement-refine) | Punto de entrada de todo requerimiento: lo formaliza como `RQ` (solo certificar lo que un tercero definió), `PRD` (aprobar producto, sin decisiones técnicas) o `SRS` (especificación completa: alcance, stack, repositorios). Un PRD se promueve a SRS. Paso opcional antes de `work-define`. |
 | [work‑define](SKILLS.md#work-define)               | Crea o actualiza historias de usuario.                                                                                                    |
 | [design‑define](SKILLS.md#design-define)           | Documenta el diseño técnico de una historia: modelos de datos, endpoints, diagramas.                                                      |
-| [test‑define](SKILLS.md#test-define)               | Crea casos de prueba a partir de los criterios de aceptación de una historia o funcionalidad.                                             |
-| [work‑plan](SKILLS.md#work-plan)                   | Planifica las tareas técnicas de una historia, o una tarea de mantenimiento independiente.                                                |
+| [test‑define](SKILLS.md#test-define)               | Crea casos de prueba a partir de los criterios de aceptación de una historia, funcionalidad o requerimiento (`RQ`/`PRD`/`SRS`). Un requerimiento crudo lo deriva a `requirement-refine`. |
+| [work‑plan](SKILLS.md#work-plan)                   | Planifica las tareas técnicas de una historia o una tarea de mantenimiento independiente, y registra incidentes (`BUG-XXX`: qué está mal, con evidencia; sin plan). |
 | [work‑implement](SKILLS.md#work-implement)         | Implementa una tarea planificada, o automatiza los casos de prueba ya definidos.                                                          |
 | [quality‑check](SKILLS.md#quality-check)           | Corre las verificaciones automáticas del proyecto (tipado, linter, pruebas, build, etc.) antes de integrar.                               |
 | [code‑review](SKILLS.md#code-review)               | Revisión de código antes de integrar: intención, diseño y feedback accionable.                                                            |
@@ -226,7 +226,7 @@ Tú defines la intención, las restricciones y las decisiones importantes; el ag
 
 | Nivel                                 | Lo defines tú           | Te asiste           |
 | -------------------------------------- | ------------------------ | -------------------- |
-| Refinar el requerimiento (alcance, stack, SRS) | Product Owner, Arquitecto, Diseñador UI/UX | `/requirement-refine` |
+| Formalizar el requerimiento (RQ · PRD · SRS) | Product Owner, Arquitecto, Diseñador UI/UX | `/requirement-refine` |
 | Problema de negocio                   | Product Owner            | `/work-define`       |
 | Comportamiento esperado               | Desarrollador             | `/work-plan`         |
 | Casos de prueba                       | QA                        | `/test-define`       |

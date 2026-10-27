@@ -40,7 +40,7 @@
       "properties": {
         "changesPath": {
           "type": "string",
-          "description": "Ruta relativa a la raíz del repositorio donde viven las especificaciones que cambian el sistema: historias de usuario (user-stories/US-XXX-…), tareas de mantenimiento (work-items/WI-XXX-…), requisitos (requirements/SRS-XXX-…) e investigaciones sueltas (research/RS-XXX-…). Ej: docs/specs/changes/. Reemplaza a la antigua basePath."
+          "description": "Ruta relativa a la raíz del repositorio donde viven las especificaciones que cambian el sistema: historias de usuario (user-stories/US-XXX-…), tareas de mantenimiento (work-items/WI-XXX-…), incidentes (incidents/BUG-XXX-…), requisitos (requirements/SRS-XXX-…) e investigaciones sueltas (research/RS-XXX-…). Ej: docs/specs/changes/. Reemplaza a la antigua basePath."
         },
         "currentPath": {
           "type": "string",
@@ -48,7 +48,7 @@
         },
         "archivedPath": {
           "type": "string",
-          "description": "Ruta relativa a la raíz del repositorio donde work-integrate/pr-create archivan el trabajo cerrado, espejando las subcarpetas de changesPath (user-stories/, work-items/, research/). Ej: docs/specs/archived/. Reemplaza a la antigua archivePath."
+          "description": "Ruta relativa a la raíz del repositorio donde work-integrate/pr-create archivan el trabajo cerrado, espejando las subcarpetas de changesPath (user-stories/, work-items/, incidents/, research/). Ej: docs/specs/archived/. Reemplaza a la antigua archivePath."
         },
         "testCases": {
           "type": "object",
@@ -138,7 +138,7 @@
         },
         "scope": {
           "type": "string",
-          "description": "Dónde vive el código bajo prueba. code (por defecto si se omite): en este repositorio, flujo habitual. tests: este repositorio contiene solo pruebas contra un sistema desplegado cuyo código no está aquí; work-implement aplica el modo pruebas (solo tipos TC/FT, sin corrección de código de producción, URLs y credenciales desde .env, registro en test-cases-automation.md en lugar de progress.md). El modo afecta a todo el catálogo: no se diseña ni implementa código funcional, work-define no crea TK, work-plan solo crea WI de tipo bug, coverage-verify no es puerta de cierre y pr-create/work-integrate no lo invocan (N/A), quality-check y code-review auditan solo el código propio, y el diseño o la arquitectura del sistema bajo prueba se solicita al usuario y se documenta tal cual (ver references/implementation.md § Modo pruebas).",
+          "description": "Dónde vive el código bajo prueba. code (por defecto si se omite): en este repositorio, flujo habitual. tests: este repositorio contiene solo pruebas contra un sistema desplegado cuyo código no está aquí; work-implement aplica el modo pruebas (solo tipos TC/FT, sin corrección de código de producción, URLs y credenciales desde .env, registro en test-cases-automation.md en lugar de progress.md). El modo afecta a todo el catálogo: no se diseña ni implementa código funcional, work-define no crea TK, work-plan solo registra incidentes BUG-XXX (nunca WI), coverage-verify no es puerta de cierre y pr-create/work-integrate no lo invocan (N/A), quality-check y code-review auditan solo el código propio, y el diseño o la arquitectura del sistema bajo prueba se solicita al usuario y se documenta tal cual (ver references/implementation.md § Modo pruebas).",
           "enum": [
             "code",
             "tests"

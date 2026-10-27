@@ -45,7 +45,7 @@ El nombre del archivo y, si hay un tracker externo vinculado, el título usado a
 
 ## Pasos de ejecución
 
-| # | Actor | Acción | Resultado esperado del paso |
+| # | Actor | Acción | Resultado esperado |
 |---|-------|--------|-----------------------------|
 | 1 | {{usuario / sistema}} | {{acción concreta}} | {{qué debe ocurrir después de este paso}} |
 | 2 | {{usuario / sistema}} | {{acción concreta}} | {{qué debe ocurrir después de este paso}} |

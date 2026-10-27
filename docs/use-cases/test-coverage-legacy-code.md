@@ -41,7 +41,7 @@ flowchart TD
 
 | Situación | Camino correcto |
 |-----------|------------------|
-| El código tiene un defecto real, no solo falta de pruebas | [Fix a bug](fix-a-bug.md), tras diagnosticarlo con `work-research` (flujo *Analizar issue*) |
+| El código tiene un defecto real, no solo falta de pruebas | Registrarlo como incidente `BUG-XXX` con `work-plan` y seguir [Fix a bug](fix-a-bug.md) |
 | El código ya tiene requisitos documentados (`US-XXX`/`WI-XXX`) pero sin pruebas | `test-define` directamente sobre esa US/WI, sin pasar por `work-research` |
 | Se busca escribir funcionalidad nueva, no cubrir la ya existente | `work-define` (nueva US) o `work-plan` (WI de otro tipo) — un `FT-XXX` nunca produce código funcional |
 | Solo se quiere el diagnóstico del código legado, sin automatizar pruebas | `work-research` (flujo *Analizar legado*) hasta el discovery/features, sin invocar `test-define` ni `work-implement` |

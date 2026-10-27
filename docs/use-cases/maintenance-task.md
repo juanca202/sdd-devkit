@@ -38,6 +38,7 @@ flowchart TD
 |-----------|------------------|
 | El requerimiento sí tiene (o necesita) una historia de usuario | [Flujo de implementación](../../README.md#flujo-de-implementación) completo, con `work-define` |
 | Es una corrección de un defecto reportado | [Fix a bug](fix-a-bug.md) — investigación previa con diagnóstico de causa raíz |
+| Solo hay que registrar un defecto observado, sin corregirlo | `work-plan`, tipo de plan *Incidente* (`BUG-XXX`): no es un WI |
 | Es un refactor de código existente | [Refactorización de código](refactor.md) — investigación previa de factibilidad e impacto |
 | La implementación la ejecuta un framework de terceros (Speckit, OpenSpec, AgentOS) | Variante [Integración con otros frameworks de implementación](../../README.md#integración-con-otros-frameworks-de-implementación) del README |
 

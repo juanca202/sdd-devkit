@@ -1,6 +1,6 @@
 # Flujo detallado, ejemplos y anti-patrones
 
-Procedimiento paso a paso para **crear** y **actualizar** una Especificación de Requisitos de Software (`SRS-XXX`), más ejemplos y anti-patrones. Las anclas de calidad (`#rfc-2119`, `#categorías-de-fr-xxx`, `#categorías-de-nfr-xxx`, `#prioridad`, `#estado-por-requisito`, `#métodos-de-verificación`, `#verificabilidad`, `#definition-of-ready-dor-del-srs`) viven en [`quality-criteria.md`](quality-criteria.md).
+Procedimiento paso a paso para **elegir el tipo de documento** (`RQ-XXX`, `PRD-XXX` o `SRS-XXX` — ver [Tipos de documento](quality-criteria.md#tipos-de-documento-rq-prd-y-srs)), **crear** y **actualizar** cada uno, **promover** un PRD a SRS, más ejemplos y anti-patrones. Las anclas de calidad (`#rfc-2119`, `#categorías-de-fr-xxx`, `#categorías-de-nfr-xxx`, `#prioridad`, `#estado-por-requisito`, `#métodos-de-verificación`, `#verificabilidad`, `#definition-of-ready-dor-del-srs`, `#definition-of-ready-dor-del-prd`, `#definition-of-ready-dor-del-rq`) viven en [`quality-criteria.md`](quality-criteria.md).
 
 ---
 
@@ -16,7 +16,45 @@ Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/references/asking.md`]
 
 **Inferir primero, preguntar solo si queda duda.** Varios puntos de este flujo no son preguntas obligatorias por defecto, sino inferencias que solo se convierten en pregunta cuando la inferencia es ambigua: si el requerimiento necesita UI (paso 4), si una capacidad transversal común —autenticación, roles, notificaciones, etc.— ya existe o está en el alcance de este SRS (paso 3), y el tipo de solución —web, app nativa, híbrida, responsiva— cuando sí hay UI (paso 4). En los tres casos, una inferencia razonablemente clara se registra sin preguntar (dejando constancia breve del motivo); solo la ambigüedad real dispara la pregunta estructurada.
 
-**Orden funcional primero, técnico al final.** Salvo la excepción de abajo, las tandas de lo funcional (paso 3: alcance, actores, `FR-XXX`, `NFR-XXX`, reglas de negocio, interfaces externas, datos, cumplimiento normativo), UI (paso 4: wireframes), verificación/trazabilidad (paso 5) y riesgos (paso 6) van **antes** que las preguntas técnicas (pasos 7-10: stack, repositorios, proyecto base, equipo). El requerimiento se entiende primero en términos de qué debe hacer; el cómo se construye se resuelve después. **Excepción:** si una laguna funcional **no se puede cerrar sin una decisión técnica puntual** (p. ej. «¿la sincronización debe ser en tiempo real?» depende de si la infraestructura lo soporta), esa decisión técnica se adelanta y se pregunta ahí mismo, dentro de la tanda funcional que la necesita — no se espera al paso 7. El resto del stack, no relacionado con esa duda puntual, se sigue resolviendo en su paso correspondiente.
+**Orden funcional primero, técnico al final.** Salvo la excepción de abajo, las tandas de lo funcional (paso 3: alcance, actores, `FR-XXX`, `NFR-XXX`, reglas de negocio, interfaces externas, datos, cumplimiento normativo), UI (paso 4: wireframes), verificación/trazabilidad (paso 5) y riesgos (paso 6) van **antes** que las preguntas técnicas (pasos 7-9: stack, repositorios, proyecto base). El requerimiento se entiende primero en términos de qué debe hacer; el cómo se construye se resuelve después. **Excepción:** si una laguna funcional **no se puede cerrar sin una decisión técnica puntual** (p. ej. «¿la sincronización debe ser en tiempo real?» depende de si la infraestructura lo soporta), esa decisión técnica se adelanta y se pregunta ahí mismo, dentro de la tanda funcional que la necesita — no se espera al paso 7. El resto del stack, no relacionado con esa duda puntual, se sigue resolviendo en su paso correspondiente.
+
+---
+
+## Paso 0 — Tipo de documento
+
+Todo requerimiento entra por este skill y lo primero que se resuelve es **qué documento se genera**. Se hace **antes** de crear carpetas y **después** de leer el insumo (incluidas imágenes): la elección depende de lo que el insumo revela.
+
+1. **Leer el insumo y componer un parte de 3-5 líneas** con lo detectado, sin redactar nada todavía:
+   - Insumo: qué es (texto, ticket, documento con nombre/versión, transcripción…), sobre qué sistema.
+   - **Dueño de la definición:** ¿lo define este equipo, o viene definido/aprobado por un tercero (documento con responsable, versión y aprobación de otra organización)?
+   - **Stack:** sin decidir / ya decidido / sistema existente.
+   - **Harness:** `implementation.scope` de `.sdd-devkit/settings.json` (`tests`, `code`, o sin harness).
+   - **Recomendación** y su motivo en una frase.
+
+2. **Reglas de recomendación** (la primera que aplique):
+
+   | Señal | Recomendación |
+   |---|---|
+   | Invocación con modificador `rq` / `prd` / `srs`, o el tipo ya quedó dicho en la sesión | **Ese tipo, sin preguntar** |
+   | Harness `scope: tests` **y** el documento viene definido por un tercero | **RQ, sin preguntar** (informar: «se genera un RQ porque el harness es solo de pruebas y la definición es del cliente») |
+   | Llegó por handoff de `test-define` (`origen=test-define`), o el usuario dijo «solo pruebas» / «certificar» / «el requerimiento no es nuestro» | **RQ** (preguntar) |
+   | Documento definido por un tercero, pero este equipo implementa | **SRS** (preguntar; advertir que el alcance lo fija ese documento) |
+   | Producto o módulo nuevo sin stack, o el usuario necesita aprobación/estimación de negocio antes de ingeniería | **PRD** (preguntar) |
+   | Stack decidido o sistema existente, y este equipo implementa | **SRS** (preguntar) |
+
+3. **La pregunta** (herramienta estructurada; una sola; omitida cuando la tabla dice «sin preguntar»). Primero el parte del punto 1, después:
+
+   > **¿Qué documento generamos a partir de este requerimiento?**
+   >
+   > - **RQ — solo certificar (Recomendado)** — La definición es del cliente; registramos criterios de aceptación trazados a su documento y generamos casos de prueba. No se cierran lagunas de producto.
+   > - **PRD — aprobar producto** — Problema, objetivos, usuarios, alcance y requisitos priorizados, sin decisiones técnicas. Para aprobar/estimar y derivar historias de usuario.
+   > - **SRS — especificar para implementar** — PRD + stack, repositorios, requisitos de calidad con umbral, interfaces, datos y verificación. Listo para `/work-define` y `/work-plan`.
+
+   Reglas: la opción recomendada va **primera** con «(Recomendado)» en la etiqueta; las otras dos conservan el orden fijo PRD → SRS (es una escala de profundidad). Etiquetas de ≤5 palabras; sin opción «Otro» manual. Fallback sin herramienta: la misma lista enumerada 1/2/3.
+
+4. **Advertencias de una línea, no segunda pregunta:** si el usuario elige PRD o SRS sobre un documento definido por un tercero → «El alcance lo fija <documento>; las lagunas se registrarán como Observaciones salvo que confirmes que podemos redefinirlas». Si elige RQ en un harness de implementación → «Un RQ no deriva historias ni tareas; si luego se implementa, se creará un PRD/SRS desde el mismo insumo».
+
+5. **Continuar** con el flujo del tipo elegido: [RQ](#flujo-crear-un-rq-requerimiento-externo), [PRD o SRS](#flujo-crear-un-prd-o-un-srs-nuevo).
 
 ---
 
@@ -24,20 +62,38 @@ Mecanismo, ritmo y fallback compartidos: [`${PLUGIN_ROOT}/references/asking.md`]
 
 Antes de crear archivos, verificar:
 
-- **Duplicado de ID:** si el usuario proporciona `SRS-XXX`, confirmar que esa carpeta no existe ya en `<changesPath>/requirements/`.
-- **Solapamiento de alcance:** revisar los títulos de otros SRS existentes para detectar si el mismo requerimiento ya tiene una especificación en curso. Si coincide, sugerir actualizar la existente en vez de crear una nueva.
+- **Duplicado de ID:** si el usuario proporciona un ID, confirmar que ese **número** no existe ya en `<changesPath>/requirements/` ni en `<archivedPath>/requirements/` con **ningún** prefijo (`RQ-*`, `PRD-*`, `SRS-*`): el secuencial es único para los tres. Si no lo proporciona, el siguiente libre es el mayor número encontrado entre todos los prefijos + 1.
+- **Solapamiento de alcance:** revisar los títulos de otros `RQ-*`, `PRD-*` y `SRS-*` existentes (activos y archivados) para detectar si el mismo requerimiento ya tiene un documento en curso. Si coincide con un SRS/PRD, sugerir actualizarlo (o promoverlo, si es PRD y ahora se implementa) en vez de crear otro. Si coincide con un RQ y ahora se pide PRD/SRS, crear el nuevo documento, enlazar el RQ en `references/` y ofrecer archivarlo. Si coincide con un PRD/SRS y ahora se pide RQ, **no crear el RQ**: los `AC-XXX` de la sección 12 ya sirven a `test-define` — informar y redirigir.
 - **Requerimiento demasiado vago:** si no hay ni siquiera un objetivo funcional identificable (una frase de qué se quiere lograr y para quién), no crear el archivo todavía — preguntar primero. Con un objetivo funcional mínimo, sí se puede crear en Draft.
 
 Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajustar el alcance, (b) actualizar el SRS existente, o (c) proporcionar la información faltante.
 
 ---
 
-## Flujo: Crear un SRS nuevo
+## Flujo: Crear un RQ (requerimiento externo)
+
+Aplica cuando el Paso 0 resolvió **RQ**. No hay entrevista de producto: el dueño de la definición es un tercero y este equipo solo acuerda qué se certifica. Plantilla: [`assets/rq-template.md`](../assets/rq-template.md).
+
+1. **Fijar el ID y la carpeta** `RQ-XXX-[slug]/`: número del **secuencial único** de `requirements/` (mayor entre `RQ-*`, `PRD-*` y `SRS-*`, activos y archivados, + 1). Numeración siempre local: no se crea work item para el RQ.
+2. **Conservar el documento fuente íntegro en `references/`** (mismo criterio que el paso 2 del flujo SRS: nunca se edita; una versión nueva es un archivo nuevo) y leer todo su contenido, imágenes incluidas.
+3. **Encabezado:** dueño de la definición, documento fuente con versión, work item del dueño (p. ej. «Requerimiento #15428»). Si el documento no trae versión, registrar la fecha de recepción como versión.
+4. **Extraer `BR-XX` y `AC-XXX` solo de lo que el documento dice**, cada uno con su **fuente** (sección/ítem/HU). Lo que falte para poder probar se pregunta (con `createDetailsMode: ask` de `planning.md`) **como criterio a certificar**, nunca como redefinición de alcance; con `never`, se anota como supuesto en Observaciones. Un ítem no verificable no genera un AC genérico: va a Cobertura de la fuente como «Sin criterio».
+5. **Cobertura de la fuente:** recorrer el documento ítem por ítem (objetivos, HU, puntos de alcance, reglas) y asignar `Cubierto` / `Sin criterio (no verificable)` / `Fuera del alcance de certificación` / `Pendiente`.
+6. **Confirmar con el usuario** (una sola pregunta, lote completo): tabla de `AC-XXX` + Cobertura de la fuente. Confirmado y sin `Pendiente` → `Estado: Ready`; si no, `Draft` con lo pendiente en Observaciones.
+7. **Cierre:** ofrecer `/test-define RQ-XXX` como único siguiente paso. Si el usuario menciona implementar, explicar que eso requiere un PRD/SRS desde el mismo insumo (no se convierte el RQ).
+
+**Actualizar un RQ** (nueva versión del documento fuente): guardar el archivo nuevo en `references/`, añadir fila al Historial, diffear criterios, marcar los `AC-XXX` afectados (nuevo / modificado / retirado — los retirados se conservan con nota, no se borran), actualizar Cobertura de la fuente, y **avisar a `test-define`** en el mensaje de cierre: los TC de los AC modificados deben revisarse (flujo «actualizar TCs existentes» de ese skill); este skill no toca `test-cases/`.
+
+---
+
+## Flujo: Crear un PRD o un SRS nuevo
+
+Aplica cuando el Paso 0 resolvió **PRD** o **SRS**. Plantillas: [`assets/prd-template.md`](../assets/prd-template.md) y [`assets/srs-template.md`](../assets/srs-template.md), con la **misma numeración de secciones 1-15**; el prefijo del ID y de la carpeta (`PRD-XXX-…` o `SRS-XXX-…`) es el tipo, y el número sale del secuencial único de `requirements/`. La diferencia es qué pasos y roles corren. **En un PRD se omiten los pasos marcados «solo SRS»** y las secciones correspondientes ya vienen en la plantilla como «Pendiente — se completa al promover a SRS».
 
 1. **Fijar el ID y nombre de carpeta**
-   - Usar el `SRS-XXX` indicado por el usuario o inferir el siguiente libre listando carpetas `SRS-*` en `<changesPath>/requirements/`.
+   - Prefijo según el Paso 0 (`PRD-` o `SRS-`). Número: el indicado por el usuario (si está libre con cualquier prefijo) o el siguiente libre del secuencial único (mayor entre `RQ-*`, `PRD-*`, `SRS-*`, activos y archivados, + 1).
    - Proponer el `nombre-corto` en kebab-case; validar con el usuario si hay ambigüedad.
-   - Crear la carpeta `SRS-XXX-[nombre-corto]/` y `assets/` si habrá archivos vinculados.
+   - Crear la carpeta `PRD-XXX-[nombre-corto]/` o `SRS-XXX-[nombre-corto]/` y `assets/` si habrá archivos vinculados.
 
 2. **Capturar el requerimiento en bruto y todo su contexto de insumo**, en cualquier combinación en que el usuario lo aporte: texto, ticket, correo, transcripción de reunión, diseño o mockup, wireframes existentes, documentación técnica, diagramas, o capturas/imágenes. No hay un único formato esperado — el objetivo es reunir todo lo que da contexto para definir el alcance correctamente y sirve de insumo para las preguntas de aclaración de los pasos siguientes. **Guardarlo tal cual en `references/`** dentro de la carpeta del SRS, antes de redactar nada:
    - Texto pegado o transcrito (incluidas transcripciones de reunión) → `references/raw-requirement.md`.
@@ -47,7 +103,7 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
    - Enlazar cada archivo desde la sección **Enlaces y archivos de apoyo** del `README.md` (`Requerimiento original`).
 
 3. **Cierre de lagunas funcionales**
-   - **Conducir este paso con el guion de [`interview.md`](interview.md):** primero la **Ola 1 — Discovery** (rol PO: problema, objetivo de negocio, actores, proceso actual, resultado deseado, reglas de negocio) y después los bloques de la **Ola 2 — Definition** que tocan a este paso (PO: `FR-XXX`; ARCH: `NFR-XXX`, restricciones técnicas, integraciones, datos, cumplimiento normativo), cada tanda en el lenguaje de su rol y sin mezclar dominios. Cubre así, funcionalmente: alcance, actores, requisitos funcionales (`FR-XXX`), no funcionales (`NFR-XXX`), reglas de negocio, interfaces externas (usuario, hardware, software, comunicaciones — a nivel de existencia y contrato mínimo, no el detalle técnico completo), requisitos de datos (qué entidades maneja, retención/privacidad, volumen estimado), cumplimiento normativo (qué normativa aplica y cómo se cumple, si el dominio lo exige — p. ej. datos personales, financieros, de salud), restricciones y supuestos. Todavía **no** se toca stack, repositorios ni proyecto base — eso va en los pasos 7-9.
+   - **Conducir este paso con el guion de [`interview.md`](interview.md):** primero la **Ola 1 — Discovery** (rol PO: problema, objetivo de negocio **con sus métricas de éxito `OB-XX`**, actores **y sus escenarios `SC-XX`**, proceso actual, resultado deseado, reglas de negocio) y después los bloques de la **Ola 2 — Definition** que tocan a este paso (PO: `FR-XXX`; ARCH: `NFR-XXX`, restricciones técnicas, integraciones, datos, cumplimiento normativo), cada tanda en el lenguaje de su rol y sin mezclar dominios. **En un PRD el bloque ARCH no corre:** los `NFR-XXX` se registran como expectativas cualitativas del PO/UX (sin umbral), las interfaces externas solo a nivel de usuario, los datos solo como obligaciones de negocio y la normativa solo como «qué aplica». Cubre así, funcionalmente: alcance, actores, requisitos funcionales (`FR-XXX`), no funcionales (`NFR-XXX`), reglas de negocio, interfaces externas (usuario, hardware, software, comunicaciones — a nivel de existencia y contrato mínimo, no el detalle técnico completo), requisitos de datos (qué entidades maneja, retención/privacidad, volumen estimado), cumplimiento normativo (qué normativa aplica y cómo se cumple, si el dominio lo exige — p. ej. datos personales, financieros, de salud), restricciones y supuestos. Todavía **no** se toca stack, repositorios ni proyecto base — eso va en los pasos 7-9.
    - **Inferir primero los supuestos sobre funcionalidad transversal reutilizable.** Antes de convertir cada necesidad del requerimiento en un `FR-XXX` nuevo, evaluar si depende de una capacidad común a la mayoría de aplicativos — autenticación, control de roles/permisos, notificaciones, auditoría/logging, procesamiento de pagos, almacenamiento de archivos, búsqueda, multi-tenancy, y cualquier otra capacidad transversal habitual — y si, por el contexto (menciones de un proyecto base, una plataforma compartida, un sistema ya en uso en la organización, un SSO corporativo), esa capacidad **ya existe o se reutiliza** en lugar de construirse desde cero como parte de este requerimiento. Si la inferencia es razonablemente clara, no preguntar: registrar el supuesto (capacidad, origen inferido) en la tabla de **Supuestos y dependencias** (sección 2.5) y no crear un `FR-XXX` para lo que ya está resuelto fuera del alcance de este SRS. **Preguntar solo si queda duda** — p. ej. el requerimiento menciona «login» sin aclarar si es el SSO corporativo existente o un sistema nuevo, o «notificaciones» sin aclarar si usa un servicio de mensajería ya disponible — con la herramienta estructurada, opciones `[Ya existe / se reutiliza]` / `[Está en el alcance de este SRS construirlo]`, agrupando varias capacidades ambiguas en la misma tanda cuando aplique. Si el usuario confirma que está en el alcance, sí se redacta el `FR-XXX` correspondiente como cualquier otro.
    - Formular las preguntas que cierren cada laguna detectada, en **tandas de hasta 3**, encadenando tantas como haga falta (ver [Cómo preguntar al usuario](#cómo-preguntar-al-usuario)). Opciones cortas cuando la respuesta admita categorías (categoría de `FR-XXX`/`NFR-XXX`, modalidad RFC 2119); entrada libre solo para el enunciado narrativo.
    - **Excepción — duda funcional que exige una definición técnica:** si cerrar un `FR-XXX` o `NFR-XXX` depende de una decisión técnica puntual (p. ej. si un reporte puede ser en tiempo real, si dos sistemas pueden integrarse síncronamente), preguntar esa decisión puntual **aquí mismo**, dentro de la misma tanda, en vez de diferirla al paso 8. No convertir esto en una vía para adelantar todo el stack: solo la pieza técnica estrictamente necesaria para resolver la duda funcional en curso: el resto del stack se resuelve en su paso.
@@ -68,17 +124,19 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
      7. **Registrar el resultado** en la tabla de la sección 11 del SRS: pantalla, enlace al wireframe (`WF-XXX`, con la ruta devuelta **copiada tal cual**, sin recomponerla desde el nombre de la pantalla), estado de revisión **idéntico al de la cabecera del `.md`** (lo fijó `design-define`; este skill no lo cambia) y un resumen de qué observaciones quedaron incorporadas a qué `FR-XXX`.
    - Una pantalla que quede `Proposed` es una laguna como cualquier otra: mantiene el SRS en Draft hasta resolverse.
 
-5. **Verificación y trazabilidad de los requisitos** — el **criterio de verificación** de cada requisito se levanta con el rol dueño (PO para `FR-XXX`, ARCH para `NFR-XXX`) en su lenguaje: «¿cómo sabrás que esto quedó cumplido?» (ver etapa 09 en [`interview.md`](interview.md)).
+5. **Criterios de aceptación, verificación y trazabilidad** — el **criterio de aceptación** de cada requisito se levanta con el rol dueño (PO para `FR-XXX`, ARCH para `NFR-XXX`; en un PRD, PO/UX para ambos) en su lenguaje: «¿cómo sabrás que esto quedó cumplido?» (ver etapa 09 en [`interview.md`](interview.md)). Cada criterio recibe un id **`AC-XXX`** secuencial global en el documento (un requisito puede tener varios); son inmutables y los consumen `test-define` (TCs de aceptación del requerimiento) y `work-define` (herencia hacia los AC de cada US).
    - Con los `FR-XXX`/`NFR-XXX` ya cerrados y priorizados, y las pantallas de UI resueltas (si aplica), completar por cada requisito: **Origen** (de dónde viene: requerimiento en bruto, pregunta al usuario, observación de wireframe), **Depende de** (otro `FR-XXX`/`NFR-XXX` del que depende, si aplica) y **Estado del requisito** (`Proposed` / `Approved`, ver [Estado por requisito](quality-criteria.md#estado-por-requisito) — distinto del `Estado: Draft/Ready` del documento completo).
-   - **Método de verificación, por lote:** proponer un método (`Inspección` / `Análisis` / `Demostración` / `Prueba`, ver [Métodos de verificación](quality-criteria.md#métodos-de-verificación)) para cada requisito según su naturaleza, presentarlos todos juntos y preguntar **una sola vez** si alguno necesita ajuste — no uno por uno.
+   - **Método de verificación, por lote (solo SRS; en un PRD queda `Pendiente`):** proponer un método (`Inspección` / `Análisis` / `Demostración` / `Prueba`, ver [Métodos de verificación](quality-criteria.md#métodos-de-verificación)) para cada requisito según su naturaleza, presentarlos todos juntos y preguntar **una sola vez** si alguno necesita ajuste — no uno por uno.
    - Para cada requisito, redactar el **criterio de verificación**: cómo se comprueba que se cumplió, en términos observables y medibles (ver [Verificabilidad](quality-criteria.md#verificabilidad) — evitar términos ambiguos como «rápido», «fácil de usar» o «robusto» sin una medida concreta). Si un requisito no puede formularse de forma verificable con la información disponible, tratarlo como laguna en vez de forzar un criterio vacío o genérico.
-   - Registrar todo en la tabla de la sección 12 del SRS (**Verificación y trazabilidad**): `ID`, `Origen`, `Depende de`, `Método de verificación`, `Criterio de verificación`. No duplicar el enunciado del requisito aquí — ya está en las secciones 6/7; esta tabla solo referencia el `ID`.
+   - Registrar todo en la tabla de la sección 12 del SRS (**Verificación y trazabilidad**): `ID`, `AC`, `Origen`, `Depende de`, `Método de verificación`, `Criterio de aceptación / verificación`. No duplicar el enunciado del requisito aquí — ya está en las secciones 5/6; esta tabla solo referencia el `ID`.
 
 6. **Riesgos**
-   - Identificar riesgos que puedan afectar la implementación o el resultado del requerimiento: técnicos (dependencias externas, integraciones inciertas), de alcance (ambigüedad no resuelta), de datos/privacidad, de cumplimiento normativo, de equipo o capacidad. Partir de lo ya cerrado en los pasos anteriores — no reabrir como riesgo lo que ya quedó resuelto como laguna funcional.
+   - Identificar riesgos que puedan afectar la implementación o el resultado del requerimiento: técnicos (dependencias externas, integraciones inciertas — **solo SRS**), de adopción/negocio, de alcance (ambigüedad no resuelta), de datos/privacidad, de cumplimiento normativo, de equipo o capacidad. En un PRD solo los de producto; los técnicos se añaden al promover. Partir de lo ya cerrado en los pasos anteriores — no reabrir como riesgo lo que ya quedó resuelto como laguna funcional.
    - Por cada riesgo, proponer probabilidad (`Alta`/`Media`/`Baja`), impacto (`Alto`/`Medio`/`Bajo`), mitigación y, si aplica, a qué `FR-XXX`/`NFR-XXX` se relaciona.
    - **Presentar la lista propuesta y preguntar una sola vez** si falta algún riesgo o si alguno necesita ajuste — mismo patrón de lote que prioridad, wireframes y método de verificación. Ningún riesgo es bloqueante para `Estado: Ready` por sí solo; es informativo, salvo que el propio usuario decida tratarlo como una laguna abierta.
    - Registrar en la tabla de la sección 13 del SRS (**Riesgos**).
+
+> **Pasos 7-9: solo SRS.** En un PRD se saltan: las secciones 3 y 4 quedan «Pendiente — se completa al promover a SRS» y se pasa al paso 10. No se pregunta ni se infiere el stack en un PRD, aunque el insumo mencione tecnologías.
 
 7. **Pregunta inicial: ¿investigar el stack o ya está decidido?**
    - Con lo funcional ya cerrado (salvo excepciones pendientes documentadas), lanzar **una sola pregunta** con la herramienta estructurada: *"¿Investigamos el stack tecnológico o ya tienes decidido cómo se va a construir?"* — opciones `[Investigar con /work-research]` / `[Ya lo tengo decidido]`.
@@ -97,8 +155,8 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
    - **Si es existente:** la columna **Proyecto base** se registra como «No aplica» — el repositorio ya tiene su propia base de código; no preguntar por un starter. Capturar en **Notas** qué módulo o área del repositorio existente se ve afectada, si el requerimiento ya lo deja claro o si el usuario lo aporta espontáneamente (no es un dato bloqueante, a diferencia del tipo de repositorio).
    - Sin al menos un repositorio identificado y con su **Tipo** resuelto, el SRS no puede declararse Ready — puede seguir en Draft.
 
-10. **Redactar el** `README.md` usando `assets/srs-template.md` como molde:
-    - **Introducción y Descripción general:** propósito, alcance, fuera de alcance, actores, restricciones y supuestos — todo lo que el requerimiento en bruto y las respuestas del usuario ya dejaron claro, incluida la tabla de **funcionalidad transversal reutilizable** (2.5) resultado directo del paso 3.
+10. **Redactar el** `README.md` usando la plantilla del tipo (`assets/prd-template.md` o `assets/srs-template.md`) como molde:
+    - **Introducción y Descripción general:** propósito (en un PRD, problema/oportunidad con evidencia), **objetivos y métricas `OB-XX`** (1.4), alcance, fuera de alcance, actores **y escenarios `SC-XX`** (2.4), restricciones, supuestos y, si aplica, fases de entrega (2.7) — todo lo que el requerimiento en bruto y las respuestas del usuario ya dejaron claro, incluida la tabla de **funcionalidad transversal reutilizable** (2.5) resultado directo del paso 3.
     - **Stack tecnológico:** resultado directo del paso 8 — modo de resolución (`researched`/`decided`), tabla de decisiones por capa, decisiones pendientes si las hay.
     - **Repositorios e implementación:** resultado directo del paso 9 — un repositorio por fila, con su tipo (nuevo / existente), y su proyecto base o «ninguno, desde cero» cuando es nuevo, o «No aplica» cuando es existente.
     - **Requisitos funcionales (`FR-XXX`):** tabla con id secuencial, categoría (ver [Categorías de FR-XXX](quality-criteria.md#categorías-de-fr-xxx)), prioridad (ver [Prioridad](quality-criteria.md#prioridad)), estado del requisito (ver [Estado por requisito](quality-criteria.md#estado-por-requisito)) y enunciado con palabra clave RFC 2119 en MAYÚSCULAS (ver [RFC 2119](quality-criteria.md#rfc-2119)) — incluidos los `FR-XXX` nuevos o ajustados que salieron de la revisión de wireframes en el paso 4.
@@ -108,7 +166,8 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
     - **Requisitos de datos:** resultado directo del paso 3 — entidades de datos, retención/privacidad, volumen estimado.
     - **Cumplimiento normativo:** resultado directo del paso 3 — normativa aplicable, requisito relacionado y cómo se cumple; omitir la sección si el dominio no tiene normativa aplicable.
     - **Diseño de interfaz** (omitir la sección entera si `srs:ui-required=false`): tabla de pantallas con enlace al wireframe, estado de revisión y observaciones ya incorporadas — resultado directo del paso 4.
-    - **Verificación y trazabilidad:** resultado directo del paso 5 — tabla `ID`/`Origen`/`Depende de`/`Método de verificación`/`Criterio de verificación`.
+    - **Verificación y trazabilidad:** resultado directo del paso 5 — tabla `ID`/`AC`/`Origen`/`Depende de`/`Método de verificación`/`Criterio de aceptación / verificación` (método `Pendiente` en PRD).
+    - **En un PRD**, las secciones «solo SRS» se dejan tal como vienen en la plantilla («Pendiente — se completa al promover a SRS»), se registra en la cabecera quién aprueba y en **Observaciones** la primera línea enumera qué falta para promover.
     - **Riesgos:** resultado directo del paso 6.
     - **Enlaces y archivos de apoyo:** enlazar cada archivo de `references/` guardado en el paso 2, la investigación de stack si se hizo, y la carpeta `wireframes/` del SRS si aplica.
     - **Historias de usuario derivadas:** dejar la tabla vacía; se completa después del handoff a `/work-define`.
@@ -116,25 +175,41 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
 
 11. **Validación final — Ola 3 (Validation)**, con el `README.md` ya redactado; detalle completo en [`interview.md`](interview.md#ola-3-en-detalle-paso-11-de-flowmd):
     - **Análisis de gaps:** recorrer el documento buscando huecos estructurales (requisito sin criterio, actor sin requisito que lo atienda, pantalla sin `FR-XXX` o viceversa, integración sin interfaz externa, `NFR-XXX` sin umbral).
-    - **Revisión cruzada PO + UX + ARCH:** contradicciones y ambigüedades entre lo dicho por cada rol (negocio vs. wireframes vs. restricciones técnicas) y decisiones pendientes.
-    - **Validación externa:** lanzar un **subagente sin el contexto de la sesión**, limitado a leer la carpeta del SRS, que evalúe si el documento basta para implementarse **sin volver a preguntar** y reporte faltantes, ambigüedades, mezclas de requisito con decisión de diseño e inconsistencias.
+    - **Revisión cruzada PO + UX + ARCH** (en un PRD, PO + UX): contradicciones y ambigüedades entre lo dicho por cada rol (negocio vs. wireframes vs. restricciones técnicas) y decisiones pendientes.
+    - **Validación externa:** lanzar un **subagente sin el contexto de la sesión**, limitado a leer la carpeta del SRS, que evalúe si el documento basta para implementarse **sin volver a preguntar** (en un PRD: si basta para que negocio apruebe alcance y prioridades y para derivar historias de usuario sin repreguntar lo funcional) y reporte faltantes, ambigüedades, mezclas de requisito con decisión de diseño e inconsistencias.
     - **Resolver:** convertir los hallazgos en tandas dirigidas al rol dueño de cada hueco (mismo mecanismo del paso 3), aplicar las respuestas y repetir la validación externa solo si los cambios fueron sustanciales. Lo que el usuario decida no resolver queda en **Observaciones** y mantiene el SRS en Draft.
 
 12. **Glosario** (si aplica): términos de dominio nuevos van a `docs/glossary.md`, igual criterio que en `work-define`.
 
 13. **Cierre**
-    - Si el SRS queda en **Draft**, resumir las lagunas agrupadas por sección (`FR-XXX`, `NFR-XXX`, Interfaces externas, Requisitos de datos, Cumplimiento normativo, Wireframes, Verificación y trazabilidad, Riesgos, Stack, Repositorios) y ofrecer, en la siguiente interacción, cerrar cada una con preguntas estructuradas.
-    - Si el SRS queda en **Ready** (ver [Definition of Ready (DoR) del SRS](quality-criteria.md#definition-of-ready-dor-del-srs)), ofrecer explícitamente **`/work-define`** para descomponer el requerimiento en historias de usuario, pasándole el contexto completo del SRS (ruta del `README.md`, `FR-XXX` y `NFR-XXX`, repositorios, stack, equipo si está definido, wireframes si los hay). **No crear la US directamente desde este skill.**
+    - Si el documento queda en **Draft**, resumir las lagunas agrupadas por sección (`FR-XXX`, `NFR-XXX`, `AC-XXX`, Interfaces externas, Requisitos de datos, Cumplimiento normativo, Wireframes, Verificación y trazabilidad, Riesgos, Stack, Repositorios) y ofrecer, en la siguiente interacción, cerrar cada una con preguntas estructuradas.
+    - Si el SRS queda en **Ready** (ver [DoR del SRS](quality-criteria.md#definition-of-ready-dor-del-srs)), ofrecer explícitamente **`/work-define`** para descomponer el requerimiento en historias de usuario, pasándole el contexto completo del SRS (ruta del `README.md`, `FR-XXX` y `NFR-XXX`, repositorios, stack, equipo si está definido, wireframes si los hay), y **`/test-define SRS-XXX`** para los casos de prueba de aceptación sobre los `AC-XXX`. **No crear la US ni los TC directamente desde este skill.**
+    - Si es un **`PRD-XXX`** y queda en **Ready** (ver [DoR del PRD](quality-criteria.md#definition-of-ready-dor-del-prd)), la pregunta de cierre ofrece: **`/work-define`** (las US no necesitan stack), **`/test-define PRD-XXX`** (TCs de aceptación) y **Promover a SRS** ([flujo de promoción](#flujo-promover-un-prd-a-srs)). `/work-plan` y `/arch-init` **no** se ofrecen desde un PRD: necesitan la sección 4.
     - **Repositorios sin harness:** por cada repositorio de la sección **Repositorios e implementación**, verificar si tiene `AGENTS.md` en su raíz (y, solo si es la raíz principal de la solución —repo único o repo de especificaciones—, también `.sdd-devkit/settings.json`; un submódulo **nunca** lo tiene ni debe tenerlo, su configuración es la del repo principal) — un repositorio marcado **Nuevo** nunca los tiene todavía; uno **Existente** se verifica si es accesible localmente, y si no lo es, preguntar directamente al usuario. Si **alguno** de los repositorios carece del harness, agregar **`/arch-init`** como opción adicional en la misma pregunta de cierre, junto a `/work-define` — no es excluyente ni bloquea el handoff, es una sugerencia más que el usuario puede tomar antes, después o en vez de continuar con `/work-define`.
 
 ---
 
-## Flujo: Actualizar un SRS existente
+## Flujo: Promover un PRD a SRS
 
-1. **Identificar el archivo** — por ID, nombre-corto o título, buscándolo en `<changesPath>/requirements/`.
+Aplica cuando el usuario pide completar un `PRD-XXX` para implementarlo («promuévelo», «complétalo a SRS», `/requirement-refine srs PRD-007`), o cuando `/requirement-refine PRD-XXX` cae sobre un PRD Ready y el usuario elige esa opción.
+
+1. **Leer el `README.md` completo** y verificar que el PRD está en `Ready`; si está en `Draft`, cerrar primero sus lagunas de producto (flujo de actualización) — no se promueve un PRD incompleto.
+2. **Correr solo el bloque de ingeniería**, con el rol ARCH de [`interview.md`](interview.md): cuantificar los `NFR-XXX` existentes (mismo id, ahora con umbral) y añadir los que falten; completar interfaces 8.2-8.4, entidades/volumen de datos (9), «cómo se cumple» en normativa (10); asignar **método de verificación** a cada `AC-XXX` existente y afinar criterios sin cambiar ids; añadir riesgos técnicos; después los **pasos 7-9** del flujo de creación (stack, repositorios, proyecto base).
+3. **Reglas invariantes:** `FR-XXX`, `NFR-XXX`, `BR-XX`, `AC-XXX`, `OB-XX`, `SC-XX` conservan sus ids; lo nuevo toma el siguiente libre. El **número** no cambia; cambia el prefijo. Si al cuantificar un NFR o al resolver una interfaz aparece una laguna **de producto**, se vuelve al rol PO/UX para esa pieza — no se decide por ingeniería.
+4. **Renombrar y migrar a `srs-template.md`:** `git mv PRD-XXX-[slug] SRS-XXX-[slug]` (mismo número; guard de destino y reparación de enlaces entrantes como describe [`${PLUGIN_ROOT}/references/archive.md`](../../../references/archive.md): línea `Requerimiento:` de las US derivadas, campo **Artefacto padre** de los `TC-XXX` en `test-cases/`, índices); reestructurar el `README.md` a `srs-template.md` sección por sección (misma numeración: se sustituyen las líneas «Pendiente — se completa al promover a SRS» por el contenido y se cambian los títulos de 1.1, 6, 9, 12 y 13 a los del SRS; la cabecera cambia `Aprobación de negocio` por la línea **Promovido a SRS** con fecha y `desde PRD-XXX`, conservando la aprobación en 1.5 Referencias); título `# SRS-XXX:`; retirar y la línea «qué falta para promover» de Observaciones. Confirmar el renombrado con el usuario en la misma pregunta que los cambios (muestra origen → destino y los enlaces que se repararán).
+5. **Ola 3 completa** (PO+UX+ARCH y subagente sin contexto) sobre el documento promovido; **DoR del SRS**.
+6. **Si ya existen US derivadas** (sección 15): avisar al usuario de que los cambios de ingeniería (repositorios, NFR cuantificados, métodos de verificación) pueden afectarlas y listar cuáles; este skill no las edita.
+7. **Cierre** igual que un SRS nuevo en Ready: `/work-define` (o las US ya existentes), `/work-plan`, `/test-define`, y `/arch-init` si algún repositorio no tiene harness.
+
+---
+
+## Flujo: Actualizar un PRD o SRS existente
+
+1. **Identificar el archivo** — por ID (`PRD-XXX` o `SRS-XXX`), nombre-corto o título, buscándolo en `<changesPath>/requirements/`. (Un `RQ-XXX` se actualiza con el flujo descrito en [Crear un RQ](#flujo-crear-un-rq-requerimiento-externo).)
 2. **Leer el** `README.md` **actual** completo antes de editar.
 3. **Aplicar los cambios** solicitados. Reglas invariantes:
-   - Mantener siempre los ids `FR-XXX`, `NFR-XXX` y `BR-XX` existentes, también al reordenar o eliminar; los nuevos toman el siguiente secuencial libre.
+   - Mantener siempre los ids `FR-XXX`, `NFR-XXX`, `BR-XX`, `AC-XXX`, `OB-XX` y `SC-XX` existentes, también al reordenar o eliminar; los nuevos toman el siguiente secuencial libre. Un `AC-XXX` que cambia de enunciado se señala en el mensaje de cierre: sus `TC-XXX` (si `test-define` ya los generó) deben revisarse.
+   - Si el documento es un **PRD** y el cambio pedido es de ingeniería (stack, repos, umbral de NFR, método de verificación), no aplicarlo suelto: ofrecer el [flujo de promoción](#flujo-promover-un-prd-a-srs).
    - Si el cambio trae información nueva del requerimiento (no una corrección de redacción), guardarla en `references/` como un archivo adicional (ver paso 2 del flujo de creación) en vez de reescribir el original.
    - Si cambia el stack tecnológico o alguno de los repositorios, actualizar la marca oculta `srs:stack-mode` si corresponde y revisar si la tabla de **Historias de usuario derivadas** queda desalineada — avisar al usuario en ese caso en vez de corregirla por cuenta propia (esa tabla la puebla el resultado de `/work-define`, no este skill).
    - Si el usuario pide un cambio de UI sobre un wireframe ya aprobado, tratarlo como una nueva vuelta de revisión (paso 4 del flujo de creación): delegar de nuevo a `/design-define` vía subagente indicando el `WF-XXX` existente (nunca uno nuevo para la misma pantalla) y el cambio pedido — él actualiza el SVG y su Historial de cambios —, y aquí reflejar el impacto reportado en los `FR-XXX` afectados y sincronizar el estado devuelto en la sección 11 con la cabecera del wireframe antes de volver a marcarlo `Approved`.
@@ -149,6 +224,7 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
 
 **Información:**
 
+- **Tipo de documento resuelto en el Paso 0** (RQ / PRD / SRS), con el parte de señales presentado y la pregunta hecha (u omitida por regla), antes de crear carpetas
 - Objetivo funcional del requerimiento claro
 - Requerimiento en bruto guardado en `references/` antes de redactar nada, en cualquier formato aportado (texto, transcripción, diseño, wireframes, documentación técnica, imágenes)
 - **Imágenes, capturas, diagramas y wireframes aportados leídos e interpretados** (no asumidos) antes de redactar; lagunas o conflictos detectados en ellos trasladados a la tanda de preguntas del paso 3 — mismo criterio que `/work-define` con sus artefactos visuales
@@ -158,8 +234,8 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
 - Necesidad de UI inferida (o preguntada si era ambigua); si es Sí: tipo de solución y responsividad inferidos (o preguntados si era ambiguo), y wireframes generados y revisados por pantalla
 - Método de verificación y criterio de verificación asignados a cada requisito; verificabilidad revisada (sin términos ambiguos sin medida concreta)
 - Riesgos identificados y presentados como lote, con probabilidad/impacto/mitigación
-- Pregunta inicial de stack (investigar vs. decidido) ya formulada y respondida
-- Repositorios identificados, con su **tipo** (nuevo / existente) resuelto explícitamente por cada uno, y proyecto base resuelto para los nuevos
+- Pregunta inicial de stack (investigar vs. decidido) ya formulada y respondida — **solo SRS**
+- Repositorios identificados — **solo SRS**;, con su **tipo** (nuevo / existente) resuelto explícitamente por cada uno, y proyecto base resuelto para los nuevos
 - Entrevista conducida según [`interview.md`](interview.md): olas en orden (Discovery → Definition → Validation), cada tanda de un solo rol y en su lenguaje; sin decisiones de diseño redactadas como requisitos (tecnología solo como restricción explícita)
 - Ola 3 ejecutada tras redactar: gaps, revisión cruzada y validación con subagente sin contexto de sesión; hallazgos resueltos o registrados en Observaciones
 - Idioma resuelto según la sección «Resolución de idioma» de `SKILL.md`
@@ -167,19 +243,19 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
 
 **Validación:**
 
-- ID `SRS-XXX` sin carpeta existente (creación) o carpeta identificada (actualización)
-- Sin solapamiento de alcance con SRS existentes
+- Número del ID libre en **todos** los prefijos (`RQ-*`, `PRD-*`, `SRS-*`, activos y archivados) en creación, o carpeta identificada en actualización/promoción
+- Sin solapamiento de alcance con SRS/PRD/RQ existentes (activos y archivados)
 - Objetivo funcional identificado (mínimo para crear); si el resto no es completamente resoluble → `Estado: Draft` con lagunas en Observaciones
 
-**Condiciones para** `Estado: Ready`**:** ver [Definition of Ready (DoR) del SRS](quality-criteria.md#definition-of-ready-dor-del-srs).
+**Condiciones para** `Estado: Ready`**:** según el tipo — [DoR del SRS](quality-criteria.md#definition-of-ready-dor-del-srs), [DoR del PRD](quality-criteria.md#definition-of-ready-dor-del-prd), [DoR del RQ](quality-criteria.md#definition-of-ready-dor-del-rq).
 
 **Formato:**
 
-- Plantilla `assets/srs-template.md` leída
+- Plantilla del tipo leída (`assets/rq-template.md`, `assets/prd-template.md` o `assets/srs-template.md`)
 - `FR-XXX`/`NFR-XXX` en tabla, con identificadores secuenciales sin saltos; categoría, prioridad y estado del requisito completos; enunciado RFC 2119 en MAYÚSCULAS
 - Requerimiento en bruto en `references/` (nunca en `assets/`), enlazado desde Enlaces y archivos de apoyo
 - Wireframes, si los hay, generados y revisados por `/design-define` vía subagente (nunca escritos desde aquí) en `wireframes/WF-XXX-[pantalla-slug].md` + `.svg` dentro de la carpeta del SRS; nada escrito en `docs/architecture/`; tabla en la sección Diseño de interfaz con las rutas devueltas tal cual y el estado idéntico al de la cabecera de cada `.md`; cada observación reportada con impacto reflejada en su `FR-XXX`
-- Verificación y trazabilidad completa: todo `FR-XXX`/`NFR-XXX` con método y criterio de verificación, sin duplicar el enunciado del requisito
+- Verificación y trazabilidad completa: todo `FR-XXX`/`NFR-XXX` con al menos un `AC-XXX` y su criterio (método `Pendiente` solo en PRD), sin duplicar el enunciado del requisito
 - Detalle técnico de modelos/APIs/flujos remitido a `design-define` cuando corresponda (no se redacta aquí; ese detalle llega después, a nivel de US o TK)
 
 ---
@@ -218,10 +294,27 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
 - *Comportamiento:* El agente guarda los tres insumos en `references/` (transcripción → `raw-requirement.md`; capturas y PDF → copiados con su nombre original) → **lee las capturas** antes de continuar: identifica en ellas las pantallas y campos del sistema legado, y detecta que una de ellas muestra un flujo de aprobación no mencionado en la transcripción → traslada esa discrepancia a la tanda de preguntas del paso 3 («la captura muestra un paso de aprobación de un supervisor que la transcripción no menciona, ¿sigue vigente?») en lugar de asumir cuál de las dos fuentes prevalece → lee el PDF de políticas de retención y lo usa directamente como insumo de la sección Cumplimiento normativo, citando la política concreta.
 - *Salida:* `references/` con los tres archivos originales enlazados desde Enlaces y archivos de apoyo; `FR-XXX` que reflejan el flujo de aprobación aclarado por el usuario; sección Cumplimiento normativo con la política del PDF trazada a su `FR-XXX`/`NFR-XXX` correspondiente.
 
+**Ejemplo 7 — Documento del cliente ya aprobado, harness de pruebas → RQ**
+
+- *Entrada:* El usuario adjunta «DTG-003 v1.1 — Análisis técnico, Requerimiento #15428», con responsable y aprobación del cliente, en un repositorio con `scope: tests`.
+- *Comportamiento:* Paso 0: el parte detecta dueño externo + `scope: tests` → **RQ sin preguntar**, informando el motivo. Se guarda el `.docx` en `references/`, se leen sus capturas, se extraen `AC-XXX` con fuente («§4 HU8», «§3 Objetivo 3»…), se arma la Cobertura de la fuente marcando «Objetivo 5 — experiencia intuitiva» como «Sin criterio (no verificable)» y los ETLs de «Análisis de impacto» como «Fuera del alcance de certificación» si el usuario lo confirma. Una sola pregunta de confirmación del lote → `Ready` → se ofrece `/test-define RQ-001`.
+- *Salida:* `RQ-001-roles-capp/README.md` con encabezado (dueño, documento fuente v1.1, Requerimiento #15428), `AC-XXX` trazados a la fuente y Cobertura firmable; nada de FR/NFR, stack ni objetivos propios.
+
+**Ejemplo 8 — Producto nuevo, negocio debe aprobar antes de decidir tecnología → PRD y promoción**
+
+- *Entrada:* «Queremos una app para que los socios consulten y disputen cargos; el comité la aprueba el mes que viene y recién después definimos con qué se construye.»
+- *Comportamiento:* Paso 0 recomienda **PRD**; el usuario confirma. Olas 1-2 con PO y UX: problema y evidencia, `OB-01` «reducir llamadas al call center por disputas» (métrica proxy), actores y `SC-XX`, `FR-XXX` priorizados, `NFR-XXX` cualitativos («los datos del socio deben estar protegidos»), wireframes vía `design-define`, `AC-XXX` de negocio, riesgos de adopción. Secciones 3, 4, 8.2-8.4 y método de verificación quedan «Pendiente — se completa al promover a SRS». Ola 3 con PO+UX → `Ready` → se ofrece `/work-define`, `/test-define PRD-004` y «Promover a SRS». Un mes después, `/requirement-refine srs PRD-004`: corre solo el bloque ARCH (umbrales de NFR, interfaces, datos, métodos, stack, repos), mismos ids, `git mv PRD-004-disputas-cargos SRS-004-disputas-cargos` con enlaces reparados, fecha de promoción, Ola 3 completa.
+
 ---
 
 ## Anti-patterns
 
+- **Saltarse el Paso 0** y crear directamente un SRS (o un RQ) sin haber compuesto el parte de señales y resuelto el tipo de documento; o preguntar el tipo cuando una regla ya lo fija (modificador, `scope: tests` + dueño externo, tipo ya dicho en la sesión).
+- **Redactar un PRD como «SRS sin rigor»**: `FR-XXX` sin RFC 2119, sin prioridad o sin `AC-XXX`. El PRD recorta el *contexto de implementación*, no la calidad del requisito.
+- **Preguntar o inferir el stack en un PRD**, o rellenar las secciones «solo SRS» de `prd-template.md` en vez de dejarlas con su línea «Pendiente — se completa al promover a SRS»; o usar `srs-template.md` para un PRD.
+- **Convertir un RQ en PRD/SRS** reutilizando su carpeta o renumerando sus `AC-XXX`; o redefinir alcance/objetivos en un RQ cuando la definición es de un tercero.
+- **Crear un RQ cuando ya existe un PRD/SRS** del mismo requerimiento: `test-define` consume los `AC-XXX` de la sección 12 directamente.
+- **Renumerar `AC-XXX`, `OB-XX` o `SC-XX`** al actualizar o promover: son tan inmutables como los `FR-XXX`. Tampoco dar un número nuevo al promover (PRD-007 → SRS-007, nunca SRS-012), ni calcular el siguiente libre mirando un solo prefijo.
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma, que se lee la plantilla, o ir enumerando pasos en voz alta. Al usuario se le comunica el resultado y las preguntas que el flujo exija.
 - **Asumir el contenido de una imagen, captura, diagrama o wireframe aportado sin leerlo**, en lugar de interpretarlo antes de continuar — igual de grave que inventar el texto de un requerimiento no leído.
 - Descartar como «fuera de formato» un insumo que no sea texto plano (transcripción de reunión, diseño, documentación técnica): cualquier insumo que dé contexto de alcance se captura y se lee, no solo el texto pegado directamente.
@@ -230,7 +323,7 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
 - Preguntar por repositorio pero omitir la pregunta de proyecto base para alguno de ellos.
 - Asumir que un repositorio es nuevo o existente por su nombre, por aparecer como submódulo del workspace, o porque «suena» a un proyecto conocido, en lugar de preguntarlo explícitamente por cada uno.
 - Preguntar por proyecto base en un repositorio que el usuario ya declaró **existente**: esa pregunta solo aplica a repositorios nuevos; para uno existente la columna Proyecto base es «No aplica», no una pregunta pendiente.
-- Redactar `FR-XXX`/`AC-XXX` de historia de usuario: este skill no crea criterios de aceptación ni US, solo requisitos de alto nivel que `work-define` descompone después.
+- Redactar historias de usuario o los `AC-XXX` **de una US**: los `AC-XXX` de este skill son criterios de aceptación **del requerimiento** (sección 12), que `work-define` hereda y refina por historia; este skill no crea US.
 - Documentar modelos de datos, contratos de API o diagramas en el SRS: eso es `design-define`, y llega después, a nivel de US o TK.
 - Guardar el requerimiento en bruto en `assets/` en vez de `references/`, o reescribirlo/sobrescribirlo en una actualización en vez de añadir un archivo nuevo — `references/` es un registro de procedencia, no un borrador editable.
 - Preguntar «¿tiene interfaz propia?» cuando ya es evidente por el requerimiento y los `FR-XXX` (gasta un turno de más); o, al revés, dar por sentado un caso ambiguo sin preguntar en lugar de reconocer la ambigüedad y confirmarlo con el usuario.
@@ -239,7 +332,7 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
 - Indexar en la sección 11 una ruta recompuesta desde el nombre de la pantalla en vez de la devuelta por `design-define`, o un estado distinto al de la cabecera del `.md`; o dejar un `WF-XXX` devuelto sin su fila en la sección 11 — un wireframe huérfano no lo encuentra `work-define`.
 - Crear o editar cualquier cosa en `docs/architecture/` desde este skill (carpetas de capability, `models/`, `flows/`, `diagrams/`, APIs): los wireframes son un recurso del SRS, no de la arquitectura, y tanto ellos como la documentación técnica los escribe `/design-define`.
 - Recibir del subagente una observación con impacto en requisitos y no reflejarla en los `FR-XXX` — o ajustar un `FR-XXX` por una observación de wireframe sin que esa observación esté en el Historial de cambios del wireframe (si no está, el cambio no pasó por `design-define`).
-- Declarar `Estado: Ready` sin stack resuelto, sin repositorios con su tipo y proyecto base definidos, con alguna pantalla de UI todavía `Proposed`, o con Observaciones que aún listen pendientes.
+- Declarar `Estado: Ready` en un SRS sin stack resuelto, sin repositorios con su tipo y proyecto base definidos, con alguna pantalla de UI todavía `Proposed`, o con Observaciones que aún listen pendientes.
 - Crear la historia de usuario directamente desde este skill al llegar a Ready, en lugar de invocar `/work-define`.
 - Preguntar por stack, repositorios o proyecto base antes de cerrar lo funcional (alcance, actores, `FR-XXX`, `NFR-XXX`), salvo la excepción explícita de una duda funcional que no se puede cerrar sin una definición técnica puntual.
 - Usar la excepción de duda funcional como atajo para adelantar todo el stack de una vez: solo se adelanta la pieza técnica puntual que la duda funcional necesita, no el resto.
@@ -247,7 +340,7 @@ Si hay conflicto de ID o solapamiento, informar al usuario y ofrecer: (a) ajusta
 - Preguntar la prioridad, el método de verificación o los riesgos **uno por uno**, requisito por requisito, en lugar de proponer todo el conjunto y confirmarlo en una sola pregunta.
 - Redactar un criterio de verificación con términos ambiguos («debe ser rápido», «fácil de usar», «robusto») sin una medida concreta, en lugar de tratarlo como una laguna de verificabilidad hasta poder formularlo de forma comprobable.
 - Duplicar el enunciado completo del `FR-XXX`/`NFR-XXX` dentro de la tabla de Verificación y trazabilidad en lugar de referenciar el `ID` — esa tabla es de seguimiento, no una copia del requisito.
-- Declarar `Estado: Ready` con requisitos en Verificación y trazabilidad sin método o sin criterio de verificación, o con `FR-XXX`/`NFR-XXX` sin prioridad asignada.
+- Declarar `Estado: Ready` con `FR-XXX`/`NFR-XXX` sin `AC-XXX`, sin prioridad asignada, o (en un SRS) con `AC-XXX` sin método de verificación.
 - Tratar un riesgo identificado como bloqueante de `Estado: Ready` por defecto: es informativo, salvo que el usuario decida dejarlo como laguna abierta explícita.
 - Crear un `FR-XXX` para una capacidad transversal común (autenticación, roles/permisos, notificaciones, auditoría, pagos, almacenamiento, búsqueda, etc.) sin antes evaluar si ya existe o se reutiliza del proyecto base o de una plataforma compartida — construir de más lo que ya está resuelto.
 - Preguntar explícitamente, una por una, por cada capacidad transversal común en lugar de inferir primero y preguntar solo las que queden ambiguas.
@@ -264,12 +357,17 @@ Posición: **antes del inicio** del pipeline `work-define` → `work-plan` → `
 
 |                              |                                                                                                                                                                                                                    |
 | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Entrada**                  | Un requerimiento en bruto: idea, ticket, correo o conversación, sin estructurar. No requiere SRS ni US previos.                                                                                                 |
-| **Salida mínima (creación)** | Carpeta `SRS-XXX-[nombre-corto]/README.md` con objetivo funcional; puede quedar en `Estado: Draft` con lagunas en Observaciones.                                                                                |
-| **Salida para continuar**    | `Estado: Ready`: stack resuelto, repositorios y proyecto base definidos, al menos un `FR-XXX` priorizado y con método/criterio de verificación, `NFR-XXX` igual de completos, interfaces externas y requisitos de datos revisados, wireframes aprobados si el requerimiento tiene UI, riesgos identificados, Observaciones sin pendientes abiertos y **validación final de Ola 3 superada** — gaps, revisión cruzada y subagente sin contexto, ver [`interview.md`](interview.md#ola-3-en-detalle-paso-11-de-flowmd) (ver [Definition of Ready (DoR) del SRS](quality-criteria.md#definition-of-ready-dor-del-srs)). |
-| **Siguiente paso**           | Con el SRS en `Ready`: invocar **`/work-define`**, pasándole el contexto completo del SRS (incluidos los wireframes aprobados y la tabla de Verificación y trazabilidad como insumo de los criterios de aceptación de las historias que correspondan), para descomponerlo en una o más historias de usuario. No crear `US-XXX` desde este skill. `work-define` tiene su propio flujo receptor (`Flujo: Descomponer un SRS-XXX en historias`) que hereda repos/wireframes/criterios en vez de repreguntarlos, y al terminar **escribe de vuelta** en la tabla **Historias de usuario derivadas** (sección 15) de este mismo `README.md` — es la única sección del SRS que se puebla después de Ready. |
+| **Entrada**                  | Un requerimiento en bruto: idea, ticket, correo, conversación o **documento de un tercero** (con o sin estructura). No requiere SRS ni US previos. **Es el único punto de entrada de requerimientos del catálogo:** `test-define` no formaliza nada por su cuenta — con texto crudo hace handoff aquí con `origen=test-define`. |
+| **Paso 0**                   | Tipo de documento: `RQ-XXX` (solo certificar), `PRD-XXX` (aprobar producto) o `SRS-XXX` (implementar); un solo secuencial para los tres. Ver [Paso 0](#paso-0--tipo-de-documento). |
+| **Salida mínima (creación)** | Carpeta `<RQ|PRD|SRS>-XXX-[slug]/README.md` — con objetivo funcional en PRD/SRS, con documento fuente y al menos un `AC-XXX` en RQ; puede quedar en `Estado: Draft` con lagunas en Observaciones.                                                                                |
+| **Salida para continuar**    | `Estado: Ready` según el DoR del tipo. Para un SRS: stack resuelto, repositorios y proyecto base definidos, al menos un `FR-XXX` priorizado y con método/criterio de verificación, `NFR-XXX` igual de completos, interfaces externas y requisitos de datos revisados, wireframes aprobados si el requerimiento tiene UI, riesgos identificados, Observaciones sin pendientes abiertos y **validación final de Ola 3 superada** — gaps, revisión cruzada y subagente sin contexto, ver [`interview.md`](interview.md#ola-3-en-detalle-paso-11-de-flowmd) (ver [Definition of Ready (DoR) del SRS](quality-criteria.md#definition-of-ready-dor-del-srs)). |
+| **Siguiente paso (RQ)**      | Con el RQ en `Ready`: **`/test-define RQ-XXX`**, único siguiente paso. |
+| **Siguiente paso (PRD)**     | Con el PRD en `Ready`: **`/work-define`** (las US no necesitan stack; `work-define` deja repositorios por confirmar), **`/test-define PRD-XXX`** (TCs de aceptación sobre los `AC-XXX`) o **promover a SRS**. Nunca `/work-plan` ni `/arch-init` desde un PRD. |
+| **Siguiente paso (SRS)**     | Con el SRS en `Ready`: invocar **`/work-define`**, pasándole el contexto completo del SRS (incluidos los wireframes aprobados y la tabla de Verificación y trazabilidad como insumo de los criterios de aceptación de las historias que correspondan), para descomponerlo en una o más historias de usuario. No crear `US-XXX` desde este skill. `work-define` tiene su propio flujo receptor (`Flujo: Descomponer un SRS-XXX en historias`) que hereda repos/wireframes/criterios en vez de repreguntarlos, y al terminar **escribe de vuelta** en la tabla **Historias de usuario derivadas** (sección 15) de este mismo `README.md` — es la única sección del SRS que se puebla después de Ready. |
 | **Repositorios sin harness**  | Si algún repositorio de la sección 4 (nuevo, o existente sin `AGENTS.md` en su raíz; `.sdd-devkit/settings.json` solo se exige en la raíz principal, nunca en un submódulo) todavía no tiene el harness inicializado, ofrecer también **`/arch-init`** junto a `/work-define` en la misma pregunta de cierre — opción adicional, no bloquea ni reemplaza el handoff habitual. |
 | **Si queda en Draft**        | No **ofrecer** el handoff a `work-define`; cerrar lagunas con preguntas estructuradas o mantener Draft documentado. (Si el usuario igualmente pide descomponerlo, `work-define` acepta un SRS en Draft con aviso — las lagunas de Observaciones tienden a trasladarse a las US; no bloquearlo, pero advertirlo.)                                                                                                        |
 | **Delegación a design-define** | Si el requerimiento tiene UI → subagente con `/design-define` (flujo «Wireframes») genera y revisa con el usuario los `WF-XXX` en `wireframes/` de la carpeta del SRS y devuelve rutas, estados e impacto en requisitos; este skill los indexa en la sección 11 y aplica el impacto en los `FR-XXX`. Nunca escribe wireframes por sí mismo. |
 | **Delegación a work-research** | Si el usuario elige investigar el stack → subagente con `/work-research` (Investigación libre, dominio Técnica) produce el `RS-XXX` que este skill enlaza en la sección Stack tecnológico y resume, sin duplicar su contenido. |
+| **Hacia test-define**        | PRD/SRS: los `AC-XXX` de la sección 12 son los criterios; TCs en `test-cases/` de la carpeta del documento, padre `PRD-XXX` o `SRS-XXX` (al promover, el padre de esos TC se actualiza al nuevo prefijo). RQ: los `AC-XXX` de su tabla; TCs en `test-cases/` del RQ. `test-define` añade la línea «Casos de prueba:» bajo cada AC y no edita nada más. |
+| **Desde test-define**        | Llega un requerimiento crudo con `origen=test-define`: el Paso 0 recomienda RQ; el usuario puede elegir PRD/SRS. Al terminar, el cierre ofrece `/test-define <ID>` y `test-define` continúa su flujo normal. |
 | **Regreso desde work-define** | Si al descomponer el SRS en historias aparece una laguna funcional que el SRS no cubría, el usuario decide si se completa aquí (actualizar el SRS) o directamente en la US — este skill no impone cuál.        |

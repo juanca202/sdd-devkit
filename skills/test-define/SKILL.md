@@ -1,6 +1,6 @@
 ---
 name: test-define
-description: "Crear casos de prueba (TC-XXX) a partir de los criterios de aceptación de cualquier artefacto de especificación con identificador codificado: una historia de usuario (US-XXX), un work item (WI-XXX), un feature (FT-XXX) o cualquier documento cuyos criterios estén numerados (AC-001, 1.1, R-3…), según IEEE 29119-4. Un requerimiento en texto crudo se formaliza antes como RQ-XXX; `archive` lo archiva. Activar cuando el usuario pida \"definir test cases\", \"crear casos de prueba\", \"generar TCs\", \"pruebas para la US/WI/FT\", o mencione \"test-define\" o \"/test-define\". Con integración de gestor de proyectos activa, también para sincronizar casos de prueba del tracker con el modificador explícito `sync`, indicando el código o URL de un Test Case o de su historia — crea los TC locales que falten y actualiza los existentes; un `#id` o URL sin modificador NO sincroniza nada: se pregunta. Si el artefacto está archivado en <archivedPath>/, se detiene: hay que desarchivarlo antes."
+description: "Crear casos de prueba (TC-XXX) a partir de los criterios de aceptación de cualquier artefacto de especificación con identificador codificado: una historia de usuario (US-XXX), un work item (WI-XXX), un feature (FT-XXX), un requerimiento formalizado por /requirement-refine (RQ-XXX; o PRD-XXX/SRS-XXX, cuyos AC-XXX viven en su sección 12) o cualquier documento cuyos criterios estén numerados (AC-001, 1.1, R-3…), según IEEE 29119-4. Un requerimiento en texto crudo NO se formaliza aquí: se hace handoff a /requirement-refine (que elige RQ/PRD/SRS) y se vuelve con el ID. Este skill no archiva nada. Activar cuando el usuario pida \"definir test cases\", \"crear casos de prueba\", \"generar TCs\", \"pruebas para la US/WI/FT\", o mencione \"test-define\" o \"/test-define\". Con integración de gestor de proyectos activa, también para sincronizar casos de prueba del tracker con el modificador explícito `sync`, indicando el código o URL de un Test Case o de su historia — crea los TC locales que falten y actualiza los existentes; un `#id` o URL sin modificador NO sincroniza nada: se pregunta. Si el artefacto está archivado en <archivedPath>/, se detiene: hay que desarchivarlo antes."
 license: MIT
 ---
 
@@ -21,8 +21,8 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 | Integración condicional con un gestor de proyectos: detalle específico de cada proveedor (creación de work items, campos, IDs, vinculación al artefacto padre) | `references/<proveedor>.md` (p. ej. [`references/azure-devops.md`](references/azure-devops.md) para Azure DevOps) — leer solo si la integración está activa (ver [Resolución de la integración con el gestor de proyectos](#resolución-de-la-integración-con-el-gestor-de-proyectos)) |
 | **Sincronizar** casos de prueba desde el gestor de proyectos (`sync <#TC \| #US \| URL>`): crea los que falten y actualiza los que existan — solo con integración activa | [Flujo: sincronizar TCs](#flujo-sincronizar-tcs-desde-el-gestor-de-proyectos-sync) y, por proveedor, la sección «Lectura» de `references/<proveedor>.md` (p. ej. [`references/azure-devops.md`](references/azure-devops.md#lectura-sync)) |
 | Estructura del archivo de un caso de prueba | [`assets/test-case-template.md`](assets/test-case-template.md) |
-| Estructura del documento `RQ-XXX` que se crea cuando el requerimiento llega en bruto | [`assets/requirement-template.md`](assets/requirement-template.md) — ver [Requerimiento (`RQ-XXX`)](#requerimiento-rq-xxx--requerimiento-en-bruto) |
-| Archivar un `RQ-XXX` (`archive`) | [Modificador `archive`](#modificador-archive-archivar-requerimientos-rq-xxx) y [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md) |
+| Qué hacer cuando el requerimiento llega **en bruto** (texto o documento ajeno al proyecto): handoff a `/requirement-refine` | [Requerimiento en bruto → handoff](#requerimiento-en-bruto--handoff-a-requirement-refine) |
+| Cómo se leen los `AC-XXX` de un `RQ-XXX`, `PRD-XXX` o `SRS-XXX` de `requirement-refine`, y dónde van sus TCs | [Requerimientos formalizados (`RQ-XXX`, `PRD-XXX`, `SRS-XXX`)](#requerimientos-formalizados-rq-xxx-prd-xxx-srs-xxx) |
 
 ### Referencias compartidas del plugin
 
@@ -117,38 +117,29 @@ Las **claves** son en inglés (estándar); el usuario puede nombrarlas en españ
 
 > **Un `#id` o una URL de work item sin modificador nunca dispara una sincronización ni sirve de número para un TC nuevo.** Si la entrada trae algo que parece un identificador del tracker, o palabras como «importa», «trae», «sincroniza», «los test cases de Azure/ADO», **preguntar** (herramienta estructurada) antes de hacer nada: Opciones: [Sincronizar desde <Sistema>] / [Generar TCs nuevos desde los criterios (el número es solo contexto)]. Con integración desactivada, la pregunta se reduce a confirmar que se generan TCs nuevos.
 
-### Modificador `archive` (archivar requerimientos `RQ-XXX`)
+### `archive` no es de este skill
 
-**Archiva este skill, porque es el que produce el `RQ-XXX`** — no `requirement-refine` (que solo archiva `SRS-XXX`, aunque compartan carpeta) ni los skills de cierre. Procedimiento, destinos, reglas de confirmación y contrato para el resto del catálogo: [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md) — leerlo antes de mover nada.
-
-| Invocación | Alcance |
-|------------|---------|
-| `/test-define archive RQ-XXX` · `/test-define RQ-XXX archive` (uno o varios IDs; el orden es indiferente) | Los requerimientos indicados, **estén como estén**. |
-| `/test-define archive` (sin ID) | **Todos** los `RQ-XXX` de `<changesPath>/requirements/` que ya estén **completos**; los incompletos se listan aparte con su estado y no se mueven. Nunca toca los `SRS-XXX` de esa carpeta. |
-
-- **Solo `RQ-XXX`.** Con un `US`/`WI`/`SRS`/`RS`, parar e indicar el skill que lo archiva (`work-define`, `work-plan`, `requirement-refine`, `work-research`). Los `TC-XXX` no se archivan por separado: viajan con su padre.
-- **El estado no restringe, pero se informa.** Parte de estado antes de preguntar: `Estado` del `README.md`, criterios sin TC, TCs en `Draft` y —si existe— el veredicto de `criteria-coverage.md`. Señales de incompleto: `Draft`, algún `AC-XXX` sin TC, algún TC en `Draft`, cobertura `REJECTED`.
-- **Siempre se confirma** (herramienta estructurada, una sola tanda para todo el lote), mostrando origen → destino. Sin canal de respuesta, no se archiva.
-- **Destino:** `<archivedPath>/requirements/RQ-XXX-{slug}/`; la carpeta se mueve completa (`README.md`, `assets/`, `test-cases/`). `git mv`, guard de destino, reparación de enlaces y cierre con un commit directo `docs(specs): archivar RQ-XXX`, tal como describe la referencia.
-- Un `RQ` ya bajo `<archivedPath>` se informa y no se toca; un ID suelto **sin** `archive` nunca archiva.
+Este skill **no archiva nada**. Un `RQ-XXX`, `PRD-XXX` o `SRS-XXX` se archiva con `/requirement-refine archive <ID>` (los `TC-XXX` viajan con su padre); una US con `work-define`, un WI con `work-plan`. Si el usuario pide `/test-define archive …`, indicar el skill correcto sin mover nada. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md).
 
 ---
 
 ## Selección del artefacto
 
-El usuario indica un artefacto: puede ser un identificador conocido del repo (`US-XXX`, `WI-XXX`, `FT-XXX`) **una ruta/nombre de cualquier otro documento** de especificación que ya existe en el proyecto, **o un requerimiento en bruto** (texto en la conversación o documento adjunto que no vive en el proyecto), que se formaliza primero como `RQ-XXX`. La única condición para procesarlo es la del Paso 1: que tenga criterios de aceptación con identificador codificado. Si el artefacto es ambiguo (varios candidatos, o no está clara la ruta), **preguntar** antes de continuar.
+El usuario indica un artefacto: puede ser un identificador conocido del repo (`US-XXX`, `WI-XXX`, `FT-XXX`, `RQ-XXX`, `PRD-XXX`, `SRS-XXX`), **una ruta/nombre de cualquier otro documento** de especificación que ya existe en el proyecto, **o un requerimiento en bruto** (texto en la conversación o documento adjunto que no vive en el proyecto) — este último **no se procesa aquí**: ver [Requerimiento en bruto → handoff](#requerimiento-en-bruto--handoff-a-requirement-refine). La única condición para procesar un artefacto es la del Paso 1: que tenga criterios de aceptación con identificador codificado. Si el artefacto es ambiguo (varios candidatos, o no está clara la ruta), **preguntar** antes de continuar.
 
 | Tipo | Ubicación del artefacto | Ubicación de los TCs |
 |------|------------------------|----------------------|
 | Historia de usuario | `<changesPath>/user-stories/US-XXX-{nombre}/README.md` | `<changesPath>/user-stories/US-XXX-{nombre}/test-cases/` |
 | Work item | `<changesPath>/work-items/WI-XXX-{kebab-case}/README.md` | `<changesPath>/work-items/WI-XXX-{kebab-case}/test-cases/` |
 | Feature (funcionalidad ya implementada) | `<currentPath>/FT-XXX-{slug}/README.md` | `<currentPath>/FT-XXX-{slug}/test-cases/` |
-| Requerimiento **en bruto**: texto en la conversación o documento adjunto que no vive en el proyecto | Lo crea este skill: `<changesPath>/requirements/RQ-XXX-{slug}/README.md` (ver [abajo](#requerimiento-rq-xxx--requerimiento-en-bruto)) | `<changesPath>/requirements/RQ-XXX-{slug}/test-cases/` |
+| Requerimiento externo (de `requirement-refine`, tipo RQ) | `<changesPath>/requirements/RQ-XXX-{slug}/README.md` — criterios en su tabla **Criterios de aceptación** | `<changesPath>/requirements/RQ-XXX-{slug}/test-cases/` |
+| PRD o SRS (de `requirement-refine`) | `<changesPath>/requirements/PRD-XXX-{slug}/README.md` o `SRS-XXX-{slug}/README.md` — criterios `AC-XXX` en la **sección 12** (columna `AC`; «Criterios de aceptación y trazabilidad» en el PRD, «Verificación y trazabilidad» en el SRS) | `test-cases/` dentro de esa misma carpeta |
+| Requerimiento **en bruto**: texto en la conversación o documento adjunto que no vive en el proyecto | **No se crea nada aquí.** Handoff a `/requirement-refine` (ver [abajo](#requerimiento-en-bruto--handoff-a-requirement-refine)); se vuelve con el `RQ-XXX`/`PRD-XXX`/`SRS-XXX` resultante | Según el tipo que `requirement-refine` haya creado (dos filas de arriba) |
 | **Cualquier otro artefacto** de especificación que ya existe en el proyecto, sea cual sea su origen o formato | La ruta que indique el usuario (buscarla en el repo si solo da un nombre) | `test-cases/` dentro de la carpeta que contiene el artefacto; si el artefacto es un archivo suelto, `test-cases/` junto a él. Confirmar la ruta con el usuario antes de escribir. |
 
 > La carpeta `test-cases/` se crea si no existe; el archivo del artefacto permanece donde está.
 
-> **Artefacto archivado.** Si un `US-XXX`/`WI-XXX` no aparece en su ruta activa, buscarlo bajo `<archivedPath>/user-stories/` o `<archivedPath>/work-items/` antes de darlo por inexistente — el usuario puede haberlo archivado con el modificador `archive` de `work-define`/`work-plan`. Si está archivado, **parar y avisar**: definir casos de prueba nuevos para un trabajo ya cerrado requiere desarchivarlo primero, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado: además de duplicar el identificador, la numeración de TCs del [Paso 3](#numeración-y-nombres-de-archivo) reiniciaría en `001` ignorando los TCs que ya existen en el archivo. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo).
+> **Artefacto archivado.** Si un `US-XXX`/`WI-XXX`/`RQ-XXX`/`PRD-XXX`/`SRS-XXX` no aparece en su ruta activa, buscarlo bajo `<archivedPath>/user-stories/`, `<archivedPath>/work-items/` o `<archivedPath>/requirements/` antes de darlo por inexistente — el usuario puede haberlo archivado con el modificador `archive` de `work-define`/`work-plan`/`requirement-refine`. Si está archivado, **parar y avisar**: definir casos de prueba nuevos para un trabajo ya cerrado requiere desarchivarlo primero, y eso lo decide el usuario. **Nunca** crear la carpeta en la ruta activa por no haberla encontrado: además de duplicar el identificador, la numeración de TCs del [Paso 3](#numeración-y-nombres-de-archivo) reiniciaría en `001` ignorando los TCs que ya existen en el archivo. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md#contrato-para-el-resto-del-catálogo).
 
 ### Feature (`FT-XXX`) — funcionalidad ya implementada
 
@@ -164,19 +155,24 @@ criterios del feature describen el comportamiento **ya implementado**, así que 
 la **red de seguridad** para cubrirlo; cuando un TC valide un comportamiento que el
 discovery marcó como posible bug preservado, anotarlo para trazabilidad.
 
-### Requerimiento (`RQ-XXX`) — requerimiento en bruto
+### Requerimientos formalizados (`RQ-XXX`, `PRD-XXX`, `SRS-XXX`)
 
-**Solo cuando el usuario entrega el requerimiento en crudo** —texto escrito o pegado en la conversación, o un documento que adjunta y que **no vive en el proyecto** (incluido el que llega por el handoff de `arch-init` en un proyecto de pruebas)—, este skill lo formaliza como un documento `RQ-XXX` para extraer de él las reglas de negocio (`BR-XX`) y los criterios de aceptación (`AC-XXX`), y planifica los casos de prueba sobre ese documento **igual** que con una US, un WI o un FT.
+Los produce `/requirement-refine`; este skill solo los lee.
 
-> **Un documento que ya existe dentro del proyecto no genera `RQ`.** Si el usuario referencia un archivo del repo (por ruta o nombre), se procesa en su sitio como «cualquier otro artefacto» (última fila de la tabla), con las reglas del Paso 1 tal cual — incluido parar si sus criterios no tienen identificador. Tampoco una US/WI/FT.
+- **`RQ-XXX` (requerimiento externo):** la definición es de un tercero y el RQ solo acuerda qué se certifica. Criterios en su tabla **Criterios de aceptación** (`AC-XXX`, cada uno con la **fuente** del documento del dueño). Flujo normal: estado `Ready`, entrevista, perspectivas, índice y trazabilidad del Paso 5 sobre el `README.md` del RQ; TCs en `RQ-XXX-{slug}/test-cases/` con **Artefacto padre** `RQ-XXX`. Al reportar un TC fallido, citar junto al `AC-XXX` su fuente (p. ej. «AC-007 — DTG-003 §4 HU8»): es lo que el dueño del documento reconoce. Si el RQ recibe una nueva versión del documento fuente, `requirement-refine` marca los AC afectados y avisa; los TC correspondientes se revisan con el [flujo de actualización](#flujo-actualizar-tcs-existentes).
+- **`PRD-XXX` o `SRS-XXX`:** los criterios son los `AC-XXX` de la **sección 12** (columna `AC`; titulada «Criterios de aceptación y trazabilidad» en el PRD y «Verificación y trazabilidad» en el SRS; un `FR-XXX`/`NFR-XXX` puede tener varios). Los TCs que salen de aquí son **pruebas de aceptación del requerimiento** (lo que el cliente certifica), con **Artefacto padre** `PRD-XXX` o `SRS-XXX` según el documento, en su `test-cases/`. Un `PRD-XXX` `Ready` es válido como origen: el método de verificación `Pendiente` no bloquea; si el método está fijado (SRS), úsalo como pista del tipo de prueba. Cuando `requirement-refine` promueve un PRD, renombra la carpeta a `SRS-XXX` (mismo número) y actualiza el **Artefacto padre** de estos TC; los TC no se regeneran. La línea «Casos de prueba:» del Paso 5 se añade bajo la tabla de la sección 12, una por `AC-XXX`.
+- **Dos niveles, sin duplicar.** Si una `US-XXX` deriva de ese PRD/SRS, sus `AC` traen la referencia al `AC-XXX` de origen. Al generar TCs para la US, **no repetir** los TC de aceptación que ya existen en el PRD/SRS para ese `AC-XXX` de origen: cubrir solo lo específico del incremento (nuevos AC de la US, perspectivas que el TC del requerimiento no cubre) y enlazar en el índice de la US los TC del requerimiento que ya lo cubren.
 
-1. **Ubicación e identificador.** `<changesPath>/requirements/RQ-XXX-{slug}/README.md` (ruta resuelta según [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md)). `XXX` es secuencial de tres dígitos, **global** sobre las carpetas `RQ-*` de `<changesPath>/requirements/` **y** de `<archivedPath>/requirements/`; la numeración es independiente de la de los `SRS-XXX` que conviven en esa carpeta. `{slug}` en kebab-case, corto, derivado del título. La numeración es **siempre local**, con o sin gestor de proyectos: este skill no crea un work item para el `RQ`.
-2. **Conservar el original en `assets/`.** Guardar el requerimiento recibido, íntegro y sin editar, en `RQ-XXX-{slug}/assets/` (el documento adjunto tal cual, o un `.md` con el texto pegado) y **enlazarlo** en la sección **Referencias** del `RQ`. Nunca pegar el original dentro del `README.md`.
-3. **Redactar con la plantilla** [`assets/requirement-template.md`](assets/requirement-template.md) —misma estructura que un `FT-XXX`, pero describe el comportamiento **esperado**, no el ya implementado—: descripción funcional, reglas de negocio `BR-XX` y criterios `AC-XXX` con enunciado RFC 2119, extraídos **solo** de lo que el requerimiento dice. Lo que falte para poder probar se pregunta (con `createDetailsMode: ask`) o se anota como supuesto en **Observaciones** (con `never`); no inventar alcance.
-4. **Confirmar los criterios.** Mostrar al usuario las `BR-XX` y los `AC-XXX` extraídos y pedir confirmación antes de generar ningún TC: aquí sí asigna identificadores este skill, y por eso el usuario los valida. Confirmados, guardar con `Estado: Ready`; si quedan lagunas que impiden probar, dejarlo en `Draft`, informar cuáles son y parar.
-5. **Continuar el flujo normal** desde el [Paso 1](#paso-1--leer-y-extraer-criterios) con el `RQ-XXX` como artefacto origen: entrevista, perspectivas happy/error/límite, índice, y trazabilidad del Paso 5 sobre el `README.md` del `RQ`. Los TCs se guardan en `RQ-XXX-{slug}/test-cases/` y su campo **Artefacto padre** es el `RQ-XXX`.
+### Requerimiento en bruto → handoff a `requirement-refine`
 
-Límites: un `RQ-XXX` es el soporte mínimo para trazar pruebas, **no** un `SRS-XXX` (stack, repositorios, FR/NFR → `requirement-refine`) ni una historia (`work-define`); si el usuario quiere alguno de esos, sugerir el skill correspondiente en vez de crear el `RQ`. Invocado de nuevo sobre un `RQ-XXX` existente (`/test-define RQ-001`), se trata como cualquier artefacto del repo (no se crea otro). Si no aparece en la ruta activa, buscarlo en `<archivedPath>/requirements/` y aplicar la regla de «Artefacto archivado» de arriba. Se archiva con el [modificador `archive`](#modificador-archive-archivar-requerimientos-rq-xxx) de este skill.
+Cuando el usuario entrega el requerimiento **en crudo** —texto escrito o pegado en la conversación, o un documento que adjunta y que **no vive en el proyecto**—, **este skill no crea ningún artefacto**: la formalización de requerimientos es de `requirement-refine`, que decide con el usuario si es un `RQ` (solo certificar), un `PRD` o un `SRS`.
+
+1. **Informar en una línea** que el requerimiento no está formalizado en el proyecto y que lo formaliza `/requirement-refine`.
+2. **Confirmar con una sola pregunta** (herramienta estructurada): `[Formalizar con /requirement-refine]` / `[Cancelar]`. No ofrecer aquí los tres tipos: los recomienda `requirement-refine`, que tiene el contexto (dueño de la definición, harness, stack).
+3. **Invocar `requirement-refine`** pasándole el insumo tal cual (texto o archivo), el idioma resuelto y la pista **`origen=test-define`** — con ella, su Paso 0 recomienda `RQ` aunque el harness sea de implementación; el usuario puede igualmente elegir PRD/SRS. Si el cliente lo permite, como subagente que invoca el skill; si no, indicar al usuario que ejecute `/requirement-refine` con el mismo insumo y vuelva con el ID.
+4. **Continuar** desde la [Selección del artefacto](#selección-del-artefacto) con el `RQ-XXX`/`PRD-XXX`/`SRS-XXX` devuelto, aplicando las reglas del Paso 1 tal cual (incluido parar si quedó en `Draft`).
+
+> **Un documento que ya existe dentro del proyecto no dispara el handoff.** Si el usuario referencia un archivo del repo (por ruta o nombre), se procesa en su sitio como «cualquier otro artefacto» (última fila de la tabla), con las reglas del Paso 1 tal cual — incluido parar si sus criterios no tienen identificador. Tampoco una US/WI/FT.
 
 ---
 
@@ -184,6 +180,7 @@ Límites: un `RQ-XXX` es el soporte mínimo para trazar pruebas, **no** un `SRS-
 
 1. **Ubicar y leer el artefacto completo**, sea cual sea su formato. Localizar la sección de criterios de aceptación: normalmente titulada «Criterios de aceptación» / «Acceptance Criteria», pero puede llamarse «Requisitos», «Requirements», «Comportamiento esperado» o similar. En artefactos del repo:
    - **US / WI / FT / RQ:** el `README.md` del artefacto; los criterios están en la sección **Criterios de aceptación**.
+   - **PRD / SRS:** el `README.md` del artefacto; los criterios son los `AC-XXX` de la columna `AC` de la **sección 12** (PRD: «Criterios de aceptación y trazabilidad»; SRS: «Verificación y trazabilidad») (ver [Requerimientos formalizados](#requerimientos-formalizados-rq-xxx-prd-xxx-srs-xxx)).
    - **Cualquier otro artefacto:** la sección equivalente dentro del documento indicado por el usuario. Si hay dudas sobre cuál sección contiene los criterios, preguntar en vez de asumir.
 2. **Verificar el estado del artefacto — solo si el artefacto declara un campo de estado** (`Estado:` / `Status:`). Es un campo propio de los artefactos de este plugin; **su ausencia no es un motivo para parar** y no debe pedirse al usuario que lo agregue.
    - Sin campo de estado → continuar (el artefacto es externo al plugin).
@@ -205,7 +202,7 @@ Límites: un `RQ-XXX` es el soporte mínimo para trazar pruebas, **no** un `SRS-
    Agrégalos en el artefacto y reinicia el proceso.
    ```
 
-   No continuar hasta que todos los criterios tengan identificador. No asignar identificadores automáticamente sobre un artefacto existente (los `AC-XXX` de un `RQ-XXX` nuevo los redacta este skill y los confirma el usuario; es el único caso).
+   No continuar hasta que todos los criterios tengan identificador. No asignar identificadores automáticamente sobre ningún artefacto: este skill nunca redacta criterios (los `AC-XXX` de un `RQ`/`PRD`/`SRS` los redacta `requirement-refine`; los de una US, `work-define`).
 5. Registrar los criterios encontrados (identificador tal como aparece y título). **No se pide confirmación en este punto**: el alcance por defecto son **todos** los criterios de aceptación, salvo que el usuario haya pedido explícitamente un subconjunto (ver [Paso 2](#paso-2--entrevista-de-clarificación), «El alcance no se pregunta»). El listado completo se comunica en el resumen del Paso 4.
 
 ---
@@ -280,8 +277,8 @@ Si dentro de una perspectiva hay múltiples escenarios distintos que vale la pen
 
 Usar `assets/test-case-template.md` para todos los campos. Reglas de llenado:
 
-- **Artefacto padre:** el identificador del artefacto del que salen los criterios (`US-XXX`, `WI-XXX`, `FT-XXX`, `RQ-XXX`) o, si es externo al plugin, su identificador o su ruta. Es lo que permite reencontrar el origen de un TC leído en aislamiento; no dejarlo vacío.
-- **Estado:** `Ready` al crearlo, salvo indicación contraria del usuario (mismo valor en la marca oculta `tc:status`; en un `RQ-XXX`, en `rq:status`). Ver [Flujo: actualizar TCs existentes](#flujo-actualizar-tcs-existentes) para cuándo pasa a `Draft` u `Obsolete`.
+- **Artefacto padre:** el identificador del artefacto del que salen los criterios (`US-XXX`, `WI-XXX`, `FT-XXX`, `RQ-XXX`, `PRD-XXX`, `SRS-XXX`) o, si es externo al plugin, su identificador o su ruta. Es lo que permite reencontrar el origen de un TC leído en aislamiento; no dejarlo vacío.
+- **Estado:** `Ready` al crearlo, salvo indicación contraria del usuario (mismo valor en la marca oculta `tc:status`). Ver [Flujo: actualizar TCs existentes](#flujo-actualizar-tcs-existentes) para cuándo pasa a `Draft` u `Obsolete`.
 - **Perspectiva:** registrar la perspectiva de cobertura del caso (`Happy Path`, `Error` o `Límite`), coherente con el sufijo del slug del archivo. No confundir con el o los tipos de prueba del campo Tipo de prueba (Unit/Integration/E2E…).
 - **Título descriptivo:** redactarlo en formato Given–When–Then (GWT), **respetando el idioma del artefacto origen**: en español usar `Dado {{contexto/precondición}}, Cuando {{acción/evento}}, Entonces {{resultado esperado}}`; en inglés usar `Given {{context/precondition}}, When {{action/event}}, Then {{expected result}}`. Debe describir el escenario concreto que valida el TC, coherente con las precondiciones, los pasos y el resultado esperado final.
 - **Criterio de aceptación:** referenciar el identificador del criterio **exactamente como aparece en el artefacto origen** (`AC-012`, `1.3`, `R-3`…). **No normalizar ni reescribir** el identificador a otro formato: el vínculo de trazabilidad debe ser buscable literalmente en el artefacto. Este campo no puede estar vacío ni ser genérico.
@@ -342,7 +339,7 @@ Usar `assets/test-case-template.md` para todos los campos. Reglas de llenado:
 
 ## Paso 5 — Actualizar el artefacto origen con la trazabilidad
 
-Una vez guardados y aceptados los TCs, editar el artefacto origen (el `README.md` de la US, del WI, del FT o del RQ, **o el archivo del artefacto externo procesado**) para dejar registrada la trazabilidad directa: bajo cada criterio de aceptación, agregar la lista de los casos de prueba que lo cubren.
+Una vez guardados y aceptados los TCs, editar el artefacto origen (el `README.md` de la US, del WI, del FT, del RQ, del PRD o del SRS — en estos dos últimos bajo la tabla de la sección 12 —, **o el archivo del artefacto externo procesado**) para dejar registrada la trazabilidad directa: bajo cada criterio de aceptación, agregar la lista de los casos de prueba que lo cubren.
 
 > Si el artefacto no pertenece al repo (documento externo, spec de otra herramienta, archivo de solo lectura), **pedir confirmación al usuario antes de modificarlo**; si no autoriza la edición, omitir este paso y reportar la trazabilidad en el resumen y en el índice `test-cases/README.md`.
 
@@ -408,12 +405,13 @@ Posición: **definición de pruebas** — después de que el artefacto tenga cri
 
 | | |
 |--|--|
-| **Entrada** | Un artefacto con criterios de aceptación **identificados**: `US-XXX` o `WI-XXX` en `Ready` (de `work-define` / `work-plan`), un `FT-XXX` (del flujo «Analizar legado» de `work-research`), cualquier documento del proyecto con criterios codificados, o un **requerimiento en bruto** (del usuario, o del cierre de `arch-init` en un proyecto de pruebas), que se formaliza como `RQ-XXX`. |
+| **Entrada** | Un artefacto con criterios de aceptación **identificados**: `US-XXX` o `WI-XXX` en `Ready` (de `work-define` / `work-plan`), un `FT-XXX` (del flujo «Analizar legado» de `work-research`), un `RQ-XXX`, `PRD-XXX` o `SRS-XXX` en `Ready` de `requirement-refine`, o cualquier documento del proyecto con criterios codificados. Un **requerimiento en bruto** **no** es entrada: se hace handoff a `/requirement-refine` con `origen=test-define` y se vuelve con el ID. |
+| **Handoff a `requirement-refine`** | Texto crudo o documento ajeno al proyecto → una línea + confirmación `[Formalizar con /requirement-refine] / [Cancelar]` → `requirement-refine` elige con el usuario RQ/PRD/SRS, lo crea y, al llegar a `Ready`, ofrece `/test-define <ID>`. |
 | **Salida** | `test-cases/` junto al artefacto, con un `TC-XXX-{slug}.md` por caso, su índice `test-cases/README.md`, y la línea `Casos de prueba:` bajo cada criterio del artefacto origen. |
 | **Siguiente paso** | **`work-implement`** en su tipo `TC-XXX` / `FT-XXX`, que automatiza los TCs en `Ready` bajo el subagente `quality-specialist`. Después, **`coverage-verify`** para el veredicto de cobertura. |
 | **Vuelta desde `work-implement`** | Al automatizar se descubre que el TC está mal especificado → [Flujo: actualizar TCs existentes](#flujo-actualizar-tcs-existentes). |
 | **Vuelta desde `work-research`** | El análisis de un caso de prueba concluye que falla la especificación y no el código → mismo flujo de actualización. |
-| **Escalada** | El artefacto no tiene criterios, o los tiene sin identificador → devolver a `work-define` (US), `work-plan` (WI) o al flujo «Analizar legado» de `work-research` (FT). No inventar criterios aquí. |
+| **Escalada** | El artefacto no tiene criterios, o los tiene sin identificador → devolver a `work-define` (US), `work-plan` (WI), `requirement-refine` (RQ/PRD/SRS) o al flujo «Analizar legado» de `work-research` (FT). No inventar criterios aquí. |
 
 ---
 
@@ -449,8 +447,10 @@ La trazabilidad inversa (de un criterio a sus TCs) se obtiene buscando el identi
 - **Borrar el archivo de un TC que dejó de aplicar** en lugar de marcarlo `Obsolete`: la fila se conserva por trazabilidad, aunque ya no cuente como cobertura.
 - Modificar el artefacto origen más allá de agregar la línea `Casos de prueba:` bajo cada criterio en el Paso 5; cualquier otro cambio al texto de los criterios o a otras secciones está prohibido.
 - **Rechazar un artefacto por no seguir las convenciones de este plugin** (nombre `US-XXX`/`WI-XXX`/`FT-XXX`, ubicación en `docs/specs/`, campo `Estado:`, identificadores en formato `AC-XXX`). El único requisito es que los criterios tengan identificador codificado; el formato es indiferente.
-- **Crear un `RQ-XXX` para algo que no es un requerimiento en bruto**: una US/WI/FT, o un documento que ya existe en el proyecto (ese se procesa en su sitio, como siempre). El `RQ` es solo para texto en crudo o un documento adjunto ajeno al repo.
-- Generar TCs sobre un `RQ-XXX` cuyos `AC-XXX` el usuario no confirmó, o crear el `RQ` sin guardar el requerimiento original en `assets/` y enlazarlo en el `RQ`. Archivar con este skill algo que no sea un `RQ-XXX`.
+- **Crear un `RQ-XXX` (o cualquier documento de requerimiento) desde este skill**, o redactar `AC-XXX` sobre texto crudo «para poder avanzar»: la formalización es de `requirement-refine`; aquí solo se hace el handoff.
+- Ofrecer los tres tipos (RQ/PRD/SRS) en la confirmación del handoff: la recomendación la hace `requirement-refine` con el contexto completo.
+- Archivar con este skill cualquier artefacto.
+- Generar sobre una US los mismos TC de aceptación que ya existen en el SRS/PRD de origen para el mismo `AC-XXX`, en vez de cubrir solo lo específico del incremento y enlazar los existentes.
 - **Renombrar o normalizar los identificadores de criterio** del artefacto origen (p. ej. convertir `1.1` en `AC-001`) al escribir los TCs o el índice: se referencian verbatim.
 - Pedir al usuario que agregue un campo `Estado:` a un artefacto que no pertenece al plugin.
 - Escribir código de prueba (Jest, Cypress, etc.); ese trabajo corresponde a `work-implement` (tipos `TC-XXX` / `FT-XXX`, ejecutados bajo `quality-specialist`).

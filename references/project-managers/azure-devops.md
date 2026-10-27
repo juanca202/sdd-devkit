@@ -9,10 +9,28 @@ qué tipo de work item crea, en qué jerarquía lo ancla y qué campos usa.
 
 | Skill | Delta |
 |-------|-------|
-| `work-plan` | Crea `Task` para `TK-XXX` y para todo `WI-XXX` (sin excepción); crea `Bug` **únicamente** para un incidente `BUG-XXX` — [`skills/work-plan/references/azure-devops.md`](../../skills/work-plan/references/azure-devops.md) |
+| `work-plan` | Crea `Task` para `TK-XXX` y para todo `WI-XXX` (sin excepción); crea `Bug` **únicamente** para un incidente `BUG-XXX`; con `sync` **baja** un `Task` (→ `TK`/`WI`) o un `Bug` (→ `BUG-XXX`) para crearlo o actualizarlo localmente, y con `sync … push` **sube** el documento local al work item — [`skills/work-plan/references/azure-devops.md`](../../skills/work-plan/references/azure-devops.md) |
 | `test-define` | Crea `Test Case` dentro de la jerarquía Test Plan → Test Suite; con `sync` **lee** Test Cases existentes (por TC o por historia padre) para crearlos o actualizarlos localmente, sin escribir — [`skills/test-define/references/azure-devops.md`](../../skills/test-define/references/azure-devops.md) |
 | `work-research` | **Solo lee**: obtiene, enruta y propaga — [`skills/work-research/references/azure-devops.md`](../../skills/work-research/references/azure-devops.md) |
-| `work-define` | **Solo lee**: sincroniza (`sync #id`) una `User Story` / `PBI` como `US-<id>` local — la crea si falta, la actualiza si existe; nunca escribe en ADO — [`skills/work-define/references/azure-devops.md`](../../skills/work-define/references/azure-devops.md) |
+| `work-define` | Al redactar **no escribe** en ADO (secuencial local). Con `sync #id` **baja** una `User Story` / `PBI` como `US-<id>` local — la crea si falta, la actualiza si existe; con `sync … push` **sube** la US local al work item — [`skills/work-define/references/azure-devops.md`](../../skills/work-define/references/azure-devops.md) |
+
+## Dirección de la sincronización (`sync` y `push`)
+
+`sync` es el **mismo contrato** en los tres skills que lo ofrecen (`work-define`, `work-plan`, `test-define`), y cada uno enruta al `sync` de otro cuando el tipo del work item no es suyo (`User Story` → `work-define`, `Task`/`Bug` → `work-plan`, `Test Case` → `test-define`).
+
+| Forma | Dirección | Qué hace |
+|-------|-----------|----------|
+| `sync <#id \| URL \| <ID local>> […]` (**por defecto**) | **Bajada: ADO → repo** | Lee el work item y **crea** el documento local si no existe o lo **actualiza** si ya existe (diff por sección, se aplica solo lo confirmado, identificadores locales inmutables). **No escribe nada en ADO**: un cambio local que no esté en el tracker se conserva y se señala en el diff, pero no se sube. |
+| `sync <ID local \| #id> […] push` (o «sube», «publica», «actualiza en ADO») | **Subida: repo → ADO**, solo a petición explícita | Lee el work item y el documento local, presenta **el diff en sentido inverso** (qué tiene el documento que el work item no refleja) y, con confirmación, escribe en ADO **solo lo confirmado**, usando el mismo mapeo de campos que la creación (campo dedicado primero, Descripción como respaldo, mismos encabezados — contrato de reconstrucción íntegra). Si el documento local **no tiene** `Work Item (ADO)`, `push` ofrece **crearlo** en ADO con el tipo que corresponde al artefacto (`User Story`, `Task`, `Bug`, `Test Case`); el documento local **conserva su número** y solo se le añade la línea `Work Item (ADO)`. |
+
+Reglas comunes a ambas direcciones:
+
+- **Nunca sin modificador.** Un `#id` o una URL suelta no sincroniza en ningún sentido; se pregunta qué se espera.
+- **Conflicto** (el work item y el documento cambiaron ambos desde la última sincronización, o difieren en una misma sección): se muestra sección a sección y el usuario decide cuál prevalece; nunca se resuelve en silencio ni se fusiona texto.
+- **`push` nunca cambia el `id`, el tipo ni el padre** del work item, ni crea un segundo work item para un documento que ya tiene `Work Item (ADO)`; el estado (`System.State`) **no se toca** salvo petición expresa.
+- **El `id` de ADO es el número local** en todo lo que nace de una bajada; en un `push` que crea el work item, el número local no cambia (ver «El ID de ADO manda» arriba: esa regla aplica a la creación desde el skill, no a un documento ya numerado).
+- **Degradación sin MCP**: la bajada pide el contenido pegado; la subida se limita a mostrar lo que habría que copiar en ADO y lo informa.
+- **Archivado**: ni `sync` ni `push` escriben dentro de un documento archivado (Regla 1 de `archive.md`); un `push` de un documento archivado es legítimo (sube lo que hay) si el usuario lo pide.
 
 ## Activación y configuración
 

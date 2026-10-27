@@ -31,7 +31,7 @@ work item vía MCP y leer su campo `System.WorkItemType` para elegir el flujo:
 |-----------------------|-----------------------|--------------------------|
 | `User Story` / `Product Backlog Item` / `Feature` / `Epic` | `US-XXX` | **Analizar decisiones pendientes** |
 | `Task` | `TK-XXX` (si cuelga de una historia) o `WI-XXX` | **Analizar decisiones pendientes** |
-| `Bug` | Defecto | **Analizar issue** |
+| `Bug` | Defecto (incidente `BUG-XXX` si está materializado localmente — buscar `BUG-<id>-*` o `Work Item (ADO): [#<id>]`) | **Analizar issue**. Si el usuario solo quiere registrarlo sin diagnosticar, `/work-plan sync #<id>` |
 | `Test Case` | `TC-XXX` | **Analizar test case** |
 | `Issue` / `Impediment` / otros | — | Preguntar al usuario qué espera antes de elegir flujo |
 

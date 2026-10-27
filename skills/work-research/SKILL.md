@@ -101,7 +101,7 @@ No continúes hasta haber leído y aplicado `project-management.md`.
 | Historia de usuario / feature / épica → `US-XXX` | **Analizar decisiones pendientes**                          |
 | Tarea → `TK-XXX`                                 | **Analizar decisiones pendientes**                          |
 | Work item de mantenimiento → `WI-XXX`            | **Analizar decisiones pendientes**                          |
-| **Bug** / defecto / incidencia                   | **Analizar issue**                                          |
+| **Bug** / defecto / incidencia                   | **Analizar issue** (solo registrarlo sin diagnóstico: `/work-plan sync #id`) |
 | **Test case** / caso de prueba                   | **Analizar test case**                                      |
 | Cualquier otro tipo                              | Preguntar al usuario qué espera de él antes de elegir flujo |
 

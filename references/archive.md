@@ -1,7 +1,7 @@
 # Archivado de artefactos de especificación (compartida)
 
 Referencia transversal del plugin **SDD Devkit**. Es la **fuente única** de cómo se archiva un artefacto
-(`SRS-XXX`, `RQ-XXX`, `US-XXX`, `WI-XXX`, `RS-XXX` suelto) y de las dos reglas que el resto del catálogo aplica sobre
+(`SRS-XXX` —PRD o SRS—, `RQ-XXX`, `US-XXX`, `WI-XXX`, `BUG-XXX`, `RS-XXX` suelto) y de las dos reglas que el resto del catálogo aplica sobre
 lo ya archivado. Los `SKILL.md` la enlazan; no repiten el procedimiento.
 
 > **Notación.** `<archivedPath>` es `specification.archivedPath` de `.sdd-devkit/settings.json` ya
@@ -21,10 +21,11 @@ siempre hay una revisión humana entre integrar y archivar, y ese momento lo eli
 
 | Artefacto | Skill que archiva | Invocación |
 |-----------|-------------------|------------|
-| `SRS-XXX` | `requirement-refine` | `/requirement-refine archive SRS-003` · `/requirement-refine SRS-003 archive` |
-| `RQ-XXX` (con sus `test-cases/` y `assets/`) | `test-define` | `/test-define archive RQ-001` · `/test-define RQ-001 archive` |
+| `SRS-XXX` y `PRD-XXX` (con sus `references/`, `assets/`, `wireframes/`, `research/`, `test-cases/`) | `requirement-refine` | `/requirement-refine archive SRS-003` · `/requirement-refine PRD-002 archive` |
+| `RQ-XXX` (con sus `references/`, `assets/` y `test-cases/`) | `requirement-refine` | `/requirement-refine archive RQ-001` · `/requirement-refine RQ-001 archive` — `test-define` no archiva |
 | `US-XXX` (con sus `TK-XXX`, `test-cases/`, `research/`, `progress.md`, `criteria-coverage.md`, `wireframes/`, `assets/`) | `work-define` | `/work-define archive US-042` · `/work-define US-042 archive` |
-| `WI-XXX` (todos los tipos, `bug` incluido) | `work-plan` | `/work-plan archive WI-007` · `/work-plan WI-007 archive` |
+| `WI-XXX` (todos los tipos, `spike` incluido) | `work-plan` | `/work-plan archive WI-007` · `/work-plan WI-007 archive` |
+| `BUG-XXX` (incidente, con sus `assets/`) | `work-plan` | `/work-plan archive BUG-003` · `/work-plan BUG-003 archive` — `archive` sin ID archiva los `WI-XXX` **y** los `BUG-XXX` completos |
 | `RS-XXX` suelto (`<changesPath>/research/`) | `work-research` | `/work-research archive RS-003` · `/work-research RS-003 archive` |
 
 El modificador tiene **dos formas**, y el orden entre `archive` y el ID es indiferente:
@@ -54,10 +55,12 @@ lee el artefacto y compone un **parte de estado**:
 
 | Artefacto | Qué se comprueba | Señal de «incompleto» |
 |-----------|------------------|-----------------------|
-| `SRS-XXX` | `Estado`; tabla «Historias de usuario derivadas» | `Draft`; FR/NFR sin US derivada |
+| `SRS-XXX` | `Estado`; tabla «Historias de usuario derivadas»; `test-cases/` si existe (AC sin TC, TC en `Draft`) | `Draft`; FR/NFR sin US derivada |
+| `PRD-XXX` | `Estado`; si fue promovido (entonces ya no existe como `PRD-*`: se archiva el `SRS-XXX`); `test-cases/` si existe | `Draft`; sin promover (informativo: archivar un PRD no promovido es válido, p. ej. go/no-go negativo) |
 | `RQ-XXX` | `Estado`; `test-cases/` (criterios sin TC, TC en `Draft`); `criteria-coverage.md` si existe | `Draft`; algún `AC-XXX` sin TC; TC en `Draft`; cobertura `REJECTED` |
 | `US-XXX` | `Estado`; `progress.md` (marca `work:status` y la de cada `TK`); `criteria-coverage.md` (marca `coverage-verify:verdict`); `TK-XXX` en `Draft`; `test-cases/` con TC en `Draft` | `Draft`; sin `progress.md` o con unidades no `Done`; sin cobertura o `REJECTED`; rama `feature/US-XXX-*` aún sin integrar (`git branch --merged <base>` si la base es conocida) |
-| `WI-XXX` | `Estado`; `progress.md`; `criteria-coverage.md`; tipo `bug` → línea `Resolución:`; tipo `spike` → línea `Resolución:` y presencia de `spike-report.md` | Igual que la US; un `bug` con `Resolución: Open` o `En corrección`; un `spike` sin `spike-report.md` o con `Resolución: Open` (su rama `spike/` **nunca** se integra, así que «rama sin integrar» no es señal de incompleto en un spike) |
+| `WI-XXX` | `Estado`; `progress.md`; `criteria-coverage.md`; tipo `spike` → línea `Resolución:` y presencia de `spike-report.md` | Igual que la US; un `spike` sin `spike-report.md` o con `Resolución: Open` (su rama `spike/` **nunca** se integra, así que «rama sin integrar» no es señal de incompleto en un spike) |
+| `BUG-XXX` | `Estado`; línea `Resolución:` | `Draft`; `Resolución: Open` o `Fixing (…)` (no hay `progress.md`, cobertura ni rama: un incidente no se implementa) |
 | `RS-XXX` suelto | Referencias vivas desde artefactos **activos** (misma búsqueda que el paso 2 del procedimiento) | ≥ 1 referencia viva |
 
 Un artefacto es **completo** cuando ninguna de esas señales aparece; es el criterio que usa `archive` sin ID
@@ -97,9 +100,11 @@ Reglas de la confirmación:
 | Artefacto | Origen | Destino |
 |-----------|--------|---------|
 | Especificación de requisitos | `<changesPath>/requirements/SRS-XXX-{nombre-corto}/` | `<archivedPath>/requirements/SRS-XXX-{nombre-corto}/` |
-| Requerimiento formalizado para pruebas | `<changesPath>/requirements/RQ-XXX-{slug}/` | `<archivedPath>/requirements/RQ-XXX-{slug}/` |
+| Documento de producto (PRD) | `<changesPath>/requirements/PRD-XXX-{nombre-corto}/` | `<archivedPath>/requirements/PRD-XXX-{nombre-corto}/` |
+| Requerimiento externo (solo certificar) | `<changesPath>/requirements/RQ-XXX-{slug}/` | `<archivedPath>/requirements/RQ-XXX-{slug}/` |
 | Historia de usuario | `<changesPath>/user-stories/US-XXX-{nombre-corto}/` | `<archivedPath>/user-stories/US-XXX-{nombre-corto}/` |
 | Tarea de mantenimiento | `<changesPath>/work-items/WI-XXX-{kebab-case}/` | `<archivedPath>/work-items/WI-XXX-{kebab-case}/` |
+| Incidente | `<changesPath>/incidents/BUG-XXX-{kebab-case}/` | `<archivedPath>/incidents/BUG-XXX-{kebab-case}/` |
 | Investigación suelta | `<changesPath>/research/RS-XXX-{slug}/` | `<archivedPath>/research/RS-XXX-{slug}/` |
 
 La carpeta se mueve **completa y tal cual**: `README.md`, `TK-XXX-*.md`, `progress.md`,
@@ -202,12 +207,13 @@ Ambas resuelven `<archivedPath>` desde `settings.json` **antes** de buscar o esc
 
 ### Regla 1 — Fallback de lectura
 
-**Quien busque la carpeta de un `SRS-XXX`, `US-XXX`, `WI-XXX` o `RS-XXX` y no la encuentre en `<changesPath>`
+**Quien busque la carpeta de un `SRS-XXX`, `US-XXX`, `WI-XXX`, `BUG-XXX` o `RS-XXX` y no la encuentre en `<changesPath>`
 debe mirar en `<archivedPath>` antes de darla por inexistente.**
 
 ```
 <changesPath>/user-stories/US-042-…/   →  <archivedPath>/user-stories/US-042-…/
 <changesPath>/work-items/WI-007-…/     →  <archivedPath>/work-items/WI-007-…/
+<changesPath>/incidents/BUG-003-…/      →  <archivedPath>/incidents/BUG-003-…/
 <changesPath>/research/RS-003-…/       →  <archivedPath>/research/RS-003-…/
 <changesPath>/requirements/SRS-003-…/  →  <archivedPath>/requirements/SRS-003-…/
 ```
@@ -221,11 +227,12 @@ desarchivarlo primero». Desarchivar es mover la carpeta de vuelta a `<changesPa
 > **Nunca crear la carpeta en la ruta activa porque «no estaba».** Deja dos carpetas con el mismo
 > identificador y el guard de destino lo descubre mucho después.
 
-#### Las dos únicas excepciones a la prohibición de escribir
+#### Las únicas excepciones a la prohibición de escribir
 
 | Quién | Qué puede escribir | Por qué |
 |-------|--------------------|---------|
 | **`coverage-verify`** | Su `criteria-coverage.md`, dentro de la carpeta del artefacto | Es un **derivado** del artefacto, no trabajo nuevo; revalidar la cobertura de algo archivado es una consulta. |
+| **`work-integrate`** | Solo la línea `Resolución:` de un `BUG-XXX` archivado, al integrar el `bug-fix` que lo cita (`Fixed (WI-YYY)`) | Es el cierre de trazabilidad del incidente, no trabajo nuevo. |
 | **`work-implement` en [modo corrección](../skills/work-implement/SKILL.md#modo-correccion-delegado-desde-quality-check)** | **Nada dentro de la carpeta.** Continúa el flujo en vez de parar; la nota de retrabajo va al informe de `quality-check`. | La corrección llega en el cierre, cuando el archivado puede haber ocurrido. |
 
 > **Efecto sobre `coverage-verify`.** Su `SPEC_FINGERPRINT` incluye las rutas de la carpeta; el `git mv`
@@ -242,10 +249,10 @@ historial, no su ubicación.
 
 | Contador | Dónde se escanea | Skill |
 |----------|------------------|-------|
-| `SRS-XXX` | `<changesPath>/requirements/` **+** `<archivedPath>/requirements/` | `requirement-refine` |
-| `RQ-XXX` | `<changesPath>/requirements/` **+** `<archivedPath>/requirements/` (solo carpetas `RQ-*`) | `test-define` |
+| `RQ-XXX` · `PRD-XXX` · `SRS-XXX` | **Un solo contador** para los tres prefijos: `<changesPath>/requirements/` **+** `<archivedPath>/requirements/`, todas las carpetas `RQ-*`, `PRD-*` y `SRS-*`. Un PRD promovido conserva su número como `SRS-XXX`. | `requirement-refine` |
 | `US-XXX` | `<changesPath>/user-stories/` **+** `<archivedPath>/user-stories/` | `work-define` |
 | `WI-XXX` | `<changesPath>/work-items/` **+** `<archivedPath>/work-items/` | `work-plan` |
+| `BUG-XXX` | `<changesPath>/incidents/` **+** `<archivedPath>/incidents/` | `work-plan` |
 | `RS-XXX` | `<changesPath>/research/` **+** `<archivedPath>/research/`, y el `research/` del artefacto | `work-research` |
 | `TK-XXX` | El `US-XXX-…/` del padre | `work-plan` |
 | `TC-XXX` | El `test-cases/` del padre | `test-define` |

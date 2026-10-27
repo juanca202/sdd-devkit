@@ -4,11 +4,13 @@ Recorrido end-to-end para corregir un defecto reportado, usando SDD Devkit desde
 
 ```mermaid
 flowchart TD
-    A["Bug reportado<br/>(descripción del issue)"] --> B["Diagnóstico del issue<br/>**/work-research**"]
+    A["Bug reportado<br/>(descripción, prueba en rojo<br/>o work item del tracker)"] --> R["Registro del incidente<br/>**/work-plan** (BUG-XXX, opcional)"]
+    R --> B["Diagnóstico del issue<br/>**/work-research**"]
+    A -.->|"sin registrar"| B
     B --> C{"¿Causa raíz<br/>localizada?"}
     C -->|"No reproducible /<br/>sin causa raíz"| H["Análisis humano<br/>(datos, entorno, logs, pasos exactos)"]
     C -->|"Sí, con evidencia"| D["Dossier de bug<br/>(reproducción + causa raíz + diagnóstico de pruebas)"]
-    D --> E["Planificación del fix<br/>**/work-plan** (WI tipo bug-fix)"]
+    D --> E["Planificación del fix<br/>**/work-plan** (WI tipo bug-fix,<br/>Origen: BUG-XXX)"]
     E --> F["Implementación<br/>**/work-implement** (🔴 test fail → fix → 🟢 test pass)"]
     F --> I["Creación de PR<br/>**/pr-create**"]
     I --> J(["Entregable"])
@@ -21,21 +23,22 @@ flowchart TD
     classDef entryPoint fill:#dcfce7,stroke:#15803d,stroke-width:3px,color:#14532d
     classDef exitPoint fill:#fee2e2,stroke:#b91c1c,stroke-width:3px,color:#7f1d1d
     classDef note fill:#f8fafc,stroke:#94a3b8,stroke-width:1px,stroke-dasharray:3 3,color:#334155
-    class B,D,E,F,I main
+    class R,B,D,E,F,I main
     class H human
     class A entryPoint
     class J exitPoint
     class NOTE note
 ```
 
-1. **Inicio**: alguien reporta un bug (descripción en texto o un work item en el gestor de proyectos).
+1. **Inicio**: alguien reporta un bug (descripción en texto, una prueba en rojo fiel a su `TC-XXX`, o un work item en el gestor de proyectos).
+   - **Registro del incidente** (`work-plan`, tipo de plan *Incidente*, opcional pero recomendado): deja constancia de **qué está mal** con su evidencia en `<changesPath>/incidents/BUG-XXX-…/README.md`, sin plan de corrección. Es lo único que se produce cuando el hallazgo nace en un **repositorio solo de pruebas** (`implementation.scope: tests`): la corrección se planifica en el repositorio de la aplicación citando ese `BUG-XXX`. Con la integración activa, es el único artefacto que se crea como `Bug` en el tracker.
 2. **Diagnóstico** (`work-research`, flujo *Analizar issue*): reconstruye la reproducción, aísla la causa raíz y diagnostica en qué situación está la suite de pruebas frente al escenario.
 3. **Condición — ¿causa raíz localizada con evidencia?**
    - **No** (bug no reproducible o sin causa raíz confirmada): el flujo no avanza a la remediación. Se entrega el diagnóstico parcial y pasa a **análisis humano**, que reúne lo que falta (datos, entorno, logs, versión, pasos exactos). Con esa información nueva, se puede reintentar el diagnóstico.
    - **Sí**: se produce el **dossier de bug** (reproducción, causa raíz, diagnóstico de pruebas y plan rojo→verde propuesto).
-4. **Planificación** (`work-plan`): a partir del dossier, crea un `WI` de tipo `bug-fix` con el plan de implementación (un `IT-XX` por paso del ciclo rojo→verde) y sus criterios de aceptación.
+4. **Planificación** (`work-plan`): a partir del dossier, crea un `WI` de tipo `bug-fix` con el plan de implementación (un `IT-XX` por paso del ciclo rojo→verde) y sus criterios de aceptación; si el bug estaba registrado, lo cita en `Origen: BUG-XXX` y pone su `Resolución` en `Fixing (WI-YYY)`.
 5. **Implementación** (`work-implement`): ejecuta el ciclo en orden — 🔴 prueba que falla demostrando el bug, corrección mínima de la causa raíz, 🟢 prueba en verde.
-6. **Cierre**: creación de Pull/Merge Request (`pr-create`) hacia el entregable. `pr-create` ejecuta **internamente** las puertas de calidad (`quality-check`, `code-review`, `coverage-verify`) antes de crear el PR. El archivado **no** forma parte del PR: cuando el equipo termine su revisión, se archiva con `/work-plan WI-XXX archive`, que muestra el estado real del WI y pide confirmación. No son pasos aparte de este flujo.
+6. **Cierre**: creación de Pull/Merge Request (`pr-create`) hacia el entregable. `pr-create` ejecuta **internamente** las puertas de calidad (`quality-check`, `code-review`, `coverage-verify`) antes de crear el PR. El archivado **no** forma parte del PR: cuando el equipo termine su revisión, se archiva con `/work-plan WI-XXX archive`, que muestra el estado real del WI y pide confirmación. Al integrar (`work-integrate`), la `Resolución` del incidente pasa a `Fixed (WI-YYY)`; el `BUG-XXX` se archiva aparte con `/work-plan BUG-XXX archive`. No son pasos aparte de este flujo.
 
 ## Cuándo no aplica este caso
 
@@ -44,6 +47,7 @@ flowchart TD
 | El código hace lo especificado y lo especificado está mal | `work-define` (corregir la US/criterios), no un bug-fix |
 | No hay comportamiento defectuoso, sino código legado sin documentar ni probar | [Cobertura de pruebas en código existente](test-coverage-legacy-code.md) |
 | El «bug» es en realidad una carencia funcional | `work-define` (nueva US) o `work-plan` (WI de otro tipo) |
+| Solo se quiere dejar constancia del defecto, sin corregirlo todavía | `work-plan` (incidente `BUG-XXX`); este caso entra después, sobre ese incidente |
 | Incidente en producción que requiere mitigación inmediata | Respuesta a incidentes; este caso entra después, para el fix definitivo |
 
 Otras tareas de mantenimiento sin diagnóstico previo (deuda técnica, dependencias, seguridad, operativa): [Tarea de mantenimiento](maintenance-task.md).

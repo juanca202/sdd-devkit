@@ -111,7 +111,7 @@ if (scope === 'tests') {
 > **`always` no crea los `TC-XXX` aquí.** Sigue siendo `test-define` quien los redacta y con sus propias
 > reglas; este bloque solo decide si el skill lo invoca sin preguntar o pregunta primero.
 
-> **No aplica a `bug` ni `spike`.** Un `WI` de tipo `bug` (registro de un hallazgo) o `spike` (experimento con timebox cuyo entregable es un informe) no tiene `AC-XXX` que cubrir con casos de prueba: `work-plan` no ofrece ni invoca `test-define` para ellos en ninguno de los tres valores de `createMode`.
+> **No aplica a un incidente (`BUG-XXX`) ni a un `WI` de tipo `spike`.** Un incidente (registro de un hallazgo, no implementable) o un `spike` (experimento con timebox cuyo entregable es un informe) no tiene `AC-XXX` que cubrir con casos de prueba: `work-plan` no ofrece ni invoca `test-define` para ellos en ninguno de los tres valores de `createMode`.
 
 > **No bloquea la implementación.** Que no haya casos de prueba no impide cerrar la planificación ni
 > pasar a `work-implement`: ese skill tiene su propia comprobación de `test-cases/` y decide ahí qué

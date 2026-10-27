@@ -7,6 +7,7 @@
 **Severidad:** {{Crítico | Alto | Medio | Bajo}} — {{a quién y a qué afecta}}
 **Reproducibilidad:** {{Always | Intermittent ({{frecuencia}}) | Not Reproducible}}
 **Repositorio:** `{{nombre del repo afectado}}`
+**Incidente:** {{enlace por ruta relativa al `README.md` del `BUG-XXX` que registró el hallazgo, si existe (será el `Origen` del `bug-fix`); omitir la línea si el bug no estaba registrado}}
 **Historia de usuario:** {{enlace por ruta relativa al `README.md` de la `US-XXX` a la que pertenece el comportamiento defectuoso + su título (o el `WI-XXX` / `FT-XXX` si el artefacto relacionado no es una historia); con tracker vinculado, añadir el enlace a su work item. `N/A` solo si se buscó y no existe}}
 **Caso de prueba:** {{enlace por ruta relativa al `TC-XXX-{slug}.md` que detectó el bug o que cubre el comportamiento afectado + el `AC-XXX` que verifica; varios separados por coma. Omitir la línea si no hay ningún TC}}
 **Creado por:** {{git config user.name}}

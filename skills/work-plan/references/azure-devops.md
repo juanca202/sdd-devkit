@@ -7,9 +7,9 @@
 > comunes. **Leerla antes que este archivo.**
 
 Este archivo contiene **solo el delta de `work-plan`**. Se activa desde «Resolución de la integración con el
-gestor de proyectos» en `SKILL.md`, y aplica de forma transversal a cualquier tipo de plan que cree work
-items; cuando dice «tarea» se refiere al artefacto del tipo de plan en curso (p. ej. un `TK-XXX` de
-historia de usuario).
+gestor de proyectos» en `SKILL.md`, y aplica de forma transversal a los tres tipos de plan (todos crean work
+items); cuando dice «tarea» se refiere al artefacto del tipo de plan en curso (p. ej. un `TK-XXX` de
+historia de usuario, o un incidente `BUG-XXX`).
 
 ## Qué se crea en ADO
 
@@ -19,14 +19,16 @@ Antes de generar el archivo local, crear el work item vía MCP:
 |-------|-------|
 | **Título** | El nombre descriptivo de la tarea (el mismo que iría en el nombre de archivo). |
 | **Tipo de work item — `TK-`** | `Task` (o el tipo equivalente configurado en el proyecto). |
-| **Tipo de work item — `WI-`** | Según el `Tipo` del WI: **solo `bug` → `Bug`** (el reporte del defecto: lleva en Descripción sus secciones Comportamiento esperado / observado, Pasos para reproducir —también en `Microsoft.VSTS.TCM.ReproSteps` si el proyecto lo expone—, Evidencia e Impacto; **en modo pruebas** —`implementation.scope: tests`, plantilla `work-item-tests-template.md`— las secciones son las de esa plantilla: Precondiciones, Datos de prueba, Pasos de ejecución con lo observado y los comentarios, Resultado esperado / observado final, Hallazgos, Evidencias e Impacto, con la tabla de pasos también en `ReproSteps`; cada archivo de `assets/` listado en Evidencias se **sube como adjunto** del `Bug` si el MCP lo permite y, si no, se avisa al usuario de qué archivos adjuntar a mano, y el `Bug` se vincula con `Tested By`/`Related` al work item del `TC-XXX` cuando ese TC existe en ADO, best-effort). **Todos los demás tipos, `bug-fix` y `spike` incluidos**, → `Task`: un `bug-fix` es trabajo de corrección, y si cita `Origen: WI-XXX (bug)` se vincula al `Bug` de ese bug con la relación `Related` (o `Child`, si el proceso lo admite), sin crear un segundo `Bug`. Un `spike` lleva en Descripción sus secciones propias (Pregunta de investigación, Hipótesis, Preguntas a responder, Fuera de alcance, Enfoque del experimento, Entregable) y `Timebox`; si el proceso del proyecto expone un tipo `Spike`, puede usarse en su lugar, confirmándolo con el usuario. Un WI que cita `Origen: WI-XXX (spike)` se vincula al work item del spike con `Related`. Ante duda, confirmar con el usuario. |
-| **Criterios de aceptación** | Solo si el artefacto tiene esa sección (un `WI-XXX` puede tenerla, un `TK-XXX` no). Campo dedicado `Microsoft.VSTS.Common.AcceptanceCriteria` si existe; si no, dentro de Descripción. |
+| **Tipo de work item — `BUG-`** | **`Bug`** — el único artefacto que se crea con ese tipo. El reporte del defecto lleva en Descripción sus secciones Comportamiento esperado / observado, Pasos para reproducir —también en `Microsoft.VSTS.TCM.ReproSteps` si el proyecto lo expone—, Evidencia e Impacto, y `Microsoft.VSTS.Common.Severity` si existe. **En modo pruebas** —`implementation.scope: tests`, plantilla `incident-tests-template.md`— las secciones son las de esa plantilla: Precondiciones, Datos de prueba, Pasos de ejecución con lo observado y los comentarios, Resultado esperado / observado final, Hallazgos, Evidencias e Impacto, con la tabla de pasos también en `ReproSteps`. Cada archivo de `assets/` listado en Evidencias se **sube como adjunto** del `Bug` si el MCP lo permite y, si no, se avisa al usuario de qué archivos adjuntar a mano; el `Bug` se vincula con `Tested By`/`Related` al work item del `TC-XXX` cuando ese TC existe en ADO, y con `Related` a la `User Story` afectada, best-effort. Si el bug **ya existe** en ADO (lo pasa `work-research` con su `ado_id`), **no se crea un segundo `Bug`**: se reutiliza su `id` como número local y se actualiza su Descripción con el documento. |
+| **Tipo de work item — `WI-`** | **`Task`, para todos los tipos** (`bug-fix` y `spike` incluidos): un `bug-fix` es trabajo de corrección, y si cita `Origen: BUG-XXX` se vincula al `Bug` de ese incidente con la relación `Related` (o `Child`, si el proceso lo admite), nunca se crea como `Bug`. Un `spike` lleva en Descripción sus secciones propias (Pregunta de investigación, Hipótesis, Preguntas a responder, Fuera de alcance, Enfoque del experimento, Entregable) y `Timebox`; si el proceso del proyecto expone un tipo `Spike`, puede usarse en su lugar, confirmándolo con el usuario. Un WI que cita `Origen: WI-XXX (spike)` se vincula al work item del spike con `Related`. Ante duda, confirmar con el usuario. |
+| **Criterios de aceptación** | Solo si el artefacto tiene esa sección (un `WI-XXX` puede tenerla, un `BUG-XXX` opcionalmente, un `TK-XXX` no). Campo dedicado `Microsoft.VSTS.Common.AcceptanceCriteria` si existe; si no, dentro de Descripción. |
 | **Descripción** | El documento completo, serializado con los mismos encabezados que el `.md`. `TK-XXX`: Descripción, Dependencias, Referencias, Plan de implementación (`IT-XX`), Observaciones. `WI-XXX`: Descripción, Contexto, Fuera de alcance, Reglas de negocio, Dependencias, Referencias, Plan de implementación, Observaciones (en un `spike`: Pregunta de investigación, Contexto, Hipótesis, Preguntas a responder, Fuera de alcance, Dependencias, Referencias, Enfoque del experimento, Entregable, Observaciones). |
 | **Iteración / Area Path** | Omitir: no son configurables (ver la base común). ADO aplica los valores por defecto del proyecto. |
 | **Padre** | Si aplica (p. ej. una US vinculada en ADO), vincular al work item padre. Best-effort. |
 
 Tras la llamada, extraer el `id` numérico y usarlo como número de la tarea local, con el prefijo del
-tipo de plan en curso: `TK-<ado_id>-[nombre-descriptivo].md` o `WI-<ado_id>-[nombre-descriptivo].md`.
+tipo de plan en curso: `TK-<ado_id>-[nombre-descriptivo].md`, `WI-<ado_id>-[nombre-descriptivo]/` o
+`BUG-<ado_id>-[nombre-descriptivo]/`.
 
 ## Alcance del check de ID disponible
 
@@ -34,6 +36,7 @@ tipo de plan en curso: `TK-<ado_id>-[nombre-descriptivo].md` o `WI-<ado_id>-[nom
   archivado conserva su ID de ADO, y saltárselo produciría dos carpetas locales para un mismo work item
   del tracker. (`<archivedPath>/` resuelto desde `specification.archivedPath` — ver
   [`${PLUGIN_ROOT}/references/archive.md`](../../../references/archive.md#contrato-para-el-resto-del-catálogo).)
+- **`BUG-`**: igual que `WI-`, sobre `<changesPath>/incidents/` **y** `<archivedPath>/incidents/`.
 - **`TK-`**: **no** se escanea el archivo. El `TK-` es por historia, y si la US padre estuviera
   archivada el flujo ya habría parado antes de llegar aquí (Regla 1) — lo que se comprueba es la carpeta
   de la US **realmente resuelta**.

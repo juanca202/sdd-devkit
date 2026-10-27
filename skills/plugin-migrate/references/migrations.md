@@ -173,7 +173,7 @@ toda migración que mueva rutas, no una familia opcional. Lo que cite esas rutas
 
 **Layout vigente** (`${PLUGIN_ROOT}/references/artifacts.md` § Resolución de las rutas de especificación):
 tres raíces en `.sdd-devkit/settings.json` → `specification.changesPath` (default `docs/specs/changes/`:
-`user-stories/`, `work-items/`, `requirements/`, `research/`), `specification.currentPath` (default
+`user-stories/`, `work-items/`, `incidents/`, `requirements/`, `research/`), `specification.currentPath` (default
 `docs/specs/current/`: los `FT-XXX-…/` directamente) y `specification.archivedPath` (default
 `docs/specs/archived/`, espejo de `changesPath`).
 

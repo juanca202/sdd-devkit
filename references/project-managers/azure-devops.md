@@ -9,7 +9,7 @@ qué tipo de work item crea, en qué jerarquía lo ancla y qué campos usa.
 
 | Skill | Delta |
 |-------|-------|
-| `work-plan` | Crea `Task` para `TK-XXX` y para todo `WI-XXX` salvo el de tipo `bug`, que es el único que crea como `Bug` — [`skills/work-plan/references/azure-devops.md`](../../skills/work-plan/references/azure-devops.md) |
+| `work-plan` | Crea `Task` para `TK-XXX` y para todo `WI-XXX` (sin excepción); crea `Bug` **únicamente** para un incidente `BUG-XXX` — [`skills/work-plan/references/azure-devops.md`](../../skills/work-plan/references/azure-devops.md) |
 | `test-define` | Crea `Test Case` dentro de la jerarquía Test Plan → Test Suite; con `sync` **lee** Test Cases existentes (por TC o por historia padre) para crearlos o actualizarlos localmente, sin escribir — [`skills/test-define/references/azure-devops.md`](../../skills/test-define/references/azure-devops.md) |
 | `work-research` | **Solo lee**: obtiene, enruta y propaga — [`skills/work-research/references/azure-devops.md`](../../skills/work-research/references/azure-devops.md) |
 | `work-define` | **Solo lee**: sincroniza (`sync #id`) una `User Story` / `PBI` como `US-<id>` local — la crea si falta, la actualiza si existe; nunca escribe en ADO — [`skills/work-define/references/azure-devops.md`](../../skills/work-define/references/azure-devops.md) |
@@ -76,7 +76,7 @@ la respuesta) sustituye al secuencial calculado de los archivos locales:
 
 - Formato del nombre: `<PREFIJO>-<ado_id>-[slug].md` — **sin padding de ceros**.
   Ejemplo: `id: 1847` → `TK-1847-modelo-dominio.md`, `WI-1847-upgrade-spring-boot.md`,
-  `TC-1847-login-credenciales-validas-happy.md`.
+  `BUG-1847-alta-cliente-acepta-email-invalido/`, `TC-1847-login-credenciales-validas-happy.md`.
 - **El check de ID disponible se hace igualmente:** verificar que no exista ya
   `<PREFIJO>-<ado_id>-*.md` en la carpeta destino antes de crear el archivo. El alcance del escaneo
   (incluido o no `<archivedPath>/`) es el mismo que define

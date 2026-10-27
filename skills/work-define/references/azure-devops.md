@@ -9,10 +9,10 @@ Este archivo contiene **solo el delta de `work-define`**. Se activa desde el mod
 (flujo [Sincronizar](flow.md#flujo-sincronizar-una-historia-desde-el-gestor-de-proyectos-sync) en `flow.md`), que crea la US local
 si no existe y la actualiza si ya existe.
 
-> **Rol de esta integración: leer, nunca escribir.** `work-define` **no crea ni modifica work items** en
-> ADO. La dirección es única —ADO → repositorio—: el work item es el origen y el `README.md` local es la
-> especificación que el resto del catálogo consume. Los skills que sí escriben en ADO (`work-plan`,
-> `test-define`) siguen su propio delta sin cambios.
+> **Rol de esta integración: bajar por defecto, subir solo con `push`.** Al redactar, `work-define` **no
+> crea ni modifica work items** en ADO. `sync` trae el work item al repositorio (ADO → repo); `sync … push`
+> sube la US local al work item (repo → ADO) únicamente cuando el usuario lo pide — ver «Dirección de la
+> sincronización» en la base común y [Subida (`push`)](#subida-push) abajo.
 
 > **Degradación sin MCP.** Igual que `work-research`: no se crea nada con secuencial local en silencio.
 > ```
@@ -31,9 +31,9 @@ leer `System.WorkItemType`:
 |-----------------------|--------|
 | `User Story` · `Product Backlog Item` · `Requirement` (CMMI) | **Sincronizar** como `US-<id>` (crear o actualizar). |
 | `Feature` · `Epic` | **No** es una historia: parar y ofrecer listar sus hijos (`Child`) de tipo historia para sincronizarlos uno a uno o en lote. |
-| `Task` | Es un `TK-XXX`/`WI-XXX`: remitir a `work-plan`. |
-| `Bug` | Remitir al flujo «Analizar issue» de `work-research`. |
-| `Test Case` | Es un `TC-XXX`: remitir a `test-define` / `work-research`. |
+| `Task` | Es un `TK-XXX`/`WI-XXX`: remitir a `/work-plan sync #<id>`. |
+| `Bug` | Es un incidente `BUG-XXX`: remitir a `/work-plan sync #<id>` (lo materializa en `<changesPath>/incidents/`); para diagnosticarlo, «Analizar issue» de `work-research`. |
+| `Test Case` | Es un `TC-XXX`: remitir a `/test-define sync #<id>`. |
 | Otro | Preguntar al usuario qué espera antes de hacer nada. |
 
 El proceso del proyecto (Agile, Scrum, CMMI, Basic) cambia los nombres: si el tipo devuelto no está en
@@ -100,13 +100,25 @@ enunciado de un criterio que ya tiene `Casos de prueba:`, avisar de la desalinea
   (#4821): creada → <changesPath>/user-stories/US-4821-pago-con-tarjeta/» y ofrece `/test-define` según
   `createMode`.
 
+## Subida (`push`)
+
+Solo con `sync … push` explícito. Leer el work item y la US local, presentar el **diff inverso** (lo que
+la US tiene y el work item no refleja) y escribir **solo lo confirmado** con el mapeo del Paso 2 en sentido
+contrario: título → `System.Title` (≤ 255; el completo queda local); Descripción (COMO/QUIERO/PARA) y
+Contexto → `System.Description` (HTML, mismos encabezados); Criterios de aceptación con sus `AC-XXX` →
+`Microsoft.VSTS.Common.AcceptanceCriteria` (o dentro de Descripción si el campo no existe); Complejidad →
+`StoryPoints`/`Effort` solo si la escala coincide. **No** se escriben `System.State`, `AreaPath`,
+`IterationPath` ni relaciones salvo petición expresa. Si la US no tiene `Work Item (ADO)`, ofrecer crearla
+como `User Story`/`PBI` (según el proceso) y añadir la línea `Work Item (ADO)` **sin renumerar** la US.
+Cerrar con «Subida US-XXX a ADO (#<id>): <secciones>».
+
 ## Test Cases ya existentes en ADO
 
 Si el work item sincronizado tiene relaciones «Tested By» (o una Test Suite con su título), **no** se sincronizan desde aquí: al cerrar, además del handoff habitual, ofrecer `/test-define sync #<id>` para traerlos bajo la US recién creada. `test-define` sin ese modificador generaría TCs nuevos desde los criterios, que no es lo mismo.
 
 ## Anti-patrones (propios de este delta)
 
-- Crear o modificar el work item en ADO desde `work-define` (estado, criterios renumerados, título).
+- Crear o modificar el work item en ADO sin `push` explícito; con `push`, tocar el estado, el tipo o el padre, o crear un segundo work item para una US que ya tiene `Work Item (ADO)`.
 - Sincronizar un `Feature`/`Epic` como si fuera una historia, o una `Task`/`Bug` como US.
 - Crear una segunda US local para un `#id` que ya tiene carpeta o `Work Item (ADO)` registrado.
 - Conceder `Ready` solo porque en ADO está `Active`, sin pasar los criterios de Ready del skill.

@@ -198,14 +198,8 @@ test('checkDescription: sin hallazgos si tiene 1000 caracteres o menos', () => {
   assert.deepEqual(findings, []);
 });
 
-test('checkDescription: WARNING entre 1001 y 1536', () => {
-  const findings = checkDescription({ description: 'x'.repeat(1200) });
-  assert.equal(findings.length, 1);
-  assert.equal(findings[0].severity, 'WARNING');
-});
-
-test('checkDescription: ERROR con mas de 1536', () => {
-  const findings = checkDescription({ description: 'x'.repeat(1537) });
+test('checkDescription: ERROR con mas de 1000', () => {
+  const findings = checkDescription({ description: 'x'.repeat(1001) });
   assert.equal(findings.length, 1);
   assert.equal(findings[0].severity, 'ERROR');
 });
@@ -394,19 +388,19 @@ test('validateSkill: agrega ERROR y WARNING segun corresponda', () => {
   const skillMd = [
     '---',
     'name: otro-nombre',
-    `description: ${'x'.repeat(1100)}`,
+    'description: Demo.',
     'license: Apache-2.0',
     '---',
     '',
     '# Demo',
-    '',
+    ...Array(500).fill(''),
   ].join('\n');
   fs.writeFileSync(path.join(skillDir, 'SKILL.md'), skillMd);
   const result = validateSkill(skillDir, root);
   assert.equal(result.skill, 'demo-skill');
   const severities = result.findings.map((f) => f.severity);
   assert.ok(severities.includes('ERROR')); // name no coincide con carpeta + license invalida
-  assert.ok(severities.includes('WARNING')); // description entre 1001 y 1536
+  assert.ok(severities.includes('WARNING')); // mas de 500 lineas
 });
 
 test('validateSkill: ERROR si la carpeta no tiene SKILL.md', () => {

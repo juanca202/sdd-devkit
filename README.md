@@ -1,6 +1,6 @@
 # SDD Devkit
 
-![version](https://img.shields.io/badge/version-2.4.0-blue) ![license](https://img.shields.io/badge/license-MIT-green)
+![version](https://img.shields.io/badge/version-2.4.1-blue) ![license](https://img.shields.io/badge/license-MIT-green)
 
 **SDD Devkit** es un framework de SDD (Spec-Driven Development), distribuido como [Agent Plugin](https://agent-plugins.org/), cuyo objetivo es ayudarte en la preparación, planificación e implementación de proyectos de desarrollo. Su flujo:
 

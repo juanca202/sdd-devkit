@@ -279,6 +279,7 @@ Cada tipo tiene su plantilla; PRD y SRS comparten numeración de secciones. Si h
 /work-define sync #4821
 /work-define sync #4821 #4822 #4830
 /work-define sync US-4821
+/work-define sync US-4821 push
 /work-define US-042 archive
 /work-define archive
 ```
@@ -340,6 +341,7 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 /test-define sync #4821
 /test-define sync #4830 #4831
 /test-define sync US-4821
+/test-define sync TC-4830 push
 ```
 
 - «Crea casos de prueba para US-009»
@@ -362,6 +364,7 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 | Hay una historia de usuario asociada | Tareas técnicas dentro de esa historia            |
 | No hay historia (bug-fix, deuda, mantenimiento) | Una tarea de mantenimiento independiente (`WI-XXX`); un `bug-fix` cita el incidente que corrige en `Origen: BUG-XXX` |
 | Hay una incertidumbre que impide planificar o estimar y solo se resuelve construyendo o midiendo («no sabemos si», «¿es viable?», «prueba de concepto») | Un work item de tipo `spike`: pregunta de investigación, hipótesis, preguntas `Q-XX` con criterios de éxito/fallo, timebox y enfoque del experimento; sin `AC-XXX` ni casos de prueba. Su entregable es el `spike-report.md` que `work-implement` deja en la carpeta del WI; después, `work-plan` crea el WI definitivo a partir del informe (o `work-define` la historia) |
+| El work item ya existe en el gestor de proyectos (`sync #id`, solo con integración activa) | Lo trae a local o lo actualiza, según su tipo: un `Task` como `TK-<id>` (bajo su US local) o `WI-<id>`; un `Bug` como incidente `BUG-<id>` en `incidents/`, nunca como WI. Por defecto solo baja; con `sync … push` sube los cambios locales al work item (diff inverso y confirmación) |
 | Hay un hallazgo que reportar (prueba en rojo, defecto observado) | Un **incidente** `BUG-XXX` en `<changesPath>/incidents/`: solo qué está mal, con evidencia; sin plan de corrección. No es implementable: es el insumo de un `WI` de tipo `bug-fix`. Único documento que produce en un repo con `implementation.scope: tests`, donde toma la forma del caso de prueba: sus pasos con lo observado y los comentarios para reproducirlo, los hallazgos y las evidencias de la suite adjuntas en `assets/`. Con la integración activa, es lo único que se crea como `Bug` en el tracker |
 
 **Ejemplos de invocación:**
@@ -373,6 +376,9 @@ Cada criterio se cubre desde varios ángulos (camino esperado, error, límites �
 /work-plan WI: actualizar Spring Boot a 3.3
 /work-plan registra el bug: la API devuelve 200 en vez de 422 con tarjeta vencida (TC-4830)
 /work-plan planifica la corrección del BUG-004
+/work-plan sync #4821
+/work-plan sync #4821 #4833 (un Task → TK/WI, un Bug → BUG-XXX)
+/work-plan sync BUG-004 push
 /work-plan spike: ¿aguanta el motor de reglas 500 pólizas/s? timebox 2 días
 /work-plan WI definitivo a partir del informe del spike WI-014
 /work-plan WI-007 archive

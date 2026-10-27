@@ -76,7 +76,7 @@ Las reglas de `project-management.md` son obligatorias y tienen prioridad para d
 
 No continúes hasta haber leído y aplicado `project-management.md`.
 
-**Delta de este skill:** la integración **solo lee** — `work-define` nunca crea ni modifica work items — y solo aplica al modificador `sync` (ver [Modificadores de invocación](#modificadores-de-invocación)). Los flujos de crear, actualizar y descomponer un SRS no cambian con la integración activa: una US redactada aquí sigue teniendo secuencial local y su campo `Work Item` se rellena a mano si el usuario lo aporta.
+**Delta de este skill:** la integración solo aplica al modificador `sync` (ver [Modificadores de invocación](#modificadores-de-invocación)): **por defecto baja** (tracker → repo) y **solo con `push` sube** (repo → tracker), según «Dirección de la sincronización» de la base común del proveedor. Al redactar, `work-define` nunca crea ni modifica work items. Los flujos de crear, actualizar y descomponer un SRS no cambian con la integración activa: una US redactada aquí sigue teniendo secuencial local y su campo `Work Item` se rellena a mano si el usuario lo aporta.
 
 - **Desactivada** → `sync` no está disponible: si el usuario lo pide, parar e informar que el repo no está vinculado a un gestor de proyectos (`projectManagement` en `.sdd-devkit/settings.json`); no leer ninguna referencia de proveedor.
 - **Activada** → además de la referencia compartida del proveedor, cargar `references/<proveedor>.md` de este skill (p. ej. [`references/azure-devops.md`](references/azure-devops.md)) y seguir **únicamente** sus pasos para leer y mapear el work item. Si este skill no tiene referencia para ese proveedor, informar al usuario y ofrecer que pegue el contenido.
@@ -92,6 +92,7 @@ Las **claves** son en inglés (estándar); el usuario puede nombrarlas en españ
 | Modificador | Efecto |
 |-------------|--------|
 | `sync <#id \| URL \| US-XXX> [<#id> …]` | **Sincronizar** desde el gestor de proyectos. Si la historia **no existe** localmente, la crea: `US-<id>-[slug]/README.md` bajo `changesPath/user-stories/` con el `id` del tracker como número, el campo `Work Item (<Sistema>)` y los criterios con identificador. Si **ya existe**, la actualiza: diff por sección, se aplica solo lo confirmado, `AC-XXX` inmutables. Varias a la vez → una sola tanda de confirmación. Dirección única tracker → repo. Ver [flujo](references/flow.md#flujo-sincronizar-una-historia-desde-el-gestor-de-proyectos-sync). |
+| `sync <US-XXX \| #id> [<US-XXX> …] push` | **Subir** la historia local al gestor de proyectos, solo a petición explícita («sube», «publica en ADO»). Diff inverso por sección, confirmación, y escritura de lo confirmado con el mapeo de la referencia del proveedor; si la US no tiene `Work Item (<Sistema>)`, ofrece crearlo conservando el número local. Nunca cambia `id`, tipo, padre ni estado. |
 
 | `archive [<US-XXX> …]` | **Archivar** historias: las indicadas (estén como estén) o, sin ID, todas las ya completas. Ver [Modificador `archive`](#modificador-archive-archivar-historias-de-usuario-us-xxx). |
 

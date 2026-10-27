@@ -51,8 +51,11 @@ Verificar que no exista ya `TC-<ado_id>-*.md` en el `test-cases/` del artefacto 
 
 ## Lectura (`sync`)
 
-Solo con el modificador explícito `sync` de `SKILL.md`, que crea los TC locales que falten y actualiza los que existan. **Dirección única ADO → repo**: aquí no se crea ni se
-modifica ningún work item, plan ni suite. Degradación sin MCP: pedir el contenido pegado (título, pasos,
+Solo con el modificador explícito `sync` de `SKILL.md`, que crea los TC locales que falten y actualiza los que existan. **Por defecto, bajada ADO → repo**: aquí no se crea ni se
+modifica ningún work item, plan ni suite. La subida existe solo con `sync … push`: diff inverso, confirmación
+y escritura de lo confirmado con el mapeo del Paso 2 (título, `Microsoft.VSTS.TCM.Steps`, prioridad, parámetros); un
+TC sin `Work Item (ADO)` se ofrece crear dentro del Test Suite del padre (Paso 1) **sin renumerar** el TC
+local; `System.State`, suite y relaciones no se tocan salvo petición expresa. Degradación sin MCP: pedir el contenido pegado (título, pasos,
 parámetros) e indicar el `id`.
 
 ### Resolver qué Test Cases entran
@@ -93,7 +96,7 @@ intactos; `Obsolete` en vez de borrar). Si cambia el resultado esperado de un TC
 - Crear la carpeta del padre o un `README.md` de US desde `test-define` para poder sincronizar un TC.
 - Trazar un TC a un criterio que no cita explícitamente, o inventar perspectiva/tipo para dejarlo `Ready`.
 - Resumir, reordenar o fusionar pasos del campo `Steps`.
-- Escribir en ADO (estado, título, suite) desde `sync`.
+- Escribir en ADO desde `sync` sin `push`; con `push`, cambiar estado, suite o `id`, o crear un segundo Test Case para un TC que ya tiene `Work Item (ADO)`.
 
 ## Anti-patrones específicos
 

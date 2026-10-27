@@ -41,6 +41,90 @@ tipo de plan en curso: `TK-<ado_id>-[nombre-descriptivo].md`, `WI-<ado_id>-[nomb
   archivada el flujo ya habría parado antes de llegar aquí (Regla 1) — lo que se comprueba es la carpeta
   de la US **realmente resuelta**.
 
+## Lectura (`sync`)
+
+Solo con el modificador explícito `sync` de `SKILL.md`. **Por defecto, bajada ADO → repo**: aquí no se
+crea ni se modifica nada en ADO; la subida existe solo con `push` (ver [Subida](#subida-push)).
+Degradación sin MCP: la de la base común (pedir el contenido pegado; el número local es el `id` indicado).
+
+### Paso 1 — Leer el work item y resolver qué documento es
+
+Obtener el work item por `id` y leer `System.WorkItemType`:
+
+| `System.WorkItemType` | Documento local | Cómo se decide |
+|-----------------------|-----------------|----------------|
+| `Bug` | **`BUG-<id>-[slug]/`** en `<changesPath>/incidents/` | Siempre. Nunca un `WI`. |
+| `Task` | `TK-<id>-[slug].md` o `WI-<id>-[slug]/` | Leer la relación `Parent`: si apunta a una `User Story`/`PBI` que existe localmente (`US-<id>-*` o `Work Item (ADO): [#<id>]`, en ruta activa o archivo) → `TK` dentro de esa US; si apunta a una historia que **no** existe localmente → preguntar (`/work-define sync #<padre>` primero, o crear como WI); sin padre historia → `WI`. |
+| `User Story` · `Product Backlog Item` · `Requirement` · `Feature` · `Epic` | — | Remitir a `/work-define sync #<id>`. |
+| `Test Case` | — | Remitir a `/test-define sync #<id>`. |
+| `Issue` · `Impediment` · otros | — | Preguntar al usuario qué espera. |
+
+El proceso del proyecto (Agile, Scrum, CMMI, Basic) cambia los nombres: si el tipo no está en la tabla,
+**no adivinar** (ver la base común). Un `Bug` con `System.State` `Resolved`/`Closed`/`Done` se avisa antes
+de crear: se sincroniza solo si el usuario confirma, y su `Resolución` arranca en `Fixed (<referencia>)` o
+`Discarded — cerrado en ADO` según lo que diga el campo `Microsoft.VSTS.Common.ResolvedReason`.
+
+### Paso 2 — Mapeo de campos
+
+**`Bug` → `incident-template.md`** (en `implementation.scope: tests`, `incident-tests-template.md`, con la
+tabla de pasos reconstruida desde `ReproSteps` y `Caso de prueba` desde la relación `Tested By`):
+
+| Campo de ADO | Sección del incidente | Regla |
+|--------------|-----------------------|-------|
+| `id`, `System.Title` | `# BUG-<id>: …`, slug, `Work Item (ADO): [#<id>](<url>)` | Sin padding; slug kebab-case ≤ 5 palabras. |
+| `System.Description` | **Descripción** y, si trae «esperado / observado», **Comportamiento esperado / observado** | Normalizar HTML a markdown; no inventar lo que no diga. |
+| `Microsoft.VSTS.TCM.ReproSteps` | **Pasos para reproducir** (precondiciones + pasos numerados) | Copiar **uno a uno**, sin resumir ni reordenar. Si el campo no existe y los pasos están en la descripción, extraerlos de ahí. |
+| `Microsoft.VSTS.TCM.SystemInfo` | `Ambiente` en Pasos para reproducir | Citar el ambiente por nombre; si trae una URL, conservar solo el nombre. |
+| `Microsoft.VSTS.Common.Severity` | `Severidad` en **Impacto** | Mapear la escala del proceso (`1 - Critical` → `Crítico`, `2 - High` → `Alto`, `3 - Medium` → `Medio`, `4 - Low` → `Bajo`). Si el campo no existe, preguntar. |
+| `Microsoft.VSTS.Common.Priority` | **Impacto** → `Alcance` (una línea «Prioridad ADO: N») | Registrar, no interpretar. |
+| Adjuntos (`AttachedFile`) | **Evidencia** (`EV-XX`) | Descargar a `assets/EV-XX-<nombre>` si el MCP lo permite y enlazar; si no, fila «No adjuntado — en ADO» con su nombre. Revisar que no contengan credenciales antes de guardarlos. |
+| `System.State` | `Estado` / `Resolución` | `New`/`Active` → `Resolución: Open`; `Estado` según el checklist de Ready de `incidents.md` (el estado de ADO solo orienta). `Resolved`/`Closed` → ver Paso 1. |
+| Relación `Parent` / `Related` a una historia | `Historia de usuario` en la cabecera | Enlazar la `US-<id>` local si existe; si no, citar `#<id>`. |
+| Relación `Tested By` / `Tests` | `Caso de prueba` en la cabecera | Enlazar el `TC-<id>` local si existe; si no, citar `#<id>` y ofrecer `/test-define sync`. |
+| `System.CreatedBy`, `System.CreatedDate` | `Reportado por`, `Fecha` | Tal cual. |
+| `System.Tags`, `System.AreaPath`, `System.IterationPath` | **Contexto** («Gestión: …») | Registrar, no interpretar. |
+| Comentarios | **Observaciones** | Citar como fuente; no copiar como especificación. |
+
+**`Task` → `task-template.md` o `work-item-template.md`:**
+
+| Campo de ADO | Sección | Regla |
+|--------------|---------|-------|
+| `id`, `System.Title` | `# TK-<id>: …` / `# WI-<id>: …`, slug, `Work Item (ADO)` | Como arriba. |
+| `System.Description` | **Descripción**, y las secciones que el texto traiga con sus mismos encabezados (Contexto, Dependencias, Referencias, Plan de implementación, Observaciones) | Si la descripción fue serializada por este mismo skill, los encabezados coinciden y se mapean 1:1; si es texto libre, va íntegro a Descripción y lo demás queda como laguna. Un plan en viñetas se codifica `IT-01…` en orden. |
+| `Microsoft.VSTS.Common.AcceptanceCriteria` | **Criterios de aceptación** (solo WI) | Codificación como en `work-define sync`: verbatim si traen identificador; `AC-001…` en orden si no, anotándolo en Observaciones. Nunca inventar, dividir ni fusionar. |
+| `System.Tags` / título | `Tipo` del WI | Inferir (`bug-fix`, `refactor`, `dependency-update`…) y **confirmar**; si no se puede inferir, preguntar. Una `Task` que es un spike se sincroniza con `work-item-spike-template.md` solo si el título o las tags lo dicen; sus `Q-XX` y timebox, si no vienen, son lagunas. |
+| `System.State` | `Estado` | Solo orienta; `Ready` únicamente si pasa el checklist del tipo de plan. `Closed`/`Done` → avisar: trabajo ya cerrado en ADO. |
+| `Repositorio` | Cabecera | **No existe en ADO**: preguntar, salvo que sea inferible (repo único) o ya esté en el documento local. |
+| Relación `Parent` | US padre (TK) o `Origen` (WI que cita un `Bug` → `Origen: BUG-<id>` si ese incidente existe localmente; si no, citar `#<id>`) | Best-effort. |
+
+### Paso 3 — ¿Crear o actualizar?
+
+Buscar `<PREFIJO>-<id>-*` y cabeceras `Work Item (ADO): [#<id>]` en la ruta activa **y** en
+`<archivedPath>` (`incidents/`, `work-items/`, o la US padre para una TK). Archivado → parar y avisar. Al
+actualizar: diff por sección en una sola tanda, aplicar solo lo confirmado, identificadores inmutables; un
+`Bug` cerrado en ADO propone actualizar `Resolución`, nunca borrar evidencia.
+
+### Subida (`push`)
+
+Solo con `sync … push` explícito. Leer el work item y el documento local, presentar el **diff inverso** y
+escribir **solo lo confirmado** con el mapeo de [Qué se crea en ADO](#qué-se-crea-en-ado): mismos campos
+dedicados (`AcceptanceCriteria`, `ReproSteps` para los pasos de un incidente, `Severity`), misma
+serialización de Descripción por encabezados, adjuntos de `assets/` como `AttachedFile` en un `Bug` (best-effort; avisar
+los que no se pudieron subir). Sin `Work Item (ADO)` en la cabecera: ofrecer crear el work item (`Task`
+para TK/WI, `Bug` para un incidente), vincular el padre (US para una TK; el `Bug` del `Origen: BUG-XXX`
+para un `bug-fix`) y añadir la línea `Work Item (ADO)` **sin renumerar** el documento. No se escriben
+`System.State`, `AreaPath`, `IterationPath` ni se cambia el tipo salvo petición expresa; la `Resolución`
+de un incidente **no** se traduce a estado de ADO. Cerrar con «Subido <ID> a ADO (#<id>): <secciones>».
+
+### Anti-patrones de lectura y subida
+
+- Sincronizar un `Bug` como `WI-XXX`, o una `User Story` como WI.
+- Crear la carpeta de la US padre desde `work-plan` para colgar una `TK`.
+- Escribir en ADO desde `sync` sin `push`; con `push`, cambiar estado, tipo o padre, o crear un segundo work item para un documento que ya tiene `Work Item (ADO)`.
+- Crear un segundo documento local para un `#id` que ya tiene carpeta o `Work Item (ADO)` registrado.
+- Conceder `Ready` solo porque en ADO está `Active`.
+- Descargar adjuntos sin revisar que no contengan tokens, cookies o credenciales.
+
 ## Ejemplo — Repo vinculado a ADO con MCP disponible
 
 - *Contexto:* `project-management.md` resolvió `project: MyProject`. MCP de ADO disponible.

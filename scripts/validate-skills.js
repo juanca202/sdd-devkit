@@ -3,7 +3,7 @@
 
 // Valida el formato deterministico de skills/*/SKILL.md (WI-001): sintaxis
 // de frontmatter, convenciones de AGENTS.md (name/description/license),
-// senales blandas (lineas/description extendido) y enlaces/anclas rotas en
+// senales blandas (lineas) y enlaces/anclas rotas en
 // SKILL.md y sus references/*.md. Sin dependencias externas — solo modulos
 // nativos de Node.js.
 //
@@ -15,8 +15,9 @@ const path = require('node:path');
 
 const NAME_RE = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 const NAME_MAX_LENGTH = 64;
-const DESCRIPTION_PROJECT_MAX = 1000;
-const DESCRIPTION_PLATFORM_MAX = 1536;
+// Convencion de AGENTS.md; deja margen bajo el limite de Claude Code (1024),
+// que descarta el skill si se supera.
+const DESCRIPTION_MAX = 1000;
 const LINE_COUNT_SOFT_LIMIT = 500;
 const HEADING_RE = /^(#{1,6})\s+(.+?)\s*#*\s*$/;
 const LINK_RE = /\[[^\]]*\]\(([^)\s]+)(?:\s+"[^"]*")?\)/g;
@@ -127,16 +128,10 @@ function checkDescription(fields) {
     return [{ severity: 'ERROR', message: 'falta el campo `description` en el frontmatter' }];
   }
   const len = description.length;
-  if (len > DESCRIPTION_PLATFORM_MAX) {
+  if (len > DESCRIPTION_MAX) {
     return [{
       severity: 'ERROR',
-      message: `\`description\` tiene ${len} caracteres, supera el limite de plataforma (${DESCRIPTION_PLATFORM_MAX})`,
-    }];
-  }
-  if (len > DESCRIPTION_PROJECT_MAX) {
-    return [{
-      severity: 'WARNING',
-      message: `\`description\` tiene ${len} caracteres, supera la convencion del proyecto (${DESCRIPTION_PROJECT_MAX})`,
+      message: `\`description\` tiene ${len} caracteres, supera el limite de ${DESCRIPTION_MAX}`,
     }];
   }
   return [];

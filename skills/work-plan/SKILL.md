@@ -1,6 +1,6 @@
 ---
 name: work-plan
-description: "Planifica trabajo sin generar código ni pruebas. Tipos de plan: (1) tareas técnicas (TK-XXX) bajo una historia existente; (2) tareas de mantenimiento (WI-XXX) sin historia — bug-fix, refactor, deuda técnica, dependencias, tareas operativas y spikes (experimento con timebox, entrega un informe); (3) incidentes (BUG-XXX): registro de un hallazgo —prueba en rojo, defecto observado— con evidencia y sin plan de corrección, único documento que produce con implementation.scope: tests. Activar al pedir planificar implementación, descomponer trabajo, definir alcance técnico, planificar mantenimiento o registrar un bug o hallazgo, aunque no nombre TK, WI o BUG. Ante una sola referencia a una historia («planifica US-007»), proponer la descomposición por repositorio cubriendo los AC-XXX. Carga la definición del tipo desde references/. Cuenta lo archivado al asignar IDs sin editarlo. Archiva WI y BUG («archiva el WI-007») con el modificador `archive`, mostrando el estado y pidiendo confirmación."
+description: "Planifica trabajo sin generar código ni pruebas. Tipos de plan: (1) tareas técnicas (TK-XXX) bajo una historia existente; (2) tareas de mantenimiento (WI-XXX) sin historia — bug-fix, refactor, deuda técnica, dependencias, tareas operativas y spikes (experimento con timebox, entrega un informe); (3) incidentes (BUG-XXX): registro de un hallazgo con evidencia, sin plan de corrección; único documento que produce con implementation.scope: tests. Activar al pedir planificar implementación, descomponer trabajo, definir alcance técnico, planificar mantenimiento o registrar un bug o hallazgo, aunque no nombre TK, WI o BUG. Ante una sola referencia a una historia («planifica US-007»), proponer la descomposición por repositorio cubriendo los AC-XXX. Carga la definición del tipo desde references/. Con gestor activo, `sync #id` trae un Task como TK/WI o un Bug como BUG-XXX, creando o actualizando el documento local. Archiva WI y BUG con `archive`, mostrando el estado y pidiendo confirmación."
 license: MIT
 ---
 
@@ -93,6 +93,42 @@ Reglas de selección:
 
 ---
 
+## Modificador `sync` (sincronizar desde el gestor de proyectos)
+
+Solo con la integración con el gestor de proyectos **activada** (ver [Resolución de la integración](#resolución-de-la-integración-con-el-gestor-de-proyectos)) y el modificador **explícito**. El usuario puede nombrarlo en español («importa», «trae de Azure», «sincroniza con ADO»). Mismo contrato que `work-define sync` y `test-define sync` («Dirección de la sincronización» en la base común del proveedor): **por defecto baja** —tracker → repo: crea el documento local si no existe y lo actualiza si ya existe, sin escribir nada en el tracker— y **solo con `push` sube** —repo → tracker— a petición explícita.
+
+| Invocación | Efecto |
+|------------|--------|
+| `sync <#id \| URL \| WI-XXX \| BUG-XXX \| TK-XXX> [<#id> …]` | **Bajada.** Lee cada work item vía MCP y lo materializa **según su tipo** (tabla de abajo). Varios a la vez → una sola tanda de preguntas y de confirmación. Un cambio local que el tracker no tiene se conserva y se señala en el diff; no se sube. |
+| `sync <WI-XXX \| BUG-XXX \| TK-XXX \| #id> […] push` (o «sube», «publica en ADO») | **Subida.** Diff inverso por sección, confirmación, y escritura de lo confirmado en el work item con el mismo mapeo que la creación («Qué se crea» de `references/<proveedor>.md`). Sin `Work Item (<Sistema>)` en la cabecera, ofrece crearlo (`Task` para TK/WI, `Bug` para un incidente) conservando el número local. Nunca cambia `id`, tipo, padre ni estado. |
+
+**Qué se crea según el tipo del work item** (los nombres exactos por proceso los define `references/<proveedor>.md`):
+
+| Tipo en el tracker | Documento local | Tipo de plan cuya referencia se aplica |
+|--------------------|-----------------|----------------------------------------|
+| **Bug** | **Incidente `BUG-<id>-[slug]/README.md`** en `<changesPath>/incidents/` — **nunca un `WI`**: el tipo `bug` no existe en los work items | `references/incidents.md` (plantilla `incident-template.md`; en `implementation.scope: tests`, `incident-tests-template.md`) |
+| **Task** con padre historia que existe localmente (`US-<id>-*` o `Work Item (<Sistema>): [#<id>]`) | `TK-<id>-[slug].md` dentro de esa US | `references/user-story-tasks.md` |
+| **Task** cuyo padre historia **no** existe localmente | Preguntar: `[Sincronizar primero la historia (/work-define sync #<padre>)]` / `[Crear como WI-<id>]`. Nunca crear la carpeta de la US desde aquí | — |
+| **Task** sin padre historia (o con `implementation.scope: tests`, donde no hay TK ni WI) | `WI-<id>-[slug]/README.md` en `<changesPath>/work-items/`, con `Tipo` inferido del título/tags y confirmado; en modo pruebas, **parar**: solo se sincronizan `Bug` | `references/maintenance-tasks.md` |
+| **User Story** / PBI / Requirement / Feature / Epic | No es de este skill: remitir a `/work-define sync #<id>` | — |
+| **Test Case** | Remitir a `/test-define sync #<id>` | — |
+| Otro | Preguntar al usuario qué espera antes de hacer nada | — |
+
+**Esqueleto del flujo** (el mapeo de campos vive en `references/<proveedor>.md` → «Lectura (`sync`)»):
+
+1. **Resolver la entrada** a uno o varios `id` numéricos (`#4821`, `4821`, URL, o un `WI-<id>`/`BUG-<id>`/`TK-<id>` local con `Work Item (<Sistema>)`). Lo que no se resuelva, se pregunta.
+2. **Leer cada work item** vía MCP y clasificarlo con la tabla anterior. Sin MCP, degradar como la base común: pedir al usuario que pegue el contenido; el número local es el `id` que indicó.
+3. **Localizar el documento local** por `<PREFIJO>-<id>-*` y por cabecera `Work Item (<Sistema>): [#<id>]`, en la ruta activa **y** en `<archivedPath>`. Archivado → parar y avisar (desarchivar lo decide el usuario). No existe → **crear**; existe → **actualizar**.
+4. **Mapear** los campos a la plantilla del tipo de plan resuelto, **sin inventar** lo que el work item no diga: lo que la plantilla exige y el tracker no trae es una laguna en Observaciones. Los `AC-XXX` de un `Task` se codifican como en `work-define sync` (verbatim si ya traen identificador; `AC-001…` en orden si no, anotándolo). Para un `Bug`, los pasos de reproducción se copian **uno a uno** y los adjuntos se descargan a `assets/` como `EV-XX` si el MCP lo permite (si no, se listan como «No adjuntado — en el tracker»).
+5. **Preguntar solo lo que el tracker no tiene**, en una tanda para todo el lote: `Repositorio` (si no es inferible), `Tipo` del WI cuando el título no lo determina, y en un `Bug` la **Severidad** si el campo no existe en el proceso.
+6. **Crear** el documento con el `id` del tracker como número (sin padding), `Work Item (<Sistema>): [#<id>](<url>)` en la cabecera y `Estado` según el checklist de Ready del tipo de plan (el estado del tracker solo orienta). Un incidente nace con `Resolución: Open` salvo que el `Bug` esté cerrado en el tracker: entonces se avisa y, si el usuario confirma, `Resolución: Fixed (<referencia>)` o `Discarded — cerrado en <Sistema>`.
+7. **Actualizar** (documento ya existente): presentar **un diff por sección** en una sola tanda y aplicar únicamente lo confirmado; identificadores (`AC-XXX`, `IT-XX`, `EV-XX`) inmutables; un criterio eliminado en el tracker se marca `Obsolete`, no se borra; en un incidente, un `Bug` cerrado propone actualizar `Resolución`, nunca borrar evidencia.
+8. **Cerrar** con el mensaje explícito — «Sincronizado BUG-<id> desde <Sistema> (#<id>): creado → <ruta>» / «…: actualizadas <secciones>» / «Subido WI-XXX a <Sistema> (#<id>): <secciones>» — y el handoff habitual del tipo de plan (un incidente ofrece **[Planificar la corrección]** / **[Solo registrar]**; una TK/WI en `Ready`, `test-define` según `createMode` y `work-implement`).
+
+> **Un `#id` o una URL sin modificador nunca dispara una sincronización ni sirve de número para un documento nuevo.** Si la entrada trae un identificador del tracker o palabras como «importa», «trae», «sincroniza», **preguntar** (herramienta estructurada): [Sincronizar #<id> desde <Sistema>] / [Crear uno nuevo (el número es solo contexto)]. Con integración desactivada, `sync` no está disponible: informar que el repo no está vinculado (`projectManagement` en `.sdd-devkit/settings.json`) y no leer ninguna referencia de proveedor.
+
+---
+
 ## Modificador `archive` (archivar tareas de mantenimiento `WI-XXX` e incidentes `BUG-XXX`)
 
 **Archiva este skill, no los de cierre.** `work-integrate` y `pr-create` no archivan: siempre hay una revisión humana antes, y el usuario lo pide aquí cuando decide. Procedimiento, destinos, reglas de confirmación y contrato para el resto del catálogo: [`${PLUGIN_ROOT}/references/archive.md`](../../references/archive.md) — leerlo antes de mover nada.
@@ -120,10 +156,10 @@ Las reglas de `project-management.md` son obligatorias y tienen prioridad para d
 
 No continúes hasta haber leído y aplicado `project-management.md`.
 
-**Delta de este skill:** la integración aplica a los tres tipos de plan: todos crean work items (un incidente se crea como `Bug`; todo lo demás como `Task`).
+**Delta de este skill:** la integración aplica a los tres tipos de plan en **dos direcciones**: al redactar, todos crean work items (un incidente se crea como `Bug`; todo lo demás como `Task`); con el modificador `sync`, se **lee** un work item existente y se materializa localmente (ver [Modificador `sync`](#modificador-sync-sincronizar-desde-el-gestor-de-proyectos)).
 
-- **Desactivada** → continuar con el flujo del tipo de plan usando **ID secuencial local**; no leer ninguna referencia de proveedor.
-- **Activada** → además de la referencia compartida del proveedor, cargar `references/<proveedor>.md` de este skill (p. ej. [`references/azure-devops.md`](references/azure-devops.md)) y seguir **únicamente** sus pasos antes de crear cualquier archivo local. Si este skill no tiene referencia para ese proveedor, informar al usuario y continuar con ID secuencial local.
+- **Desactivada** → continuar con el flujo del tipo de plan usando **ID secuencial local**; no leer ninguna referencia de proveedor; `sync` no está disponible.
+- **Activada** → además de la referencia compartida del proveedor, cargar `references/<proveedor>.md` de este skill (p. ej. [`references/azure-devops.md`](references/azure-devops.md)) y seguir **únicamente** sus pasos antes de crear cualquier archivo local (sección «Qué se crea» al redactar; sección «Lectura (`sync`)» al sincronizar). Si este skill no tiene referencia para ese proveedor, informar al usuario y continuar con ID secuencial local.
 
 Todo el detalle propio de cada proveedor (herramienta MCP, campos, tipos de work item, límites de formato) vive exclusivamente en esos archivos — nunca aquí ni en las referencias de tipo de plan.
 
@@ -144,7 +180,7 @@ Solo resultados y lo que el usuario debe saber o decidir. No incluir razonamient
 | `references/user-story-tasks.md` | Tipo de plan = tarea técnica de historia de usuario. Contiene modos de invocación, ubicaciones, flujos (stub, TK completa, actualizar, planificar desde US), checklist, ejemplos y anti-patrones. |
 | `references/maintenance-tasks.md` | Tipo de plan = tarea de mantenimiento. |
 | `references/incidents.md` | Tipo de plan = incidente (`BUG-XXX`): registro de un hallazgo con evidencia, ubicación, `Resolución`, variante modo pruebas, handoffs. |
-| `references/<proveedor>.md` (p. ej. `azure-devops.md`) | Solo si `project-management.md` resolvió la integración como activada; el archivo concreto depende del `provider` resuelto. |
+| `references/<proveedor>.md` (p. ej. `azure-devops.md`) | Solo si `project-management.md` resolvió la integración como activada; el archivo concreto depende del `provider` resuelto. Cubre la creación de work items al redactar y la lectura con `sync`. |
 | `assets/task-template.md` | Plantilla canónica de una tarea de historia de usuario (`TK-XXX`). Leer antes de redactar el documento. |
 | `assets/work-item-template.md` | Plantilla canónica de una tarea de mantenimiento (`WI-XXX`). Leer antes de redactar el documento. |
 | `assets/incident-template.md` | Plantilla canónica de un incidente (`BUG-XXX`): esperado/observado, pasos para reproducir, evidencia `EV-XX`, impacto y `Resolución`; sin plan. Leer antes de redactar el documento. |

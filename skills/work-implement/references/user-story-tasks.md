@@ -38,9 +38,9 @@ Flujo para **ejecutar en codigo** las tareas tecnicas `TK-XXX` de una historia d
 
 Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
-- **US padre con README.md:** la carpeta de la US existe y tiene `README.md` con metadato `Estado: Ready`.
+- **US padre con README.md:** la carpeta de la US existe y tiene `README.md` con metadato `status: Ready`.
 - **US no archivada:** si la carpeta no aparece en `<changesPath>/user-stories/`, buscarla en `<archivedPath>/user-stories/` antes de darla por inexistente. Si esta ahi, la US **ya se cerro e integro**: **parar** y avisar — «`US-042` esta archivada; para retomarla hay que desarchivarla primero (mover su carpeta de vuelta), y eso lo decide el usuario». **Excepcion:** en [modo correccion](../SKILL.md#modo-correccion-delegado-desde-quality-check) delegado por `quality-check`, un artefacto archivado es esperable —la correccion llega en la fase de cierre, con el archivado ya commiteado—: ahi se continua, pero **sin escribir dentro de la carpeta archivada** (la nota de retrabajo va en el informe de `quality-check`). **Nunca** crear una carpeta nueva en la ruta activa por no haberla encontrado: dejaria dos artefactos con el mismo identificador. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../../references/archive.md#contrato-para-el-resto-del-catálogo).
-- **TK en estado Ready:** solo encolar tareas con `Estado: Ready`. Las `Draft` o `Done` en `progress.md` no son ejecutables por defecto.
+- **TK en estado Ready:** solo encolar tareas con `status: Ready`. Las `Draft` o `Done` en `progress.md` no son ejecutables por defecto.
 - **Test cases presentes:** verificar si existe la carpeta `<changesPath>/user-stories/US-XXX-[nombre-corto]/test-cases/` con al menos un archivo `TC-XXX-*.md`. Si no existe o esta vacia, **preguntar al usuario** (herramienta estructurada) antes de continuar:
 
   > "Esta US no tiene test cases definidos para la implementacion. ¿Como quieres continuar?"
@@ -61,7 +61,7 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
 1. Verificar working tree limpio; si no, parar y avisar.
 2. Resolver nombre de rama: `feature/US-XXX-[nombre-corto]`.
 3. Situarse en la rama: **sin worktrees**, `git checkout feature/US-XXX-[nombre-corto]` si existe; si no, `git checkout -b feature/US-XXX-[nombre-corto]` desde la rama base acordada (no asumir `main`/`develop`). **Con worktrees**, ver la nota de abajo.
-4. Leer o crear `progress.md` (desde `assets/progress-template.md`). Al crearlo, anadir **una entrada por cada TK del alcance** con `Estado: Pending` salvo las ya `Done`.
+4. Leer o crear `progress.md` (desde `assets/progress-template.md`). Al crearlo, anadir **una entrada por cada TK del alcance** con `status: Pending` salvo las ya `Done`.
 
 > **Con worktrees (`workTree: always`, `ask` afirmativo o modo paralelo), este paso NO hace `git checkout` en el arbol principal.** Se cumple creando el worktree del artefacto (`git worktree add <workTreePath>/<artefacto> [-b <rama>] <rama-base>`) y el resto del flujo corre dentro de el. **El punto 1 (working tree limpio) sigue siendo sobre el arbol principal y va antes:** con cambios sin commitear se aplica `uncommittedChanges` (`commit` / `stash` / `ask`) igual que sin worktrees, y solo despues se crea el worktree. Regla completa en [`SKILL.md` → Arbol principal intocable](../SKILL.md#arbol-principal-intocable-cuando-se-usan-worktrees-transversal).
 

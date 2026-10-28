@@ -82,7 +82,7 @@ reglas de negocio implementa?». Confirmarla con el usuario antes de investigar.
 
 El flujo es **secuencial y con compuertas**: no se crean features hasta que el
 discovery esté en `Ready`, y no se invoca `test-define` sobre un `FT-XXX` hasta que
-ese feature esté en `Estado: Ready`.
+ese feature esté en `status: Ready`.
 
 ## Principios rectores (no negociables)
 
@@ -360,7 +360,7 @@ con un `README.md` a partir de `assets/legacy/feature-template.md`:
 
 ## Paso 3 — Definir Casos de Prueba (*handoff* a `test-define`)
 
-Por cada `FT-XXX` en **`Estado: Ready`**, invoca `test-define`:
+Por cada `FT-XXX` en **`status: Ready`**, invoca `test-define`:
 
 1. Genera los `TC-XXX` a partir de los `AC-XXX` del feature, siguiendo el flujo normal
    de `test-define` (perspectivas happy/error/límite como cobertura mínima).

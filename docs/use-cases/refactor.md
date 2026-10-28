@@ -10,7 +10,7 @@ flowchart TD
     H -.->|"alcance redefinido"| B
     C -->|"Sí"| P["Resolver prerequisitos"]
     P -.->|"si aplica"| ADR["Actualización/definición de<br/>ADR y estándares<br/>**/arch-manage**"]
-    P --> F["Planificación del refactor<br/>**/work-plan** (WI `Tipo: refactor`)"]
+    P --> F["Planificación del refactor<br/>**/work-plan** (WI `kind: refactor`)"]
     F --> G["Implementación<br/>**/work-implement** (refactor)"]
     G -.->|"si aplica"| DEP["Actualización/instalación<br/>de dependencias"]
     G --> I["Creación de PR<br/>**/pr-create**"]
@@ -38,8 +38,8 @@ flowchart TD
    - **No / inconclusa**: la investigación no cierra en una recomendación accionable (impacto demasiado amplio, riesgo no mitigable, falta información). Sale a **análisis humano**, que revisa y redefine el alcance (acotarlo, dividirlo, posponerlo) o reúne el contexto que falta. Con el alcance redefinido, el flujo **vuelve a la investigación** (`work-research`), no arranca desde cero.
    - **Sí**: pasa a **resolver prerequisitos** que la investigación haya identificado, antes de planificar el refactor en sí.
 4. **Resolver prerequisitos** — rama **opcional**, que solo se resuelve si la investigación la señaló y no queda encadenada al resto del diagrama: **actualización/definición de ADR y estándares** (`arch-manage`), si el nuevo diseño formaliza una decisión arquitectónica o cambia un criterio de cumplimiento vigente.
-5. **Planificación del refactor** (`work-plan`): WI `Tipo: refactor` con el cambio estructural en sí.
-6. **Implementación** (`work-implement`): cambio estructural sin alterar comportamiento observable; suite en verde. Incluye, como tarea **opcional** dentro de la misma implementación (no encadenada al resto del diagrama), la **actualización/instalación de dependencias** (`work-plan` con WI `Tipo: dependency-update`) cuando el refactor solo es viable con versiones más nuevas de una o más dependencias (API removida, vulnerabilidad, incompatibilidad).
+5. **Planificación del refactor** (`work-plan`): WI `kind: refactor` con el cambio estructural en sí.
+6. **Implementación** (`work-implement`): cambio estructural sin alterar comportamiento observable; suite en verde. Incluye, como tarea **opcional** dentro de la misma implementación (no encadenada al resto del diagrama), la **actualización/instalación de dependencias** (`work-plan` con WI `kind: dependency-update`) cuando el refactor solo es viable con versiones más nuevas de una o más dependencias (API removida, vulnerabilidad, incompatibilidad).
 7. **Cierre**: creación de Pull/Merge Request (`pr-create`) hacia el entregable. `pr-create` ejecuta **internamente** las puertas de calidad (`quality-check`, `code-review` — SOLID, acoplamiento, duplicación — y `coverage-verify`) antes de crear el PR. El archivado **no** forma parte del PR: cuando el equipo termine su revisión, se archiva con `/work-plan WI-XXX archive`, que muestra el estado real del WI y pide confirmación. No son pasos aparte de este flujo.
 
 ## Cuándo no aplica este caso

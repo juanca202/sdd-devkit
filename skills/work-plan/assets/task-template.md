@@ -1,20 +1,25 @@
+---
+id: TK-XXX
+type: task
+status: Draft                         # Draft | Ready
+story: ../README.md                   # README.md de la historia US-XXX
+repository: nombre-repo               # obligatorio: repositorio git al que afecta la tarea; inferido del repo (git remote / carpeta) o indicado por el usuario
+assignee: "Nombre Apellido"           # opcional: lo indicado por el usuario; si no, `git config user.name`; omitir si no aplica
+work_item:                            # solo si se creó en el gestor vinculado; omitir el objeto entero si no
+  system: ADO                         # nombre corto que define la referencia del proveedor (p. ej. ADO → references/azure-devops.md)
+  id: 12345
+  url: https://…
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 -->
 # TK-XXX: {{título corto de la tarea}}
-
-<!-- tk:status={{Draft|Ready}} -->
-<!--
-Esta marca se CONSERVA al publicar. Sus claves y sus valores van en inglés SIEMPRE, aunque el resto del
-documento esté en otro idioma: es el ancla que otros skills parsean, no contenido. La etiqueta visible
-de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
--->
-**Estado:** {{Draft | Ready}}
-**Historia:** {{enlace markdown al README.md de la historia US-XXX}}
-**Repositorio:** {{obligatorio: nombre del repositorio git al que afecta la tarea; inferido del repo (git remote / carpeta) o indicado por el usuario}}
-**Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema de seguimiento vinculado — solo si se creó; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica}}
 
 ## Descripción
 

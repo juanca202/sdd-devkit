@@ -1,4 +1,24 @@
+---
+id: RQ-XXX
+type: rq
+status: Draft                         # Draft | Ready
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+definition_owner: "Cliente — Gerencia de Tecnología"   # organización / área / persona responsable del documento fuente (texto libre)
+source_document:
+  name: "DTG-003 v1.1 (06/05/2025)"   # identificador y versión del documento recibido, tal como lo nombra su dueño
+  path: references/DTG-003-v1.1.pdf    # copia íntegra en references/ de esta carpeta
+work_item:                             # ancla que sobrevive a cualquier renombrado local; obligatorio si el dueño lo tiene
+  system: ADO                          # nombre corto del gestor (el del dueño o el tracker propio)
+  id: 15428                            # identificador del requerimiento en ese gestor
+  url: https://…                       # enlace al work item, si existe
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
@@ -33,15 +53,6 @@ Reglas de contenido:
 -->
 
 # RQ-XXX: {{título corto del requerimiento}}
-
-<!-- rq:status={{Draft|Ready}} -->
-<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que srs:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
-**Estado:** {{Draft | Ready}}
-**Fecha de creación:** {{YYYY-MM-DD}}
-**Última actualización:** {{YYYY-MM-DD}}
-**Dueño de la definición:** {{organización / área / persona responsable del documento fuente; p. ej. «Cliente — Gerencia de Tecnología»}}
-**Documento fuente:** {{identificador y versión del documento recibido, tal como lo nombra su dueño; p. ej. «DTG-003 v1.1 (06/05/2025)»}} — {{enlace markdown a `references/<archivo>`}}
-**Work Item ({{Sistema}}):** {{identificador del requerimiento en el gestor del dueño (p. ej. «Requerimiento #15428») y, si existe, enlace al work item del tracker propio. Es el ancla que sobrevive a cualquier renombrado local; obligatorio si el dueño lo tiene}}
 
 ## Resumen
 

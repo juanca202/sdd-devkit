@@ -1,4 +1,18 @@
+---
+id: SRS-XXX
+type: srs
+status: Draft                         # Draft | Ready
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+promoted_from: PRD-XXX                # solo si nació como PRD (mismo número) y se completó el bloque de ingeniería; omitir si no
+promoted_at: YYYY-MM-DD               # fecha de la promoción; omitir junto con promoted_from
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 Estructura alineada a ISO/IEC/IEEE 29148:2018 (outline de Software Requirements Specification), con las
@@ -15,17 +29,6 @@ FR/NFR/BR/AC/OB/SC se conservan y solo se completa el bloque de ingeniería (3, 
 -->
 
 # SRS-XXX: {{título corto del requerimiento}}
-
-<!-- srs:status={{Draft|Ready}} -->
-<!--
-Esta marca se CONSERVA al publicar. Sus claves y sus valores van en inglés SIEMPRE, aunque el resto del
-documento esté en otro idioma: es el ancla que otros skills parsean, no contenido. La etiqueta visible
-de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
--->
-**Estado:** {{Draft | Ready}}
-**Fecha de creación:** {{YYYY-MM-DD}}
-**Última actualización:** {{YYYY-MM-DD}}
-**Promovido a SRS:** {{YYYY-MM-DD, desde `PRD-XXX` (mismo número) — solo si nació como PRD y se completó el bloque de ingeniería; omitir la línea si no aplica}}
 
 ## 1. Introducción
 
@@ -136,7 +139,6 @@ este SRS" sí debe tener su FR-XXX correspondiente en la sección 5. Eliminar la
 
 ## 3. Stack tecnológico
 
-
 <!-- srs:stack-mode={{researched|decided}} -->
 <!--
 Marca oculta, igual criterio que la de Estado: claves y valores en inglés siempre. Refleja la
@@ -245,7 +247,6 @@ no aplique en vez de dejarla vacía. Es existencia y propósito de la interfaz, 
 
 ## 9. Requisitos de datos
 
-
 <!--
 Sección opcional — incluir si el requerimiento crea, modifica o retiene datos propios. Formaliza la
 existencia de las entidades de datos, no su modelo detallado (campos, tipos, relaciones) — eso es
@@ -257,7 +258,6 @@ de solo lectura).
 | {{nombre de la entidad; p. ej. Factura, Perfil de proveedor}} | {{qué representa}} | {{cuánto tiempo se conserva; si contiene datos personales o sensibles}} | {{orden de magnitud esperado, si se conoce}} |
 
 ## 10. Cumplimiento normativo
-
 
 <!--
 Sección opcional — incluir si aplica alguna normativa, regulación o estándar externo (protección de

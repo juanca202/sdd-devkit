@@ -32,7 +32,7 @@ Todo levantamiento recorre estas etapas, en este orden. Cada etapa alimenta secc
 | 14 | **Análisis de gaps** | Huecos: FR sin criterio, actor sin flujo, integración sin contrato | los tres | Observaciones / nuevas tandas | 12 (Ola 3) |
 | 15 | **Revisión cruzada** | Contradicciones y ambigüedades entre dominios | los tres | Observaciones / nuevas tandas | 12 (Ola 3) |
 | 16 | **Trazabilidad** | Origen y dependencias de cada requisito, completos | — (agente) | 13. Verificación y trazabilidad | 5 y 12 |
-| 17 | **Requirement Ready** | DoR cumplida, validación externa superada | — (agente) | `Estado: Ready` | 13 |
+| 17 | **Requirement Ready** | DoR cumplida, validación externa superada | — (agente) | `status: Ready` | 13 |
 
 > **Etapa 09 — alcance.** En el SRS, los «criterios de aceptación» son los **criterios de verificación** de cada `FR-XXX`/`NFR-XXX` (términos observables y medibles, ver [`quality-criteria.md#verificabilidad`](quality-criteria.md#verificabilidad)). Los `AC-XXX` granulares por historia de usuario **no se crean aquí** — son de `work-define`, después del handoff.
 

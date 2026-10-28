@@ -1,4 +1,18 @@
+---
+id: WF-XXX
+type: wireframe
+status: Proposed                      # Proposed | Approved
+solution_type: web                    # web | ios | android | hybrid | desktop
+responsive: true                      # true | false; omitir si no aplica (apps nativas / escritorio)
+origin: ../README.md                  # README.md del SRS-XXX | US-XXX | WI-XXX que origina la pantalla
+related: [FR-XXX, FR-XXX]             # FR-XXX (SRS) o AC-XXX (US) que cubre la pantalla
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque al publicar el documento final.
 Dos archivos por pantalla, en wireframes/ DENTRO DE LA CARPETA DEL ARTEFACTO que los origina
@@ -19,13 +33,6 @@ no un diseño visual definitivo ni una guía de estilo. Color de marca, tipograf
 no son responsabilidad de este skill; eso lo define diseño visual más adelante.
 -->
 # {{WF-XXX}}: {{nombre de la pantalla}}
-
-<!-- wireframe:status={{Proposed|Approved}} -->
-<!-- Marca oculta; claves y valores en inglés siempre, igual criterio que srs:status. -->
-**Estado:** {{Proposed | Approved}}
-**Tipo de solución:** {{Aplicación web / App nativa (iOS) / App nativa (Android) / App híbrida / Aplicación de escritorio}} — {{responsiva | no responsiva | no aplica}}
-**Origen:** [{{SRS-XXX: título | US-XXX: título | WI-XXX: título}}](../README.md)
-**Requisitos relacionados:** {{FR-XXX, FR-XXX | AC-XXX, AC-XXX}}
 
 {{Descripción, máximo 4 líneas y sin título: qué le permite hacer esta pantalla al actor, en qué contexto llega a ella y
 qué ocurre al completarla; citar el/los `FR-XXX` (SRS) o `AC-XXX` (US) que cubre.}}

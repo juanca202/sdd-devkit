@@ -58,7 +58,7 @@ Referencia del skill `coverage-verify`. Casos de uso y errores a evitar.
 - **Confundir los dos destinos de observación:** lo atribuible a un criterio va en la columna `Observaciones` de «Cobertura por criterio»; lo que es de la corrida (suite `coverage` en `FAIL`, árbol sucio, ejecución no delegable, tests no vinculables) va en la sección «Observaciones y pendientes».
 - Inventar un resultado global agregado de la corrida: `quality-check-run.json` da `result` **por suite**, no un total.
 - **Normalizar o renombrar el identificador de un criterio** (p. ej. escribir `AC-001` donde el artefacto dice `1.1`): rompe el vínculo con los TCs que produjo `test-define`.
-- **Bloquear porque el artefacto no sigue las convenciones del plugin** (formato del identificador, ubicación, campo `Estado:` del **artefacto**). El único requisito es que los criterios tengan identificador. El `Estado:` del **TC** sí se lee: filtra la cobertura (ver «Estados de cobertura»).
+- **Bloquear porque el artefacto no sigue las convenciones del plugin** (formato del identificador, ubicación, campo `status` del **artefacto**). El único requisito es que los criterios tengan identificador. El `status` del **TC** sí se lee: filtra la cobertura (ver «Estados de cobertura»).
 - Ignorar la carpeta `test-cases/` del artefacto y su índice, reconstruyendo el mapeo solo por heurística de nombres de test.
 - Mapear la suite `coverage` a un criterio: es cobertura de líneas, no funcional.
 - **Colapsar en una sola fila un TC que declara varios tipos de prueba** (p. ej. `Unit, E2E`): esconde el tipo no automatizado tras el que sí existe. Una fila por tipo declarado.

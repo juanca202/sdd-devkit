@@ -44,18 +44,22 @@ que las tres puertas: un informe de auditoría se lee con el mismo vocabulario q
 > por **qué informe lo emite** y por el **valor canónico de la marca oculta**, nunca por la palabra que
 > lleva al lado. Un consumidor que decida leyendo la etiqueta se rompe en cuanto cambia el idioma del repo.
 
-## Etiquetas visibles vs. identificadores ocultos
+## Etiquetas visibles vs. identificadores
 
 | Dónde | Idioma | Ejemplo |
 |-------|--------|---------|
-| **Texto visible del documento** — títulos de sección, etiquetas de campo del encabezado, celdas, leyendas, prosa | **Idioma resuelto.** Es contenido que lee una persona. | `**Veredicto:** ✅ Aprobado` · `**Estado:** Ready` |
-| **Marcas ocultas y frontmatter** — comentarios HTML que otro skill parsea, claves de frontmatter | **Siempre en inglés.** Son identificadores, no contenido. | `<!-- code-review:verdict=APPROVED · mode=default -->` |
+| **Texto visible del documento** — títulos de sección, celdas, leyendas, prosa | **Idioma resuelto.** Es contenido que lee una persona. | `**Veredicto:** ✅ Aprobado` |
+| **Frontmatter y marcas ocultas** — claves y valores enumerados del frontmatter de un artefacto, comentarios HTML que otro skill parsea | **Siempre en inglés.** Son identificadores, no contenido. | `status: Ready` · `<!-- code-review:verdict=APPROVED · mode=default -->` |
 
-Todo artefacto con `**Estado:**` lleva, justo debajo de su título, la marca `<!-- <prefijo>:status=… -->` con el mismo valor que la etiqueta visible: `srs`, `us`, `tk`, `wi`, `tc`, `rq`, `ft`, `rs`, `diagnosis`, `discovery`, `validation` y `wireframe:status`. Es lo que leen los demás skills; la línea visible nunca.
+Todo artefacto documental (US, TK, WI, BUG, TC, SRS/PRD/RQ, FT, RS, WF, `progress.md`…) declara su cabecera
+—`status` incluido— en un **frontmatter YAML** en la línea 1, con claves y valores en inglés. Es lo que leen
+los demás skills. **No existe** cabecera visible (`**Estado:**`) ni marca oculta `<!-- <prefijo>:status=… -->`:
+contrato completo en [`frontmatter.md`](frontmatter.md). Las marcas ocultas quedan **solo** para los informes
+con veredicto (pie del informe) y para las unidades de `progress.md`.
 
 > **La etiqueta visible nunca es el ancla de parseo.** `**Veredicto:**` se llamará `**Verdict:**` en un repo
 > en inglés y `**Verdикт:**` en otro idioma: comparar contra ella se rompe en cuanto cambia el idioma del
-> repo. Lo que se compara es siempre la **marca oculta**, cuyas claves y valores son estables.
+> repo. Lo que se compara es siempre el **frontmatter** o la **marca oculta**, cuyas claves y valores son estables.
 
 ## Cómo lo lee un consumidor
 
@@ -98,8 +102,9 @@ Todo esto son **identificadores**, no contenido:
 
 - El `result` de `.sdd-devkit/quality-check-run.json`: `PASS` · `FAIL` · `SKIPPED` · `N/A`, y el resto de sus claves.
 - Las claves y los valores de `.sdd-devkit/settings.json`.
-- Las **marcas ocultas** de los artefactos y todas sus claves (`verdict`, `status`, `testType`,
-  `fingerprint`, `spec`, `base`, `mode`, `generated`…), incluida la marca `spike:verdict` del informe de un
+- Las **claves y los valores enumerados del frontmatter** de los artefactos (`status`, `type`, `kind`, `test_type`,
+  `perspective`, `priority`…; ver [`frontmatter.md`](frontmatter.md)) y las **marcas ocultas** de los informes y de las
+  unidades de `progress.md` con todas sus claves (`verdict`, `status`, `fingerprint`, `spec`, `base`, `mode`, `generated`…), incluida la marca `spike:verdict` del informe de un
   spike y sus valores `VIABLE` · `VIABLE_WITH_REWORK` · `NOT_VIABLE` · `INCONCLUSIVE` (consumidores:
   `work-define`, `work-plan` y el archivado; no es una puerta de cierre).
 - Los **valores** de los campos de estado, aunque su etiqueta visible sí se traduzca:
@@ -113,12 +118,12 @@ Todo esto son **identificadores**, no contenido:
   en un análisis de TC) y los estados por criterio de `arch-audit` (`COMPLIANT` / `PARTIAL` / `NON_COMPLIANT` / `UNVERIFIABLE`).
   `Met` / `Partial` / `Not Met` / `N/A` en las tablas INVEST y DoR, `Direct` / `Adaptation` / `Redesign` / `Remove` / `Pending`
   como equivalencia de migración.
-  **Regla general: toda opción de un campo de estado, veredicto o resolución en una plantilla se escribe en inglés**; la
-  etiqueta visible del campo (`**Estado:**`) sí se traduce.
+  **Regla general: toda opción de un campo de estado, veredicto o resolución en una plantilla se escribe en inglés**; en el
+  frontmatter la clave también (`status`), y solo las etiquetas visibles del cuerpo se traducen.
 - Los nombres de los modificadores de invocación y los identificadores de suite.
 - Los identificadores de artefactos y documentos (`US-XXX`, `TK-XXX`, `WI-XXX`, `TC-XXX`, `FT-XXX`, `ADR-XXX`,
   `AC-XXX`, `BR-XX`, `CR-XXX`, `RS-XXX`) y los nombres de skill.
 
-Y al revés: **sí** se traducen las etiquetas visibles de esos mismos campos —`**Estado:**`,
-`**Tipo de prueba:**`, `**Veredicto:**`, `**Fecha:**`— y todos los títulos de sección, porque son texto
-que lee una persona.
+Y al revés: **sí** se traducen las etiquetas visibles del cuerpo —`**Veredicto:**`, `**Resolución:**`,
+`**Severidad:**`— y todos los títulos de sección, porque son texto que lee una persona. Las claves del
+frontmatter no son etiquetas: no se traducen nunca.

@@ -1,8 +1,29 @@
+---
+id: WI-XXX
+type: work-item
+status: Draft                         # Draft | Ready
+kind: spike
+subtype: technical                    # technical | functional
+repository: nombre-repo               # obligatorio para Ready: repositorio git donde se ejecuta el experimento
+origin: ../../user-stories/US-XXX-slug/README.md   # artefacto o decisión que espera el resultado: README.md del US-XXX, WI-XXX, RS-XXX o ADR-XXX; omitir si es una petición directa
+timebox: "2 días"                     # obligatorio para Ready: duración máxima del experimento (texto libre: `2 días` · `8 h` · `1 sprint`)
+resolution: Open                      # Open | Replanned (US-YYY) | Replanned (WI-YYY) | Re-spiked (WI-YYY) | Discarded — motivo
+assignee: "Nombre Apellido"           # opcional: lo indicado por el usuario; si no, `git config user.name`; omitir si no aplica
+work_item:                            # solo si se creó en el gestor vinculado; omitir el objeto entero si no
+  system: ADO
+  id: 12345
+  url: https://…
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
-Plantilla del WI de `Tipo: spike` — SUSTITUYE a `work-item-template.md` para ese tipo. Es el README.md del
+Plantilla del WI de `kind: spike` — SUSTITUYE a `work-item-template.md` para ese tipo. Es el README.md del
 work item: la INVESTIGACIÓN PROPUESTA. Vive en `<changesPath>/work-items/WI-XXX-{slug}/README.md`, y en esa
 MISMA carpeta se guardan, al ejecutarlo, `spike-report.md` (el informe de resultados), `progress.md` y
 `assets/` (la evidencia). Un spike es un experimento acotado en el tiempo para reducir una incertidumbre
@@ -10,34 +31,15 @@ que impide planificar o estimar. Su entregable es CONOCIMIENTO (el informe), nun
 rama `spike/WI-XXX-{slug}` queda como referencia y el desarrollo definitivo se formaliza después en una
 `US-XXX` (`work-define`) o en un `WI-XXX` de otro tipo (`work-plan`).
 Ver `references/maintenance-tasks.md` → Variante: Tipo spike.
+
+subtype: technical → enfoque de implementación, build vs. buy, rendimiento, viabilidad de una librería o integración.
+         functional → comportamiento de la solución, riesgo, complejidad, cómo organizar el trabajo.
+resolution: arranca en `Open`. La actualiza el skill que crea el artefacto definitivo (`work-define` → `Replanned (US-YYY)`;
+  `work-plan` → `Replanned (WI-YYY)`, o `Re-spiked (WI-YYY)` al crear un segundo spike más acotado), o `work-implement`
+  al descartar tras un veredicto NOT_VIABLE. Un spike con `resolution` distinta de `Open` cuenta como completo para
+  `/work-plan archive`.
 -->
 # WI-XXX: {{título corto del spike — la incertidumbre que resuelve}}
-
-<!-- wi:status={{Draft|Ready}} · type=spike -->
-<!--
-Esta marca se CONSERVA al publicar. Sus claves y sus valores van en inglés SIEMPRE, aunque el resto del
-documento esté en otro idioma: es el ancla que otros skills parsean, no contenido. La etiqueta visible
-de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
--->
-**Estado:** {{Draft | Ready}}
-**Tipo:** spike
-**Subtipo:** {{técnico | funcional}}
-<!--
-técnico  → enfoque de implementación, build vs. buy, rendimiento, viabilidad de una librería o integración.
-funcional → comportamiento de la solución, riesgo, complejidad, cómo organizar el trabajo.
--->
-**Repositorio:** {{obligatorio para Ready: nombre del repositorio git donde se ejecuta el experimento}}
-**Origen:** {{artefacto o decisión que espera el resultado: `US-XXX`, `WI-XXX`, `RS-XXX` o `ADR-XXX` enlazado por ruta relativa; «Petición directa» si no hay ninguno}}
-**Timebox:** {{obligatorio para Ready: duración máxima del experimento, p. ej. `2 días` · `8 h` · `1 sprint`}}
-**Resolución:** {{Open | Replanned (US-YYY) | Replanned (WI-YYY) | Re-spiked (WI-YYY) | Discarded — motivo}}
-<!--
-Arranca en `Open`. La actualiza el skill que crea el artefacto definitivo (`work-define` → `Replanned (US-YYY)`;
-`work-plan` → `Replanned (WI-YYY)`, o `Re-spiked (WI-YYY)` al crear un segundo spike más acotado), o
-`work-implement` al descartar tras un veredicto NOT_VIABLE. Un spike con `Resolución` distinta de `Open`
-cuenta como completo para `/work-plan archive`.
--->
-**Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema de seguimiento vinculado — solo si se creó; omitir línea si no aplica}}
 
 ## Pregunta de investigación
 

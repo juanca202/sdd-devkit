@@ -80,7 +80,7 @@ Cuando reflog y config no concluyen, o existen varios candidatos plausibles.
 - [ ] Hash del commit de merge capturado para el reporte
 
 **Cierre del trabajo en la rama base (paso 11 — después del merge; solo `US-XXX`/`WI-XXX` en rama funcional, nunca en `test/`):**
-- [ ] `progress.md` del trabajo con el **estado del trabajo** en `Done` (encabezado `**Estado:**` y marca `<!-- work:… status=Done -->`) y `Ultima actualizacion` puesta al día
+- [ ] `progress.md` del trabajo con el **estado del trabajo** en `Done` (`status: Done` en el frontmatter) y `updated` puesto al día
 - [ ] **Nada archivado**: el archivado no forma parte del cierre; si el usuario lo pide, remitir a `/work-define US-XXX archive` o `/work-plan WI-XXX archive` (ver `${PLUGIN_ROOT}/references/archive.md`)
 
 - [ ] **Un solo commit de cierre en la rama base** (`chore(<ID>): cerrar trabajo`) como **commit directo** (mecánico, sin `git-commit`), con el `progress.md` en `Done` — **separado del commit de merge**

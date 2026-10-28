@@ -106,20 +106,67 @@ la reagrupación es la misma sin mover nada de sitio.
 Reescribir las referencias internas (secciones Referencias de US/TK/WI) según el mapeo y reportar el
 mapeo completo — los consumidores externos al repo no se pueden reescribir desde aquí.
 
-## 5. Historias de usuario con cabecera de versiones anteriores
+## 5. Artefactos con cabecera visible y marca oculta de estado (anterior al frontmatter)
 
-**Plantilla vigente:** `${PLUGIN_ROOT}/skills/work-define/assets/user-story-template.md`.
+**Contrato vigente:** `${PLUGIN_ROOT}/references/frontmatter.md` y la plantilla de cada artefacto
+(`${PLUGIN_ROOT}/skills/<skill>/assets/*-template.md`): la cabecera de todo artefacto documental es un
+**frontmatter YAML en la línea 1**, con claves y valores enumerados en inglés; no existe la cabecera visible
+(`**Estado:**`, `**Fecha de creación:**`, `**Repositorios:**`, `**Work Item (ADO):**`…) ni la marca oculta
+`<!-- <prefijo>:status=… -->` (`us`, `tk`, `wi`, `bug`, `tc`, `srs`, `rq`, `ft`, `rs`, `diagnosis`,
+`discovery`, `validation`, `wireframe`, `work`).
 
-**Detección:** el `README.md` de una US no trae alguna de las líneas vigentes de cabecera —
-`**Repositorios:**`, `**INVEST:**`, `**DoR:**` — o le falta la marca parseable `<!-- us:status=… -->`.
-(`**Requerimiento:**` y `**Work Item…:**` son opcionales: su ausencia no es un hallazgo.)
+**Alcance:** `README.md` de `US-XXX`, `TK-XXX`, `WI-XXX` (incluido `kind: spike`), `BUG-XXX`, `SRS-XXX` /
+`PRD-XXX` / `RQ-XXX`, `FT-XXX`, `RS-XXX`; `TC-XXX-*.md`; `WF-XXX-*.md`; `discovery.md`, `validation.md` y el
+dossier de diagnóstico de una `RS-XXX`; `progress.md` y `test-cases-automation.md`. En la ruta activa **y**
+en `<archivedPath>` (ahí solo se normaliza si el usuario lo aprueba expresamente: lo archivado se lee, no se
+edita, salvo migración).
 
-**Normalización:** añadir solo lo derivable del propio documento, sin inventar: `Repositorios` desde su
-sección homónima si existe como sección; `INVEST` y `DoR` calculados desde las tablas de la sección
-Validación (🟢 = Cumple, 🟡 = Parcial, 🔴 = No cumple, `/ total` de filas evaluadas, colores a 0
-omitidos); la marca `us:status` desde la línea `**Estado:**`. `Requerimiento:` solo si el origen SRS es
-rastreable (la US aparece en la tabla «Historias de usuario derivadas» de un SRS) — si no, se omite.
-Lo no derivable queda como laguna reportada, para cerrarse con `work-define`.
+**Detección:** el archivo **no abre con `---` en la línea 1**, o abre con frontmatter pero conserva debajo
+del título líneas `**Campo:**` de cabecera o una marca `<!-- <prefijo>:status=… -->`. Un `progress.md` con
+marca `<!-- work:id=… -->` también es un hallazgo (las marcas `<!-- unit:… -->` de cada unidad **se
+conservan**: siguen vigentes).
+
+**Normalización** (por archivo, con diff):
+
+1. Construir el frontmatter con las claves de la plantilla vigente del tipo, **mapeando cada línea de la
+   cabecera antigua a su clave** — etiqueta visible en cualquier idioma → clave en inglés — sin inventar
+   lo que no esté:
+   `Estado`/`Status` → `status` · `Fecha de creación`/`Fecha` → `created` · `Última actualización` →
+   `updated` · `Repositorio(s)` → `repository` / `repositories` (lista) · `Tipo` del WI → `kind` ·
+   `Subtipo` → `subtype` (`técnico` → `technical`, `funcional` → `functional`) · `Timebox` → `timebox` ·
+   `Resolución` del spike → `resolution` · `Origen` → `origin` (ruta, sin enlace markdown) · `Historia` /
+   `Historia de usuario` → `story` · `Caso de prueba` → `test_case` · `Criterio de aceptación` →
+   `criterion` · `Artefacto padre` → `parent` · `Tipo de prueba` → `test_type` (lista) · `Perspectiva` →
+   `perspective` (`Límite` → `Boundary`) · `Prioridad` → `priority` (`Alta`/`Media`/`Baja` →
+   `High`/`Medium`/`Low`) · `Severidad` del diagnóstico → `severity` (`Crítico`/`Alto`/`Medio`/`Bajo` →
+   `Critical`/`High`/`Medium`/`Low`) · `Reproducibilidad` → `reproducibility` · `Asignado a` → `assignee` ·
+   `Creado por` / `Reportado por` → `created_by` / `reported_by` · `Requerimiento` → `requirement` ·
+   `Spike de origen` → `spike` · `Promovido a SRS` → `promoted_from` + `promoted_at` · `Aprobación de
+   negocio` → `business_approval` · `Dueño de la definición` → `definition_owner` · `Documento fuente` →
+   `source_document` (`name`, `path`) · `Tipo de solución` → `solution_type` + `responsive` · `Requisitos
+   relacionados` → `related` · `Work Item (<Sistema>)` → `work_item` (`system` = el nombre corto entre
+   paréntesis, `id` = el número, `url` = el destino del enlace) · `INVEST` / `DoR` (indicadores 🟢/🟡/🔴)
+   → `invest` / `dor` (`met`, `partial`, `not_met`, `total`).
+   Añadir siempre `id` (del título o del nombre de carpeta/archivo) y `type` (según la plantilla). Los
+   valores enumerados se escriben en inglés aunque la cabecera antigua estuviera en otro idioma; el texto
+   libre se copia tal cual.
+2. Si la marca oculta y la línea visible discrepan en el `status`, prevalece la **marca oculta** (era la
+   que leían los skills) y se reporta.
+3. Eliminar la cabecera visible y la marca oculta; el título `# <ID>: …` queda como primera línea del
+   cuerpo. Todo lo demás del documento se conserva byte a byte.
+4. **US además:** si el `README.md` trae la sección `## Validación` (Complejidad sugerida, INVEST, DoR),
+   **moverla** a un `story-validation.md` hermano según
+   `${PLUGIN_ROOT}/skills/work-define/assets/story-validation-template.md` (frontmatter `type:
+   story-validation`, `story: ./README.md`, `updated`, `story_points`), conservando las tablas tal cual y
+   recalculando `invest` / `dor` del frontmatter del `README.md` desde ellas. Si la US no tenía Validación,
+   crear el `story-validation.md` con las tablas en blanco (marcadores de la plantilla) y `invest`/`dor` a
+   0: es una laguna para `work-define`, no se rellena aquí.
+5. Verificar que el bloque resultante es YAML válido (sin `{{…}}`, textos con `:` o `#` entrecomillados)
+   antes de escribir.
+
+Lo no derivable (una clave obligatoria de la plantilla sin línea equivalente en la cabecera antigua) se
+omite y queda como laguna reportada, para cerrarse con el skill dueño. Los consumidores de este repo
+(índices `test-cases/README.md`, tablas de US derivadas) no cambian: siguen citando ids y rutas.
 
 ## 6. Estándares de dominio con formato anterior
 
@@ -235,7 +282,7 @@ documentación de arquitectura: `docs/architecture/[capability]/` no tiene `wire
 
 **Normalización:**
 
-1. **Resolver el artefacto de origen de cada wireframe**: el campo **Origen** de la cabecera de su `.md`, o
+1. **Resolver el artefacto de origen de cada wireframe**: el campo **Origen** del frontmatter de su `.md`, o
    la columna Origen de su fila en el índice de la capability; si falta o apunta a un artefacto que no
    existe, buscar qué SRS/US/WI lo enlaza. Si lo enlazan varios, el origen es el más antiguo de la cadena
    (el SRS antes que sus US). **Si no se puede determinar, no adivinar:** listarlo en el plan y preguntar.

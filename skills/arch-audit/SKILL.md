@@ -194,7 +194,7 @@ ls docs/audits/arch-audit-*.md 2>/dev/null
 El informe original se preserva **tal cual se creó la primera vez** — una revalidación nunca
 reescribe, reordena ni elimina ese contenido; solo agrega una entrada nueva en `## Revalidaciones`
 con los cambios evidenciados. Procedimiento completo (estado de referencia, qué repetir de cada
-fase, cómo clasificar cada cambio, y qué campo de la cabecera se actualiza) en
+fase, cómo clasificar cada cambio, y qué campo del frontmatter se actualiza) en
 [`references/revalidation.md`](references/revalidation.md).
 
 En una **Nueva auditoría desde cero** se ignora el histórico para el análisis, se crea un archivo
@@ -408,7 +408,7 @@ flujo de `Comportamiento en Revalidación` descrito en la Fase 0 — no se reesc
      - **Alcance:** ser específico — indicar la **raíz de arquitectura auditada** (ruta relativa al repo principal, o «raíz principal»), cuántos criterios se auditaron y sobre cuántos estándares/requisitos de contexto, el desglose por estado de los excluidos, más las fuentes de AGENTS.md consideradas. Ejemplo: `submódulo packages/engine · 14 criterios en 4 estándares · 1 Draft, 1 Superseded excluidos + AGENTS.md raíz`.
      - **Método:** no es un texto fijo — describir en una frase corta qué se usó realmente en esta auditoría: las técnicas de inspección aplicadas (p. ej. `grep`, lectura de manifiestos) y las fitness functions ejecutadas. Aclarar que no se corre el build ni la suite completa.
    - **Resumen** con la tabla de conteos por prioridad y estado, seguida de 1-3 frases con la lectura global de la salud arquitectónica del repo.
-   - Hallazgos **agrupados por prioridad** (alta → media → baja). Por cada hallazgo: el criterio (con su referencia `<estándar>/CR-XXX`, el requisito que lo agrupa, el nombre de su estándar de dominio, su ADR de origen y su `Enfoque` bloqueante/warning) o la regla de AGENTS.md incumplida, `Estado`, `Evidencias` (✔ a favor / ✖ en contra), `Incumplimientos` (rutas de archivos), y `Acción sugerida`. Si el criterio tiene fitness function, incluir en `Evidencias` el resultado de ejecutarla (PASS/FAIL/WARN + comando).
+   - Hallazgos **agrupados por prioridad** (alta → media → baja). Por cada hallazgo: el criterio (con su referencia `<estándar>/CR-XXX`, el requisito que lo agrupa, el nombre de su estándar de dominio, su ADR de origen y su `Enfoque` bloqueante/warning) o la regla de AGENTS.md incumplida, `status`, `Evidencias` (✔ a favor / ✖ en contra), `Incumplimientos` (rutas de archivos), y `Acción sugerida`. Si el criterio tiene fitness function, incluir en `Evidencias` el resultado de ejecutarla (PASS/FAIL/WARN + comando).
    - **Fitness functions**: indicar si existe el **runner** (`scripts/arch/verify.<ext>`, en el lenguaje del stack del repo) y su resultado conjunto (criterios PASS / WARN / FAIL); una sub-tabla de las **existentes** (criterio `CR-XXX`, enfoque, herramienta, comando, si está registrada en el archivo de checks de su estándar, resultado PASS/FAIL/WARN/No ejecutable) y una lista de las **sugeridas** (criterio apto sin fitness function → qué medir, herramienta y esbozo). Si hay dos o más fitness functions sueltas y no existe el runner, recomendarlo aquí.
    - Sección de reglas **`UNVERIFIABLE`**.
    - Sección de **Decisiones sin criterio** (opcional): ADR `Accepted` con regla enforceable que no fijó ningún criterio (`emits: []`) → sugerir emitirlo vía `arch-manage`.
@@ -464,7 +464,7 @@ planificar la remediación de los hallazgos de alta prioridad.
 - **Priorizar señal sobre volumen.** Mejor pocos hallazgos sólidos y bien evidenciados que una lista larga de detalles triviales.
 - **Sin estándares ni AGENTS.md:** si no hay ninguna fuente normativa, informarlo y sugerir `arch-init` — bootstrapea `AGENTS.md`, `.agents/MEMORY.md`, `docs/adr/` y `docs/standards/`, e invoca `arch-discover` por su cuenta si el repo ya tiene implementación — en vez de crear un `AGENTS.md` a mano; no fabricar un informe vacío de reglas inventadas. Si solo hay ADR pero ningún criterio, señalar que las decisiones no han emitido reglas auditables y sugerir emitirlas vía `arch-manage`.
 - **Una raíz de arquitectura por corrida.** No mezclar estándares, checks ni hallazgos del repo principal y de un submódulo en un mismo informe, ni escribir el informe fuera de la raíz auditada. Si el usuario quiere cubrir varias raíces, son varias corridas con varios informes; decirlo explícitamente en vez de auditar todo junto.
-- **Informe inmutable, revalidaciones aparte.** El contenido escrito al crear el informe (resumen, hallazgos, fitness functions, reglas no verificables) no se modifica nunca. Cada revalidación se documenta como una entrada nueva en `## Revalidaciones`; el único campo del contenido original que una revalidación actualiza es `Veredicto` en la cabecera.
+- **Informe inmutable, revalidaciones aparte.** El contenido escrito al crear el informe (resumen, hallazgos, fitness functions, reglas no verificables) no se modifica nunca. Cada revalidación se documenta como una entrada nueva en `## Revalidaciones`; el único campo del contenido original que una revalidación actualiza es `Veredicto` en el frontmatter.
 
 ---
 

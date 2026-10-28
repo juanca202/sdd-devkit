@@ -1,4 +1,25 @@
+---
+id: TC-XXX
+type: test-case
+status: Draft                         # Draft | Ready | Obsolete
+test_type: [Unit, E2E]                # intención de diseño. [Manual] solo cuando el caso no se automatiza por diseño (no se combina). Tipos: Unit | Integration | API Test | Visual Test | E2E, uno o varios en ESE orden (de menor a mayor nivel). Con implementation.scope: tests, solo Manual | API Test | Visual Test | E2E (nunca Unit ni Integration)
+created: YYYY-MM-DD
+perspective: Happy Path               # Happy Path | Error | Boundary
+priority: High                        # High | Medium | Low
+criterion: AC-XXX                     # identificador del criterio tal como aparece en el artefacto origen (AC-XXX, 1.1, R-3, …) — no normalizar el formato; debe existir literalmente en el artefacto
+parent: US-XXX                        # US-XXX | WI-XXX | FT-XXX | identificador o ruta del artefacto externo
+created_by: "Nombre Apellido"
+work_item:                            # solo si se creó vía MCP en el gestor vinculado; omitir el objeto entero si no
+  system: ADO                         # nombre corto que define la referencia del proveedor (p. ej. ADO → references/azure-devops.md)
+  id: 12345
+  url: https://…
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 # Plantilla de caso de prueba — IEEE 29119-4
 
 Convención de placeholders: sustituir manualmente cada {{texto}}.
@@ -19,17 +40,6 @@ Nombre de archivo: TC-XXX-{slug}.md
 El nombre del archivo y, si hay un tracker externo vinculado, el título usado al crear el work item deben respetar cualquier límite de longitud propio de ese sistema (ver su archivo de referencia).
 -->
 # TC-{{XXX}} — Dado {{contexto/precondición}}, Cuando {{acción/evento}}, Entonces {{resultado esperado}}
-
-<!-- tc:status={{Draft|Ready|Obsolete}} · testType={{Manual|Unit|Integration|API Test|Visual Test|E2E, separados por coma}} · criterion={{identificador verbatim del criterio}} · parent={{US-XXX|WI-XXX|FT-XXX}} -->
-**Estado:** {{Draft | Ready | Obsolete}}
-**Tipo de prueba:** {{Manual | Tipo[, Tipo…]}}  <!-- intención de diseño. Tipo ∈ {Unit | Integration | API Test | Visual Test | E2E}; uno o varios separados por coma, en ESE orden (de menor a mayor nivel; p. ej. Unit, E2E). Manual solo cuando el caso no se automatiza por diseño; no se combina con tipos. Con implementation.scope: tests, solo Manual | API Test | Visual Test | E2E (nunca Unit ni Integration). -->
-**Fecha:** {{YYYY-MM-DD}}
-**Perspectiva:** {{Happy Path | Error | Límite}}
-**Prioridad:** {{Alta | Media | Baja}}
-**Criterio de aceptación:** {{identificador del criterio tal como aparece en el artefacto origen (AC-XXX, 1.1, R-3, …) + título corto — no normalizar el formato; debe existir literalmente en el artefacto}}
-**Artefacto padre:** {{US-XXX | WI-XXX | FT-XXX | identificador o ruta del artefacto externo}}
-**Creado por:** {{nombre}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema vinculado — solo si se creó vía MCP; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica}}
 
 ## Precondiciones
 

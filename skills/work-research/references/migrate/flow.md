@@ -174,7 +174,7 @@ Solo empieza con el discovery en **`Ready`**. Para cada caso/oportunidad sigue
    preferencia: (a) reutilizar artefactos de validación existentes del origen (unit,
    integración, E2E, UAT, datos históricos, ejemplos documentados); (b) capturar la
    salida del sistema origen cuando sea ejecutable. Cada caso tiene su propio
-   `Estado` (**`Pending`** = faltan insumos; **`Ready`** = golden master listo),
+   `status` (**`Pending`** = faltan insumos; **`Ready`** = golden master listo),
    distinto del estado del documento.
 
    > El Golden Master captura el comportamiento **actual**, que puede incluir

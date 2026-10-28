@@ -1,17 +1,26 @@
+---
+type: diagnosis
+status: Draft                         # Draft | Ready
+created: YYYY-MM-DD
+severity: High                        # Critical | High | Medium | Low
+reproducibility: Always               # Always | Intermittent | Not Reproducible
+repository: nombre-repo               # repositorio afectado
+incident: ../../incidents/BUG-XXX-slug/README.md   # BUG-XXX que registró el hallazgo, si existe (será el Origen del bug-fix); omitir si no estaba registrado
+story: ../../user-stories/US-XXX-slug/README.md    # US-XXX a la que pertenece el comportamiento defectuoso (o WI-XXX / FT-XXX); N/A solo si se buscó y no existe
+test_case: ../../user-stories/US-XXX-slug/test-cases/TC-XXX-slug.md   # TC que detectó el bug o cubre el comportamiento afectado; varios como lista; omitir si no hay
+created_by: "Nombre Apellido"         # `git config user.name`
+work_item:                            # work item en el gestor vinculado; omitir el objeto entero si el bug se reportó solo en conversación
+  system: ADO
+  id: 12345
+  url: https://…
+---
+<!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+-->
 # Debug — {{título corto del defecto}}
-
-<!-- diagnosis:status={{Draft|Ready}} -->
-<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que us:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
-**Estado:** {{Draft | Ready}}
-**Fecha:** {{YYYY-MM-DD}}
-**Severidad:** {{Crítico | Alto | Medio | Bajo}} — {{a quién y a qué afecta}}
-**Reproducibilidad:** {{Always | Intermittent ({{frecuencia}}) | Not Reproducible}}
-**Repositorio:** `{{nombre del repo afectado}}`
-**Incidente:** {{enlace por ruta relativa al `README.md` del `BUG-XXX` que registró el hallazgo, si existe (será el `Origen` del `bug-fix`); omitir la línea si el bug no estaba registrado}}
-**Historia de usuario:** {{enlace por ruta relativa al `README.md` de la `US-XXX` a la que pertenece el comportamiento defectuoso + su título (o el `WI-XXX` / `FT-XXX` si el artefacto relacionado no es una historia); con tracker vinculado, añadir el enlace a su work item. `N/A` solo si se buscó y no existe}}
-**Caso de prueba:** {{enlace por ruta relativa al `TC-XXX-{slug}.md` que detectó el bug o que cubre el comportamiento afectado + el `AC-XXX` que verifica; varios separados por coma. Omitir la línea si no hay ningún TC}}
-**Creado por:** {{git config user.name}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item en el sistema de seguimiento vinculado; {{Sistema}} es el nombre corto del archivo de referencia (p. ej. "ADO" para references/azure-devops.md). Omitir la línea si el bug se reportó solo en conversación}}
 
 ## Problema
 

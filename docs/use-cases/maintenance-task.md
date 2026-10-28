@@ -27,7 +27,7 @@ flowchart TD
 ```
 
 1. **Inicio**: un requerimiento de mantenimiento **que no es un bug ni un refactor** entra **directo a Planificación de tareas** (`work-plan`) — a diferencia del flujo con historia de usuario, no pasa por `work-define` porque no hay `US` asociada.
-2. **Planificación** (`work-plan`): crea el `WI-XXX` eligiendo el `Tipo` según el requerimiento (`dependency-update` / `optimization` / `security-update` / `test-improvement` / `documentation-update` / `operational-change`).
+2. **Planificación** (`work-plan`): crea el `WI-XXX` eligiendo `kind` según el requerimiento (`dependency-update` / `optimization` / `security-update` / `test-improvement` / `documentation-update` / `operational-change`).
 3. Opcionalmente, durante la planificación se ajusta el diseño arquitectónico (`design-define`) y/o se definen casos de prueba (`test-define`) — igual que en el flujo con historia de usuario.
 4. El `WI` en `Ready` pasa a **Implementación** (`work-implement`). Los casos de prueba definidos en el paso anterior también pueden automatizarse ahí.
 5. **Cierre**: creación de Pull/Merge Request (`pr-create`) hacia el entregable. `pr-create` ejecuta **internamente** las puertas de calidad (`quality-check`, `code-review`, `coverage-verify`) antes de crear el PR. El archivado **no** forma parte del PR: cuando el equipo termine su revisión, se archiva con `/work-plan WI-XXX archive`, que muestra el estado real del WI y pide confirmación. No son pasos aparte de este flujo.

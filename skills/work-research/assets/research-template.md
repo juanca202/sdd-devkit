@@ -1,4 +1,18 @@
+---
+id: RS-XXX
+type: research
+status: Draft                         # Draft | Ready
+created: YYYY-MM-DD
+flow: free                            # free | decisions | test-case | legacy | migrate
+artifact: US-XXX                      # US-XXX | TK-XXX | WI-XXX; omitir si la investigación no tiene artefacto vinculado
+created_by: "Nombre Apellido"         # `git config user.name`
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
@@ -24,14 +38,6 @@ Archivos adicionales (solo si el flujo los define, en la misma carpeta):
 -->
 
 # RS-{{XXX}} — {{Título descriptivo de la investigación}}
-
-<!-- rs:status={{Draft|Ready}} -->
-<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que us:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
-**Estado:** {{Draft | Ready}}
-**Fecha:** {{YYYY-MM-DD}}
-**Flujo:** {{Investigación libre | Analizar decisiones pendientes | Analizar test case | Analizar legado | Analizar migración}}
-**Artefacto referenciado:** {{US-XXX | TK-XXX | WI-XXX | N/A}}
-**Creado por:** {{git config user.name}}
 
 ## Pregunta de investigación
 

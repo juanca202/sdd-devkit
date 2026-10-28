@@ -1,4 +1,18 @@
+---
+type: discovery
+status: Draft                         # Draft | Ready
+created: YYYY-MM-DD
+research: ./README.md                 # README.md de la investigación RS-XXX (misma carpeta)
+scope: [src/modulo-a, src/modulo-b]   # rutas / módulos / entrypoints en alcance
+version: "commit | branch | tag"      # versión analizada
+created_by: "Nombre Apellido"         # `git config user.name`
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
@@ -17,14 +31,6 @@ Reglas:
 -->
 
 # RS-{{XXX}} · Discovery legacy — {{Nombre del código/módulo analizado}}
-
-<!-- discovery:status={{Draft|Ready}} -->
-<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que us:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
-**Estado:** {{Draft | Ready}}
-**Fecha:** {{YYYY-MM-DD}}
-**Código en alcance:** {{rutas / módulos / entrypoints}}
-**Versión analizada:** {{commit | branch | tag}}
-**Creado por:** {{git config user.name}}
 
 ## 1. Artefactos técnicos
 

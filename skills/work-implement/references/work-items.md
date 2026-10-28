@@ -1,6 +1,6 @@
 # Tipo de implementacion: Tarea de mantenimiento
 
-Flujo para **ejecutar en codigo** una tarea de mantenimiento `WI-XXX` bajo `<changesPath>/work-items/`: bugs, refactor, deuda tecnica, actualizacion de dependencias, tareas operativas o de infraestructura, y spikes (ver [Variante: `Tipo: spike`](#variante-tipo-spike-experimento-sin-integracion)). Esta referencia se carga desde `SKILL.md` cuando la seleccion de tipo resuelve a este caso. Asume ya resueltos el mecanismo de preguntas, el idioma, la validacion de repositorio y el ritmo de confirmacion (ver `SKILL.md`).
+Flujo para **ejecutar en codigo** una tarea de mantenimiento `WI-XXX` bajo `<changesPath>/work-items/`: bugs, refactor, deuda tecnica, actualizacion de dependencias, tareas operativas o de infraestructura, y spikes (ver [Variante: `kind: spike`](#variante-kind-spike-experimento-sin-integracion)). Esta referencia se carga desde `SKILL.md` cuando la seleccion de tipo resuelve a este caso. Asume ya resueltos el mecanismo de preguntas, el idioma, la validacion de repositorio y el ritmo de confirmacion (ver `SKILL.md`).
 
 > **Naturaleza del WI:** documento **unico y combinado** - el requerimiento, los criterios de aceptacion y el plan de implementacion conviven en `WI-XXX-[kebab-case]/README.md`, que mapea 1:1 con un work item del tracker externo, si el repo usa uno. **No se descompone en sub-tareas** (modelo plano). Un esfuerzo grande son varios `WI-` hermanos, nunca un WI con hijos.
 >
@@ -14,12 +14,12 @@ Flujo para **ejecutar en codigo** una tarea de mantenimiento `WI-XXX` bajo `<cha
 | --------- | ---- |
 | Work item | `<changesPath>/work-items/WI-XXX-[kebab-case]/README.md` |
 | Progreso | `<changesPath>/work-items/WI-XXX-[kebab-case]/progress.md` |
-| Informe de un spike (`Tipo: spike`) | `<changesPath>/work-items/WI-XXX-[kebab-case]/spike-report.md` — en la **misma carpeta** del WI, junto a `README.md`, `progress.md` y `assets/` |
+| Informe de un spike (`kind: spike`) | `<changesPath>/work-items/WI-XXX-[kebab-case]/spike-report.md` — en la **misma carpeta** del WI, junto a `README.md`, `progress.md` y `assets/` |
 | ADR | `docs/adr/` |
 | Documentacion tecnica | `docs/architecture/` |
 | Glosario | `docs/glossary.md` |
 
-**Rama de trabajo:** `feature/WI-XXX-[kebab-case]` por defecto. Si el equipo usa prefijos por tipo, derivarlo del campo `Tipo` del WI segun esta tabla — son los diez valores canonicos de las plantillas de `work-plan` (`work-item-template.md` y `work-item-spike-template.md`), sin abreviar ni traducir:
+**Rama de trabajo:** `feature/WI-XXX-[kebab-case]` por defecto. Si el equipo usa prefijos por tipo, derivarlo del clave `kind` del WI segun esta tabla — son los diez valores canonicos de las plantillas de `work-plan` (`work-item-template.md` y `work-item-spike-template.md`), sin abreviar ni traducir:
 
 | `Tipo` del WI | Rama |
 | ------------- | ---- |
@@ -42,7 +42,7 @@ No asumir la rama base ni la de integracion; acordarla con el usuario.
 
 Un WI de tipo **`bug-fix`** o **`security-update`** se implementa **directamente sobre la rama de integracion**. **No se crea ni se cambia a una rama `fix/`.**
 
-- **Es el comportamiento por defecto y no se pregunta.** Basta con leer `Tipo` del WI: si es uno de esos dos, no hay eleccion de rama que ofrecer al usuario.
+- **Es el comportamiento por defecto y no se pregunta.** Basta con leer `kind` del WI: si es uno de esos dos, no hay eleccion de rama que ofrecer al usuario.
 - **La rama de integracion la declara el repo, no el usuario.** Antes de tocar codigo, resolverla con [`${PLUGIN_ROOT}/references/git.md`](../../../references/git.md) — lectura obligatoria — y actuar segun lo que devuelva para la **rama actual**:
 
   | Politica de la rama actual | Que hacer |
@@ -57,21 +57,21 @@ Un WI de tipo **`bug-fix`** o **`security-update`** se implementa **directamente
 - **El cierre no hace handoff:** ver [Paso 4](#paso-4---cierre). No hay rama que mergear, asi que no se invoca `work-integrate` ni `pr-create`. **Salvo** el caso con worktrees en que el arbol principal no esta en la rama de integracion (o esta sucio): ahi queda `wt/WI-XXX` sin integrar y el handoff a `work-integrate` es obligatorio — nunca se resuelve con un checkout en el arbol del usuario.
 - **Sigue rigiendo todo lo demas:** `Ready` con criterios de aceptacion, ciclo TDD, lint/build, `progress.md`, checkboxes y la pausa de confirmacion antes de comitear.
 
-### Variante: `Tipo: spike` (experimento sin integracion)
+### Variante: `kind: spike` (experimento sin integracion)
 
 Un WI de tipo **`spike`** no implementa un plan: **ejecuta un experimento con timebox** para responder las `Q-XX` de su README y lo cierra con un **informe** (`spike-report.md`, plantilla `work-plan/assets/spike-report-template.md`). Es el unico tipo cuyo codigo **nunca se integra**: la rama `spike/WI-XXX-*` queda como referencia de lectura para la implementacion definitiva, que se planifica despues en una `US-XXX` (`work-define`) o en un `WI-XXX` de otro tipo (`work-plan`) y se construye **desde cero, con TDD**.
 
 | Que cambia | Regla |
 |------------|-------|
 | **Rama** | `spike/WI-XXX-[kebab-case]`, siempre, desde la rama base acordada. `work-integrate` y `pr-create` la rechazan por el prefijo. |
-| **Contrato** | No hay `AC-XXX`. Lo que se cumple son las **`Q-XX`** del README (cada una con criterio de exito y de fallo) dentro del **Timebox** de la cabecera. Sin timebox o sin `Q-XX` medibles, el WI no esta `Ready`: parar. |
+| **Contrato** | No hay `AC-XXX`. Lo que se cumple son las **`Q-XX`** del README (cada una con criterio de exito y de fallo) dentro del `timebox` del frontmatter. Sin timebox o sin `Q-XX` medibles, el WI no esta `Ready`: parar. |
 | **TDD** | **No obligatorio.** El codigo es desechable; se escriben tests solo si acortan el camino a una respuesta. Clean Architecture, solo en lo que no cueste timebox. |
 | **Evidencia** | **Obligatoria.** Cada `Q-XX` se responde con una medicion, salida o comportamiento observable guardado en `assets/` del WI (`EV-XX-<descripcion>.<ext>`), **sanitizado**. Una `Q-XX` sin evidencia es `INCONCLUSIVE`, no `PASS`. |
 | **Timebox** | Condicion de parada dura. Se anota la hora de inicio en `progress.md`; al agotarse se deja de experimentar y lo pendiente se marca `INCONCLUSIVE`. Solo el usuario lo extiende, y queda como decision adicional. |
 | **Test cases** | No aplica: no se pregunta por `test-cases/` ni se ofrece `test-define`. |
 | **`Done`** | Exige `spike-report.md` con la marca `<!-- spike:verdict=… · branch=… · head=<sha> … -->` y el valor canonico `VIABLE` · `VIABLE_WITH_REWORK` · `NOT_VIABLE` · `INCONCLUSIVE` (etiqueta visible en el idioma resuelto, ver `verdicts.md`). |
-| **Cierre** | **Formalizacion, no integracion** — ver Paso 4, punto 3: segun el veredicto se invoca `/work-define`, `/work-plan` (WI definitivo o segundo spike) o se pone `Resolucion: Discarded`. Nunca `work-integrate` ni `pr-create`. |
-| **Especificacion** | Ademas de los checkboxes `IT-XX`, la **unica** edicion permitida del README es la linea `Resolucion:` al descartar (`Discarded — motivo`). `Replanned (…)` y `Re-spiked (…)` las escribe el skill que crea el artefacto definitivo. |
+| **Cierre** | **Formalizacion, no integracion** — ver Paso 4, punto 3: segun el veredicto se invoca `/work-define`, `/work-plan` (WI definitivo o segundo spike) o se pone `resolution: Discarded`. Nunca `work-integrate` ni `pr-create`. |
+| **Especificacion** | Ademas de los checkboxes `IT-XX`, la **unica** edicion permitida del README es la clave `resolution` del frontmatter al descartar (`Discarded — motivo`). `Replanned (…)` y `Re-spiked (…)` las escribe el skill que crea el artefacto definitivo. |
 | **Modo paralelo** | Un spike corre siempre **solo** y **secuencial**: no entra en olas con otros WI (su timebox y su pausa de veredicto no se delegan a un subagente). Si el alcance mezcla un spike con otros WI, excluirlo y avisar. |
 
 > **Senal de parada temprana.** Si el prototipo empieza a parecer la implementacion definitiva —manejo de errores completo, estructura final, cobertura de casos que ninguna `Q-XX` pide—, el spike ya respondio lo que tenia que responder: parar y redactar el informe. Seguir es gastar timebox en codigo que no se va a integrar.
@@ -98,9 +98,9 @@ Procedimiento paso a paso: [Paso 3-S](#paso-3-s---ejecutar-un-spike-sustituye-al
 
 Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
-- **WI existente y en `Ready`:** la carpeta `WI-XXX-[kebab-case]/` existe en `<changesPath>/work-items/` y su `README.md` tiene `Estado: Ready`. Un `WI` en `Draft` (stub o incompleto) **no** es ejecutable - devolver a `work-plan` para completarlo.
+- **WI existente y en `Ready`:** la carpeta `WI-XXX-[kebab-case]/` existe en `<changesPath>/work-items/` y su `README.md` tiene `status: Ready`. Un `WI` en `Draft` (stub o incompleto) **no** es ejecutable - devolver a `work-plan` para completarlo.
 - **WI no archivado:** si la carpeta no aparece en `<changesPath>/work-items/`, buscarla en `<archivedPath>/work-items/` antes de darla por inexistente. Si esta ahi, el WI **ya se cerro e integro**: **parar** y avisar — «`WI-007` esta archivado; para retomarlo hay que desarchivarlo primero, y eso lo decide el usuario». **Excepcion:** en [modo correccion](../SKILL.md#modo-correccion-delegado-desde-quality-check) delegado por `quality-check`, un artefacto archivado es esperable —la correccion llega en la fase de cierre, con el archivado ya commiteado—: ahi se continua, pero **sin escribir dentro de la carpeta archivada** (la nota de retrabajo va en el informe de `quality-check`). Importa especialmente en este flujo porque el Paso 1 hace «leer **o crear**» el `progress.md`: sin esta comprobacion crearia una carpeta fantasma en la ruta activa con un identificador ya usado. Ver [`${PLUGIN_ROOT}/references/archive.md`](../../../references/archive.md#contrato-para-el-resto-del-catálogo).
-- **Criterios de aceptacion presentes:** el WI tiene **Criterios de aceptacion** verificables. Si faltan, parar: el WI no estaba realmente `Ready`. **Excepcion `spike`:** no tiene `AC-XXX`; lo que se verifica es que tenga **Timebox** en la cabecera y al menos una **`Q-XX` con criterio de exito y de fallo** — sin eso, parar igual.
+- **Criterios de aceptacion presentes:** el WI tiene **Criterios de aceptacion** verificables. Si faltan, parar: el WI no estaba realmente `Ready`. **Excepcion `spike`:** no tiene `AC-XXX`; lo que se verifica es que tenga `timebox` en el frontmatter y al menos una **`Q-XX` con criterio de exito y de fallo** — sin eso, parar igual.
 - **Spike ya resuelto:** si el WI es de tipo `spike` y su `Resolucion` no es `Open`, o ya existe `spike-report.md` con marca `spike:verdict`, el experimento **ya se cerro**: parar y avisar; repetirlo exige que el usuario lo diga explicitamente (y se redacta un informe nuevo, no se edita el anterior).
 - **Referencia de UI (si toca UI):** si el WI modifica UI, debe tener referencia de diseno en **Referencias** (Figma/wireframe). Sin ella, parar y avisar.
 - **Test cases presentes** (no aplica a `spike`): verificar si existe la carpeta `<changesPath>/work-items/WI-XXX-[kebab-case]/test-cases/` (dentro de la carpeta del WI) con al menos un archivo `TC-XXX-*.md`. Si no existe o esta vacia, **preguntar al usuario** (herramienta estructurada) antes de continuar:
@@ -159,9 +159,9 @@ Por cada WI aprobado:
 6. **Detenerse y preguntar** (herramienta estructurada), **sin commitear todavia los cambios del WI**: "WI-XXX completado. Continuo con WI-YYY - [titulo]?" Opciones: [Si, continuar] / [No, detener aqui]. Con `confirmByUnit: always`, si el alcance es un unico WI igualmente confirmar antes de pasar al cierre; con `confirmByUnit: never` no hay pausa y se encadena el cierre. Esta pausa, con el working tree aun sin commitear, es la ventana para que el usuario revise el resultado, aplique correcciones manuales o le indique ajustes al agente antes de que el cambio quede commiteado.
 7. Solo si confirma: **invocar `/git-commit`** sobre los cambios de WI-XXX, delegando en ese skill la agrupacion, el mensaje y el staging — este skill no decide un mensaje ni stagea por cuenta propia. `git-commit` no comitea en silencio: un commit unico lo ejecuta sin confirmar, pero puede pausar para confirmar su **propuesta de division** cuando el diff se reparte en varios commits (con `commitConfirmation = always`), y puede detenerse ante rama protegida o hook fallido. Esa pausa es distinta a la del paso anterior (esa es sobre continuar al siguiente WI; esta es sobre como se reparte el commit) y no la sustituye. Recien despues, pasar al siguiente WI. Si detiene, registrar nota y pasar al Paso 4 — la invocacion a `/git-commit` para este WI se hace ahi, en el cierre.
 
-### Paso 3-S - Ejecutar un spike (sustituye al Paso 3 para `Tipo: spike`)
+### Paso 3-S - Ejecutar un spike (sustituye al Paso 3 para `kind: spike`)
 
-> Un spike se ejecuta **igual que un WI** en lo mecanico —to-dos, checkboxes `IT-XX`, `progress.md`, pausa de confirmacion, `/git-commit`— y **distinto en el fondo**: no hay `AC-XXX`, no hay TDD obligatorio, hay timebox, y el entregable es el informe. Ver [Variante: `Tipo: spike`](#variante-tipo-spike-experimento-sin-integracion) para las reglas; aqui, el procedimiento.
+> Un spike se ejecuta **igual que un WI** en lo mecanico —to-dos, checkboxes `IT-XX`, `progress.md`, pausa de confirmacion, `/git-commit`— y **distinto en el fondo**: no hay `AC-XXX`, no hay TDD obligatorio, hay timebox, y el entregable es el informe. Ver [Variante: `kind: spike`](#variante-kind-spike-experimento-sin-integracion) para las reglas; aqui, el procedimiento.
 
 1. **Al iniciar:** `progress.md` a `In Progress` con la hora; poblar los to-dos con el titulo del WI y sus `IT-XX`. Leer el README completo: la **Pregunta de investigacion**, las **`Q-XX`** con sus criterios y el **Timebox** son el contrato del experimento.
 2. **Ejecutar el enfoque `IT-XX` a `IT-XX`**, marcando `[~]`/`[x]` como en el Paso 3. Por cada `Q-XX`: construir lo minimo que permita observar su criterio, ejecutar la medicion o prueba, y **guardar la evidencia** en `assets/` del WI como `EV-XX-<descripcion>.<ext>` (salidas, mediciones, capturas, logs **sanitizados**: nunca tokens, cookies ni valores del `.env`). Escribir tests solo si ayudan a responder una `Q-XX` mas rapido.
@@ -179,8 +179,8 @@ Por cada WI aprobado:
    | `spike:verdict` | Pregunta | Opciones |
    |-----------------|----------|----------|
    | `VIABLE` / `VIABLE_WITH_REWORK` | «El spike es viable. ¿Como se formaliza el desarrollo definitivo?» | **[Historia de usuario]** → invocar `/work-define` pasando la ruta del `spike-report.md` (resultado con valor de usuario) · **[Tarea de mantenimiento]** → invocar `/work-plan` con la misma ruta (resultado tecnico) · **[Terminar aqui]** → queda `Resolucion: Open`; se formaliza despues |
-   | `NOT_VIABLE` | «El spike descarta este camino. ¿Como se cierra?» | **[Descartar]** → poner `Resolucion: Discarded — <motivo del informe>` en el README del WI (unica edicion de la especificacion permitida aqui) y, si el informe lo recomienda, ofrecer `/arch-manage` para registrar la decision en un ADR · **[Terminar aqui]** |
-   | `INCONCLUSIVE` | «El timebox se agoto sin respuesta completa. ¿Que hacemos?» | **[Nuevo spike acotado]** → invocar `/work-plan` con la ruta del informe para un segundo `spike` (el nuevo cita al anterior en `Origen`; `Resolucion: Re-spiked (WI-YYY)` la pone `work-plan`) · **[Descartar]** · **[Terminar aqui]** |
+   | `NOT_VIABLE` | «El spike descarta este camino. ¿Como se cierra?» | **[Descartar]** → poner `resolution: Discarded — <motivo del informe>` en el README del WI (unica edicion de la especificacion permitida aqui) y, si el informe lo recomienda, ofrecer `/arch-manage` para registrar la decision en un ADR · **[Terminar aqui]** |
+   | `INCONCLUSIVE` | «El timebox se agoto sin respuesta completa. ¿Que hacemos?» | **[Nuevo spike acotado]** → invocar `/work-plan` con la ruta del informe para un segundo `spike` (el nuevo cita al anterior en `origin`; `resolution: Re-spiked (WI-YYY)` la pone `work-plan`) · **[Descartar]** · **[Terminar aqui]** |
 
    Con `implementation.handoff: always` se invoca directo la primera opcion de la fila. En todos los casos **reportar** la rama `spike/` y el `sha` como referencia de lectura, y recordar que no se integra. El borrado de la rama queda a criterio del usuario, fuera de este skill. Hecho esto, **terminar**: no continuar con el punto siguiente.
 4. **Handoff (resto de tipos):** si el alcance esta en `Done`, **preguntar al usuario** (herramienta estructurada) como continuar:
@@ -198,7 +198,7 @@ Por cada WI aprobado:
 
 ## Checklist
 
-**Repositorio:** working tree limpio; rama del WI activa o creada — **o**, si el `Tipo` es `bug-fix`/`security-update`, rama de integracion resuelta por `integrationBranches` y activa, con politica `direct`, sin crear rama; `progress.md` leido o creado.
+**Repositorio:** working tree limpio; rama del WI activa o creada — **o**, si `kind` es `bug-fix`/`security-update`, rama de integracion resuelta por `integrationBranches` y activa, con politica `direct`, sin crear rama; `progress.md` leido o creado.
 
 **Alcance:** cada `WI-*/README.md` leido completo; listas presentadas; confirmacion recibida antes del primer cambio de codigo.
 
@@ -206,7 +206,7 @@ Por cada WI aprobado:
 
 **Cierre:** pruebas unitarias e integracion de los archivos afectados en verde (acotadas al cambio) y e2e del alcance corridas una vez sobre el codigo consolidado (la bateria completa la corre `quality-check`, no este skill); working tree limpio; handoff a `pr-create` o `work-integrate` — **salvo `bug-fix`/`security-update`, que cierran sin handoff** por estar ya en la rama de integracion, **y salvo `spike`, que cierra con el informe y la pregunta de formalizacion** (`work-define` / `work-plan` / descartar), nunca con integracion.
 
-**Spike (sustituye a «Por cada WI» y a «Cierre»):** `Ready` con Timebox y al menos una `Q-XX` con criterios; `Resolucion: Open` y sin `spike-report.md` previo; rama `spike/WI-XXX-*`; hora de inicio en `progress.md`; `IT-XX` marcados al ritmo; evidencia por `Q-XX` en `assets/` sanitizada; experimento detenido al agotar el timebox o al responder todas las `Q-XX`; `spike-report.md` con marca `spike:verdict` y `sha`; `progress.md` en `Done`; `/git-commit` en la rama `spike/`; pregunta de formalizacion segun veredicto; **ningun** merge, PR ni `work-integrate`.
+**Spike (sustituye a «Por cada WI» y a «Cierre»):** `Ready` con `timebox` y al menos una `Q-XX` con criterios; `resolution: Open` y sin `spike-report.md` previo; rama `spike/WI-XXX-*`; hora de inicio en `progress.md`; `IT-XX` marcados al ritmo; evidencia por `Q-XX` en `assets/` sanitizada; experimento detenido al agotar el timebox o al responder todas las `Q-XX`; `spike-report.md` con marca `spike:verdict` y `sha`; `progress.md` en `Done`; `/git-commit` en la rama `spike/`; pregunta de formalizacion segun veredicto; **ningun** merge, PR ni `work-integrate`.
 
 ---
 
@@ -225,11 +225,11 @@ Por cada WI aprobado:
 - *Comportamiento:* varios WI + peticion explicita de no confirmar => **modo de ejecucion paralela** (ver `SKILL.md`). Analisis de dependencias primero: si son independientes, corren en subagentes con worktree (hasta `maxParallel` en paralelo); si un WI depende de otro fuera del alcance, avisar para excluir o detener. Merge secuencial a la rama del artefacto, con lint/build/tests tras cada merge.
 
 **Ejemplo 2c - WI de tipo `bug-fix`**
-- *Entrada:* "Implementa el WI-011, corregir el calculo de impuestos en el carrito" (`Tipo: bug-fix`).
+- *Entrada:* "Implementa el WI-011, corregir el calculo de impuestos en el carrito" (`kind: bug-fix`).
 - *Comportamiento:* no se crea rama `fix/`; `references/git.md` resuelve que la rama actual es `direct`, asi que se trabaja ahi **sin preguntar**. Mismo ciclo TDD, lint/build, `progress.md` a `Done` y pausa de confirmacion; al confirmar, `/git-commit` (sin confirmacion extra de rama protegida: la rama esta declarada `direct`). El cierre **no** ofrece integrar ni crear PR: se reporta el WI cerrado y los SHA.
 
 **Ejemplo 2d - WI de tipo `spike`**
-- *Entrada:* "Ejecuta el WI-014, el spike de rendimiento del motor de reglas" (`Tipo: spike`, `Timebox: 2 dias`, `Q-01` con exito «p95 < 2 s por lote de 500»).
+- *Entrada:* "Ejecuta el WI-014, el spike de rendimiento del motor de reglas" (`kind: spike`, `timebox: "2 dias"`, `Q-01` con exito «p95 < 2 s por lote de 500»).
 - *Comportamiento:* rama `spike/WI-014-rendimiento-motor-reglas` desde la base acordada; no se pregunta por test cases; `progress.md` a `In Progress` con la hora. Ejecuta `IT-01`–`IT-03` sin TDD: monta el lote de prueba, corre el benchmark, guarda `assets/EV-01-benchmark-500.json`. Observa p95 = 2,8 s → `Q-01` en fallo, pero detecta que el 60 % del tiempo es una consulta repetida → lo documenta como hallazgo. Redacta `spike-report.md` con veredicto `VIABLE_WITH_REWORK` (viable si se cachea la consulta; consideraciones: estrategia de cache, invalidacion, estimacion). `progress.md` a `Done`, pausa, `/git-commit` en `spike/`. Cierre: presenta el resumen y pregunta «¿Como se formaliza?» → **[Tarea de mantenimiento]** → invoca `/work-plan` con la ruta del informe. No ofrece integrar ni crear PR.
 
 **Ejemplo 3 - WI en Draft**
@@ -265,7 +265,7 @@ Posicion: **implementacion** - un WI es autocontenido (no proviene de `work-defi
 
 | | |
 |--|--|
-| **Entrada** | `WI-XXX` en `Estado: Ready` (Descripcion, Criterios de aceptacion, Dependencias, Referencias y Plan). Stubs en `Draft` **no** habilitan la implementacion. |
+| **Entrada** | `WI-XXX` en `status: Ready` (Descripcion, Criterios de aceptacion, Dependencias, Referencias y Plan). Stubs en `Draft` **no** habilitan la implementacion. |
 | **Salida** | Codigo commiteado; `progress.md` con el WI en `Done`; working tree limpio. |
-| **Siguiente paso** | El WI ya comiteado via `/git-commit` durante la implementacion => `pr-create` (opcional) => `work-integrate`. Nota: `work-integrate` ejecutara las tres puertas de cierre (`quality-check`, `code-review` y `coverage-verify`) y exigira veredicto `APPROVED` en las tres antes de integrar. **Excepcion `bug-fix` / `security-update`:** el trabajo ya esta en la rama de integracion, asi que **no hay siguiente paso** — el ciclo termina con el commit. **Excepcion `spike`:** el siguiente paso es la **formalizacion** del resultado — `work-define` (US) o `work-plan` (WI definitivo / segundo spike) a partir del `spike-report.md`, o `Resolucion: Discarded`; la rama `spike/` nunca se integra. |
+| **Siguiente paso** | El WI ya comiteado via `/git-commit` durante la implementacion => `pr-create` (opcional) => `work-integrate`. Nota: `work-integrate` ejecutara las tres puertas de cierre (`quality-check`, `code-review` y `coverage-verify`) y exigira veredicto `APPROVED` en las tres antes de integrar. **Excepcion `bug-fix` / `security-update`:** el trabajo ya esta en la rama de integracion, asi que **no hay siguiente paso** — el ciclo termina con el commit. **Excepcion `spike`:** el siguiente paso es la **formalizacion** del resultado — `work-define` (US) o `work-plan` (WI definitivo / segundo spike) a partir del `spike-report.md`, o `resolution: Discarded`; la rama `spike/` nunca se integra. |
 | **Regreso desde plan** | Ambiguedad tecnica, criterios faltantes o alcance incorrecto => volver a `work-plan` para ajustar el WI. |

@@ -4,9 +4,9 @@ Definición del tipo de plan **tarea de mantenimiento (`WI-XXX`)**: trabajo **si
 
 > **Alcance de un WI:** documento **único y combinado** de especificación. A diferencia de una historia de usuario —donde el requerimiento (`README.md`) y la especificación técnica (`TK-XXX`) viven en archivos separados porque la historia es un artefacto con dueño y fase propios—, una tarea de mantenimiento no tiene fase funcional separada ni se descompone en sub-tareas: el requerimiento, los criterios de aceptación y la especificación técnica conviven en **un solo documento** (`WI-XXX-[kebab-case]/README.md`), que mapea 1:1 con un único work item del tracker externo cuando hay uno vinculado (su tipo exacto lo define el archivo de referencia del sistema). No implementa código, no ejecuta pruebas, no crea ADRs. Lo no acordado va en **Observaciones** o se pregunta — nunca se inventa.
 
-La plantilla canónica está en `assets/work-item-template.md` (léela antes de escribir cualquier WI). **Excepción:** un WI de `Tipo: spike` se redacta con `assets/work-item-spike-template.md` — ver [Variante: `Tipo: spike`](#variante-tipo-spike-experimento-acotado).
+La plantilla canónica está en `assets/work-item-template.md` (léela antes de escribir cualquier WI). **Excepción:** un WI de `kind: spike` se redacta con `assets/work-item-spike-template.md` — ver [Variante: `kind: spike`](#variante-kind-spike-experimento-acotado).
 
-> **El registro de un hallazgo no es un WI.** Un defecto observado (prueba en rojo, incidencia en producción) se registra como **incidente `BUG-XXX`** —tipo de plan *Incidente*, [`references/incidents.md`](incidents.md)—, que no es implementable. El WI que lo corrige es de tipo `bug-fix` y lo cita en `Origen`. En un repositorio con `implementation.scope: tests` **no se crean WI**: solo incidentes.
+> **El registro de un hallazgo no es un WI.** Un defecto observado (prueba en rojo, incidencia en producción) se registra como **incidente `BUG-XXX`** —tipo de plan *Incidente*, [`references/incidents.md`](incidents.md)—, que no es implementable. El WI que lo corrige es de tipo `bug-fix` y lo cita en `origin`. En un repositorio con `implementation.scope: tests` **no se crean WI**: solo incidentes.
 
 ## Contenido
 
@@ -17,7 +17,7 @@ La plantilla canónica está en `assets/work-item-template.md` (léela antes de 
 - [Validación antes de crear](#validación-antes-de-crear)
 - [Flujo: Crear stub](#flujo-crear-stub-anclaje-de-id)
 - [Flujo: Crear WI completo](#flujo-crear-wi-completo)
-- [Variante: `Tipo: spike`](#variante-tipo-spike-experimento-acotado)
+- [Variante: `kind: spike`](#variante-kind-spike-experimento-acotado)
 - [Flujo: Actualizar un WI existente](#flujo-actualizar-un-wi-existente)
 - [Flujo: Proponer varios WI desde un esfuerzo grande](#flujo-proponer-varios-wi-desde-un-esfuerzo-grande)
 - [Checklist antes de redactar](#checklist-antes-de-redactar)
@@ -126,11 +126,11 @@ Un stub reserva el ID. No requiere requerimiento detallado ni contexto técnico 
 
 1. **Resolver el ID:** si el repo tiene un tracker externo vinculado (ver `SKILL.md`), seguir su archivo de referencia (crea el work item primero y usa su identificador). En cualquier otro caso, inferir el siguiente secuencial libre listando carpetas `WI-*/` **tanto en `<changesPath>/work-items/` como en `<archivedPath>/work-items/`** — los IDs archivados siguen ocupados.
 2. Crear la carpeta `WI-<número>-[nombre-descriptivo]/` y dentro el archivo `README.md` con:
-   - `Estado: Draft`
+   - `status: Draft`
    - `Tipo`: el conocido o el más probable (confirmar si hay duda).
    - `Repositorio`: el conocido o `Por definir`.
    - `Asignado a`: indicado por el usuario; si no, inferir con `git config user.name`; omitir si no aplica.
-   - `Work Item (<sistema>)`: enlace markdown al work item — solo si se creó vía el tracker vinculado (etiqueta y formato exactos en su archivo de referencia, p. ej. `Work Item (ADO)`); omitir si no aplica.
+   - `work_item`: enlace markdown al work item — solo si se creó vía el tracker vinculado (etiqueta y formato exactos en su archivo de referencia, p. ej. `work_item`); omitir si no aplica.
    - **Descripción**: objetivo breve acordado — el *qué*, sin el cómo.
    - **Criterios de aceptación / Plan de implementación**: vacíos o ausentes si aún no están definidos.
    - **Observaciones**: pendientes reales; no rellenar con texto genérico.
@@ -141,11 +141,11 @@ Un stub reserva el ID. No requiere requerimiento detallado ni contexto técnico 
 
 ## Flujo: Crear WI completo
 
-Un WI completo puede alcanzar `Estado: Ready` si cumple todas las condiciones del checklist.
+Un WI completo puede alcanzar `status: Ready` si cumple todas las condiciones del checklist.
 
 1. **Resolver el ID:** si el repo tiene un tracker externo vinculado, seguir su archivo de referencia. En cualquier otro caso, inferir el siguiente secuencial libre listando carpetas `WI-*/` **tanto en `<changesPath>/work-items/` como en `<archivedPath>/work-items/`** — los IDs archivados siguen ocupados. Crear la carpeta `WI-<número>-[nombre-descriptivo]/` antes de escribir el `README.md`.
 2. **Redactar el WI** siguiendo `assets/work-item-template.md`:
-   - **Metadatos**: `Tipo`; `Origen` solo en un `bug-fix` que corrige un incidente ya registrado (enlace al `BUG-XXX`, buscado en ruta activa y archivo; al crear el `bug-fix`, poner la `Resolución:` de ese incidente en `Fixing (WI-YYY)` — única escritura de este tipo de plan sobre un incidente) o en un WI que formaliza un spike; `Repositorio` con el nombre del repositorio git afectado; `Asignado a` indicado por el usuario, inferido con `git config user.name`, u omitido; `Work Item (<sistema>)` con el enlace al work item solo si se creó vía el tracker vinculado (etiqueta y formato en su archivo de referencia).
+   - **Frontmatter** (`${PLUGIN_ROOT}/references/frontmatter.md`): `id`, `type: work-item`, `status`, `kind`; `origin` solo en un `bug-fix` que corrige un incidente ya registrado (enlace al `BUG-XXX`, buscado en ruta activa y archivo; al crear el `bug-fix`, poner la `Resolución:` de ese incidente en `Fixing (WI-YYY)` — única escritura de este tipo de plan sobre un incidente) o en un WI que formaliza un spike; `repository` con el nombre del repositorio git afectado; `assignee` indicado por el usuario, inferido con `git config user.name`, u omitido; `work_item` (`system`, `id`, `url`) solo si se creó vía el tracker vinculado (formato en su archivo de referencia).
    - **Descripción**: qué problema/necesidad motiva el trabajo — claro y concreto; sin diseño técnico.
    - **Reglas de negocio** (opcional — incluir solo si el dominio impone restricciones, obligaciones o prohibiciones explícitas; omitir si no aplica): cada regla lleva id secuencial `BR-01`, `BR-02`, … con enunciado RFC 2119 en MAYÚSCULAS. **Cada `BR-XX` declarada debe quedar verificada por al menos un `AC-XXX`** de la sección Criterios de aceptación (anotar `→ verificado por AC-XXX` junto a la regla); si al redactar los criterios alguna `BR-XX` queda sin ningún `AC-XXX` que la verifique, es una laguna — cerrarla con una pregunta o registrarla en Observaciones, nunca dejarla sin verificar.
    - **Criterios de aceptación**: cómo se verifica que quedó hecho; lista verificable. Tono imperativo; sin «podría», «quizá».
@@ -153,24 +153,24 @@ Un WI completo puede alcanzar `Estado: Ready` si cumple todas las condiciones de
    - **Referencias**: ADRs existentes, documentación técnica (con la referencia al elemento concreto: el archivo del elemento, p. ej. `architecture/facturacion/models/MD-001-factura.md`, `architecture/facturacion/apis/API-001-facturas.md` o `flows/FL-001-emision-factura.md`; para un endpoint concreto, el archivo de su grupo de APIs con el ancla de operación, p. ej. `architecture/facturacion/apis/API-001-facturas.md#post-invoices`), diseño. La referencia la emite `design-define` ya formada y se **copia tal cual** — el archivo sigue el estándar `MD-XXX-{slug}` / `API-XXX-{slug}` / `FL-XXX-{slug}` / `DG-XXX-{slug}` con el slug fijado al crear el elemento, y el ancla de operación se deriva de método+ruta **sin el prefijo de versión** (`POST /api/v1/invoices` → `#post-invoices`). Un `#api-001-crear-factura`, un `README.md#api-001` o un `models/factura.md` apuntan a nada. No crear ADRs; si falta una decisión, sugerirlo en Observaciones. Si el WI depende de un modelo, API o flujo **sin especificación** en `architecture/`, registrarlo en Observaciones; si el usuario pide detallarlo, **delegar a `/design-define` vía subagente** y agregar aquí la referencia devuelta.
    - **Plan de implementación**: pasos concretos acordados o derivados de fuentes citadas en Referencias. Si no se conocen aún, **no inventar** — indicar en Observaciones qué falta.
    - **Migración** (opcional): si el WI proviene de una investigación de migración (`research/RS-XXX-{slug}/` de `work-research`), rellenar el bloque **Migración (origen → destino)** de la plantilla enlazando esa investigación (contexto progresivo: `discovery.md` y `validation.md` no se duplican) y mapear los `AC-XXX` a los casos Golden Master (`GM-XXX`). Omitir la sección si no es una migración.
-   - **Observaciones**: solo si hay pendientes reales. Si no hay nada, **omitir la sección**. Con pendientes reales: `Estado: Draft`.
+   - **Observaciones**: solo si hay pendientes reales. Si no hay nada, **omitir la sección**. Con pendientes reales: `status: Draft`.
 3. **Documentación técnica y glosario**: si el WI requiere crear o actualizar especificaciones en `architecture/`, **delegar a `/design-define` vía subagente** (nunca editarlas desde este skill) y enlazar las referencias devueltas; glossary sí puede actualizarse aquí con entradas breves (no sustituye ADR ni technical-doc).
-4. **Verificar el checklist** antes de asignar `Estado: Ready`.
+4. **Verificar el checklist** antes de asignar `status: Ready`.
 5. **Handoff:** con el WI en `Ready`, aplicar antes `specification.testCases.createMode` sobre el propio WI (ver [`${PLUGIN_ROOT}/references/planning.md`](../../../references/planning.md)); después, si el usuario quiere implementar, **invocar `/work-implement`** (no implementar directamente desde este skill). Si quedó en `Draft`, listar qué falta para completarlo.
 
 ---
 
-## Variante: `Tipo: spike` (experimento acotado)
+## Variante: `kind: spike` (experimento acotado)
 
 Un WI de tipo `spike` planifica un **experimento con timebox** cuyo entregable es **conocimiento** —el informe `spike-report.md`—, nunca código integrable. Existe para reducir una incertidumbre que impide planificar o estimar: viabilidad de una tecnología, rendimiento de un enfoque, complejidad real de un comportamiento. Su código vive en una rama `spike/WI-XXX-*` que **no se integra**; el desarrollo definitivo se formaliza después en una `US-XXX` (`work-define`) o en un `WI-XXX` de otro tipo (`work-plan`), que citan el informe y la rama como referencia. Sigue el flujo «Crear WI completo» con estas diferencias:
 
 1. **Plantilla.** Se redacta con **`assets/work-item-spike-template.md`** (leerla antes de escribir), no con `work-item-template.md`. La marca oculta lleva `type=spike`.
-2. **Secciones.** Sustituyen a Criterios de aceptación, Archivos afectados y Plan de implementación: **Pregunta de investigación** (una sola), **Hipótesis** (falsable, o exploración declarada), **Preguntas a responder** (`Q-XX`, cada una con criterio de **éxito** y de **fallo** medibles), **Enfoque del experimento** (`IT-XX`; el último es siempre redactar el informe) y **Entregable** (informe, evidencia en `assets/`, rama de referencia). **Fuera de alcance** es obligatoria y declara que el código no se integra. En la cabecera: **Subtipo** (`técnico` / `funcional`), **Timebox** (obligatorio), **Origen** (artefacto o decisión que espera el resultado, o «Petición directa») y **`Resolución`** (arranca en `Open`).
+2. **Secciones.** Sustituyen a Criterios de aceptación, Archivos afectados y Plan de implementación: **Pregunta de investigación** (una sola), **Hipótesis** (falsable, o exploración declarada), **Preguntas a responder** (`Q-XX`, cada una con criterio de **éxito** y de **fallo** medibles), **Enfoque del experimento** (`IT-XX`; el último es siempre redactar el informe) y **Entregable** (informe, evidencia en `assets/`, rama de referencia). **Fuera de alcance** es obligatoria y declara que el código no se integra. En el frontmatter: `kind: spike`, `subtype` (`technical` / `functional`), `timebox` (obligatorio), `origin` (artefacto o decisión que espera el resultado, o «Petición directa») y **`Resolución`** (arranca en `Open`).
 3. **Entrevista.** Lo que hay que cerrar antes de redactar: la pregunta (una, precisa), qué pasaría si la respuesta es «no» (sirve para fijar el criterio de fallo), el timebox, y qué artefacto está bloqueado esperando. Las `Q-XX` se derivan de la pregunta con el usuario; **no inventar umbrales**: si el usuario no sabe fijar un criterio medible, preguntarlo o dejarlo en Observaciones (el WI queda en `Draft`).
 4. **Ready** exige: Pregunta de investigación, Hipótesis (o exploración justificada), **al menos una `Q-XX` con criterio de éxito y de fallo medibles**, **Timebox**, Enfoque con al menos un `IT-XX` además del informe, Fuera de alcance, Repositorio, y Observaciones sin pendientes. No exige `AC-XXX`, Archivos afectados ni Plan de implementación.
 5. **Sin casos de prueba.** Un spike **no dispara `test-define`** (`createMode` no aplica, como en un incidente): no hay `AC-XXX` que cubrir y el código es desechable.
-6. **`Resolución`.** Arranca en `Open`. La actualiza el skill que crea el artefacto definitivo: `work-define` → `Replanned (US-YYY)`; `work-plan` → `Replanned (WI-YYY)` al crear un WI de otro tipo con `Origen: WI-XXX (spike)`, o `Re-spiked (WI-YYY)` al crear un segundo spike más acotado tras un veredicto `INCONCLUSIVE`; el usuario → `Discarded — motivo` tras un `NOT_VIABLE`. Un spike con `Resolución` distinta de `Open` cuenta como **completo** para `/work-plan archive`.
-7. **Handoffs.** Con el WI en `Ready`, ofrecer **`/work-implement`** (ejecuta el experimento y redacta el informe). El cierre del spike **no pasa por `work-integrate` ni `pr-create`**: lo define `work-implement` (ver su `references/work-items.md` → Variante spike). Cuando llega un `spike-report.md` como entrada de este skill —para crear el WI definitivo—, leerlo completo y **mapear sin re-entrevistar**: *Consideraciones para la implementación definitiva* → `AC-XXX` (las decisiones ya tomadas y los umbrales validados), Dependencias y Observaciones (las decisiones aún abiertas); *Qué reutilizar de la rama* y el propio informe → Referencias; `Origen: WI-XXX (spike)` en la cabecera; y actualizar la `Resolución` del spike. La entrevista se limita a lo que el informe deje abierto.
+6. **`resolution`.** Arranca en `Open`. La actualiza el skill que crea el artefacto definitivo: `work-define` → `Replanned (US-YYY)`; `work-plan` → `Replanned (WI-YYY)` al crear un WI de otro tipo con `origin` → `WI-XXX` (spike), o `Re-spiked (WI-YYY)` al crear un segundo spike más acotado tras un veredicto `INCONCLUSIVE`; el usuario → `Discarded — motivo` tras un `NOT_VIABLE`. Un spike con `resolution` distinta de `Open` cuenta como **completo** para `/work-plan archive`.
+7. **Handoffs.** Con el WI en `Ready`, ofrecer **`/work-implement`** (ejecuta el experimento y redacta el informe). El cierre del spike **no pasa por `work-integrate` ni `pr-create`**: lo define `work-implement` (ver su `references/work-items.md` → Variante spike). Cuando llega un `spike-report.md` como entrada de este skill —para crear el WI definitivo—, leerlo completo y **mapear sin re-entrevistar**: *Consideraciones para la implementación definitiva* → `AC-XXX` (las decisiones ya tomadas y los umbrales validados), Dependencias y Observaciones (las decisiones aún abiertas); *Qué reutilizar de la rama* y el propio informe → Referencias; `origin` → README del `WI-XXX` spike en el frontmatter; y actualizar `resolution` en el frontmatter del spike. La entrevista se limita a lo que el informe deje abierto.
 8. **Tracker.** Con la integración activa, `spike` se crea como `Task` (ver `references/<proveedor>.md`), con las secciones del spike en la descripción.
 
 ---
@@ -197,7 +197,7 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 2. **Identificar repositorios / alcances independientes** a partir de la descripción del esfuerzo. **No inventar** alcances no soportados por el pedido; lo no claro queda `Por definir` o se pregunta.
 3. **Presentar la propuesta** al usuario, un ítem por `WI-` tentativo: `WI-XXX` (siguiente libre **contando activos y archivados**), nombre de archivo, tipo, repositorio (o `Por definir`) y objetivo breve. **No crear archivos en este turno** — dejarlo explícito al final del mensaje.
 4. **Confirmar con el usuario** mediante la herramienta de preguntas estructuradas. Opciones: [Confirmar] / [Cancelar] — **sin** una opción de "ajustar alcance": el ajuste llega por respuesta libre, que ya explica qué cambiar. Si el usuario pide un ajuste, revisar y repetir pasos 3–4. **No continuar sin confirmación explícita.**
-5. **Crear cada WI** confirmado siguiendo el *Flujo: Crear stub* (o *WI completo* si el alcance ya está claro para alguno). Si **más de uno** se redacta como WI completo, reunir el contexto técnico que falte para el conjunto en tandas de **hasta 3 preguntas**, agrupadas por WI para que quede claro a cuál pertenece cada una, en vez de preguntar WI por WI; encadenar tantas tandas como haga falta mientras sigan quedando lagunas relevantes. Lo que siga sin acordar tras agotar la batería —el usuario respondió todo lo que iba a responder, o prefiere dejar el resto pendiente— va a **Observaciones** de ese WI, que queda en `Estado: Draft`. Asignar `Estado: Ready` **solo** a los WI que cumplan todas las condiciones del [checklist](#checklist-antes-de-redactar); es normal que el lote quede mixto.
+5. **Crear cada WI** confirmado siguiendo el *Flujo: Crear stub* (o *WI completo* si el alcance ya está claro para alguno). Si **más de uno** se redacta como WI completo, reunir el contexto técnico que falte para el conjunto en tandas de **hasta 3 preguntas**, agrupadas por WI para que quede claro a cuál pertenece cada una, en vez de preguntar WI por WI; encadenar tantas tandas como haga falta mientras sigan quedando lagunas relevantes. Lo que siga sin acordar tras agotar la batería —el usuario respondió todo lo que iba a responder, o prefiere dejar el resto pendiente— va a **Observaciones** de ese WI, que queda en `status: Draft`. Asignar `status: Ready` **solo** a los WI que cumplan todas las condiciones del [checklist](#checklist-antes-de-redactar); es normal que el lote quede mixto.
 6. **Reportar al usuario** la lista de WI creados con su objetivo breve, separando los que quedaron `Ready` de los `Draft` con su residual.
 7. **Casos de prueba:** para cada WI que quede en `Ready`, aplicar [`${PLUGIN_ROOT}/references/planning.md`](../../../references/planning.md) sobre el propio `WI` como artefacto padre, saltándolo si ya tiene `test-cases/` con algún `TC-XXX`.
 8. **Handoff:** los WI en `Draft` deben completarse a `Ready` (modo A) antes de **`work-implement`**.
@@ -224,13 +224,13 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - [ ] Sin solapamiento de alcance con WI existentes
 - [ ] Rama de trabajo actual verificada; si es una rama de implementación de otra US o WI, se advirtió al usuario y se preguntó `Continuar` / `Detenerme aquí` antes de crear
 
-**Condiciones para `Estado: Ready`:**
-- [ ] **`Tipo: bug-fix`:** `Origen` enlazando el `BUG-XXX` (o el work item del tracker) cuando el defecto ya estaba registrado, y la `Resolución` de ese incidente actualizada a `Fixing (WI-XXX)`
-- [ ] **`Tipo: spike`:** plantilla `assets/work-item-spike-template.md`; Pregunta de investigación única; Hipótesis; al menos una `Q-XX` con criterio de éxito **y** de fallo medibles; **Timebox** en la cabecera; Enfoque con al menos un `IT-XX` además del informe; Fuera de alcance con la cláusula de no integración; Repositorio; `Resolución: Open`. **Sin** `AC-XXX`, Archivos afectados ni Plan de implementación. Sustituye a las condiciones siguientes.
+**Condiciones para `status: Ready`:**
+- [ ] **`kind: bug-fix`:** `origin` enlazando el `BUG-XXX` (o el work item del tracker) cuando el defecto ya estaba registrado, y la `Resolución` de ese incidente actualizada a `Fixing (WI-XXX)`
+- [ ] **`kind: spike`:** plantilla `assets/work-item-spike-template.md`; Pregunta de investigación única; Hipótesis; al menos una `Q-XX` con criterio de éxito **y** de fallo medibles; `timebox` en el frontmatter; Enfoque con al menos un `IT-XX` además del informe; Fuera de alcance con la cláusula de no integración; Repositorio; `Resolución: Open`. **Sin** `AC-XXX`, Archivos afectados ni Plan de implementación. Sustituye a las condiciones siguientes.
 - [ ] **Descripción** con problema/necesidad claros
 - [ ] **Criterios de aceptación** verificables
 - [ ] Si hay **Reglas de negocio** (`BR-XX`) declaradas: cada una verificada por al menos un `AC-XXX` — ninguna `BR-XX` sin su `AC-XXX` correspondiente
-- [ ] Repositorio definido (no `Por definir`) en la cabecera del WI
+- [ ] Repositorio definido (no `Por definir`) en el frontmatter del WI
 - [ ] Si toca UI: referencia a Figma, wireframe o imagen de alta fidelidad en **Referencias**
 - [ ] **Dependencias** listadas dentro del alcance del work item
 - [ ] **Plan de implementación** con pasos concretos
@@ -250,11 +250,11 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 
 **Ejemplo 1 — Stub**
 - *Entrada:* «Reserva un WI para el timeout intermitente del login, todavía no sé la causa.»
-- *Salida:* carpeta `WI-001-timeout-login/` con `README.md` en Draft, `Tipo: bug-fix`, repositorio `Por definir`, Descripción breve, Criterios y Plan vacíos, Observaciones con los pendientes reales.
+- *Salida:* carpeta `WI-001-timeout-login/` con `README.md` en Draft, `kind: bug-fix`, repositorio `Por definir`, Descripción breve, Criterios y Plan vacíos, Observaciones con los pendientes reales.
 
 **Ejemplo 2 — WI completo**
 - *Entrada:* «Actualiza Spring Boot a 3.3; el ADR de versiones está en `docs/adr/`; la suite debe quedar verde y sin warnings de deprecación.»
-- *Salida:* carpeta `WI-002-upgrade-spring-boot/` con `README.md`, `Tipo: dependency-update`, Descripción, Criterios de aceptación verificables, repositorio concreto en la cabecera, Plan con pasos, referencia al ADR con ruta relativa. `Estado: Ready` si Observaciones está limpia.
+- *Salida:* carpeta `WI-002-upgrade-spring-boot/` con `README.md`, `kind: dependency-update`, Descripción, Criterios de aceptación verificables, repositorio concreto en el frontmatter, Plan con pasos, referencia al ADR con ruta relativa. `status: Ready` si Observaciones está limpia.
 
 **Ejemplo 3 — Información incompleta**
 - *Entrada:* «WI para limpiar el módulo de reportes.»
@@ -267,15 +267,15 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 
 **Ejemplo 5 — Bug-fix a partir de un incidente registrado**
 - *Entrada:* «Planifica la corrección del BUG-004» (incidente `Ready`, `Resolución: Open`, causa conocida: el descuento del cupón no se resta antes de calcular el impuesto).
-- *Salida:* `WI-012-impuestos-con-cupon/README.md`, `Tipo: bug-fix`, `Origen: [BUG-004](../../incidents/BUG-004-impuestos-ignoran-cupon/README.md)`, Descripción que resume el incidente sin duplicarlo, `AC-XXX` derivados de su comportamiento esperado, Plan con la prueba en rojo primero; actualiza `Resolución: Fixing (WI-012)` en el incidente. Sin causa conocida, el handoff correcto habría sido `work-research` «Analizar issue». Un hallazgo que aún no está registrado no se crea aquí: ver [`references/incidents.md`](incidents.md).
+- *Salida:* `WI-012-impuestos-con-cupon/README.md`, `kind: bug-fix`, `origin: ../../incidents/BUG-004-impuestos-ignoran-cupon/README.md`, Descripción que resume el incidente sin duplicarlo, `AC-XXX` derivados de su comportamiento esperado, Plan con la prueba en rojo primero; actualiza `Resolución: Fixing (WI-012)` en el incidente. Sin causa conocida, el handoff correcto habría sido `work-research` «Analizar issue». Un hallazgo que aún no está registrado no se crea aquí: ver [`references/incidents.md`](incidents.md).
 
 **Ejemplo 6 — Spike**
 - *Entrada:* «No sabemos si el motor de reglas aguanta 500 pólizas por segundo con la política de reaseguro; hay que probarlo antes de planificar la US-012.»
-- *Comportamiento:* hace falta **construir y medir**, no leer → tipo `spike`. Entrevista: pregunta única, qué pasa si no aguanta (criterio de fallo), timebox («2 días»), artefacto bloqueado (`US-012`). Crea `WI-014-rendimiento-motor-reglas/README.md` con `assets/work-item-spike-template.md`: `Subtipo: técnico`, `Origen: US-012`, `Timebox: 2 días`, `Q-01 (Rendimiento)` con éxito «p95 < 2 s por lote de 500 durante 10 min» y fallo «p95 ≥ 2 s o errores > 0,1 %», Enfoque `IT-01`–`IT-04`, `Resolución: Open`. `Estado: Ready`; no ofrece `test-define`; ofrece `/work-implement`.
+- *Comportamiento:* hace falta **construir y medir**, no leer → tipo `spike`. Entrevista: pregunta única, qué pasa si no aguanta (criterio de fallo), timebox («2 días»), artefacto bloqueado (`US-012`). Crea `WI-014-rendimiento-motor-reglas/README.md` con `assets/work-item-spike-template.md`: `Subtipo: técnico`, `Origen: US-012`, `Timebox: 2 días`, `Q-01 (Rendimiento)` con éxito «p95 < 2 s por lote de 500 durante 10 min» y fallo «p95 ≥ 2 s o errores > 0,1 %», Enfoque `IT-01`–`IT-04`, `Resolución: Open`. `status: Ready`; no ofrece `test-define`; ofrece `/work-implement`.
 - *Entrada posterior:* «Planifica la implementación definitiva a partir del informe del WI-014» (veredicto `VIABLE_WITH_REWORK`).
-- *Comportamiento:* el resultado es técnico → `WI-015` de tipo `optimization` con `Origen: WI-014 (spike)`, `AC-XXX` derivados de las consideraciones del informe, Referencias al `spike-report.md` y a la rama `spike/WI-014-rendimiento-motor-reglas`; actualiza `Resolución: Replanned (WI-015)` en el spike.
+- *Comportamiento:* el resultado es técnico → `WI-015` de tipo `optimization` con `origin` → `WI-014` (spike), `AC-XXX` derivados de las consideraciones del informe, Referencias al `spike-report.md` y a la rama `spike/WI-014-rendimiento-motor-reglas`; actualiza `resolution: Replanned (WI-015)` en el spike.
 
-**Ejemplo 7 — Repo vinculado a un tracker externo** — ver el archivo de referencia del sistema correspondiente (p. ej. `references/azure-devops.md`, donde el `Tipo` del WI determina el tipo de work item creado).
+**Ejemplo 7 — Repo vinculado a un tracker externo** — ver el archivo de referencia del sistema correspondiente (p. ej. `references/azure-devops.md`, donde `kind` del WI determina el tipo de work item creado).
 
 ---
 
@@ -283,11 +283,11 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 
 - Registrar un hallazgo como `WI-XXX` (el tipo `bug` ya no existe): el registro es un incidente `BUG-XXX` del tipo de plan *Incidente*; el WI es el `bug-fix` que lo cita.
 - Crear un `bug-fix`, refactor u otro tipo implementable en un repositorio con `implementation.scope: tests`: allí solo se registran incidentes; la remediación se planifica en el repositorio de la aplicación.
-- Crear un `bug-fix` para un incidente ya registrado sin citarlo en `Origen` ni actualizar su `Resolución`.
+- Crear un `bug-fix` para un incidente ya registrado sin citarlo en `origin` ni actualizar su `Resolución`.
 - Crear un `spike` para algo que se responde leyendo (eso es `work-research`), o un `refactor`/`optimization` disfrazado de spike para saltarse los `AC-XXX` y las puertas: si el código va a integrarse, no es un spike.
 - Dejar un `spike` en `Ready` sin timebox o sin ninguna `Q-XX` con criterio medible; inventar los umbrales en lugar de preguntarlos.
 - Ofrecer `test-define` a un `spike`, o planificarle `AC-XXX` y Plan de implementación como a un WI implementable.
-- Al crear el WI definitivo desde un `spike-report.md`, re-entrevistar lo que el informe ya responde, o no actualizar la `Resolución` del spike.
+- Al crear el WI definitivo desde un `spike-report.md`, re-entrevistar lo que el informe ya responde, o no actualizar la `resolution` del spike.
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - Implementar el arreglo, la migración o los tests mientras se redacta el WI.
 - Crear el WI como un archivo suelto `WI-XXX-[slug].md` en lugar de una carpeta `WI-XXX-[slug]/README.md`.
@@ -295,9 +295,9 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - Crear ADRs sin pedido explícito del usuario; solo referenciar existentes o sugerir su creación.
 - Crear o editar documentos en `docs/architecture/` directamente desde este skill; la especificación técnica se delega a `/design-define` vía subagente y aquí solo se enlaza la referencia devuelta.
 - Redactar en el WI la definición de un modelo, API o flujo (tablas de campos, contratos, diagramas) en lugar de referenciar su elemento en `architecture/`.
-- Publicar `Estado: Ready` sin criterios de aceptación verificables.
-- Publicar `Estado: Ready` con pendientes en Observaciones.
-- Publicar `Estado: Ready` sin el repositorio afectado en la cabecera del WI.
+- Publicar `status: Ready` sin criterios de aceptación verificables.
+- Publicar `status: Ready` con pendientes en Observaciones.
+- Publicar `status: Ready` sin el repositorio afectado en el frontmatter del WI.
 - Ignorar los WI existentes; duplicar o contradecir su alcance.
 - Inventar el requerimiento, los criterios o el plan en lugar de preguntar.
 - Rellenar secciones con supuestos o ejemplos genéricos; dejar pendientes reales sin listar en Observaciones.
@@ -317,11 +317,11 @@ Posición: **planificación** — una tarea de mantenimiento (`WI`) es **autocon
 
 | | |
 |--|--|
-| **Entrada** | Petición de mantenimiento del usuario, un **incidente `BUG-XXX`** ya registrado cuya corrección se planifica como `bug-fix` (`Origen: BUG-XXX`), un **dossier de bug** de `work-research` (flujo «Analizar issue»), del que se mapean descripción, evidencia y criterios a un `bug-fix`, o un **`spike-report.md`** de un `WI` de tipo `spike` ya cerrado, del que se mapean las consideraciones a un WI definitivo con `Origen: WI-XXX (spike)`. No requiere una US previa. |
-| **Salida para implementar** | WI en **`Estado: Ready`** (Descripción, Criterios, Plan, Dependencias y Referencias según checklist). Stubs en Draft **no** habilitan `work-implement`. Un `WI` de tipo **`spike`** en `Ready` sí va a `work-implement`, pero su salida es el `spike-report.md`, no código integrable: vuelve aquí (o a `work-define`) para formalizar el desarrollo definitivo. |
+| **Entrada** | Petición de mantenimiento del usuario, un **incidente `BUG-XXX`** ya registrado cuya corrección se planifica como `bug-fix` (`origin` → `BUG-XXX`), un **dossier de bug** de `work-research` (flujo «Analizar issue»), del que se mapean descripción, evidencia y criterios a un `bug-fix`, o un **`spike-report.md`** de un `WI` de tipo `spike` ya cerrado, del que se mapean las consideraciones a un WI definitivo con `origin` → `WI-XXX` (spike). No requiere una US previa. |
+| **Salida para implementar** | WI en **`status: Ready`** (Descripción, Criterios, Plan, Dependencias y Referencias según checklist). Stubs en Draft **no** habilitan `work-implement`. Un `WI` de tipo **`spike`** en `Ready` sí va a `work-implement`, pero su salida es el `spike-report.md`, no código integrable: vuelve aquí (o a `work-define`) para formalizar el desarrollo definitivo. |
 | **Siguiente paso** | Según `specification.testCases.createMode`: **`/test-define`** sobre el WI si corresponde y aún no tiene `TC-XXX`, y **`/work-implement`** — solo cuando el WI a ejecutar está `Ready`. La implementación nunca se hace directamente desde `work-plan`. |
 | **Regreso desde implement** | Ambigüedad técnica o alcance incorrecto → ajustar el WI aquí. |
 
 ### Repositorio afectado
 
-Cada WI declara en su cabecera el **repositorio git** al que afecta (campo `Repositorio`). Es el ámbito donde se materializará el trabajo. Se infiere del repo (git remote / carpeta) o lo indica el usuario; para `Estado: Ready` es obligatorio (no `Por definir`). Un stub puede dejarlo `Por definir` hasta que se concrete.
+Cada WI declara en su frontmatter el **repositorio git** al que afecta (clave `repository`). Es el ámbito donde se materializará el trabajo. Se infiere del repo (git remote / carpeta) o lo indica el usuario; para `status: Ready` es obligatorio (no `Por definir`). Un stub puede dejarlo `Por definir` hasta que se concrete.

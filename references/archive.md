@@ -55,12 +55,12 @@ lee el artefacto y compone un **parte de estado**:
 
 | Artefacto | Qué se comprueba | Señal de «incompleto» |
 |-----------|------------------|-----------------------|
-| `SRS-XXX` | `Estado`; tabla «Historias de usuario derivadas»; `test-cases/` si existe (AC sin TC, TC en `Draft`) | `Draft`; FR/NFR sin US derivada |
-| `PRD-XXX` | `Estado`; si fue promovido (entonces ya no existe como `PRD-*`: se archiva el `SRS-XXX`); `test-cases/` si existe | `Draft`; sin promover (informativo: archivar un PRD no promovido es válido, p. ej. go/no-go negativo) |
-| `RQ-XXX` | `Estado`; `test-cases/` (criterios sin TC, TC en `Draft`); `criteria-coverage.md` si existe | `Draft`; algún `AC-XXX` sin TC; TC en `Draft`; cobertura `REJECTED` |
-| `US-XXX` | `Estado`; `progress.md` (marca `work:status` y la de cada `TK`); `criteria-coverage.md` (marca `coverage-verify:verdict`); `TK-XXX` en `Draft`; `test-cases/` con TC en `Draft` | `Draft`; sin `progress.md` o con unidades no `Done`; sin cobertura o `REJECTED`; rama `feature/US-XXX-*` aún sin integrar (`git branch --merged <base>` si la base es conocida) |
-| `WI-XXX` | `Estado`; `progress.md`; `criteria-coverage.md`; tipo `spike` → línea `Resolución:` y presencia de `spike-report.md` | Igual que la US; un `spike` sin `spike-report.md` o con `Resolución: Open` (su rama `spike/` **nunca** se integra, así que «rama sin integrar» no es señal de incompleto en un spike) |
-| `BUG-XXX` | `Estado`; línea `Resolución:` | `Draft`; `Resolución: Open` o `Fixing (…)` (no hay `progress.md`, cobertura ni rama: un incidente no se implementa) |
+| `SRS-XXX` | `status`; tabla «Historias de usuario derivadas»; `test-cases/` si existe (AC sin TC, TC en `Draft`) | `Draft`; FR/NFR sin US derivada |
+| `PRD-XXX` | `status`; si fue promovido (entonces ya no existe como `PRD-*`: se archiva el `SRS-XXX`); `test-cases/` si existe | `Draft`; sin promover (informativo: archivar un PRD no promovido es válido, p. ej. go/no-go negativo) |
+| `RQ-XXX` | `status`; `test-cases/` (criterios sin TC, TC en `Draft`); `criteria-coverage.md` si existe | `Draft`; algún `AC-XXX` sin TC; TC en `Draft`; cobertura `REJECTED` |
+| `US-XXX` | `status` del frontmatter; `progress.md` (`status` del frontmatter y la marca `unit:… status` de cada `TK`); `criteria-coverage.md` (marca `coverage-verify:verdict`); `TK-XXX` en `Draft`; `test-cases/` con TC en `Draft` | `Draft`; sin `progress.md` o con unidades no `Done`; sin cobertura o `REJECTED`; rama `feature/US-XXX-*` aún sin integrar (`git branch --merged <base>` si la base es conocida) |
+| `WI-XXX` | `status`; `progress.md`; `criteria-coverage.md`; tipo `spike` → clave `resolution` y presencia de `spike-report.md` | Igual que la US; un `spike` sin `spike-report.md` o con `resolution: Open` (su rama `spike/` **nunca** se integra, así que «rama sin integrar» no es señal de incompleto en un spike) |
+| `BUG-XXX` | `status`; línea `Resolución:` | `Draft`; `Resolución: Open` o `Fixing (…)` (no hay `progress.md`, cobertura ni rama: un incidente no se implementa) |
 | `RS-XXX` suelto | Referencias vivas desde artefactos **activos** (misma búsqueda que el paso 2 del procedimiento) | ≥ 1 referencia viva |
 
 Un artefacto es **completo** cuando ninguna de esas señales aparece; es el criterio que usa `archive` sin ID

@@ -60,7 +60,7 @@ Distinto del `Estado: Draft/Ready` del documento completo (ver [Definition of Re
 | **Propuesto** | El agente lo redactó a partir de una inferencia o un valor por defecto que el usuario todavía no confirmó explícitamente. |
 | **Aprobado** | El usuario confirmó el enunciado — al responder la pregunta que lo originó, ya lo está aprobando; no hace falta una confirmación aparte. |
 
-Un SRS puede llegar a `Estado: Ready` con requisitos en `Proposed` **solo si** esa laguna quedó documentada y aceptada en Observaciones; en general, `Ready` implica que todos los `FR-XXX`/`NFR-XXX` relevantes están `Approved`.
+Un SRS puede llegar a `status: Ready` con requisitos en `Proposed` **solo si** esa laguna quedó documentada y aceptada en Observaciones; en general, `Ready` implica que todos los `FR-XXX`/`NFR-XXX` relevantes están `Approved`.
 
 ---
 
@@ -121,7 +121,7 @@ Este skill produce tres documentos. La elección se hace al inicio (ver [`flow.m
 | **Consumidores** | `test-define` → `TC-XXX` | `work-define` → `US-XXX` · `test-define` → `TC-XXX` de aceptación · promoción a SRS | `work-define` · `work-plan` · `arch-init` · `design-define` · `test-define` |
 | **Plantilla** | [`assets/rq-template.md`](../assets/rq-template.md) | [`assets/prd-template.md`](../assets/prd-template.md) — misma numeración 1-15 que el SRS | [`assets/srs-template.md`](../assets/srs-template.md) |
 
-**Identificadores:** los tres prefijos comparten **un único secuencial** sobre `<changesPath>/requirements/` + `<archivedPath>/requirements/` (carpetas `RQ-*`, `PRD-*` y `SRS-*` juntas): el siguiente número libre es el mayor de todos + 1, sea cual sea el tipo. **Promoción PRD → SRS:** mismo número, mismos `FR-XXX`/`NFR-XXX`/`BR-XX`/`AC-XXX` (inmutables; los nuevos toman el siguiente libre); la carpeta `PRD-XXX-slug` se renombra a `SRS-XXX-slug` (`git mv`), el documento pasa a la estructura de `srs-template.md` (misma numeración, así que es completar secciones, no reescribirlas) y se reparan los enlaces entrantes. Se completan solo las secciones marcadas «Pendiente — se completa al promover a SRS», se registra la fecha y el origen en **Promovido a SRS** y se repite la Ola 3 con el rol ARCH. **No existe promoción RQ → PRD/SRS:** si el caso cambia y se va a implementar, se crea el PRD/SRS desde el mismo insumo, se enlaza el RQ en `references/` y se archiva el RQ cuando el usuario lo decida.
+**Identificadores:** los tres prefijos comparten **un único secuencial** sobre `<changesPath>/requirements/` + `<archivedPath>/requirements/` (carpetas `RQ-*`, `PRD-*` y `SRS-*` juntas): el siguiente número libre es el mayor de todos + 1, sea cual sea el tipo. **Promoción PRD → SRS:** mismo número, mismos `FR-XXX`/`NFR-XXX`/`BR-XX`/`AC-XXX` (inmutables; los nuevos toman el siguiente libre); la carpeta `PRD-XXX-slug` se renombra a `SRS-XXX-slug` (`git mv`), el documento pasa a la estructura de `srs-template.md` (misma numeración, así que es completar secciones, no reescribirlas) y se reparan los enlaces entrantes. Se completan solo las secciones marcadas «Pendiente — se completa al promover a SRS», se registra la fecha y el origen en `promoted_at` / `promoted_from` del frontmatter y se repite la Ola 3 con el rol ARCH. **No existe promoción RQ → PRD/SRS:** si el caso cambia y se va a implementar, se crea el PRD/SRS desde el mismo insumo, se enlaza el RQ en `references/` y se archiva el RQ cuando el usuario lo decida.
 
 ## Definition of Ready (DoR) del PRD
 
@@ -134,7 +134,7 @@ Un `PRD-XXX` es **Ready** cuando cumple la tabla DoR de `prd-template.md`; las s
 - **Obligaciones de datos** (9) y **normativa aplicable** (10) identificadas, sin el «cómo».
 - **`AC-XXX`** (12): todo `FR-XXX`/`NFR-XXX` con al menos un criterio de aceptación verificable en términos de negocio; método de verificación `Pendiente`.
 - **Riesgos de producto**, **alcance** y **Ola 3 con PO+UX** igual que en un SRS.
-- **Problema y evidencia** (1.1) descritos, y **aprobación de negocio** registrada en la cabecera (quién y cuándo).
+- **Problema y evidencia** (1.1) descritos, y **aprobación de negocio** registrada en el frontmatter (quién y cuándo).
 - **Observaciones:** solo la línea «Para promover a SRS falta» — que es obligatoria y no cuenta como pendiente.
 
 ## Definition of Ready (DoR) del RQ
@@ -171,4 +171,4 @@ Tabla con los criterios de la plantilla (columna «Aplica a» = SRS). Para cada 
 | Sin aclaraciones pendientes | Observaciones vacías o «Ninguna»; nada pendiente con usuario/producto. |
 | Validación final (Ola 3) superada | El análisis de gaps, la revisión cruzada PO+UX+ARCH y la **validación con subagente sin contexto de sesión** (ver [`interview.md`](interview.md#ola-3-en-detalle-paso-11-de-flowmd)) se ejecutaron sobre el documento redactado, sin hallazgos pendientes: lo no resuelto vive en Observaciones y bloquea Ready vía el criterio anterior. |
 
-El estado **Ready** de un SRS requiere todos los criterios sin excepción (los marcados `N/A` cuentan como satisfechos cuando la condición de exclusión aplica y está declarada). Si falta cualquiera, el SRS permanece en `Estado: Draft` con las lagunas documentadas en Observaciones — nunca se declara Ready «con reservas».
+El estado **Ready** de un SRS requiere todos los criterios sin excepción (los marcados `N/A` cuentan como satisfechos cuando la condición de exclusión aplica y está declarada). Si falta cualquiera, el SRS permanece en `status: Draft` con las lagunas documentadas en Observaciones — nunca se declara Ready «con reservas».

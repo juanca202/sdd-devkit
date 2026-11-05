@@ -154,7 +154,7 @@ No continúes hasta haber leído y aplicado `verdicts.md`.
 
 ## Estados de cobertura
 
-Los valores de la columna `Estado` son **canónicos**: en el reporte se escribe su símbolo seguido de la etiqueta en el idioma resuelto.
+Los valores de la columna `status` son **canónicos**: en el reporte se escribe su símbolo seguido de la etiqueta en el idioma resuelto.
 
 | Estado (canónico) | Símbolo | Cuándo aplicarlo |
 |-------------------|---------|------------------|
@@ -164,7 +164,7 @@ Los valores de la columna `Estado` son **canónicos**: en el reporte se escribe 
 
 > **Cobertura ≠ ejecución.** Que exista prueba que valida el criterio es una cosa; que haya corrido y con qué resultado, otra. Un criterio cuya prueba **falló** —y se pudo aislar que fue la suya— se reporta `UNCOVERED` con el fallo en Observaciones (**salvo en un repositorio solo de pruebas**, `implementation.scope: tests`: ahí es `COVERED` con `Resultado = FAIL` y el hallazgo en Observaciones, ver la nota del encabezado); si la suite falló pero no se puede aislar el test, es `PARTIAL` (ver «Mapeo a la matriz»).
 >
-> **El `status` del TC filtra la cobertura.** La fuente primaria es la **columna `Estado` del índice** `test-cases/README.md`; si el índice no la trae, abrir el `TC-XXX-*.md` y leer su campo `Estado`, con la marca oculta `<!-- tc:status=Draft|Ready|Obsolete · testType=… -->` como desempate. Los **valores** (`Draft`/`Ready`/`Obsolete`) son canónicos y no se traducen; lo que va en el idioma resuelto es la etiqueta del campo. Un TC **`Obsolete`** no cuenta como cobertura (dejar Observación); uno **`Draft`** cuenta como cobertura `PARTIAL` (aún no está listo para respaldar el criterio); solo los **`Ready`** cuentan como cobertura plena. Si el TC no trae el campo, tratarlo como `Ready`. Esto es distinto del `Estado:` del **artefacto**, que este skill no exige (ver «Cuándo bloquear»).
+> **El `status` del TC filtra la cobertura.** La fuente primaria es la **columna `status` del índice** `test-cases/README.md`; si el índice no la trae, abrir el `TC-XXX-*.md` y leer la clave `status` de su frontmatter. Los **valores** (`Draft`/`Ready`/`Obsolete`) son canónicos y no se traducen. Un TC **`Obsolete`** no cuenta como cobertura (dejar Observación); uno **`Draft`** cuenta como cobertura `PARTIAL` (aún no está listo para respaldar el criterio); solo los **`Ready`** cuentan como cobertura plena. Si el TC no trae el campo, tratarlo como `Ready`. Esto es distinto del `status` del **artefacto**, que este skill no exige (ver «Cuándo bloquear»).
 >
 > **Manual por diseño vs. pendiente de automatizar.** `test-define` distingue los dos casos en el campo **Tipo de prueba** del TC: `Manual` significa *no se automatiza por decisión de diseño*; cualquier otro valor (`Unit`, `Integration`, `API Test`, `Visual Test`, `E2E`) significa *debería existir artefacto automatizado*. Respetar esa declaración: un criterio con TCs `Manual` que lo cubren por completo es `COVERED` (sus filas van con `Ejecución = Manual` y `Resultado = N/A`), no una deuda; un criterio con TCs automatizables **sin** artefacto es `PARTIAL` o `UNCOVERED`. No penalizar una decisión de diseño ni disimular una automatización pendiente.
 >
@@ -225,13 +225,13 @@ Semántica de las columnas:
 > Observaciones que el mapeo es inferido, no declarado. Solo el criterio **sin TC y sin artefacto** produce
 > la fila vacía `— | — | — | — | `UNCOVERED`.
 
-**Derivación del `Estado` del criterio** a partir de sus filas. Evaluar **en orden** y detenerse en la primera que aplique:
+**Derivación del `status` del criterio** a partir de sus filas. Evaluar **en orden** y detenerse en la primera que aplique:
 
 | # | Filas del criterio | Estado |
 |---|--------------------|--------|
 | 1 | **Ninguna** fila aporta cobertura — todas en `UNCOVERED`, o el criterio no tiene TC ni artefacto, o sus únicos TCs son `Obsolete` — **o** alguna fila dio `FAIL` **aislado a su test** (no en `scope: tests`, donde ese `FAIL` es hallazgo y el criterio sigue cubierto) | `UNCOVERED` |
 | 2 | **Alguna** fila en `UNCOVERED`/`NOT_RUN`, algún TC en `Draft` u `Obsolete` conviviendo con cobertura válida, o un `FAIL` de suite **no aislable** | `PARTIAL` |
-| 3 | **Todas** con `Resultado` ∈ {`PASS`, `N/A`} y todos los TCs en `Ready` (o sin campo `Estado`) | `COVERED` |
+| 3 | **Todas** con `Resultado` ∈ {`PASS`, `N/A`} y todos los TCs en `Ready` (o sin campo `status`) | `COVERED` |
 
 > **Dos destinos de observación, no intercambiables.** La prueba para elegir: *¿se puede atribuir a un
 > criterio concreto?* Si sí, va en la **columna `Observaciones`** de la tabla 1; si no, en la **sección
@@ -245,7 +245,7 @@ Semántica de las columnas:
 > La sección global **se omite entera** si no hay ninguno. Cuando el skill diga «dejar Observación» sin más,
 > aplicar esta prueba.
 
-> **La derivación no es cerrada sobre la matriz: dos datos viven fuera de ella.** (a) el `Estado` del TC
+> **La derivación no es cerrada sobre la matriz: dos datos viven fuera de ella.** (a) el `status` del TC
 > (`Draft`/`Obsolete`/`Ready`, que viene del propio TC) y (b) si un `FAIL` pudo **aislarse** al test del
 > criterio. Ambos se anotan siempre en la columna **Observaciones de la tabla 1** — sin esa anotación, dos
 > criterios con filas idénticas quedarían con estados distintos sin explicación. Un `FAIL` no aislable se
@@ -418,7 +418,7 @@ Parar y reportar (sin generar reporte parcial) cuando:
 - El trabajo no existe o no se encuentra su documento de criterios.
 - No hay sección de criterios de aceptación, está vacía, o los criterios **no tienen identificador codificado** (el formato es indiferente; lo que no puede faltar es el identificador): no hay nada que trazar de forma trazable; sugerir alinear el trabajo con su skill de definición/planificación antes de validar (para un `FT-XXX`, completar su especificación con el flujo «Analizar legado» de `work-research`).
 
-> **No bloquear** por que el artefacto no siga las convenciones del plugin: identificadores fuera del formato `AC-XXX`, ubicación fuera de `docs/specs/` o ausencia de campo `Estado:` **no** son motivos de bloqueo.
+> **No bloquear** por que el artefacto no siga las convenciones del plugin: identificadores fuera del formato `AC-XXX`, ubicación fuera de `docs/specs/` o ausencia de campo `status` **no** son motivos de bloqueo.
 
 `
 WARNING No es posible generar el reporte de trazabilidad:
@@ -496,5 +496,6 @@ Posición: **validación / cierre de calidad** — después de `work-implement`.
 - [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md) y [`${PLUGIN_ROOT}/references/quality-check-run.md`](../../references/quality-check-run.md): **Caché de cierre** — receta del `FINGERPRINT` y contrato de `quality-check-run.json` (esquema, frescura). *Al calcular la clave o leer/escribir la caché.*
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/references/frontmatter.md`](../../references/frontmatter.md): **Frontmatter** — cabecera YAML de todo artefacto: claves y valores en inglés, cómo se lee `status` y el resto de campos. *Al crear, leer o actualizar cualquier artefacto.*
 - [`${PLUGIN_ROOT}/references/escalation.md`](../../references/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
 

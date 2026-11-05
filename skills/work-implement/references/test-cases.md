@@ -130,7 +130,7 @@ Despues **preguntar** (herramienta estructurada): *"¿Como quieres continuar con
 
 Ademas de la validacion de repositorio transversal (`SKILL.md`):
 
-- **Artefacto padre existente y en `Ready`:** su `README.md` tiene `Estado: Ready`. Un `FT-XXX` en `Draft` **no** es ejecutable — devolver al flujo «Analizar legado» de `work-research` (o a quien lo registro) para completarlo.
+- **Artefacto padre existente y en `Ready`:** su `README.md` tiene `status: Ready`. Un `FT-XXX` en `Draft` **no** es ejecutable — devolver al flujo «Analizar legado» de `work-research` (o a quien lo registro) para completarlo.
 - **El `FT-XXX` no se lee como plan:** de su `README.md` solo interesan los **`AC-XXX`** y su linea `Casos de prueba:`. Si el feature contuviera algo con aspecto de plan de implementacion, subtareas o trabajo pendiente, **ignorarlo y avisar al usuario**: ese contenido no pertenece a un feature y no se ejecuta desde aqui.
 - **Criterios de aceptacion presentes:** el padre tiene `AC-XXX` verificables. Sin ellos no hay nada que automatizar; parar.
 - **Carpeta `test-cases/` con contenido:** debe existir con al menos un `TC-XXX-*.md`. Si no existe o esta vacia, **preguntar al usuario** (herramienta estructurada) antes de continuar:
@@ -144,8 +144,8 @@ Ademas de la validacion de repositorio transversal (`SKILL.md`):
   A diferencia de los tipos `TK`/`WI`, aqui **no existe la opcion «continuar sin test cases»**: sin TC no hay unidad que implementar.
 
 - **Indice de test cases:** leer `test-cases/README.md` (columnas `TC · Perspectiva · Tipo de prueba · Estado · Prioridad · Criterio de aceptacion`). Es la fuente para construir el alcance. Si el indice no existe pero hay archivos `TC-XXX-*.md`, leer los propios test cases.
-- **Estado de cada TC:** tomarlo de la columna `Estado` del indice; solo abrir el `TC-XXX-*.md` si el indice no la trae (formato anterior a esa convencion). Solo se automatizan los TC en `Estado: Ready`. Los `Draft` se excluyen (devolver a `test-define`); los `Obsolete` se excluyen sin mas.
-- **`testType` del TC** (clave de su marca oculta `<!-- tc:… -->`, no la etiqueta visible): un TC con `testType=Manual` **no es automatizable por diseno** — se excluye del alcance y se registra en `Cobertura de test cases` del `progress.md`. Para el resto, el campo (`Unit`, `Integration`, `API Test`, `Visual Test`, `E2E`, o una combinacion) determina **que nivel de prueba escribir**.
+- **Estado de cada TC:** tomarlo de la columna `status` del indice; solo abrir el `TC-XXX-*.md` si el indice no la trae (formato anterior a esa convencion). Solo se automatizan los TC en `status: Ready`. Los `Draft` se excluyen (devolver a `test-define`); los `Obsolete` se excluyen sin mas.
+- **`test_type` del TC** (clave de su frontmatter): un TC con `test_type: [Manual]` **no es automatizable por diseno** — se excluye del alcance y se registra en `Cobertura de test cases` del `progress.md`. Para el resto, el campo (`Unit`, `Integration`, `API Test`, `Visual Test`, `E2E`, o una combinacion) determina **que nivel de prueba escribir**.
 - **AC sin TC:** si algun `AC-XXX` del padre no tiene ningun `TC-XXX` que lo cubra, **avisar al usuario** antes de continuar y ofrecer handoff a `test-define` para completar la cobertura, o continuar dejando constancia del hueco en `progress.md`. Este skill **no inventa** casos de prueba que `test-define` no documento.
 
 ---
@@ -340,7 +340,7 @@ Posicion: **implementacion de pruebas** - entre `test-define` y `coverage-verify
 
 | | |
 |--|--|
-| **Entrada** | Artefacto padre (`FT-XXX`, `US-XXX` o `WI-XXX`) en `Estado: Ready` con `AC-XXX`, y su carpeta `test-cases/` poblada por `test-define` con TC en `Ready`. |
+| **Entrada** | Artefacto padre (`FT-XXX`, `US-XXX` o `WI-XXX`) en `status: Ready` con `AC-XXX`, y su carpeta `test-cases/` poblada por `test-define` con TC en `Ready`. |
 | **Salida** | Pruebas automatizadas commiteadas y en verde (modo pruebas: commiteadas tal cual, con los rojos fieles al TC registrados como hallazgos, no ocultos); `progress.md` con cada unidad en `Done` y su `Cobertura de test cases` (modo pruebas: `test-cases-automation.md` con cada unidad en `Done`, su `Cobertura de test cases` y sus `Hallazgos`); working tree limpio. |
 | **Siguiente paso** | `coverage-verify` sobre el artefacto padre (matriz de cobertura y veredicto) => `pr-create` (opcional) => `work-integrate`. Nota: `work-integrate` ejecutara las tres puertas de cierre (`quality-check`, `code-review` y `coverage-verify`) y exigira veredicto `APPROVED` en las tres antes de integrar. |
 | **Regreso a definicion** | TC ambiguo, erroneo o AC sin cobertura => volver a `test-define`. Si el hueco es del propio artefacto (criterio no testeable o mal definido), volver a quien lo registro: `work-define`/`work-plan` para US/WI, el flujo «Analizar legado» de `work-research` para un `FT-XXX`. |

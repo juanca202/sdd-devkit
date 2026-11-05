@@ -1,28 +1,36 @@
+---
+type: progress
+work: US-XXX                          # US-XXX | WI-XXX | FT-XXX — identificador del trabajo (carpeta donde vive este archivo)
+status: Pending                       # Pending | In Progress | Done
+kind: user-story                      # user-story | maintenance | test-cases | feature
+created: "YYYY-MM-DD HH:mm"
+updated: "YYYY-MM-DD HH:mm"
+---
 <!--
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
-Las marcas `<!-- work:… -->` y `<!-- unit:… -->` SE CONSERVAN al publicar: son el ancla que
-`work-integrate` y `pr-create` parsean para comprobar que cada unidad esta en `Done`. Sus claves y sus
-valores van en ingles SIEMPRE, aunque el resto del documento este en otro idioma; las etiquetas
-visibles (`**Estado:**`, `**Archivos:**`…) si se redactan en el idioma resuelto.
-Ver ../../references/verdicts.md.
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. No repetir ningún campo del
+frontmatter como línea `**Campo:**` bajo el título. El frontmatter describe el DOCUMENTO (el trabajo completo);
+cada unidad conserva su propia sección en el cuerpo.
+
+El estado del trabajo completo es `status` del frontmatter. Las marcas `<!-- unit:… -->` de cada unidad SE
+CONSERVAN al publicar: son el ancla que `work-integrate` y `pr-create` parsean para comprobar que cada unidad
+esta en `Done`. Sus claves y sus valores van en ingles SIEMPRE, aunque el resto del documento este en otro
+idioma; las etiquetas visibles de la unidad (`**Estado:**`, `**Archivos:**`…) si se redactan en el idioma
+resuelto. Ver ../../references/verdicts.md.
 -->
 # Progreso
 
-## {{identificador del trabajo}}
-
-<!-- work:id={{US-XXX|WI-XXX|FT-XXX}} · status={{Pending|In Progress|Done}} -->
-**Estado:** {{Pending | In Progress | Done}}
-**Tipo:** {{historia de usuario | tarea de mantenimiento | casos de prueba | feature}}
-**Fecha de creación:** {{YYYY-MM-DD HH:mm}}
-**Ultima actualizacion:** {{YYYY-MM-DD HH:mm}}
+## {{identificador del trabajo}}: {{titulo corto}}
 
 <!--
-Valores del identificador: `US-XXX-{{slug}}` (historia), `WI-XXX-{{slug}}` (tarea de mantenimiento) o `FT-XXX-{{slug}}` (feature).
+Valores de `work` (y del encabezado): `US-XXX-{{slug}}` (historia), `WI-XXX-{{slug}}` (tarea de mantenimiento) o `FT-XXX-{{slug}}` (feature).
 Ubicacion y alcance por tipo (cada trabajo tiene su propio `progress.md` dentro de su carpeta):
 - Historia de usuario (`US-XXX`): un `progress.md` por carpeta de la US (`<changesPath>/user-stories/US-XXX-{{nombre-corto}}/progress.md`); el encabezado lleva su `US-XXX` y las unidades son sus `TK-XXX`.
-- Tarea de mantenimiento (`WI-XXX`): un `progress.md` por carpeta del WI (`<changesPath>/work-items/WI-XXX-{{slug}}/progress.md`), específico de ese WI; el encabezado lleva su `WI-XXX` y la unidad es el `WI-XXX` completo (una sola entrada, sin sub-tareas). En un WI de `Tipo: spike` la unidad es el experimento: `Iniciado` es el reloj del timebox, `Archivos` incluye `spike-report.md`, y en `Notas` se registra el timebox consumido y el veredicto.
+- Tarea de mantenimiento (`WI-XXX`): un `progress.md` por carpeta del WI (`<changesPath>/work-items/WI-XXX-{{slug}}/progress.md`), específico de ese WI; el encabezado lleva su `WI-XXX` y la unidad es el `WI-XXX` completo (una sola entrada, sin sub-tareas). En un WI de `kind: spike` la unidad es el experimento: `Iniciado` es el reloj del timebox, `Archivos` incluye `spike-report.md`, y en `Notas` se registra el timebox consumido y el veredicto.
 - Feature (`FT-XXX`): un `progress.md` por carpeta del feature (`<currentPath>/FT-XXX-{{slug}}/progress.md`); el encabezado lleva su `FT-XXX` y la unidad es el `FT-XXX` completo (una sola entrada que cubre todos sus `TC-XXX`).
 - Casos de prueba (`TC-XXX`) sueltos: el `progress.md` vive en la carpeta del **artefacto padre** que los contiene (US, WI o FT); el encabezado lleva el ID de ese padre y hay **una unidad por cada `TC-XXX`** del alcance.
 

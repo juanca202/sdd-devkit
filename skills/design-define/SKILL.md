@@ -48,6 +48,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 - [`${PLUGIN_ROOT}/references/language.md`](../../references/language.md): **Idioma** — resolución obligatoria del idioma de artefactos, documentos y mensajes. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/linking.md`](../../references/linking.md): **Enlaces** — toda referencia a un archivo del proyecto se escribe como enlace que lo abre. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
+- [`${PLUGIN_ROOT}/references/frontmatter.md`](../../references/frontmatter.md): **Frontmatter** — cabecera YAML de todo artefacto: claves y valores en inglés, cómo se lee `status` y el resto de campos. *Al crear, leer o actualizar cualquier artefacto.*
 
 ---
 

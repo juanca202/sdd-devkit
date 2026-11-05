@@ -2,7 +2,7 @@
 
 > **Base común obligatoria:** [`${PLUGIN_ROOT}/references/project-managers/azure-devops.md`](../../../references/project-managers/azure-devops.md)
 > — activación y datos de conexión resueltos en [`${PLUGIN_ROOT}/references/project-management.md`](../../../references/project-management.md), verificación del MCP
-> y su degradación, construcción de la URL, campo `Work Item (ADO)`, uso del `id` de ADO como número
+> y su degradación, construcción de la URL, campo `work_item`, uso del `id` de ADO como número
 > local, límite de 255 caracteres del título, contrato de reconstrucción íntegra y anti-patrones
 > comunes. **Leerla antes que este archivo.**
 
@@ -20,7 +20,7 @@ Antes de generar el archivo local, crear el work item vía MCP:
 | **Título** | El nombre descriptivo de la tarea (el mismo que iría en el nombre de archivo). |
 | **Tipo de work item — `TK-`** | `Task` (o el tipo equivalente configurado en el proyecto). |
 | **Tipo de work item — `BUG-`** | **`Bug`** — el único artefacto que se crea con ese tipo. El reporte del defecto lleva en Descripción sus secciones Comportamiento esperado / observado, Pasos para reproducir —también en `Microsoft.VSTS.TCM.ReproSteps` si el proyecto lo expone—, Evidencia e Impacto, y `Microsoft.VSTS.Common.Severity` si existe. **En modo pruebas** —`implementation.scope: tests`, plantilla `incident-tests-template.md`— las secciones son las de esa plantilla: Precondiciones, Datos de prueba, Pasos de ejecución con lo observado y los comentarios, Resultado esperado / observado final, Hallazgos, Evidencias e Impacto, con la tabla de pasos también en `ReproSteps`. Cada archivo de `assets/` listado en Evidencias se **sube como adjunto** del `Bug` si el MCP lo permite y, si no, se avisa al usuario de qué archivos adjuntar a mano; el `Bug` se vincula con `Tested By`/`Related` al work item del `TC-XXX` cuando ese TC existe en ADO, y con `Related` a la `User Story` afectada, best-effort. Si el bug **ya existe** en ADO (lo pasa `work-research` con su `ado_id`), **no se crea un segundo `Bug`**: se reutiliza su `id` como número local y se actualiza su Descripción con el documento. |
-| **Tipo de work item — `WI-`** | **`Task`, para todos los tipos** (`bug-fix` y `spike` incluidos): un `bug-fix` es trabajo de corrección, y si cita `Origen: BUG-XXX` se vincula al `Bug` de ese incidente con la relación `Related` (o `Child`, si el proceso lo admite), nunca se crea como `Bug`. Un `spike` lleva en Descripción sus secciones propias (Pregunta de investigación, Hipótesis, Preguntas a responder, Fuera de alcance, Enfoque del experimento, Entregable) y `Timebox`; si el proceso del proyecto expone un tipo `Spike`, puede usarse en su lugar, confirmándolo con el usuario. Un WI que cita `Origen: WI-XXX (spike)` se vincula al work item del spike con `Related`. Ante duda, confirmar con el usuario. |
+| **Tipo de work item — `WI-`** | **`Task`, para todos los tipos** (`bug-fix` y `spike` incluidos): un `bug-fix` es trabajo de corrección, y si cita `origin` → `BUG-XXX` se vincula al `Bug` de ese incidente con la relación `Related` (o `Child`, si el proceso lo admite), nunca se crea como `Bug`. Un `spike` lleva en Descripción sus secciones propias (Pregunta de investigación, Hipótesis, Preguntas a responder, Fuera de alcance, Enfoque del experimento, Entregable) y el `timebox` del frontmatter; si el proceso del proyecto expone un tipo `Spike`, puede usarse en su lugar, confirmándolo con el usuario. Un WI que cita `origin` → `WI-XXX` (spike) se vincula al work item del spike con `Related`. Ante duda, confirmar con el usuario. |
 | **Criterios de aceptación** | Solo si el artefacto tiene esa sección (un `WI-XXX` puede tenerla, un `BUG-XXX` opcionalmente, un `TK-XXX` no). Campo dedicado `Microsoft.VSTS.Common.AcceptanceCriteria` si existe; si no, dentro de Descripción. |
 | **Descripción** | El documento completo, serializado con los mismos encabezados que el `.md`. `TK-XXX`: Descripción, Dependencias, Referencias, Plan de implementación (`IT-XX`), Observaciones. `WI-XXX`: Descripción, Contexto, Fuera de alcance, Reglas de negocio, Dependencias, Referencias, Plan de implementación, Observaciones (en un `spike`: Pregunta de investigación, Contexto, Hipótesis, Preguntas a responder, Fuera de alcance, Dependencias, Referencias, Enfoque del experimento, Entregable, Observaciones). |
 | **Iteración / Area Path** | Omitir: no son configurables (ver la base común). ADO aplica los valores por defecto del proyecto. |
@@ -54,7 +54,7 @@ Obtener el work item por `id` y leer `System.WorkItemType`:
 | `System.WorkItemType` | Documento local | Cómo se decide |
 |-----------------------|-----------------|----------------|
 | `Bug` | **`BUG-<id>-[slug]/`** en `<changesPath>/incidents/` | Siempre. Nunca un `WI`. |
-| `Task` | `TK-<id>-[slug].md` o `WI-<id>-[slug]/` | Leer la relación `Parent`: si apunta a una `User Story`/`PBI` que existe localmente (`US-<id>-*` o `Work Item (ADO): [#<id>]`, en ruta activa o archivo) → `TK` dentro de esa US; si apunta a una historia que **no** existe localmente → preguntar (`/work-define sync #<padre>` primero, o crear como WI); sin padre historia → `WI`. |
+| `Task` | `TK-<id>-[slug].md` o `WI-<id>-[slug]/` | Leer la relación `Parent`: si apunta a una `User Story`/`PBI` que existe localmente (`US-<id>-*` o `work_item.id: <id>`, en ruta activa o archivo) → `TK` dentro de esa US; si apunta a una historia que **no** existe localmente → preguntar (`/work-define sync #<padre>` primero, o crear como WI); sin padre historia → `WI`. |
 | `User Story` · `Product Backlog Item` · `Requirement` · `Feature` · `Epic` | — | Remitir a `/work-define sync #<id>`. |
 | `Test Case` | — | Remitir a `/test-define sync #<id>`. |
 | `Issue` · `Impediment` · otros | — | Preguntar al usuario qué espera. |
@@ -71,16 +71,16 @@ tabla de pasos reconstruida desde `ReproSteps` y `Caso de prueba` desde la relac
 
 | Campo de ADO | Sección del incidente | Regla |
 |--------------|-----------------------|-------|
-| `id`, `System.Title` | `# BUG-<id>: …`, slug, `Work Item (ADO): [#<id>](<url>)` | Sin padding; slug kebab-case ≤ 5 palabras. |
+| `id`, `System.Title` | `# BUG-<id>: …`, slug, `work_item: { system: ADO, id: <id>, url: <url> }` | Sin padding; slug kebab-case ≤ 5 palabras. |
 | `System.Description` | **Descripción** y, si trae «esperado / observado», **Comportamiento esperado / observado** | Normalizar HTML a markdown; no inventar lo que no diga. |
 | `Microsoft.VSTS.TCM.ReproSteps` | **Pasos para reproducir** (precondiciones + pasos numerados) | Copiar **uno a uno**, sin resumir ni reordenar. Si el campo no existe y los pasos están en la descripción, extraerlos de ahí. |
 | `Microsoft.VSTS.TCM.SystemInfo` | `Ambiente` en Pasos para reproducir | Citar el ambiente por nombre; si trae una URL, conservar solo el nombre. |
 | `Microsoft.VSTS.Common.Severity` | `Severidad` en **Impacto** | Mapear la escala del proceso (`1 - Critical` → `Crítico`, `2 - High` → `Alto`, `3 - Medium` → `Medio`, `4 - Low` → `Bajo`). Si el campo no existe, preguntar. |
 | `Microsoft.VSTS.Common.Priority` | **Impacto** → `Alcance` (una línea «Prioridad ADO: N») | Registrar, no interpretar. |
 | Adjuntos (`AttachedFile`) | **Evidencia** (`EV-XX`) | Descargar a `assets/EV-XX-<nombre>` si el MCP lo permite y enlazar; si no, fila «No adjuntado — en ADO» con su nombre. Revisar que no contengan credenciales antes de guardarlos. |
-| `System.State` | `Estado` / `Resolución` | `New`/`Active` → `Resolución: Open`; `Estado` según el checklist de Ready de `incidents.md` (el estado de ADO solo orienta). `Resolved`/`Closed` → ver Paso 1. |
-| Relación `Parent` / `Related` a una historia | `Historia de usuario` en la cabecera | Enlazar la `US-<id>` local si existe; si no, citar `#<id>`. |
-| Relación `Tested By` / `Tests` | `Caso de prueba` en la cabecera | Enlazar el `TC-<id>` local si existe; si no, citar `#<id>` y ofrecer `/test-define sync`. |
+| `System.State` | `status` / `Resolución` | `New`/`Active` → `Resolución: Open`; `status` según el checklist de Ready de `incidents.md` (el estado de ADO solo orienta). `Resolved`/`Closed` → ver Paso 1. |
+| Relación `Parent` / `Related` a una historia | `Historia de usuario` en el frontmatter | Enlazar la `US-<id>` local si existe; si no, citar `#<id>`. |
+| Relación `Tested By` / `Tests` | `Caso de prueba` en el frontmatter | Enlazar el `TC-<id>` local si existe; si no, citar `#<id>` y ofrecer `/test-define sync`. |
 | `System.CreatedBy`, `System.CreatedDate` | `Reportado por`, `Fecha` | Tal cual. |
 | `System.Tags`, `System.AreaPath`, `System.IterationPath` | **Contexto** («Gestión: …») | Registrar, no interpretar. |
 | Comentarios | **Observaciones** | Citar como fuente; no copiar como especificación. |
@@ -89,17 +89,17 @@ tabla de pasos reconstruida desde `ReproSteps` y `Caso de prueba` desde la relac
 
 | Campo de ADO | Sección | Regla |
 |--------------|---------|-------|
-| `id`, `System.Title` | `# TK-<id>: …` / `# WI-<id>: …`, slug, `Work Item (ADO)` | Como arriba. |
+| `id`, `System.Title` | `# TK-<id>: …` / `# WI-<id>: …`, slug, `work_item` | Como arriba. |
 | `System.Description` | **Descripción**, y las secciones que el texto traiga con sus mismos encabezados (Contexto, Dependencias, Referencias, Plan de implementación, Observaciones) | Si la descripción fue serializada por este mismo skill, los encabezados coinciden y se mapean 1:1; si es texto libre, va íntegro a Descripción y lo demás queda como laguna. Un plan en viñetas se codifica `IT-01…` en orden. |
 | `Microsoft.VSTS.Common.AcceptanceCriteria` | **Criterios de aceptación** (solo WI) | Codificación como en `work-define sync`: verbatim si traen identificador; `AC-001…` en orden si no, anotándolo en Observaciones. Nunca inventar, dividir ni fusionar. |
 | `System.Tags` / título | `Tipo` del WI | Inferir (`bug-fix`, `refactor`, `dependency-update`…) y **confirmar**; si no se puede inferir, preguntar. Una `Task` que es un spike se sincroniza con `work-item-spike-template.md` solo si el título o las tags lo dicen; sus `Q-XX` y timebox, si no vienen, son lagunas. |
-| `System.State` | `Estado` | Solo orienta; `Ready` únicamente si pasa el checklist del tipo de plan. `Closed`/`Done` → avisar: trabajo ya cerrado en ADO. |
-| `Repositorio` | Cabecera | **No existe en ADO**: preguntar, salvo que sea inferible (repo único) o ya esté en el documento local. |
-| Relación `Parent` | US padre (TK) o `Origen` (WI que cita un `Bug` → `Origen: BUG-<id>` si ese incidente existe localmente; si no, citar `#<id>`) | Best-effort. |
+| `System.State` | `status` | Solo orienta; `Ready` únicamente si pasa el checklist del tipo de plan. `Closed`/`Done` → avisar: trabajo ya cerrado en ADO. |
+| `repository` | Frontmatter | **No existe en ADO**: preguntar, salvo que sea inferible (repo único) o ya esté en el documento local. |
+| Relación `Parent` | US padre (TK) o `origin` (WI que cita un `Bug` → `origin` → `BUG-<id>` si ese incidente existe localmente; si no, citar `#<id>`) | Best-effort. |
 
 ### Paso 3 — ¿Crear o actualizar?
 
-Buscar `<PREFIJO>-<id>-*` y cabeceras `Work Item (ADO): [#<id>]` en la ruta activa **y** en
+Buscar `<PREFIJO>-<id>-*` y frontmatters con `work_item.id: <id>` en la ruta activa **y** en
 `<archivedPath>` (`incidents/`, `work-items/`, o la US padre para una TK). Archivado → parar y avisar. Al
 actualizar: diff por sección en una sola tanda, aplicar solo lo confirmado, identificadores inmutables; un
 `Bug` cerrado en ADO propone actualizar `Resolución`, nunca borrar evidencia.
@@ -110,9 +110,9 @@ Solo con `sync … push` explícito. Leer el work item y el documento local, pre
 escribir **solo lo confirmado** con el mapeo de [Qué se crea en ADO](#qué-se-crea-en-ado): mismos campos
 dedicados (`AcceptanceCriteria`, `ReproSteps` para los pasos de un incidente, `Severity`), misma
 serialización de Descripción por encabezados, adjuntos de `assets/` como `AttachedFile` en un `Bug` (best-effort; avisar
-los que no se pudieron subir). Sin `Work Item (ADO)` en la cabecera: ofrecer crear el work item (`Task`
-para TK/WI, `Bug` para un incidente), vincular el padre (US para una TK; el `Bug` del `Origen: BUG-XXX`
-para un `bug-fix`) y añadir la línea `Work Item (ADO)` **sin renumerar** el documento. No se escriben
+los que no se pudieron subir). Sin `work_item` en el frontmatter: ofrecer crear el work item (`Task`
+para TK/WI, `Bug` para un incidente), vincular el padre (US para una TK; el `Bug` del `origin` → `BUG-XXX`
+para un `bug-fix`) y añadir la línea `work_item` **sin renumerar** el documento. No se escriben
 `System.State`, `AreaPath`, `IterationPath` ni se cambia el tipo salvo petición expresa; la `Resolución`
 de un incidente **no** se traduce a estado de ADO. Cerrar con «Subido <ID> a ADO (#<id>): <secciones>».
 
@@ -120,8 +120,8 @@ de un incidente **no** se traduce a estado de ADO. Cerrar con «Subido <ID> a AD
 
 - Sincronizar un `Bug` como `WI-XXX`, o una `User Story` como WI.
 - Crear la carpeta de la US padre desde `work-plan` para colgar una `TK`.
-- Escribir en ADO desde `sync` sin `push`; con `push`, cambiar estado, tipo o padre, o crear un segundo work item para un documento que ya tiene `Work Item (ADO)`.
-- Crear un segundo documento local para un `#id` que ya tiene carpeta o `Work Item (ADO)` registrado.
+- Escribir en ADO desde `sync` sin `push`; con `push`, cambiar estado, tipo o padre, o crear un segundo work item para un documento que ya tiene `work_item`.
+- Crear un segundo documento local para un `#id` que ya tiene carpeta o `work_item` registrado.
 - Conceder `Ready` solo porque en ADO está `Active`.
 - Descargar adjuntos sin revisar que no contengan tokens, cookies o credenciales.
 
@@ -133,5 +133,5 @@ de un incidente **no** se traduce a estado de ADO. Cerrar con «Subido <ID> a AD
   el MCP está disponible, crea el work item en ADO (`Task`, título "Endpoint de autenticación",
   Descripción con el documento completo del TK serializado por secciones, US-003 como padre si hay
   vinculación) y extrae `id: 2031`. Genera el archivo local `TK-2031-endpoint-autenticacion.md` con el
-  campo `Work Item (ADO): [#2031](https://dev.azure.com/…)`. El flujo del tipo de plan (stub o TK
+  `work_item: { system: ADO, id: 2031, url: https://dev.azure.com/… }` en el frontmatter. El flujo del tipo de plan (stub o TK
   completa) continúa según la intención del usuario.

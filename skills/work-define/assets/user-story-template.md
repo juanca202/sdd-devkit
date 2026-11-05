@@ -1,24 +1,43 @@
+---
+id: US-XXX
+type: user-story
+status: Draft                         # Draft | Ready
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+repositories: [frontend-web, api-catalogo]
+invest: { met: 0, partial: 0, not_met: 0, total: 6 }
+dor: { met: 0, partial: 0, not_met: 0, total: 6 }
+requirement: ../../requirements/SRS-XXX-slug/README.md   # solo si la US nació descomponiendo un SRS-XXX; omitir si no
+spike: ../../work-items/WI-XXX-slug/README.md            # solo si la US formaliza el resultado de un WI-XXX de tipo spike; omitir si no
+work_item:                                               # solo con tracker vinculado; omitir el objeto entero si no hay
+  system: ADO
+  id: 12345
+  url: https://dev.azure.com/org/project/_workitems/edit/12345
+---
 <!--
 Sustituir cada {{…}} a mano (no es un motor). Al publicar: borrar este bloque y todos los {{…}}.
-`us:status` (abajo) se CONSERVA: claves/valores en inglés SIEMPRE; Estado en el idioma resuelto. Ver ../../references/verdicts.md.
-Repositorios: nombres git separados por coma. work-plan agrupa las TK por este campo.
-INVEST / DoR: derivados de las tablas de Validación, nunca aparte. 🟢 Met · 🟡 Partial · 🔴 Not Met. `/ total` = filas evaluadas (INVEST: 6; DoR: 6 menos No aplica, que no cuentan). Omitir colores a 0. Recalcular al tocar las tablas.
-Requerimiento: solo si la US nació descomponiendo un `SRS-XXX` de requirement-refine — enlace a su README.md; es la trazabilidad inversa de su tabla «Historias de usuario derivadas». Omitir la línea si no proviene de un SRS.
-Spike de origen: solo si la US formaliza el resultado de un `WI-XXX` de tipo spike — enlace a su README.md; el informe y la rama spike/ van en Referencias. Omitir la línea si no proviene de un spike.
-Work Item: omitir la línea si no hay. {{Sistema}} = nombre corto (p. ej. ADO). Lo pobla work-define solo al sincronizar desde el tracker (`sync`); una US redactada aquí no lo lleva salvo que el usuario lo aporte a mano (sí lo poblan siempre TK/WI/TC con tracker vinculado). Si se pone a mano: Criterios de aceptación → campo dedicado del sistema si lo expone; el resto del documento (cabecera incluida Repositorios, y todas las secciones) → descripción del work item, por secciones, para reconstruir la US si se pierde el .md. No omitir secciones.
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. No repetir ningún campo del
+frontmatter como línea `**Campo:**` bajo el título.
+  status: Draft | Ready — único estado del artefacto.
+  repositories: nombres git. work-plan agrupa las TK por este campo. Con implementation.scope: tests no se
+    pregunta: va el nombre del propio repo de pruebas.
+  invest / dor: resumen numérico derivado de las tablas de story-validation.md (archivo hermano, plantilla
+    story-validation-template.md), nunca aparte. total = filas evaluadas (INVEST: 6; DoR: 6 menos las N/A, que
+    no cuentan). Recalcular al tocar las tablas; en Draft sin validar, todo a 0.
+  requirement: solo si la US nació descomponiendo un SRS-XXX de requirement-refine — ruta a su README.md; es
+    la trazabilidad inversa de su tabla «Historias de usuario derivadas». Omitir la clave si no proviene de un SRS.
+  spike: solo si la US formaliza el resultado de un WI-XXX de tipo spike — ruta a su README.md; el informe y
+    la rama spike/ van en Referencias. Omitir la clave si no proviene de un spike.
+  work_item: system = nombre corto del proveedor (p. ej. ADO). Lo pobla work-define solo al sincronizar
+    desde el tracker (sync); una US redactada aquí no lo lleva salvo que el usuario lo aporte a mano (sí lo
+    poblan siempre TK/WI/TC con tracker vinculado). Si se pone a mano: Criterios de aceptación → campo dedicado
+    del sistema si lo expone; el resto del documento (frontmatter incluido, mapeado campo a campo, y todas las
+    secciones) → descripción del work item, por secciones, para reconstruir la US si se pierde el .md. No omitir
+    secciones.
 -->
 # US-XXX: {{título corto de la historia de usuario}}
-
-<!-- us:status={{Draft|Ready}} -->
-**Estado:** {{Draft | Ready}}
-**Fecha de creación:** {{YYYY-MM-DD}}
-**Última actualización:** {{YYYY-MM-DD}}
-**Repositorios:** {{frontend-web, api-catalogo}}
-**INVEST:** {{🟢 N · 🟡 N · 🔴 N / total}}
-**DoR:** {{🟢 N · 🟡 N · 🔴 N / total}}
-**Requerimiento:** {{[SRS-XXX: Título](../../requirements/SRS-XXX-[nombre-corto]/README.md)}}
-**Spike de origen:** {{[WI-XXX: Título](../../work-items/WI-XXX-[slug]/README.md)}}
-**Work Item ({{Sistema}}):** {{enlace markdown}}
 
 ## Descripción
 
@@ -97,34 +116,3 @@ flows/FL-XXX-{slug}.md o diagrams/DG-XXX-{slug}.md.
 - {{datos o aclaraciones pendientes del usuario o de producto}}
 - {{decisiones pendientes}}
 - {{otras notas relevantes}}
-
----
-
-## Validación
-
-### Complejidad sugerida
-
-- **Story points:** {{1 | 2 | 3 | 5 | 8 | 13}}
-- **Justificación:** {{justificación breve basada en alcance, riesgo e incertidumbre}}
-
-### INVEST
-
-| Letra | Criterio      | Resultado                      | Notas         |
-| ----- | ------------- | ------------------------------ | ------------- |
-| **I** | Independiente | {{Met / Not Met / Partial}} | {{explicación}} |
-| **N** | Negociable    | {{Met / Not Met / Partial}} | {{explicación}} |
-| **V** | Valiosa       | {{Met / Not Met / Partial}} | {{explicación}} |
-| **E** | Estimable     | {{Met / Not Met / Partial}} | {{explicación}} |
-| **S** | Pequeña       | {{Met / Not Met / Partial}} | {{explicación}} |
-| **T** | Testeable     | {{Met / Not Met / Partial}} | {{explicación}} |
-
-### Definition of Ready (DoR)
-
-| Criterio DoR                       | Estado                                     | Notas                                                                        |
-| ---------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------- |
-| Dependencias listas                | {{Met / Not Met / Partial}}             | {{explicación}}                                                                |
-| Inputs/outputs claros              | {{Met / Not Met / Partial}}             | {{explicación}}                                                                |
-| Repositorios definidos             | {{Met / Not Met / Partial}}             | {{explicación}}                                                                |
-| Sin decisiones técnicas pendientes | {{Met / Not Met / Partial}}             | {{explicación}}                                                                |
-| Referencias de UI                  | {{Met / Not Met / Partial / N/A}} | {{explicación}}                                                                |
-| Sin aclaraciones pendientes        | {{Met / Not Met / Partial}}             | {{vacío o «Ninguna» en Observaciones; nada pendiente con usuario/producto}}    |

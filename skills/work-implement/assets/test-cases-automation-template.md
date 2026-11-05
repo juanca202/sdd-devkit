@@ -1,3 +1,12 @@
+---
+type: test-automation
+parent: FT-XXX                        # FT-XXX | US-XXX | WI-XXX — artefacto padre (carpeta donde vive este archivo)
+status: Pending                       # Pending | In Progress | Done
+system_under_test: "nombre del sistema/ambiente"
+env_vars: [BASE_URL, API_BASE_URL]    # solo NOMBRES de las variables que consumen las pruebas, nunca valores
+created: "YYYY-MM-DD HH:mm"
+updated: "YYYY-MM-DD HH:mm"
+---
 <!--
 Plantilla de `test-cases-automation.md` — SOLO para `implementation.scope: tests` (repositorio de
 pruebas contra un sistema externo). En `scope: code` no se usa: ahi el registro va en `progress.md`.
@@ -5,11 +14,17 @@ pruebas contra un sistema externo). En `scope: code` no se usa: ahi el registro 
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
-Este archivo NO lleva marcas ocultas `<!-- work:… -->` / `<!-- unit:… -->`: no se puede garantizar que
-un comentario HTML sobreviva a todas las herramientas por las que pasa un markdown. El estado que
-`work-integrate` lee en las ramas `test/` de un repo externo es el VALOR de la linea `**Estado:**`
-(o `**Status:**`), que va SIEMPRE en ingles — `Pending`, `In Progress` o `Done` — aunque la etiqueta y
-el resto del documento esten en otro idioma. No traducir esos valores.
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. No repetir ningún campo del
+frontmatter como línea `**Campo:**` bajo el título. El frontmatter describe el DOCUMENTO (el trabajo completo);
+cada unidad conserva su propia sección en el cuerpo.
+
+Este archivo NO lleva marcas ocultas `<!-- unit:… -->` en sus unidades: no se puede garantizar que un
+comentario HTML sobreviva a todas las herramientas por las que pasa un markdown. El estado del documento que
+`work-integrate` lee en las ramas `test/` de un repo externo es `status` del frontmatter; el de cada unidad es
+el VALOR de su linea `**Estado:**` (o `**Status:**`), que va SIEMPRE en ingles — `Pending`, `In Progress` o
+`Done` — aunque la etiqueta y el resto del documento esten en otro idioma. No traducir esos valores.
 
 Este archivo NO es un progress.md: no registra implementacion de codigo, ni archivos de produccion, ni
 decisiones de diseno. Registra unicamente que TC quedaron automatizados, cuales no y por que, y los
@@ -19,11 +34,6 @@ hallazgos (comportamiento del sistema distinto al documentado en el TC). Nunca c
 # Automatización de pruebas
 
 ## {{FT-XXX | US-XXX | WI-XXX}}: {{titulo corto del artefacto padre}}
-
-**Estado:** {{Pending | In Progress | Done}}
-**Sistema bajo prueba:** {{nombre del sistema/ambiente}} — variables: `{{BASE_URL, API_BASE_URL, …}}` (solo nombres, nunca valores)
-**Fecha de creación:** {{YYYY-MM-DD HH:mm}}
-**Ultima actualizacion:** {{YYYY-MM-DD HH:mm}}
 
 ## Unidades
 

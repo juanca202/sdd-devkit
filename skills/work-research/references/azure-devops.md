@@ -2,7 +2,7 @@
 
 > **Base común obligatoria:** [`${PLUGIN_ROOT}/references/project-managers/azure-devops.md`](../../../references/project-managers/azure-devops.md)
 > — activación y datos de conexión resueltos en [`${PLUGIN_ROOT}/references/project-management.md`](../../../references/project-management.md), verificación del MCP
-> y su degradación, construcción de la URL, campo `Work Item (ADO)`, normalización del HTML de
+> y su degradación, construcción de la URL, campo `work_item`, normalización del HTML de
 > `System.Description` y anti-patrones comunes. **Leerla antes que este archivo.**
 
 Este archivo contiene **solo el delta de `work-research`**. Se activa desde «Entrada desde el gestor de
@@ -31,14 +31,14 @@ work item vía MCP y leer su campo `System.WorkItemType` para elegir el flujo:
 |-----------------------|-----------------------|--------------------------|
 | `User Story` / `Product Backlog Item` / `Feature` / `Epic` | `US-XXX` | **Analizar decisiones pendientes** |
 | `Task` | `TK-XXX` (si cuelga de una historia) o `WI-XXX` | **Analizar decisiones pendientes** |
-| `Bug` | Defecto (incidente `BUG-XXX` si está materializado localmente — buscar `BUG-<id>-*` o `Work Item (ADO): [#<id>]`) | **Analizar issue**. Si el usuario solo quiere registrarlo sin diagnosticar, `/work-plan sync #<id>` |
+| `Bug` | Defecto (incidente `BUG-XXX` si está materializado localmente — buscar `BUG-<id>-*` o `work_item.id: <id>`) | **Analizar issue**. Si el usuario solo quiere registrarlo sin diagnosticar, `/work-plan sync #<id>` |
 | `Test Case` | `TC-XXX` | **Analizar test case** |
 | `Issue` / `Impediment` / otros | — | Preguntar al usuario qué espera antes de elegir flujo |
 
 > El proceso del proyecto cambia los nombres de los tipos: si el tipo devuelto no está en la tabla,
 > **no adivinar** (ver la base común).
 
-Si el work item tiene un documento equivalente en el repo (por su `Work Item (ADO)`
+Si el work item tiene un documento equivalente en el repo (por su `work_item`
 registrado en el encabezado), **leer también el documento local**: la especificación es
 el `.md`; el work item aporta estado, comentarios, adjuntos y decisiones que no
 llegaron al documento. Si discrepan, registrarlo como hallazgo.
@@ -91,7 +91,7 @@ Notas transversales:
 
 - **Nunca inventar lo que el work item no dice.** Si falta información, preguntarla al
   usuario.
-- Registrar el `Work Item (ADO)` en el encabezado del informe o del dossier, con el formato que define
+- Registrar el `work_item` en el encabezado del informe o del dossier, con el formato que define
   la base común.
 
 ## Paso 2 — Propagar el identificador en el *handoff*
@@ -101,9 +101,9 @@ URL del artefacto leído para que el skill destino lo enlace o lo reutilice:
 
 | Flujo | Qué propagar |
 |-------|--------------|
-| **Analizar issue** → `work-plan` | El `ado_id` del **`Bug` ya existente** en ADO. Ese `Bug` es el **reporte** (equivale a un incidente `BUG-XXX` local; si existe uno con ese `Work Item (ADO)`, pasar también su ruta para `Origen`); el `bug-fix` que planifica `work-plan` es trabajo de corrección y en ADO es siempre una `Task` **vinculada** a ese `Bug` (`Related`/`Child`), con `Origen` en su cabecera — nunca un segundo `Bug` para el mismo defecto. Si el bug no existe aún en ADO ni como incidente local, `work-plan` puede registrarlo primero como incidente `BUG-XXX` (→ `Bug`) y después el `bug-fix` (→ `Task`). Con `implementation.scope: tests` el *handoff* es solo el incidente: `BUG-<ado_id>` reutilizando el `Bug` existente, o creándolo si no existe |
+| **Analizar issue** → `work-plan` | El `ado_id` del **`Bug` ya existente** en ADO. Ese `Bug` es el **reporte** (equivale a un incidente `BUG-XXX` local; si existe uno con ese `work_item`, pasar también su ruta para `origin`); el `bug-fix` que planifica `work-plan` es trabajo de corrección y en ADO es siempre una `Task` **vinculada** a ese `Bug` (`Related`/`Child`), con `origin` en su frontmatter — nunca un segundo `Bug` para el mismo defecto. Si el bug no existe aún en ADO ni como incidente local, `work-plan` puede registrarlo primero como incidente `BUG-XXX` (→ `Bug`) y después el `bug-fix` (→ `Task`). Con `implementation.scope: tests` el *handoff* es solo el incidente: `BUG-<ado_id>` reutilizando el `Bug` existente, o creándolo si no existe |
 | **Analizar decisiones pendientes** → `work-define` / `work-plan` | El `ado_id` del artefacto investigado, para que las actualizaciones caigan sobre ese mismo work item |
-| **Historia leída de ADO sin documento local** → `work-define` | Sugerir `/work-define sync #<ado_id>`: es la única vía para que la US se materialice localmente con su `id` y su `Work Item (ADO)`; `work-define` sin ese modificador no sincroniza (pregunta). |
+| **Historia leída de ADO sin documento local** → `work-define` | Sugerir `/work-define sync #<ado_id>`: es la única vía para que la US se materialice localmente con su `id` y su `work_item`; `work-define` sin ese modificador no sincroniza (pregunta). |
 | **Analizar test case** → `test-define` | El `ado_id` del `Test Case` auditado, para que se corrija o amplíe **ese** work item y no se cree uno nuevo |
 
 El detalle de creación y actualización vive en la referencia de ADO de cada skill

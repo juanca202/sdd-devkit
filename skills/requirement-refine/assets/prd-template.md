@@ -1,4 +1,17 @@
+---
+id: PRD-XXX
+type: prd
+status: Draft                         # Draft | Ready
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+business_approval: "Pendiente"        # quién aprueba este PRD y en qué instancia (comité, cliente, sponsor); fecha si ya ocurrió (texto libre)
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
@@ -30,16 +43,6 @@ Reglas de contenido:
 -->
 
 # PRD-XXX: {{título corto del requerimiento}}
-
-<!-- srs:status={{Draft|Ready}} -->
-<!--
-Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre (misma marca que el SRS:
-el PRD es el mismo documento en una etapa anterior). La etiqueta visible va en el idioma resuelto.
--->
-**Estado:** {{Draft | Ready}}
-**Fecha de creación:** {{YYYY-MM-DD}}
-**Última actualización:** {{YYYY-MM-DD}}
-**Aprobación de negocio:** {{quién aprueba este PRD y en qué instancia (comité, cliente, sponsor); fecha si ya ocurrió, o «Pendiente»}}
 
 ## 1. Introducción
 

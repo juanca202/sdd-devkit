@@ -2,7 +2,7 @@
 
 > **Base común obligatoria:** [`${PLUGIN_ROOT}/references/project-managers/azure-devops.md`](../../../references/project-managers/azure-devops.md)
 > — activación y datos de conexión resueltos en [`${PLUGIN_ROOT}/references/project-management.md`](../../../references/project-management.md), verificación del MCP
-> y su degradación, construcción de la URL, campo `Work Item (ADO)`, uso del `id` de ADO como número
+> y su degradación, construcción de la URL, campo `work_item`, uso del `id` de ADO como número
 > local, límite de 255 caracteres del título, contrato de reconstrucción íntegra y anti-patrones
 > comunes. **Leerla antes que este archivo.**
 
@@ -44,7 +44,7 @@ Suite resuelto**, nunca como work item aislado:
 | **Descripción** | El resto del documento completo, con los mismos encabezados que el `.md`: Perspectiva, Criterio de aceptación, Artefacto padre, Precondiciones, Datos de prueba, Resultado esperado final, Observaciones. |
 | **Iteración / Area Path** | Omitir: no son configurables (ver la base común). ADO aplica los valores por defecto del proyecto. |
 | **Test Suite** | Agregar el TC al Test Suite resuelto en el Paso 1 (mecanismo que provea el MCP). **Obligatorio.** |
-| **Padre** | Trazabilidad adicional, best-effort: si el artefacto origen (US/WI/FT) tiene un `Work Item (ADO)` en su encabezado, vincular el TC a ese work item con la relación «Tests» / «Tested By». |
+| **Padre** | Trazabilidad adicional, best-effort: si el artefacto origen (US/WI/FT) tiene un `work_item` en su encabezado, vincular el TC a ese work item con la relación «Tests» / «Tested By». |
 
 Tras la llamada, extraer el `id` numérico y usarlo como número del TC: `TC-<ado_id>-[slug].md`.
 Verificar que no exista ya `TC-<ado_id>-*.md` en el `test-cases/` del artefacto antes de crear.
@@ -54,7 +54,7 @@ Verificar que no exista ya `TC-<ado_id>-*.md` en el `test-cases/` del artefacto 
 Solo con el modificador explícito `sync` de `SKILL.md`, que crea los TC locales que falten y actualiza los que existan. **Por defecto, bajada ADO → repo**: aquí no se crea ni se
 modifica ningún work item, plan ni suite. La subida existe solo con `sync … push`: diff inverso, confirmación
 y escritura de lo confirmado con el mapeo del Paso 2 (título, `Microsoft.VSTS.TCM.Steps`, prioridad, parámetros); un
-TC sin `Work Item (ADO)` se ofrece crear dentro del Test Suite del padre (Paso 1) **sin renumerar** el TC
+TC sin `work_item` se ofrece crear dentro del Test Suite del padre (Paso 1) **sin renumerar** el TC
 local; `System.State`, suite y relaciones no se tocan salvo petición expresa. Degradación sin MCP: pedir el contenido pegado (título, pasos,
 parámetros) e indicar el `id`.
 
@@ -65,20 +65,20 @@ parámetros) e indicar el `id`.
 | `#id` de un `Test Case` | Ese. Su padre se obtiene de la relación «Tests» (el work item que prueba) o, si falta, del Test Suite que lo contiene: la suite lleva el título del padre (`US-4821: …`), del que se extrae el `id`. |
 | `#id` de `User Story` / `PBI` / `Task` / `Bug` / `Feature` documentado como FT | Los work items de tipo `Test Case` con relación «Tested By» hacia él **más** los que cuelgan del Test Suite con su título dentro del Test Plan del proyecto (unión, sin duplicar). |
 
-El padre **local** es la US/WI/FT cuya cabecera tenga `Work Item (ADO): [#<id-del-padre>]`. Sin él, parar y
+El padre **local** es la US/WI/FT cuyo frontmatter tenga `work_item.id: <id-del-padre>`. Sin él, parar y
 sugerir `/work-define sync #<id>`.
 
 ### Mapeo de campos a la plantilla de TC
 
 | Campo de ADO | Campo de `test-case-template.md` | Regla |
 |--------------|----------------------------------|-------|
-| `id` | Número (`TC-<id>-[slug].md`) y `Work Item (ADO): [#<id>](<url>)` | Sin padding. |
+| `id` | Número (`TC-<id>-[slug].md`) y `work_item: { system: ADO, id: <id>, url: <url> }` | Sin padding. |
 | `System.Title` | Título `# TC-<id> — …` | Si ya es GWT (Dado/Cuando/Entonces o Given/When/Then) se conserva; si no, se conserva **tal cual** y se anota en Observaciones que no sigue GWT — no se reescribe el escenario. Slug kebab-case ≤ 5 palabras. |
 | `Microsoft.VSTS.TCM.Steps` (XML: `<step>` con `action` y `expectedresult`) | **Pasos de ejecución** | Una fila por `<step>`, en orden, HTML normalizado. `Actor`: el que indique el texto; si no lo indica, `usuario` y nota en Observaciones. Un `shared step` se expande en sus pasos citando el id del shared step. |
 | `Microsoft.VSTS.TCM.Parameters` + `Microsoft.VSTS.TCM.LocalDataSource` | **Datos de prueba** | Un campo por parámetro; una fila por juego de valores (o `N/A`). Los `@param` de los pasos se dejan como referencia al campo. |
 | `System.Description` | **Precondiciones** si el texto lo es (o lleva ese encabezado); el resto a **Observaciones** | HTML → markdown. |
 | `Microsoft.VSTS.Common.Priority` | `Prioridad` | `1` → Alta · `2` → Media · `3`/`4` → Baja. |
-| `System.State` | `Estado` | `Design` → `Draft` · `Ready` → `Ready` **solo si** criterio, perspectiva y tipo quedaron resueltos (si no, `Draft` con laguna) · `Closed` → `Obsolete` previa confirmación (al actualizar, ofrecerlo; nunca borrar el archivo). |
+| `System.State` | `status` | `Design` → `Draft` · `Ready` → `Ready` **solo si** criterio, perspectiva y tipo quedaron resueltos (si no, `Draft` con laguna) · `Closed` → `Obsolete` previa confirmación (al actualizar, ofrecerlo; nunca borrar el archivo). |
 | `Microsoft.VSTS.TCM.AutomationStatus`, `System.Tags`, título | `Tipo de prueba` y `Perspectiva` | Solo si lo dicen de forma explícita (etiquetas `api`, `e2e`, `ui`, `manual`, `happy`, `error`, `limite`/`boundary`, o el título). Si no, se preguntan en la tanda única del flujo; con `createDetailsMode: never`, `Draft` con laguna. `AutomationStatus = Automated` **no** fija el tipo. |
 | Descripción, título o etiquetas que citen un identificador de criterio (`AC-003`, `CA-2`, `1.1`) | `Criterio de aceptación` y `criterion=` de la marca | Solo si el identificador **existe verbatim** en la sección de criterios del padre local; si no existe o no se cita, se pregunta en la tanda única (o queda `—` y `Draft`). |
 | Relación «Tests» / suite | `Artefacto padre` y `parent=` | El padre local resuelto arriba. |
@@ -96,7 +96,7 @@ intactos; `Obsolete` en vez de borrar). Si cambia el resultado esperado de un TC
 - Crear la carpeta del padre o un `README.md` de US desde `test-define` para poder sincronizar un TC.
 - Trazar un TC a un criterio que no cita explícitamente, o inventar perspectiva/tipo para dejarlo `Ready`.
 - Resumir, reordenar o fusionar pasos del campo `Steps`.
-- Escribir en ADO desde `sync` sin `push`; con `push`, cambiar estado, suite o `id`, o crear un segundo Test Case para un TC que ya tiene `Work Item (ADO)`.
+- Escribir en ADO desde `sync` sin `push`; con `push`, cambiar estado, suite o `id`, o crear un segundo Test Case para un TC que ya tiene `work_item`.
 
 ## Anti-patrones específicos
 
@@ -110,7 +110,7 @@ intactos; `Obsolete` en vez de borrar). Si cambia el resultado esperado de un TC
 ## Ejemplo — Repo vinculado a ADO con MCP disponible
 
 - *Contexto:* `project-management.md` resolvió `project: MyProject`. MCP de ADO disponible. La
-  US padre (`US-003: Endpoint de autenticación`) tiene `Work Item (ADO): [#1500](https://dev.azure.com/…)`
+  US padre (`US-003: Endpoint de autenticación`) tiene `work_item: { system: ADO, id: 1500, url: https://dev.azure.com/… }`
   en su encabezado.
 - *Entrada:* generar TCs para `AC-001` de `US-003`.
 - *Comportamiento:* El agente detecta ADO (en `SKILL.md`), lee la base común y este archivo, y verifica
@@ -119,6 +119,6 @@ intactos; `Obsolete` en vez de borrar). Si cambia el resultado esperado de un TC
   work item `Test Case` dentro de él: título GWT (abreviado si supera 255 caracteres), Pasos de
   ejecución en el campo `Steps`, Descripción con el resto del documento serializado por secciones, y
   vinculado además a `#1500` si el MCP lo permite. Extrae `id: 2210` y genera
-  `TC-2210-login-credenciales-validas-happy.md` con `Work Item (ADO): [#2210](…)` en el encabezado. El
+  `TC-2210-login-credenciales-validas-happy.md` con `work_item` (`system: ADO`, `id: 2210`) en el encabezado. El
   resto del flujo de `test-define` (Pasos 4 y 5) continúa normalmente. Para el siguiente TC del mismo
   `AC-001` (u otro AC de `US-003`), reutiliza el mismo Test Plan y Test Suite sin volver a crearlos.

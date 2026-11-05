@@ -1,4 +1,22 @@
+---
+id: FT-XXX
+type: feature
+status: Draft                         # Draft | Ready
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+provenance: legacy                    # legacy (inferido de código legado por work-research) | existing (registro de funcionalidad existente)
+research: research/RS-XXX-slug/README.md   # investigación de origen (discovery) cuando provenance: legacy; omitir si no
+work_item:                            # solo si se creó manualmente; ningún skill lo pobla por su cuenta para un FT. Si existe, test-define lo usa para vincular sus TC al feature padre. Omitir el objeto entero si no
+  system: ADO                         # nombre corto que define la referencia del proveedor (p. ej. ADO → references/azure-devops.md)
+  id: 12345
+  url: https://…
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
@@ -24,14 +42,6 @@ Reglas de contenido:
 -->
 
 # FT-XXX: {{título corto del feature}}
-
-<!-- ft:status={{Draft|Ready}} -->
-<!-- Marca oculta que se CONSERVA al publicar; claves y valores en inglés siempre, igual criterio que us:status. La etiqueta visible de abajo sí va en el idioma resuelto. -->
-**Estado:** {{Draft | Ready}}
-**Fecha de creación:** {{YYYY-MM-DD}}
-**Última actualización:** {{YYYY-MM-DD}}
-**Procedencia:** {{Funcionalidad ya implementada. Origen: "inferido de código legacy (RS-XXX · commit/branch)" | "registro de funcionalidad existente"}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item del feature en el sistema de seguimiento vinculado — solo si se creó manualmente; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica. Ningún skill de esta suite crea o pobla este campo por su cuenta para un FT; si existe, `test-define` lo usa para vincular sus TC al feature padre}}
 
 ## Descripción funcional
 

@@ -1,28 +1,34 @@
+---
+id: WI-XXX
+type: work-item
+status: Draft                         # Draft | Ready
+kind: refactor                        # bug-fix | refactor | dependency-update | optimization | security-update | test-improvement | documentation-update | operational-change (spike usa work-item-spike-template.md)
+repository: nombre-repo               # obligatorio para Ready: repositorio git al que afecta; inferido del repo (git remote / carpeta) o indicado por el usuario
+origin: ../../incidents/BUG-XXX-slug/README.md   # solo en un bug-fix que corrige un incidente registrado (BUG-XXX, o el work item del tracker si vive en otro repo) o en un WI que formaliza un spike (README.md del WI-XXX spike); omitir si no aplica
+assignee: "Nombre Apellido"           # opcional: lo indicado por el usuario; si no, `git config user.name`; omitir si no aplica
+work_item:                            # solo si se creó en el gestor vinculado; omitir el objeto entero si no
+  system: ADO                         # nombre corto que define la referencia del proveedor (p. ej. ADO → references/azure-devops.md)
+  id: 12345
+  url: https://…
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
 En un repositorio con `implementation.scope: tests` NO se usa esta plantilla: allí `work-plan` no crea WI,
 solo incidentes (`BUG-XXX`, plantilla `incident-tests-template.md`). Un hallazgo (qué está mal, con
 evidencia) tampoco es un WI con `scope: code`: es un incidente (`incident-template.md`); el WI que lo
-corrige es de tipo `bug-fix` y lo cita en `Origen`.
--->
-# WI-XXX: {{título corto del work item}}
+corrige es de tipo `bug-fix` y lo cita en `origin`.
 
-<!-- wi:status={{Draft|Ready}} -->
-<!--
-Esta marca se CONSERVA al publicar. Sus claves y sus valores van en inglés SIEMPRE, aunque el resto del
-documento esté en otro idioma: es el ancla que otros skills parsean, no contenido. La etiqueta visible
-de arriba sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
--->
-**Estado:** {{Draft | Ready}}
-**Tipo:** {{bug-fix | refactor | dependency-update | optimization | security-update | test-improvement | documentation-update | operational-change}}
-<!-- `spike` también es un tipo válido, pero NO usa esta plantilla: se redacta con `work-item-spike-template.md`. -->
-<!--
-Tipos de work item:
+Valores de `kind` (tipo de work item):
 | Tipo | Incluye |
 |---|---|
-| bug-fix | Corrección de errores: el plan de remediación de un defecto, normalmente registrado antes como incidente `BUG-XXX` (que se cita en `Origen`). El registro del hallazgo en sí NO es un WI: es un incidente (`incident-template.md`). |
+| bug-fix | Corrección de errores: el plan de remediación de un defecto, normalmente registrado antes como incidente `BUG-XXX` (que se cita en `origin`). El registro del hallazgo en sí NO es un WI: es un incidente (`incident-template.md`). |
 | refactor | Refactorización, limpieza de código y reducción de deuda técnica. |
 | dependency-update | Actualización de librerías, frameworks y SDKs. |
 | optimization | Rendimiento, escalabilidad y consumo de recursos. |
@@ -32,14 +38,11 @@ Tipos de work item:
 | operational-change | Configuración, CI/CD, infraestructura, despliegues y migraciones. |
 | spike | Experimento con timebox para responder una incertidumbre que impide planificar o estimar (viabilidad, rendimiento, complejidad). Su entregable es un informe, nunca código integrable; la rama `spike/` queda como referencia y el desarrollo definitivo se formaliza en una US o en otro WI. **Se redacta con `work-item-spike-template.md`**, no con esta plantilla. |
 -->
-**Repositorio:** {{obligatorio para Ready: nombre del repositorio git al que afecta el work item; inferido del repo (git remote / carpeta) o indicado por el usuario.}}
-**Origen:** {{solo en un `bug-fix` que corrige un incidente ya registrado —`BUG-XXX` enlazado por ruta relativa, o el work item del tracker si el incidente vive en otro repositorio— o en un WI que formaliza el resultado de un spike: `WI-XXX (spike)` enlazado; omitir línea si no aplica}}
-**Asignado a:** {{opcional: priorizar lo indicado por el usuario; si no, inferir con `git config user.name`; omitir línea si no aplica}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item creado en el sistema de seguimiento vinculado — solo si se creó; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica}}
+# WI-XXX: {{título corto del work item}}
 
 ## Descripción
 
-{{qué motiva el work item: el problema, la necesidad o el comportamiento esperado — el *qué*, no el cómo. Para un bug-fix: qué falla (resumen del incidente citado en `Origen`, sin duplicarlo) y qué comportamiento debe quedar. Para un refactor / deuda técnica: qué situación se quiere mejorar y por qué. Sin diseño técnico aquí}}
+{{qué motiva el work item: el problema, la necesidad o el comportamiento esperado — el *qué*, no el cómo. Para un bug-fix: qué falla (resumen del incidente citado en `origin`, sin duplicarlo) y qué comportamiento debe quedar. Para un refactor / deuda técnica: qué situación se quiere mejorar y por qué. Sin diseño técnico aquí}}
 
 ## Contexto
 
@@ -76,7 +79,7 @@ Rutas permitidas: assets/ (recursos propios de este work item) o docs/architectu
 - **Arquitectura:** {{enlace a ADR en `docs/adr/` si el work item depende de decisiones ya registradas; no inventar ADRs nuevos}}
 - **Documentación técnica:** {{enlace si aplica, tal como lo devuelve `design-define`: `docs/architecture/[capability]/models/MD-XXX-{slug}.md` / `apis/API-XXX-{slug}.md` / `flows/FL-XXX-{slug}.md` / `diagrams/DG-XXX-{slug}.md`, añadiendo el ancla de operación `#<método-ruta>` cuando se cita un endpoint concreto (`apis/API-001-facturas.md#post-invoices`); copiar la referencia tal cual, nunca recomponerla del título}}
 - **Diseño:** {{enlace a Figma, wireframe o imagen de alta fidelidad; obligatorio si el work item toca UI}}
-- **Spike de origen:** {{solo si `Origen` es un spike: enlace a su `spike-report.md` y la rama `spike/WI-XXX-{slug}` @ sha — referencia de lectura, nunca para mergear; omitir si no aplica}}
+- **Spike de origen:** {{solo si `origin` es un spike: enlace a su `spike-report.md` y la rama `spike/WI-XXX-{slug}` @ sha — referencia de lectura, nunca para mergear; omitir si no aplica}}
 - **Wireframe:** {{[WF-XXX: pantalla](wireframes/WF-XXX-{slug}.md), uno por pantalla, si el work item tiene wireframes propios (viven en `wireframes/` de esta carpeta, nunca en `docs/architecture/`); omitir si no aplica}}
 
 ## Migración (origen → destino)

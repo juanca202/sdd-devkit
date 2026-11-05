@@ -2,7 +2,7 @@
 
 Definición del tipo de plan **incidente (`BUG-XXX`)**: el **registro de un hallazgo** — un comportamiento incorrecto, defecto o incidencia observada — con su evidencia. Esta referencia se carga desde `SKILL.md` cuando la selección de tipo de plan resuelve a este caso. Asume ya resueltos el subagente, el mecanismo de preguntas y el idioma (ver `SKILL.md`).
 
-> **Un incidente no es implementable.** Describe **qué está mal**, nunca cómo corregirlo: no lleva Plan de implementación, Archivos afectados ni Dependencias, no va a `work-implement` y no dispara `test-define`. Es el **insumo** de la corrección, que se planifica aparte como un `WI-XXX` de tipo `bug-fix` (en este mismo repositorio, o en el repositorio de la aplicación cuando el incidente nace en un repositorio solo de pruebas) y lo cita en su cabecera (`Origen: BUG-XXX`). Vive en su propia carpeta, a la altura de `user-stories/` y `work-items/`: `<changesPath>/incidents/BUG-XXX-[kebab-case]/README.md`.
+> **Un incidente no es implementable.** Describe **qué está mal**, nunca cómo corregirlo: no lleva Plan de implementación, Archivos afectados ni Dependencias, no va a `work-implement` y no dispara `test-define`. Es el **insumo** de la corrección, que se planifica aparte como un `WI-XXX` de tipo `bug-fix` (en este mismo repositorio, o en el repositorio de la aplicación cuando el incidente nace en un repositorio solo de pruebas) y lo cita en su frontmatter (`origin: …/BUG-XXX-slug/README.md`). Vive en su propia carpeta, a la altura de `user-stories/` y `work-items/`: `<changesPath>/incidents/BUG-XXX-[kebab-case]/README.md`.
 
 > **De dónde nace.** Una prueba automatizada que falla siendo fiel a su `TC-XXX` (`work-implement`, tipos TC/FT), una ejecución manual de casos de prueba, un criterio `UNCOVERED` por prueba en rojo en `coverage-verify`, el diagnóstico de `work-research` (flujo «Analizar issue») en un repositorio solo de pruebas, o un defecto observado en producción que el usuario quiere dejar registrado antes de —o sin— planificar su corrección. En todos los casos **lo redacta este skill**: los demás hacen *handoff* pasando lo que observaron; ninguno escribe el incidente por su cuenta.
 
@@ -90,17 +90,17 @@ Leer siempre **todos** los `BUG-*/README.md` existentes en `<changesPath>/incide
 
 1. **Resolver el ID:** si el repo tiene un tracker externo vinculado, seguir su archivo de referencia (crea el work item `Bug` primero y usa su identificador). En cualquier otro caso, inferir el siguiente secuencial libre listando carpetas `BUG-*/` **en `<changesPath>/incidents/` y en `<archivedPath>/incidents/`**. Crear la carpeta `BUG-<número>-[nombre-descriptivo]/` antes de escribir el `README.md`.
 2. **Redactar el incidente** siguiendo `assets/incident-template.md` (en modo pruebas, `assets/incident-tests-template.md` — ver la variante):
-   - **Cabecera**: `Estado`; `Repositorio`; `Historia de usuario` (o `N/A` tras buscar); `Caso de prueba` si lo hay; `Reportado por`; `Fecha`; `Work Item (<sistema>)` solo si se creó vía el tracker vinculado.
+   - **Frontmatter**: `id`, `type: incident`, `status`; `repository`; `story` (o `N/A` tras buscar); `test_case` si lo hay; `reported_by`; `created`; `work_item` solo si se creó vía el tracker vinculado. Claves y valores en inglés (`${PLUGIN_ROOT}/references/frontmatter.md`).
    - **Descripción**: qué está mal, en una o dos frases. Sin causa supuesta ni solución.
    - **Comportamiento esperado / observado**, **Pasos para reproducir** (con precondiciones, ambiente por nombre y frecuencia), **Evidencia** (`EV-XX`, al menos una fila; los adjuntos copiados a `assets/`), **Impacto** (`Severidad`, `Alcance`, `Origen del hallazgo`, `Resolución: Open`).
    - **Contexto** (opcional): restricciones del dominio o la hipótesis de causa que aporte el usuario, **marcada como hipótesis**. Ningún texto del incidente propone cómo arreglarlo.
    - **Criterios de aceptación** (opcional): el comportamiento esperado ya es el criterio de cierre; si se rellenan, enuncian el comportamiento correcto, nunca la solución.
    - **Referencias**: work item del tracker, artefacto afectado, documentación que fija lo esperado.
-   - **Observaciones**: solo pendientes reales (evidencia no adjuntable, datos que faltan para reproducir). Con pendientes que impidan reproducir: `Estado: Draft`.
+   - **Observaciones**: solo pendientes reales (evidencia no adjuntable, datos que faltan para reproducir). Con pendientes que impidan reproducir: `status: Draft`.
 3. **Sanitizar la evidencia.** Nunca incluir credenciales, tokens, cookies ni valores del `.env`; los ambientes se citan por nombre. Trazas, HAR y logs se revisan antes de copiar; si contienen datos de sesión y no se pueden limpiar, **no se adjuntan**: se listan como «No adjuntado — motivo» con su ruta de origen.
-4. **Verificar el checklist** antes de asignar `Estado: Ready`.
+4. **Verificar el checklist** antes de asignar `status: Ready`.
 5. **Trazabilidad hacia atrás.** Si el incidente llegó desde `work-implement`, devolverle el `BUG-XXX` creado para que lo anote en la línea `Hallazgos` de `test-cases-automation.md` (`seguimiento: BUG-XXX`) o en `Cobertura de test cases` de `progress.md`.
-6. **Handoff.** Con el incidente en `Ready`, preguntar (herramienta estructurada): **[Planificar la corrección]** → `work-research` «Analizar issue» sobre este incidente (diagnóstico y `bug-fix` con plan) o, si la causa ya es conocida, `work-plan` para un `WI` de tipo `bug-fix` con `Origen: BUG-XXX`; **[Solo registrar]** → terminar. **Con `implementation.scope: tests` la única opción es registrar**: la corrección se planifica en el repositorio de la aplicación citando este incidente (o el work item `Bug` del tracker). Un incidente **nunca** va a `work-implement` ni dispara `test-define`.
+6. **Handoff.** Con el incidente en `Ready`, preguntar (herramienta estructurada): **[Planificar la corrección]** → `work-research` «Analizar issue» sobre este incidente (diagnóstico y `bug-fix` con plan) o, si la causa ya es conocida, `work-plan` para un `WI` de tipo `bug-fix` con `origin` → `BUG-XXX`; **[Solo registrar]** → terminar. **Con `implementation.scope: tests` la única opción es registrar**: la corrección se planifica en el repositorio de la aplicación citando este incidente (o el work item `Bug` del tracker). Un incidente **nunca** va a `work-implement` ni dispara `test-define`.
 
 ---
 
@@ -108,7 +108,7 @@ Leer siempre **todos** los `BUG-*/README.md` existentes en `<changesPath>/incide
 
 Aplica **solo** cuando la política de implementación resolvió `scope = tests`. Allí el incidente nace siempre de ejecutar un caso de prueba, así que el documento **tiene la forma de ese caso de prueba**: se redacta con **`assets/incident-tests-template.md`** (leerla antes de escribir), no con `incident-template.md`. Todo lo dicho en el flujo anterior sigue valiendo (no se propone solución, `Resolución`, handoffs, tracker); esta variante cambia **la estructura del documento y cómo se reúne la evidencia**. Con `scope: code` nada de esto aplica.
 
-1. **Partir del `TC-XXX`.** Leer completo el caso de prueba que detectó el hallazgo (lo pasa el skill que lo detectó, o lo indica el usuario) y **copiar** sus Precondiciones, Datos de prueba, Pasos de ejecución y Resultado esperado final, con la misma numeración de pasos. La cabecera enlaza el TC, su criterio y su artefacto padre. El `TC-XXX-*.md` **no se edita**. Si el hallazgo no nace de un TC (observación manual), las mismas secciones se redactan a mano con lo que el usuario describa y `Caso de prueba: N/A`.
+1. **Partir del `TC-XXX`.** Leer completo el caso de prueba que detectó el hallazgo (lo pasa el skill que lo detectó, o lo indica el usuario) y **copiar** sus Precondiciones, Datos de prueba, Pasos de ejecución y Resultado esperado final, con la misma numeración de pasos. El frontmatter enlaza el TC (`test_case`), su criterio (`criterion`) y su artefacto padre (`parent`). El `TC-XXX-*.md` **no se edita**. Si el hallazgo no nace de un TC (observación manual), las mismas secciones se redactan a mano con lo que el usuario describa y `Caso de prueba: N/A`.
 2. **Ampliar los pasos con lo ocurrido.** Cada paso lleva su **Resultado observado** (literal; «Conforme» si se comportó como se esperaba; «No ejecutado» tras el fallo) y sus **Comentarios**: todo lo que hace falta para **reproducirlo** y el TC no dice — esperas, endpoint o selector exacto, cuerpo de la petición, datos que hay que sembrar, orden, diferencias entre ejecuciones. Se marca con ❌ el paso donde aparece el fallo. Los valores reales usados van en Datos de prueba; lo sensible, por el nombre de su variable. Esa información sale del spec automatizado, de la salida del runner y de lo que reporte el skill que detectó el hallazgo; lo que no conste **se pregunta**, no se inventa.
 3. **Hallazgos (`H-XX`).** Una fila por comportamiento incorrecto distinto: paso, qué está mal, esperado, observado, su **Severidad** y sus evidencias; la `Severidad` de Impacto es la más alta de la tabla. Si son defectos independientes, proponer un incidente por defecto.
 4. **Evidencias (`EV-XX`) — adjuntar lo que registró la suite.**
@@ -135,7 +135,7 @@ Aplica **solo** cuando la política de implementación resolvió `scope = tests`
 | Valor | Quién lo escribe | Cuándo |
 |-------|------------------|--------|
 | `Open` | `work-plan` al registrar | Siempre al crear |
-| `Fixing (WI-YYY)` | `work-plan` al crear el `bug-fix` que cita `Origen: BUG-XXX` | Al planificar la corrección en este repositorio. Si la corrección se planifica en otro repositorio (incidente nacido en un repo de pruebas), el valor cita el work item del tracker o el repositorio: `Fixing (<referencia>)` |
+| `Fixing (WI-YYY)` | `work-plan` al crear el `bug-fix` que cita `origin` → `BUG-XXX` | Al planificar la corrección en este repositorio. Si la corrección se planifica en otro repositorio (incidente nacido en un repo de pruebas), el valor cita el work item del tracker o el repositorio: `Fixing (<referencia>)` |
 | `Fixed (WI-YYY)` | `work-integrate` al integrar ese `bug-fix` | Misma búsqueda en ruta activa y archivo; si el incidente vive en otro repositorio, solo se menciona en el reporte |
 | `Discarded — motivo` | `work-plan` (flujo *Actualizar*) por decisión del usuario | No es un defecto, no se reproduce, duplicado de otro `BUG-XXX`… |
 
@@ -155,7 +155,7 @@ Un incidente con `Resolución: Open` o `Fixing (…)` cuenta como **incompleto**
 - [ ] ID `BUG-XXX` libre en `<changesPath>/incidents/` **y en `<archivedPath>/incidents/`**
 - [ ] Rama de trabajo actual verificada; si es una rama de implementación ajena, se advirtió y se preguntó `Continuar` / `Detenerme aquí` (no aplica al *handoff* de `work-implement` desde su rama `test/`)
 
-**Condiciones para `Estado: Ready`:**
+**Condiciones para `status: Ready`:**
 - [ ] **`scope: code`** (plantilla `assets/incident-template.md`): Descripción, Comportamiento esperado/observado, Pasos para reproducir (precondiciones, ambiente por nombre, frecuencia), al menos una `EV-XX` verificable (sin credenciales), Severidad con uno de los cuatro valores, Repositorio, `Resolución: Open`
 - [ ] **Modo pruebas** (plantilla `assets/incident-tests-template.md`): secciones del `TC-XXX` copiadas con su numeración; pasos con Resultado observado y Comentarios para reproducir, paso fallido marcado; al menos un `H-XX`; evidencias de la suite copiadas a `assets/` y enlazadas (`EV-XX`), sanitizadas; Severidad; sistema bajo prueba. Sustituye a la condición anterior.
 - [ ] **Sin** Plan de implementación, Archivos afectados ni Dependencias; ninguna propuesta de solución en el texto (una hipótesis de causa, si la hay, marcada como tal en Contexto u Observaciones)
@@ -163,7 +163,7 @@ Un incidente con `Resolución: Open` o `Fixing (…)` cuenta como **incompleto**
 
 **Formato:**
 - [ ] Nombre de carpeta en kebab-case, secuencial global sobre `incidents/` **+ `<archivedPath>/incidents/`**
-- [ ] Marca oculta `<!-- bug:status=… -->` conservada, en inglés
+- [ ] Frontmatter en la línea 1 con `status` en inglés; sin cabecera visible ni marca oculta
 - [ ] Sin párrafos instructivos de plantilla en el incidente publicado
 - [ ] `specification.testCases.createMode` **no aplicado**: un incidente no tiene `AC-XXX` que cubrir
 
@@ -173,7 +173,7 @@ Un incidente con `Resolución: Open` o `Fixing (…)` cuenta como **incompleto**
 
 **Ejemplo 1 — Hallazgo en un repositorio solo de pruebas**
 - *Entrada:* `implementation.scope: tests`; `work-implement` reporta que `TC-005` (API Test) falla: la API responde 200 donde el TC espera 422, y el runner dejó el reporte y el cuerpo de la respuesta.
-- *Salida:* carpeta `BUG-003-alta-cliente-acepta-email-invalido/` con `README.md` según `assets/incident-tests-template.md`: cabecera enlazando `TC-005` y su `AC-XXX`; Precondiciones, Datos y Pasos copiados del TC, con el paso 2 marcado ❌ (observado: `200 OK`, comentario con el endpoint y el cuerpo enviado); `H-01`; `assets/EV-01-reporte.html` y `assets/EV-02-respuesta.json` copiados de la salida del runner; `Resolución: Open`. Sin plan ni propuesta de corrección. Devuelve `BUG-003` a `work-implement` para la línea `Hallazgos`. Única opción al cerrar: registrar.
+- *Salida:* carpeta `BUG-003-alta-cliente-acepta-email-invalido/` con `README.md` según `assets/incident-tests-template.md`: frontmatter con `test_case` → `TC-005` y `criterion` → su `AC-XXX`; Precondiciones, Datos y Pasos copiados del TC, con el paso 2 marcado ❌ (observado: `200 OK`, comentario con el endpoint y el cuerpo enviado); `H-01`; `assets/EV-01-reporte.html` y `assets/EV-02-respuesta.json` copiados de la salida del runner; `Resolución: Open`. Sin plan ni propuesta de corrección. Devuelve `BUG-003` a `work-implement` para la línea `Hallazgos`. Única opción al cerrar: registrar.
 
 **Ejemplo 2 — Defecto observado en producción (`scope: code`)**
 - *Entrada:* «Registra el bug: el cálculo de impuestos del carrito ignora el descuento cuando hay cupón; en producción desde el viernes, captura adjunta.»
@@ -210,6 +210,6 @@ Posición: **registro** — un incidente no entra en el ciclo de implementación
 | | |
 |--|--|
 | **Entrada** | Un hallazgo que se registra: *handoff* de `work-implement` (prueba en rojo fiel al TC) o de `work-research` («Analizar issue» en modo pruebas), o la petición directa del usuario (un `UNCOVERED` por rojo en `coverage-verify`, una ejecución manual de TC, producción). |
-| **Salida** | Incidente en **`Estado: Ready`** con `Resolución: Open`. Nunca es salida para implementar. |
-| **Siguiente paso** | `work-research` «Analizar issue» sobre el `BUG-XXX` (diagnóstico → `bug-fix` con plan) o `work-plan` → `WI` de tipo `bug-fix` con `Origen: BUG-XXX` cuando la causa ya es conocida. En `implementation.scope: tests`: ninguno en este repo; la corrección se planifica en el repositorio de la aplicación. |
+| **Salida** | Incidente en **`status: Ready`** con `Resolución: Open`. Nunca es salida para implementar. |
+| **Siguiente paso** | `work-research` «Analizar issue» sobre el `BUG-XXX` (diagnóstico → `bug-fix` con plan) o `work-plan` → `WI` de tipo `bug-fix` con `origin` → `BUG-XXX` cuando la causa ya es conocida. En `implementation.scope: tests`: ninguno en este repo; la corrección se planifica en el repositorio de la aplicación. |
 | **Cierre de trazabilidad** | `work-plan` pone `Fixing (WI-YYY)` al crear el `bug-fix`; `work-integrate` pone `Fixed (WI-YYY)` al integrarlo (un PR creado con `pr-create` se cierra después con `work-integrate`, que es quien marca el `Done`). |

@@ -50,7 +50,7 @@ Handoff → work-plan (WI tipo bug-fix) → work-implement
 `<changesPath>/work-items/WI-XXX-{kebab-case}/README.md`, creado por `work-plan` a partir
 del **dossier de bug** que produce este flujo con
 [`assets/issue/diagnosis-template.md`](../../assets/issue/diagnosis-template.md). Si el
-bug ya estaba registrado como incidente `BUG-XXX`, el `bug-fix` lo cita en `Origen`. Con
+bug ya estaba registrado como incidente `BUG-XXX`, el `bug-fix` lo cita en `origin`. Con
 `implementation.scope: tests`, el entregable es el **incidente `BUG-XXX`** en
 `<changesPath>/incidents/BUG-XXX-{kebab-case}/README.md`, también creado por `work-plan`.
 
@@ -101,7 +101,7 @@ La entrada puede venir de dos sitios:
 | Entrada | Qué hacer |
 |---------|-----------|
 | **Descripción en prosa** del usuario | Normalizarla al formato de reporte (abajo). Lo que falte, preguntarlo. |
-| **Incidente local** `BUG-XXX` (`<changesPath>/incidents/`, o `<archivedPath>/incidents/`) | Leerlo completo: su esperado/observado, pasos, evidencia (`EV-XX`; en modo pruebas también los hallazgos `H-XX`) y cabecera (US, TC, work item) **son** el reporte normalizado; no re-preguntar lo que ya documenta. El `bug-fix` resultante lo citará en `Origen`. |
+| **Incidente local** `BUG-XXX` (`<changesPath>/incidents/`, o `<archivedPath>/incidents/`) | Leerlo completo: su esperado/observado, pasos, evidencia (`EV-XX`; en modo pruebas también los hallazgos `H-XX`) y frontmatter (`story`, `test_case`, `work_item`) **son** el reporte normalizado; no re-preguntar lo que ya documenta. El `bug-fix` resultante lo citará en `origin`. |
 | **Código/ID de un bug** del gestor de proyectos (p. ej. `#4821`) | Resolver la vinculación siguiendo «Entrada desde el gestor de proyectos» de `SKILL.md` y **leer el work item vía MCP** (título, descripción, pasos de reproducción, severidad, entorno, adjuntos, comentarios). Ver [`references/azure-devops.md`](../azure-devops.md) para Azure DevOps. Si existe un `BUG-XXX` local con ese `Work Item`, usarlo como entrada. |
 
 **Reporte normalizado** — mínimo para continuar:
@@ -114,8 +114,8 @@ La entrada puede venir de dos sitios:
 | Entorno y versión | Deseable | Registrar como `Desconocido` y marcar el riesgo de no poder reproducir |
 | Frecuencia (siempre / intermitente) | Deseable | Preguntar; un bug intermitente cambia la estrategia de prueba (ver Paso 2) |
 | Severidad / impacto | Deseable | Inferir del comportamiento y confirmar |
-| Historia de usuario relacionada (`US-XXX`; o `WI`/`FT`) | No | **Buscarla siempre** antes de darla por inexistente: la que cite el reporte o el work item del tracker (padre / vínculos), o la que documente el comportamiento afectado en `<changesPath>/user-stories/` y `<archivedPath>/user-stories/`. Si existe, cargarla —sus `AC-XXX` son la referencia de «esperado»— y **enlazarla en la cabecera del dossier** (`Historia de usuario`). `N/A` solo tras buscar |
-| Caso de prueba (`TC-XXX`) | No | Si el bug lo detectó un TC, o la historia tiene en `test-cases/` un TC que cubre el comportamiento afectado, **enlazarlo en la cabecera** (`Caso de prueba`) con su `AC-XXX`. Sin TC, omitir la línea: este flujo no crea TC |
+| Historia de usuario relacionada (`US-XXX`; o `WI`/`FT`) | No | **Buscarla siempre** antes de darla por inexistente: la que cite el reporte o el work item del tracker (padre / vínculos), o la que documente el comportamiento afectado en `<changesPath>/user-stories/` y `<archivedPath>/user-stories/`. Si existe, cargarla —sus `AC-XXX` son la referencia de «esperado»— y **enlazarla en el frontmatter del dossier** (`story`). `N/A` solo tras buscar |
+| Caso de prueba (`TC-XXX`) | No | Si el bug lo detectó un TC, o la historia tiene en `test-cases/` un TC que cubre el comportamiento afectado, **enlazarlo en el frontmatter** (`test_case`) con su `AC-XXX`. Sin TC, omitir la clave: este flujo no crea TC |
 
 Con el reporte normalizado, **confirmar la pregunta de investigación** con el usuario
 antes de continuar (Paso 1 de `SKILL.md`): «¿Por qué ocurre *<comportamiento
@@ -130,7 +130,7 @@ Antes del Paso 1, resolver `implementation.scope` con
 
 | `scope` | Qué hace este flujo | *Handoff* |
 |---------|---------------------|-----------|
-| `code` (o sin clave) | Los cuatro pasos completos: reproducción, causa raíz en el código, matriz de pruebas, ciclo rojo→verde | `work-plan` → `WI` de tipo `bug-fix` (con `Origen: BUG-XXX` si el bug ya estaba registrado como incidente) |
+| `code` (o sin clave) | Los cuatro pasos completos: reproducción, causa raíz en el código, matriz de pruebas, ciclo rojo→verde | `work-plan` → `WI` de tipo `bug-fix` (con `origin` → `BUG-XXX` si el bug ya estaba registrado como incidente) |
 | `tests` | **Solo el Paso 0 y el Paso 1.1–1.3** (reporte normalizado y reproducción determinista contra el sistema desplegado). **No** se aísla causa raíz (el código no está aquí), **no** hay matriz de pruebas sobre el código ni ciclo rojo→verde: la prueba fiel al TC ya está en rojo y así se queda | `work-plan` → **incidente `BUG-XXX`** (tipo de plan *Incidente*, plantilla con forma de caso de prueba). La corrección se planifica en el repositorio de la aplicación citando ese incidente o el work item `Bug` del tracker. Si el incidente ya existe (`BUG-XXX` como entrada), el flujo no crea otro: actualiza su evidencia vía `work-plan` y termina |
 
 En modo pruebas el dossier se reduce a **Problema**, **Reproducción** (pasos con lo observado y
@@ -274,8 +274,8 @@ Añadir además:
    Opciones: `[Sí, crear el WI de corrección]` (con `scope: tests`: `[Sí, registrar el incidente]`) / `[Profundizar]` / `[Descartar]`.
    Dejar explícito que todavía no se ha creado ningún artefacto.
 3. **Sí** → *handoff* a `work-plan` pasando el dossier completo. Con `scope: code`, tipo de
-   plan **tarea de mantenimiento**, `Tipo: bug-fix` (si la entrada fue un `BUG-XXX`, pasar
-   su ruta para `Origen`; si el bug ya existe en el tracker, su `ado_id` y URL). Con
+   plan **tarea de mantenimiento**, `kind: bug-fix` (si la entrada fue un `BUG-XXX`, pasar
+   su ruta para `origin`; si el bug ya existe en el tracker, su `ado_id` y URL). Con
    `scope: tests`, tipo de plan **incidente**: `work-plan` mapea *Problema* → Descripción y
    Esperado/Observado, *Reproducción* → Pasos con lo observado, evidencias → `EV-XX`, y las
    secciones `N/A` se omiten — ver `work-plan/references/incidents.md`. El mapeo al WI
@@ -293,7 +293,7 @@ Añadir además:
 | **Reglas de negocio** confirmadas durante el análisis | **Reglas de negocio** |
 | **Archivos afectados** (corrección y prueba) | **Archivos afectados** |
 | Dependencias del fix citadas en la corrección (servicio, versión, migración) | **Dependencias** |
-| Cabecera: **Historia de usuario** y **Caso de prueba** | **Referencias** (enlaces a la `US-XXX` y al `TC-XXX`, conservados tal cual) |
+| Frontmatter: `story` y `test_case` | **Referencias** (enlaces a la `US-XXX` y al `TC-XXX`, conservados tal cual) |
 | **Referencias** (work item, artefacto, archivos citados) | **Referencias** |
 
 > **El formato de los `AC-XXX` lo impone `work-plan`, no el dossier.** El dossier los

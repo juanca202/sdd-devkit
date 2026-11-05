@@ -3421,7 +3421,6 @@ var ARTIFACT_CATALOG = [
     parentTypes: [],
     requiresParent: false,
     requiresCapability: false,
-    statusMarker: "srs:status",
     statusValues: DRAFT_READY
   },
   {
@@ -3434,7 +3433,6 @@ var ARTIFACT_CATALOG = [
     parentTypes: [],
     requiresParent: false,
     requiresCapability: false,
-    statusMarker: "rq:status",
     statusValues: DRAFT_READY
   },
   {
@@ -3447,7 +3445,6 @@ var ARTIFACT_CATALOG = [
     parentTypes: [],
     requiresParent: false,
     requiresCapability: false,
-    statusMarker: "us:status",
     statusValues: DRAFT_READY
   },
   {
@@ -3460,7 +3457,6 @@ var ARTIFACT_CATALOG = [
     parentTypes: ["US"],
     requiresParent: true,
     requiresCapability: false,
-    statusMarker: "tk:status",
     statusValues: DRAFT_READY
   },
   {
@@ -3473,7 +3469,6 @@ var ARTIFACT_CATALOG = [
     parentTypes: [],
     requiresParent: false,
     requiresCapability: false,
-    statusMarker: "wi:status",
     statusValues: DRAFT_READY
   },
   {
@@ -3486,7 +3481,6 @@ var ARTIFACT_CATALOG = [
     parentTypes: [],
     requiresParent: false,
     requiresCapability: false,
-    statusMarker: "ft:status",
     statusValues: DRAFT_READY
   },
   {
@@ -3499,7 +3493,6 @@ var ARTIFACT_CATALOG = [
     parentTypes: ["US", "WI", "FT", "RQ"],
     requiresParent: true,
     requiresCapability: false,
-    statusMarker: "tc:status",
     statusValues: ["Draft", "Ready", "Obsolete"]
   },
   {
@@ -3513,7 +3506,6 @@ var ARTIFACT_CATALOG = [
     parentTypes: ["SRS", "RQ", "US", "WI", "FT"],
     requiresParent: false,
     requiresCapability: false,
-    statusMarker: "rs:status",
     statusValues: DRAFT_READY
   },
   {
@@ -3526,7 +3518,6 @@ var ARTIFACT_CATALOG = [
     parentTypes: ["SRS", "US", "WI"],
     requiresParent: true,
     requiresCapability: false,
-    statusMarker: "wireframe:review-status",
     statusValues: ["Proposed", "Approved"]
   },
   {
@@ -3539,7 +3530,6 @@ var ARTIFACT_CATALOG = [
     parentTypes: [],
     requiresParent: false,
     requiresCapability: false,
-    statusMarker: "status",
     statusValues: ["Draft", "Proposed", "Accepted", "Deprecated", "Superseded"]
   },
   ...[
@@ -3558,7 +3548,6 @@ var ARTIFACT_CATALOG = [
       parentTypes: [],
       requiresParent: false,
       requiresCapability: true,
-      statusMarker: null,
       statusValues: null
     })
   )
@@ -4537,8 +4526,19 @@ function readHtmlComments(markdown) {
   return comments;
 }
 
-// src/features/artifact-catalog/status-marker.ts
+// src/features/artifact-catalog/legacy-status-marker.ts
 var PAIR_SEPARATOR = " \xB7 ";
+var LEGACY_STATUS_MARKERS = {
+  SRS: "srs:status",
+  RQ: "rq:status",
+  US: "us:status",
+  TK: "tk:status",
+  WI: "wi:status",
+  FT: "ft:status",
+  TC: "tc:status",
+  RS: "rs:status",
+  WF: "wireframe:review-status"
+};
 function parseMarkerPairs(comment) {
   const pairs = /* @__PURE__ */ new Map();
   for (const part of comment.trim().split(PAIR_SEPARATOR)) {
@@ -4550,13 +4550,28 @@ function parseMarkerPairs(comment) {
   }
   return pairs;
 }
+function readLegacyStatusMarks(markdown, type) {
+  const marker = LEGACY_STATUS_MARKERS[type];
+  if (marker === void 0) return [];
+  const marks = [];
+  for (const comment of readHtmlComments(markdown)) {
+    const value = parseMarkerPairs(comment.text).get(marker);
+    if (value !== void 0) marks.push({ value, line: comment.line });
+  }
+  return marks;
+}
+
+// src/features/artifact-catalog/status-marker.ts
+function hasFrontMatter(markdown) {
+  return markdown.split("\n", 1)[0]?.trim() === "---";
+}
 function readFrontMatterStatus(markdown) {
   const lines = markdown.split("\n");
   if (lines[0]?.trim() !== "---") return null;
-  for (let index = 1; index < lines.length; index++) {
-    const line = lines[index] ?? "";
-    if (line.trim() === "---") return null;
-    const match = /^status:\s*(.*?)\s*$/.exec(line);
+  const close = lines.findIndex((line, index) => index > 0 && line.trim() === "---");
+  if (close === -1) return null;
+  for (let index = 1; index < close; index++) {
+    const match = /^status:\s*(.*?)\s*$/.exec(lines[index] ?? "");
     if (match !== null) {
       const value = (match[1] ?? "").replace(/^(['"])(.*)\1$/, "$2");
       return { value, line: index + 1 };
@@ -4565,18 +4580,10 @@ function readFrontMatterStatus(markdown) {
   return null;
 }
 function readStatusMarks(markdown, descriptor) {
-  const { statusMarker } = descriptor;
-  if (statusMarker === null) return [];
-  if (statusMarker === "status") {
-    const mark = readFrontMatterStatus(markdown);
-    return mark === null ? [] : [mark];
-  }
-  const marks = [];
-  for (const comment of readHtmlComments(markdown)) {
-    const value = parseMarkerPairs(comment.text).get(statusMarker);
-    if (value !== void 0) marks.push({ value, line: comment.line });
-  }
-  return marks;
+  if (descriptor.statusValues === null) return [];
+  if (!hasFrontMatter(markdown)) return readLegacyStatusMarks(markdown, descriptor.type);
+  const mark = readFrontMatterStatus(markdown);
+  return mark === null ? [] : [mark];
 }
 async function attachStatus(fs2, artifacts) {
   const result = [];
@@ -4854,7 +4861,7 @@ function optionText2(value) {
   return typeof value === "string" ? value : void 0;
 }
 function registerListCommand(program2) {
-  program2.command("list").description("Lista artefactos de un tipo o de todos; --state active es el \xEDndice de activos").argument("[type]", "tipo de artefacto; sin \xE9l se listan todos, en el orden del cat\xE1logo").option("--parent <id|path>", "restringe al sub\xE1rbol de ese artefacto").option("--capability <name>", "restringe MD, API, FL y DG a una capability").option("--state <state>", "active, archived o all", "all").option("--with-status", "a\xF1ade el estado le\xEDdo de la marca oculta del documento").option("--limit <n>", "ventana: m\xE1ximo de artefactos a devolver").option("--offset <n>", "ventana: artefactos a saltar").action(async (type, opts, command) => {
+  program2.command("list").description("Lista artefactos de un tipo o de todos; --state active es el \xEDndice de activos").argument("[type]", "tipo de artefacto; sin \xE9l se listan todos, en el orden del cat\xE1logo").option("--parent <id|path>", "restringe al sub\xE1rbol de ese artefacto").option("--capability <name>", "restringe MD, API, FL y DG a una capability").option("--state <state>", "active, archived o all", "all").option("--with-status", "a\xF1ade el estado le\xEDdo del status del frontmatter del documento").option("--limit <n>", "ventana: m\xE1ximo de artefactos a devolver").option("--offset <n>", "ventana: artefactos a saltar").action(async (type, opts, command) => {
     const globals = readGlobalOptions(command);
     const { locate } = await openRepository(globals);
     const query = {

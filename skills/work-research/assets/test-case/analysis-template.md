@@ -1,4 +1,22 @@
+---
+type: analysis
+verdict: TC OK · Implementation OK     # TC OK · Implementation OK | TC OK · Implementation Wrong | TC Wrong | TC Incomplete | TC Coupled to Implementation | False Negative | Ambiguous Requirement | No Automated Coverage
+created: YYYY-MM-DD
+test_case: ../../test-cases/TC-XXX-slug.md
+parent: US-XXX                        # US-XXX | WI-XXX | FT-XXX; omitir si no hay artefacto padre
+requirement: AC-XXX                   # AC-XXX | BR-XX; omitir si no hay traza declarada (y señalarlo en el cuerpo)
+automated_test: "ruta/al/test › nombre del caso"   # omitir si no existe prueba automatizada (y señalarlo en el cuerpo)
+work_item:                            # work item del TC en el gestor vinculado — solo si el TC existe allí; omitir el objeto entero si no
+  system: ADO
+  id: 12345
+  url: https://…
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. No repetir ningún campo del
+frontmatter como línea `**Campo:**` bajo el título.
+
 Convención de placeholders: sustituir manualmente cada {{texto}}; no es un motor de plantillas.
 Eliminar este bloque y sustituir todos los {{…}} al publicar el documento final.
 
@@ -17,13 +35,6 @@ recomendación» del README; el detalle vive aquí.
 
 # Análisis del caso de prueba {{TC-XXX}} — {{título del TC}}
 
-**Veredicto:** {{TC OK · Implementation OK | TC OK · Implementation Wrong | TC Wrong | TC Incomplete | TC Coupled to Implementation | False Negative | Ambiguous Requirement | No Automated Coverage}}
-**Fecha:** {{YYYY-MM-DD}}
-**Caso de prueba:** {{[TC-XXX](ruta/al/TC-XXX-slug.md)}}
-**Artefacto padre:** {{US-XXX | WI-XXX | FT-XXX | N/A}}
-**Requisito verificado:** {{AC-XXX | BR-XX | ⚠️ sin traza declarada}}
-**Prueba automatizada:** {{`ruta/al/test › nombre del caso` | ⚠️ no existe}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item del caso de prueba en el sistema de seguimiento vinculado — solo si el TC existe allí; {{Sistema}} es el nombre corto que define el archivo de referencia del sistema (p. ej. "ADO" para references/azure-devops.md); omitir línea si no aplica}}
 
 ---
 

@@ -1,4 +1,28 @@
+---
+id: BUG-XXX
+type: incident
+status: Draft                         # Draft | Ready
+repository: sistema-bajo-prueba       # obligatorio para Ready: nombre del sistema bajo prueba tal como lo declara AGENTS.md
+test_case: ../../user-stories/US-XXX-slug/test-cases/TC-XXX-slug.md   # TC que detectó el hallazgo; si no nace de un TC, omitir y explicar en Descripción cómo se observó
+criterion: AC-XXX                     # identificador verbatim del criterio que el TC verifica (AC-XXX, 1.1, R-3, …); omitir si no hay TC
+parent: US-XXX                        # US-XXX | WI-XXX | FT-XXX del TC; omitir si no hay TC
+test_type: API Test                   # API Test | Visual Test | E2E | Manual — el nivel con el que se ejecutó
+automated_test: "nombre del caso en el runner — ruta/al/spec.ext"   # incluye el ID del TC; omitir si la ejecución fue manual
+environment: "QA · build 1.4.2 · Chrome 130"   # nombre del ambiente (nunca la URL ni valores del .env) · build/versión · navegador/dispositivo si aplica
+executed_at: "YYYY-MM-DD HH:mm"
+frequency: Always                     # Always | Intermittent (N of M runs)
+reported_by: "Nombre Apellido"        # indicado por el usuario; si no, `git config user.name`
+work_item:                            # work item `Bug` creado en el gestor vinculado — solo si se creó; omitir el objeto entero si no
+  system: ADO
+  id: 12345
+  url: https://…
+---
 <!--
+Frontmatter (bloque YAML de arriba, SIEMPRE en la línea 1): claves y valores enumerados en inglés; es lo que leen
+los demás skills. Contrato en ../../references/frontmatter.md. Dentro del bloque no van {{…}} (no es YAML válido):
+sustituir los valores de ejemplo y, si se quiere, borrar los comentarios `# …`. Las claves marcadas «omitir» se
+quitan enteras cuando no aplican. No repetir ningún campo del frontmatter como línea `**Campo:**` bajo el título.
+
 Plantilla de un INCIDENTE (BUG-XXX) en un repositorio SOLO DE PRUEBAS (`implementation.scope: tests`).
 Sustituye a `incident-template.md` en ese modo; con `scope: code` (o sin la clave) NO se usa.
 
@@ -15,25 +39,6 @@ Nunca incluir credenciales, tokens, cookies ni valores del `.env`: los ambientes
 por NOMBRE. El documento describe qué está mal, nunca cómo corregirlo.
 -->
 # BUG-XXX: {{título corto del hallazgo}}
-
-<!-- bug:status={{Draft|Ready}} -->
-<!--
-Esta marca se CONSERVA al publicar. Sus claves y sus valores van en inglés SIEMPRE, aunque el resto del
-documento esté en otro idioma: es el ancla que otros skills parsean, no contenido. La etiqueta visible
-de abajo sí se redacta en el idioma resuelto. Ver ../../references/verdicts.md.
--->
-**Estado:** {{Draft | Ready}}
-**Repositorio:** {{obligatorio para Ready: nombre del sistema bajo prueba tal como lo declara `AGENTS.md`}}
-**Caso de prueba:** {{enlace por ruta relativa al `TC-XXX-{slug}.md` que detectó el hallazgo + su título; si el hallazgo no nace de un TC, `N/A — {{cómo se observó}}`}}
-**Criterio de aceptación:** {{identificador verbatim del criterio que el TC verifica (AC-XXX, 1.1, R-3, …) + título corto; omitir línea si no hay TC}}
-**Artefacto padre:** {{US-XXX | WI-XXX | FT-XXX del TC, enlazado por ruta relativa; omitir línea si no hay TC}}
-**Tipo de prueba:** {{API Test | Visual Test | E2E | Manual — el nivel con el que se ejecutó}}
-**Prueba automatizada:** {{nombre del caso tal como lo reporta el runner (incluye el ID del TC) — `ruta/al/spec.ext`; omitir línea si la ejecución fue manual}}
-**Ambiente:** {{nombre del ambiente (nunca la URL ni valores del `.env`) · build/versión del sistema si se conoce · navegador/dispositivo si aplica}}
-**Fecha de ejecución:** {{YYYY-MM-DD HH:mm}}
-**Frecuencia:** {{Always | Intermittent (N de M ejecuciones)}}
-**Reportado por:** {{indicado por el usuario; si no, `git config user.name`}}
-**Work Item ({{Sistema}}):** {{enlace markdown al work item `Bug` creado en el sistema de seguimiento vinculado — solo si se creó; omitir línea si no aplica}}
 
 ## Descripción
 

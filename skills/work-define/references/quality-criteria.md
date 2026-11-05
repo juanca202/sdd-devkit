@@ -35,7 +35,7 @@ Tabla con las seis dimensiones (I, N, V, E, S, T); valor de cada una: `Met` / `N
 | **S** | Pequeña       | Cabe en un incremento razonable; si es grande, dividir. |
 | **T** | Testeable     | Los criterios de aceptación (`AC-XXX`) permiten verificación objetiva. |
 
-Si INVEST no es completamente valorable con la información disponible, la historia se crea con `Estado: Draft` y las lagunas documentadas en Observaciones. Las dependencias con otras US o sistemas afectan especialmente las dimensiones **I** y **E**.
+Si INVEST no es completamente valorable con la información disponible, la historia se crea con `status: Draft` y las lagunas documentadas en Observaciones. Las dependencias con otras US o sistemas afectan especialmente las dimensiones **I** y **E**.
 
 ---
 
@@ -47,7 +47,7 @@ Tabla con los seis criterios de la plantilla. Para cada uno: `Met` / `Not Met` /
 | ---------------------------------- | --------- |
 | Dependencias listas                | Prerrequisitos y dependencias con otras US o sistemas resueltos o confirmados. |
 | Inputs/outputs claros              | Entradas y salidas funcionales bien definidas. |
-| Repositorios definidos             | Campo **Repositorios:** de la cabecera poblado con el/los repositorio(s) git afectados, separados por coma. |
+| Repositorios definidos             | Clave `repositories` del frontmatter poblada con el/los repositorio(s) git afectados. Con `implementation.scope: tests` se pobla automáticamente con el propio repositorio de pruebas y la fila queda `Met`. |
 | Sin decisiones técnicas pendientes | No quedan decisiones técnicas abiertas que condicionen el alcance. |
 | Referencias de UI                  | Para US de UI: enlaces de diseño presentes — diseño/Figma aportado, o wireframes `WF-XXX` heredados del SRS (`wireframes/` de su carpeta) o generados por `/design-define` vía subagente (`wireframes/` de la US) y **aprobados** (uno `Proposed` deja el criterio en `Partial`) (`N/A` si no hay UI propia). |
 | Sin aclaraciones pendientes        | Observaciones vacías o «Ninguna»; nada pendiente con usuario/producto. |

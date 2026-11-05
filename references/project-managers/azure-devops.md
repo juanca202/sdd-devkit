@@ -21,13 +21,13 @@ qué tipo de work item crea, en qué jerarquía lo ancla y qué campos usa.
 | Forma | Dirección | Qué hace |
 |-------|-----------|----------|
 | `sync <#id \| URL \| <ID local>> […]` (**por defecto**) | **Bajada: ADO → repo** | Lee el work item y **crea** el documento local si no existe o lo **actualiza** si ya existe (diff por sección, se aplica solo lo confirmado, identificadores locales inmutables). **No escribe nada en ADO**: un cambio local que no esté en el tracker se conserva y se señala en el diff, pero no se sube. |
-| `sync <ID local \| #id> […] push` (o «sube», «publica», «actualiza en ADO») | **Subida: repo → ADO**, solo a petición explícita | Lee el work item y el documento local, presenta **el diff en sentido inverso** (qué tiene el documento que el work item no refleja) y, con confirmación, escribe en ADO **solo lo confirmado**, usando el mismo mapeo de campos que la creación (campo dedicado primero, Descripción como respaldo, mismos encabezados — contrato de reconstrucción íntegra). Si el documento local **no tiene** `Work Item (ADO)`, `push` ofrece **crearlo** en ADO con el tipo que corresponde al artefacto (`User Story`, `Task`, `Bug`, `Test Case`); el documento local **conserva su número** y solo se le añade la línea `Work Item (ADO)`. |
+| `sync <ID local \| #id> […] push` (o «sube», «publica», «actualiza en ADO») | **Subida: repo → ADO**, solo a petición explícita | Lee el work item y el documento local, presenta **el diff en sentido inverso** (qué tiene el documento que el work item no refleja) y, con confirmación, escribe en ADO **solo lo confirmado**, usando el mismo mapeo de campos que la creación (campo dedicado primero, Descripción como respaldo, mismos encabezados — contrato de reconstrucción íntegra). Si el documento local **no tiene** `work_item`, `push` ofrece **crearlo** en ADO con el tipo que corresponde al artefacto (`User Story`, `Task`, `Bug`, `Test Case`); el documento local **conserva su número** y solo se le añade la línea `work_item`. |
 
 Reglas comunes a ambas direcciones:
 
 - **Nunca sin modificador.** Un `#id` o una URL suelta no sincroniza en ningún sentido; se pregunta qué se espera.
 - **Conflicto** (el work item y el documento cambiaron ambos desde la última sincronización, o difieren en una misma sección): se muestra sección a sección y el usuario decide cuál prevalece; nunca se resuelve en silencio ni se fusiona texto.
-- **`push` nunca cambia el `id`, el tipo ni el padre** del work item, ni crea un segundo work item para un documento que ya tiene `Work Item (ADO)`; el estado (`System.State`) **no se toca** salvo petición expresa.
+- **`push` nunca cambia el `id`, el tipo ni el padre** del work item, ni crea un segundo work item para un documento que ya tiene `work_item`; el estado (`System.State`) **no se toca** salvo petición expresa.
 - **El `id` de ADO es el número local** en todo lo que nace de una bajada; en un `push` que crea el work item, el número local no cambia (ver «El ID de ADO manda» arriba: esa regla aplica a la creación desde el skill, no a un documento ya numerado).
 - **Degradación sin MCP**: la bajada pide el contenido pegado; la subida se limita a mostrar lo que habría que copiar en ADO y lo informa.
 - **Archivado**: ni `sync` ni `push` escriben dentro de un documento archivado (Regla 1 de `archive.md`); un `push` de un documento archivado es legítimo (sube lo que hay) si el usuario lo pide.
@@ -72,11 +72,14 @@ Comprobar si existe una herramienta MCP de Azure DevOps disponible en el cliente
 
 ## Vínculo con el work item
 
-Cuando el artefacto se sincroniza con ADO, registrar el vínculo en el campo `Work Item (ADO)` del
+Cuando el artefacto se sincroniza con ADO, registrar el vínculo en el campo `work_item` del
 encabezado del documento local:
 
 ```
-Work Item (ADO): [#<ado_id>](<url-al-work-item>)
+work_item:
+  system: ADO
+  id: <ado_id>
+  url: <url-al-work-item>
 ```
 
 Usar la URL que devuelva el MCP, o construirla como:
@@ -134,7 +137,7 @@ devuelto o requerido no encaja con lo esperado, **no adivinar**: mostrárselo al
 
 - Crear el archivo local con ID secuencial cuando el repo está vinculado a ADO **y** el MCP está
   disponible — siempre crear en ADO primero y usar su `id`.
-- Omitir el campo `Work Item (ADO)` en el encabezado cuando el artefacto fue creado o leído vía MCP.
+- Omitir el campo `work_item` en el encabezado cuando el artefacto fue creado o leído vía MCP.
 - Bloquear la creación porque no se pudo vincular el padre — es best-effort.
 - Usar un Título de más de 255 caracteres en lugar de una versión abreviada.
 - Enviar a ADO solo un resumen y omitir el resto de las secciones del `.md` — rompe la reconstrucción

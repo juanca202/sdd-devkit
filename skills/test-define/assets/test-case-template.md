@@ -1,7 +1,7 @@
 ---
 id: TC-XXX
 type: test-case
-status: Draft                         # Draft | Ready | Obsolete
+status: Draft                         # Draft | Ready | Obsolete — únicos valores; nunca Done/Passed
 test_type: [Unit, E2E]                # intención de diseño. [Manual] solo cuando el caso no se automatiza por diseño (no se combina). Tipos: Unit | Integration | API Test | Visual Test | E2E, uno o varios en ESE orden (de menor a mayor nivel). Con implementation.scope: tests, solo Manual | API Test | Visual Test | E2E (nunca Unit ni Integration)
 created: YYYY-MM-DD
 perspective: Happy Path               # Happy Path | Error | Boundary

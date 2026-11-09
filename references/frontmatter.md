@@ -37,12 +37,22 @@ visible (`**Estado:**`, `**Fecha de creación:**`, …) y a la marca oculta `<!-
 |-------|-------|-------------------|
 | `id` | Identificador del artefacto: `US-XXX`, `TK-XXX`, `WI-XXX`, `BUG-XXX`, `TC-XXX`, `SRS-XXX`, `PRD-XXX`, `RQ-XXX`, `FT-XXX`, `RS-XXX`, `WF-XXX` | Todos los que tienen id propio; los archivos secundarios de una carpeta (`discovery.md`, `validation.md`, `progress.md`, `story-validation.md`) no lo llevan |
 | `type` | Tipo del artefacto: `user-story` · `task` · `work-item` · `incident` · `test-case` · `srs` · `prd` · `rq` · `feature` · `research` · `discovery` · `validation` · `diagnosis` · `wireframe` · `progress` · `test-automation` · `story-validation` | Todos. Sustituye al prefijo de la antigua marca (`us:`, `tk:`, `wi:`…) |
-| `status` | Estado del artefacto. `Draft` · `Ready` en la mayoría; `Draft` · `Ready` · `Obsolete` en un TC; `Proposed` · `Approved` en un WF; `Pending` · `In Progress` · `Done` en `progress.md` y `test-cases-automation.md` | Todos |
+| `status` | Estado del artefacto. **Solo** `Draft` · `Ready` — no existe ningún otro valor; terminar de redactar el documento **no** lo pasa a `Done` | US, TK, WI, BUG, RQ, PRD, SRS, RS, FT |
+| `status` | `Draft` · `Ready` · `Obsolete` | TC |
+| `status` | `Proposed` · `Approved` | WF |
+| `status` | `Pending` · `In Progress` · `Done` — describe el **progreso de implementación**, no el estado de una especificación | `progress.md`, `test-cases-automation.md` únicamente |
 | `created` / `updated` | Fecha de creación y de última actualización | Donde la plantilla los define |
 | `repository` / `repositories` | Nombre git del repositorio (o lista, en una US) | TK, WI, BUG, US |
 | `assignee` | Persona asignada (`git config user.name` si no se indica) | TK, WI |
 | `created_by` / `reported_by` | Autor del documento / del reporte | RS, discovery, diagnosis, TC, BUG |
 | `work_item` | Objeto `{ system, id, url }` con el work item del gestor de proyectos vinculado: `system` es el nombre corto que define la referencia del proveedor (p. ej. `ADO`), `id` el identificador en el tracker, `url` el enlace. Se omite entero si no hay tracker o no se creó el work item | US, TK, WI, BUG, TC, RQ, FT, diagnosis |
+
+> **`Done` no es un estado de especificación.** `Pending` / `In Progress` / `Done` viven solo en `progress.md` y
+> `test-cases-automation.md` (los escribe `work-implement`). Una US, TK, WI, BUG, RQ, PRD, SRS o RS tiene exactamente
+> dos estados: `Draft` mientras falte algo del checklist de su skill, `Ready` cuando lo cumple todo. Haber terminado de
+> redactarla, haberla implementado o que su work item esté `Closed`/`Done` en el tracker **nunca** se traduce en
+> `status: Done`: el estado del tracker solo orienta entre `Draft` y `Ready`, y el cierre del trabajo se registra en
+> `progress.md` o archivando el artefacto.
 
 Las claves propias de cada tipo (`invest`, `dor`, `kind`, `test_type`, `perspective`, `priority`,
 `severity`, `reproducibility`, `timebox`, `resolution`…) y sus valores admitidos están en la **plantilla**

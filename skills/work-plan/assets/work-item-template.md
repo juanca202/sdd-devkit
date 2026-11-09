@@ -1,7 +1,7 @@
 ---
 id: WI-XXX
 type: work-item
-status: Draft                         # Draft | Ready
+status: Draft                         # Draft | Ready — únicos valores; nunca Done (eso va en progress.md)
 kind: refactor                        # bug-fix | refactor | dependency-update | optimization | security-update | test-improvement | documentation-update | operational-change (spike usa work-item-spike-template.md)
 repository: nombre-repo               # obligatorio para Ready: repositorio git al que afecta; inferido del repo (git remote / carpeta) o indicado por el usuario
 origin: ../../incidents/BUG-XXX-slug/README.md   # solo en un bug-fix que corrige un incidente registrado (BUG-XXX, o el work item del tracker si vive en otro repo) o en un WI que formaliza un spike (README.md del WI-XXX spike); omitir si no aplica

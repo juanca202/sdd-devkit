@@ -191,6 +191,7 @@ Un incidente con `Resolución: Open` o `Fixing (…)` cuenta como **incompleto**
 
 - Escribir en un incidente cómo solucionarlo (plan, archivos, diseño): un incidente describe qué está mal; la solución es un `WI` de tipo `bug-fix`.
 - Registrar un hallazgo como `WI-XXX`: el tipo `bug` ya no existe en los work items; el registro es siempre un `BUG-XXX`.
+- Escribir `status: Done` (o cualquier valor distinto de `Draft`/`Ready`; el cierre de un incidente es su línea `Resolución:`, no el `status`) en el frontmatter, p. ej. al terminar de redactar el documento o por copiar el estado `Closed`/`Done` del tracker: `Done` solo existe en `progress.md`.
 - Dejar un incidente en `Ready` sin evidencia verificable, o pegar en su evidencia tokens, cookies o valores del `.env`.
 - Enviar un incidente a `work-implement`, ofrecerle `test-define` o crearle `progress.md`.
 - Crear un `bug-fix`, refactor u otro WI en un repositorio con `implementation.scope: tests`: allí solo se registran incidentes; la remediación se planifica en el repositorio de la aplicación.

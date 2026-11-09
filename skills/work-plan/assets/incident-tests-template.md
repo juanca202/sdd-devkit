@@ -1,7 +1,7 @@
 ---
 id: BUG-XXX
 type: incident
-status: Draft                         # Draft | Ready
+status: Draft                         # Draft | Ready — únicos valores; nunca Done (eso va en progress.md)
 repository: sistema-bajo-prueba       # obligatorio para Ready: nombre del sistema bajo prueba tal como lo declara AGENTS.md
 test_case: ../../user-stories/US-XXX-slug/test-cases/TC-XXX-slug.md   # TC que detectó el hallazgo; si no nace de un TC, omitir y explicar en Descripción cómo se observó
 criterion: AC-XXX                     # identificador verbatim del criterio que el TC verifica (AC-XXX, 1.1, R-3, …); omitir si no hay TC

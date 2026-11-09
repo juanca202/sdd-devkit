@@ -38,6 +38,8 @@ Los cuatro flujos de análisis se solapan en sus señales de entrada; los criter
 
 ---
 
+> **Estados admitidos:** el `status` del frontmatter de un `RS-XXX` admite **únicamente** `Draft` o `Ready`. `Done`, `Pending`, `In Progress`, `Closed` o cualquier otro valor **no existen** para este artefacto: ni al terminar de redactarlo, ni al sincronizarlo desde un tracker cuyo work item esté cerrado (el estado del tracker solo orienta entre `Draft` y `Ready`). El cierre del trabajo se registra en `progress.md` (`work-implement`) o archivando el artefacto, nunca cambiando este campo.
+
 ## Salida estandarizada
 
 Toda investigación genera **una carpeta** `research/RS-XXX-{slug}/` con un `README.md` como **informe principal**, redactado con `[assets/research-template.md](assets/research-template.md)`. Puede contener **archivos adicionales** en la misma carpeta si el flujo los define, siempre referenciados desde el `README.md`.
@@ -446,6 +448,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 
 ## Anti-patterns
 
+- Escribir `status: Done` (o cualquier valor distinto de `Draft`/`Ready`) en el frontmatter, p. ej. al terminar de redactar el documento o por copiar el estado `Closed`/`Done` del tracker: `Done` solo existe en `progress.md`.
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 Transversales a todos los flujos. Los específicos de cada uno viven en su archivo de referencia.
 

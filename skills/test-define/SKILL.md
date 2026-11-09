@@ -12,6 +12,8 @@ Genera **casos de prueba documentados** (`TC-XXX`) a partir de los criterios de 
 
 > **Solo documentación de prueba:** este skill produce archivos `TC-XXX-{slug}.md` más un índice `test-cases/README.md`. No implementa código de prueba ni ejecuta tests. La única modificación permitida sobre el artefacto origen es agregar, bajo cada criterio de aceptación, la lista de casos de prueba que lo cubren (ver Paso 5); no altera ningún otro contenido del artefacto ni otros archivos existentes.
 
+> **Estados admitidos:** el `status` del frontmatter de un `TC-XXX` admite **únicamente** `Draft`, `Ready` u `Obsolete`. `Done`, `Pending`, `In Progress` o `Passed` **no existen** para este artefacto: el resultado de ejecutar o automatizar la prueba se registra en `test-cases-automation.md` (`work-implement`), nunca en este campo.
+
 ## Mapa de referencias
 
 Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle íntegro vive en `references/`.

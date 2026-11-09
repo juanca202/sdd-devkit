@@ -309,6 +309,7 @@ Aplica cuando el usuario pide completar un `PRD-XXX` para implementarlo («promu
 
 ## Anti-patterns
 
+- Escribir `status: Done` (o cualquier valor distinto de `Draft`/`Ready`) en el frontmatter, p. ej. al terminar de redactar el documento o por copiar el estado `Closed`/`Done` del tracker: `Done` solo existe en `progress.md`.
 - **Saltarse el Paso 0** y crear directamente un SRS (o un RQ) sin haber compuesto el parte de señales y resuelto el tipo de documento; o preguntar el tipo cuando una regla ya lo fija (modificador, `scope: tests` + dueño externo, tipo ya dicho en la sesión).
 - **Redactar un PRD como «SRS sin rigor»**: `FR-XXX` sin RFC 2119, sin prioridad o sin `AC-XXX`. El PRD recorta el *contexto de implementación*, no la calidad del requisito.
 - **Preguntar o inferir el stack en un PRD**, o rellenar las secciones «solo SRS» de `prd-template.md` en vez de dejarlas con su línea «Pendiente — se completa al promover a SRS»; o usar `srs-template.md` para un PRD.

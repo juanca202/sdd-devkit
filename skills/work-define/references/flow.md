@@ -310,6 +310,7 @@ Solo con la integración con el gestor de proyectos **activada** y el modificado
 - Crear una segunda US local para un work item que ya tiene carpeta o `work_item` registrado, en vez de actualizarla.
 - Completar al sincronizar los criterios, dependencias o repositorios con lo que «probablemente» quiso decir el work item, o conceder `Ready` solo porque en el tracker está activo.
 - Poner detalle técnico (clases, endpoints, esquemas) en el `README.md` en lugar de remitirlo a `architecture/` o `TK-XXX`.
+- Escribir `status: Done` (o cualquier valor distinto de `Draft`/`Ready`) en el frontmatter, p. ej. al terminar de redactar el documento o por copiar el estado `Closed`/`Done` del tracker: `Done` solo existe en `progress.md`.
 - Declarar `status: Ready` sin Criterios de aceptación completo o sin referencias de diseño cuando la historia involucra UI.
 - Declarar `status: Ready` con Observaciones que aún listen aclaraciones o pendientes sin resolver.
 - Resolver un conflicto entre `TK-XXX` y el `README.md` de la US degradando la US; la US prevalece.

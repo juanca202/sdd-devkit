@@ -1,7 +1,7 @@
 ---
 id: RQ-XXX
 type: rq
-status: Draft                         # Draft | Ready
+status: Draft                         # Draft | Ready — únicos valores; nunca Done (eso va en progress.md)
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 definition_owner: "Cliente — Gerencia de Tecnología"   # organización / área / persona responsable del documento fuente (texto libre)

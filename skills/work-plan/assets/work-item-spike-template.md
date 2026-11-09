@@ -1,7 +1,7 @@
 ---
 id: WI-XXX
 type: work-item
-status: Draft                         # Draft | Ready
+status: Draft                         # Draft | Ready — únicos valores; nunca Done (eso va en progress.md)
 kind: spike
 subtype: technical                    # technical | functional
 repository: nombre-repo               # obligatorio para Ready: repositorio git donde se ejecuta el experimento

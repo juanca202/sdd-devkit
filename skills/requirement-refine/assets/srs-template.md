@@ -1,7 +1,7 @@
 ---
 id: SRS-XXX
 type: srs
-status: Draft                         # Draft | Ready
+status: Draft                         # Draft | Ready — únicos valores; nunca Done (eso va en progress.md)
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 promoted_from: PRD-XXX                # solo si nació como PRD (mismo número) y se completó el bloque de ingeniería; omitir si no

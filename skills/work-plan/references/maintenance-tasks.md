@@ -296,6 +296,7 @@ Aplica cuando el trabajo no cabe en un único WI autocontenido (modo B). El prop
 - Crear o editar documentos en `docs/architecture/` directamente desde este skill; la especificación técnica se delega a `/design-define` vía subagente y aquí solo se enlaza la referencia devuelta.
 - Redactar en el WI la definición de un modelo, API o flujo (tablas de campos, contratos, diagramas) en lugar de referenciar su elemento en `architecture/`.
 - Publicar `status: Ready` sin criterios de aceptación verificables.
+- Escribir `status: Done` (o cualquier valor distinto de `Draft`/`Ready`) en el frontmatter, p. ej. al terminar de redactar el documento o por copiar el estado `Closed`/`Done` del tracker: `Done` solo existe en `progress.md`.
 - Publicar `status: Ready` con pendientes en Observaciones.
 - Publicar `status: Ready` sin el repositorio afectado en el frontmatter del WI.
 - Ignorar los WI existentes; duplicar o contradecir su alcance.

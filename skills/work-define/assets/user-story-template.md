@@ -1,7 +1,7 @@
 ---
 id: US-XXX
 type: user-story
-status: Draft                         # Draft | Ready
+status: Draft                         # Draft | Ready — únicos valores; nunca Done (eso va en progress.md)
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 repositories: [frontend-web, api-catalogo]

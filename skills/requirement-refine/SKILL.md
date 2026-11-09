@@ -26,6 +26,8 @@ Lo primero que resuelve el skill —antes de crear nada— es **qué documento s
 
 Plantillas canónicas: `assets/rq-template.md`, `assets/prd-template.md` y `assets/srs-template.md` — lee la del tipo antes de escribir el documento.
 
+> **Estados admitidos:** el `status` del frontmatter de un `RQ-XXX`, `PRD-XXX` o `SRS-XXX` admite **únicamente** `Draft` o `Ready`. `Done`, `Pending`, `In Progress`, `Closed` o cualquier otro valor **no existen** para este artefacto: ni al terminar de redactarlo, ni al sincronizarlo desde un tracker cuyo work item esté cerrado (el estado del tracker solo orienta entre `Draft` y `Ready`). El cierre del trabajo se registra en `progress.md` (`work-implement`) o archivando el artefacto, nunca cambiando este campo.
+
 ## Mapa de referencias
 
 Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle íntegro vive en `references/`.

@@ -1,7 +1,7 @@
 ---
 id: PRD-XXX
 type: prd
-status: Draft                         # Draft | Ready
+status: Draft                         # Draft | Ready — únicos valores; nunca Done (eso va en progress.md)
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 business_approval: "Pendiente"        # quién aprueba este PRD y en qué instancia (comité, cliente, sponsor); fecha si ya ocurrió (texto libre)

@@ -108,7 +108,7 @@ Todo esto son **identificadores**, no contenido:
   spike y sus valores `VIABLE` · `VIABLE_WITH_REWORK` · `NOT_VIABLE` · `INCONCLUSIVE` (consumidores:
   `work-define`, `work-plan` y el archivado; no es una puerta de cierre).
 - Los **valores** de los campos de estado, aunque su etiqueta visible sí se traduzca:
-  `Draft` / `Ready` / `Obsolete` en un TC, `Pending` / `In Progress` / `Done` en `progress.md` y en `test-cases-automation.md`,
+  `Draft` / `Ready` (únicos valores) en US, TK, WI, BUG, RQ, PRD, SRS y RS, `Draft` / `Ready` / `Obsolete` en un TC, `Pending` / `In Progress` / `Done` **solo** en `progress.md` y en `test-cases-automation.md` (nunca en el frontmatter de una especificación),
   `Unit` / `Integration` / `API Test` / `Visual Test` / `E2E` / `Manual` como tipo de prueba,
   `Proposed` / `Approved` como estado de revisión de un `WF-XXX`, `Proposed` / `Approved` como estado de un
   `FR-XXX`/`NFR-XXX`, `Open` / `Fixing (…)` / `Fixed (…)` / `Discarded` en la `Resolución` de un incidente `BUG-XXX` y `Open` / `Replanned (…)` / `Re-spiked (…)` /

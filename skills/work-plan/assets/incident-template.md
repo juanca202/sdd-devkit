@@ -1,7 +1,7 @@
 ---
 id: BUG-XXX
 type: incident
-status: Draft                         # Draft | Ready
+status: Draft                         # Draft | Ready — únicos valores; nunca Done (eso va en progress.md)
 created: YYYY-MM-DD
 repository: nombre-repo               # obligatorio para Ready: repositorio git donde se observa el defecto; inferido del repo (git remote / carpeta) o indicado por el usuario
 story: ../../user-stories/US-XXX-slug/README.md   # README.md de la US-XXX (o WI-XXX / FT-XXX) cuyo comportamiento documentado se incumple; N/A solo tras buscarla

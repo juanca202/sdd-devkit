@@ -1,7 +1,7 @@
 ---
 id: TK-XXX
 type: task
-status: Draft                         # Draft | Ready
+status: Draft                         # Draft | Ready — únicos valores; nunca Done (eso va en progress.md)
 story: ../README.md                   # README.md de la historia US-XXX
 repository: nombre-repo               # obligatorio: repositorio git al que afecta la tarea; inferido del repo (git remote / carpeta) o indicado por el usuario
 assignee: "Nombre Apellido"           # opcional: lo indicado por el usuario; si no, `git config user.name`; omitir si no aplica

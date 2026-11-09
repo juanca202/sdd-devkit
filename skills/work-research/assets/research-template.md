@@ -1,7 +1,7 @@
 ---
 id: RS-XXX
 type: research
-status: Draft                         # Draft | Ready
+status: Draft                         # Draft | Ready — únicos valores; nunca Done (eso va en progress.md)
 created: YYYY-MM-DD
 flow: free                            # free | decisions | test-case | legacy | migrate
 artifact: US-XXX                      # US-XXX | TK-XXX | WI-XXX; omitir si la investigación no tiene artefacto vinculado

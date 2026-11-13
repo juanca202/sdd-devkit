@@ -35,7 +35,7 @@ Toda compuerta de calidad incluye pruebas unitarias, sin excepción (es Bloquean
 | .NET | xUnit |
 | Rust | `cargo test` (stdlib) |
 
-Si el usuario ya tiene preferencia declarada (en `.agents/MEMORY.md`, en el manifiesto del proyecto, o porque lo indicó en el Paso 2), respetarla sobre esta tabla.
+Si el usuario ya tiene preferencia declarada (en `AGENTS.md`, en el manifiesto del proyecto, o porque lo indicó en el Paso 2), respetarla sobre esta tabla.
 
 ## 3. Cuándo sugerir capas adicionales (matiz por tipo de proyecto)
 

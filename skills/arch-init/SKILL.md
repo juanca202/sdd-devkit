@@ -1,13 +1,13 @@
 ---
 name: arch-init
 description: >-
-  Identifica el punto de partida de un proyecto (sin código / con código base / con implementación) e inicializa lo que falte de su harness multi-agente: repo git —o, si la solución abarca varios repositorios, un repo de especificaciones que los agrega como submódulos—, placeholders `AGENTS.md`/`.agents/MEMORY.md`/`.sdd-devkit/settings.json`/`docs/adr/README.md`/`docs/standards/README.md`/`README.md` (raíz, con descripción del proyecto), el stack tecnológico (investigando con `work-research` si hace falta), candidatos de ADR/estándares (vía `arch-discover` si ya hay implementación, por repositorio si es multi-repo) y la compuerta de calidad (vía `quality-check`). Cierra actualizando el stack y sugiriendo el siguiente paso (`requirement-refine`, `work-define`, `work-plan` o `test-define`). Activar al pedir inicializar o preparar uno o varios repos para agentes, configurar su harness, crear `AGENTS.md`/`MEMORY.md` desde cero, o mencionar "arch-init", "/arch-init", "inicializa el harness".
+  Identifica el punto de partida de un proyecto (sin código / con código base / con implementación) e inicializa lo que falte de su harness multi-agente: repo git —o, si la solución abarca varios repositorios, un repo de especificaciones que los agrega como submódulos—, placeholders `AGENTS.md`/`.sdd-devkit/settings.json`/`docs/adr/README.md`/`docs/standards/README.md`/`README.md` (raíz, con descripción del proyecto), el stack tecnológico (investigando con `work-research` si hace falta), candidatos de ADR/estándares (vía `arch-discover` si ya hay implementación, por repositorio si es multi-repo) y la compuerta de calidad (vía `quality-check`). Cierra actualizando el stack y sugiriendo el siguiente paso (`requirement-refine`, `work-define`, `work-plan` o `test-define`). Activar al pedir inicializar o preparar uno o varios repos para agentes, configurar su harness, crear `AGENTS.md` desde cero, o mencionar "arch-init", "/arch-init", "inicializa el harness".
 license: MIT
 ---
 
 # Skill: Inicialización del harness de agentes (arch-init)
 
-Inicializa, en un proyecto **en cualquier punto de partida**, las primeras instrucciones persistentes y compatibles con múltiples agentes: repositorio git, los archivos base del harness (`AGENTS.md`, `.agents/MEMORY.md`, `.sdd-devkit/settings.json`, `docs/adr/README.md`, `docs/standards/README.md`, `README.md` de la raíz), un stack tecnológico definido, una compuerta de calidad mínima y las decisiones relevantes documentadas como ADR/estándares.
+Inicializa, en un proyecto **en cualquier punto de partida**, las primeras instrucciones persistentes y compatibles con múltiples agentes: repositorio git, los archivos base del harness (`AGENTS.md`, `.sdd-devkit/settings.json`, `docs/adr/README.md`, `docs/standards/README.md`, `README.md` de la raíz), un stack tecnológico definido, una compuerta de calidad mínima y las decisiones relevantes documentadas como ADR/estándares.
 
 > **Completa siempre lo que falta.** El punto de partida que identifica el Paso 1 — sin código, con código base, o con implementación — solo decide **cómo** se llega a cada pieza (p. ej. un stack ya detectado salta el Paso 2). El resultado al cerrar es siempre el mismo checklist completo, sin importar de dónde partió. **Excepción: "Solo specs".** Un repositorio sin código de aplicación (nunca lo va a tener) no es un punto de partida más de esa escala, sino un tipo de repositorio distinto: su checklist de cierre es deliberadamente más corto — sin stack, sin candidatos de arquitectura ni compuerta de calidad, sin `docs/adr/`/`docs/standards/` propios — porque nada de eso aplica a un repositorio que solo contiene documentación.
 >
@@ -17,7 +17,7 @@ Inicializa, en un proyecto **en cualquier punto de partida**, las primeras instr
 
 ## Relación con el resto de SDD Devkit
 
-`arch-init` es el único punto de entrada que **crea** `AGENTS.md`, `.agents/MEMORY.md`, `.sdd-devkit/settings.json`, `docs/adr/README.md`, `docs/standards/README.md` y el `README.md` de la raíz desde cero — el resto de skills de arquitectura los dan por existentes (o toleran que estén vacíos):
+`arch-init` es el único punto de entrada que **crea** `AGENTS.md`, `.sdd-devkit/settings.json`, `docs/adr/README.md`, `docs/standards/README.md` y el `README.md` de la raíz desde cero — el resto de skills de arquitectura los dan por existentes (o toleran que estén vacíos):
 
 | Skill | Qué asume/hace, y cómo se relaciona con `arch-init` |
 | ----- | ----------------------------------------------------- |
@@ -64,14 +64,13 @@ No continúes hasta haber leído y aplicado `language.md`.
 
 | Archivo | Contenido | Se crea en |
 | ------- | --------- | ---------- |
-| `AGENTS.md` | Fuentes de contexto + reglas generales + sección `Stack tecnológico` | Paso 3 (stub) → Paso 5 (stack definitivo). **Por repositorio**: uno en la raíz principal y uno en cada submódulo si es multi-repo — ver la nota de abajo. |
-| `.agents/MEMORY.md` | Memoria persistente (preferencias y reglas operativas — **no** el stack, eso vive solo en `AGENTS.md`) | Paso 3 (stub). **Único**: solo en la raíz principal, nunca en un submódulo. |
+| `AGENTS.md` | Fuentes de contexto + reglas generales (las reglas y la **memoria persistente** del proyecto: normas de trabajo y preferencias operativas) + sección `Stack tecnológico` | Paso 3 (stub) → Paso 5 (stack definitivo). **Por repositorio**: uno en la raíz principal y uno en cada submódulo si es multi-repo — ver la nota de abajo. |
 | `.sdd-devkit/settings.json` | Configuración del plugin conforme a [`schemas/settings.schema.json`](../../schemas/settings.schema.json); **persiste el idioma** en la clave `language` | Paso 3. **Único**: solo en la raíz principal, nunca en un submódulo. |
 | `README.md` (raíz) | Descripción de qué hace el proyecto, 1-2 párrafos | Paso 3 (agregada/actualizada — sin plantilla de secciones fija). **Por repositorio**, igual que `AGENTS.md`: en la raíz principal describe la solución completa; en cada submódulo, ese repositorio en particular. |
 | `docs/adr/README.md` | Índice de ADRs vigentes | Paso 3 (stub) → Paso 5 (poblado por `arch-manage`) |
 | `docs/standards/README.md` | Índice de estándares vigentes | Paso 3 (stub) → Paso 5 (poblado por `arch-manage`) |
 
-Los archivos del harness que **ya existan** en el proyecto se revisan en el Paso 3. `AGENTS.md`, `.agents/MEMORY.md`, `.sdd-devkit/settings.json`, `docs/adr/README.md` y `docs/standards/README.md` deben estar en el formato de su plantilla — no admiten variantes, porque el resto del catálogo lee sus secciones por título; si existen con otro formato, la normalización se **delega en `/plugin-migrate`** (ver [3.1 Archivos fuera de formato](#31-archivos-fuera-de-formato)); en multi-repo, la verificación aplica **una vez por cada copia** de `AGENTS.md` (raíz principal y cada submódulo), cada una comparada contra la plantilla que le corresponde.
+Los archivos del harness que **ya existan** en el proyecto se revisan en el Paso 3. `AGENTS.md`, `.sdd-devkit/settings.json`, `docs/adr/README.md` y `docs/standards/README.md` deben estar en el formato de su plantilla — no admiten variantes, porque el resto del catálogo lee sus secciones por título; si existen con otro formato, la normalización se **delega en `/plugin-migrate`** (ver [3.1 Archivos fuera de formato](#31-archivos-fuera-de-formato)); en multi-repo, la verificación aplica **una vez por cada copia** de `AGENTS.md` (raíz principal y cada submódulo), cada una comparada contra la plantilla que le corresponde.
 
 > **`CLAUDE.md` ya no forma parte del harness.** Versiones anteriores de este plugin creaban en cada repositorio un `CLAUDE.md` con una sola línea (`@AGENTS.md`), como puntero de compatibilidad. **Este skill ya no lo crea, en ningún repositorio y bajo ninguna circunstancia** — `AGENTS.md` es la única fuente de instrucciones para agentes. Un `CLAUDE.md` que ya exista **no se toca aquí**: si tiene contenido propio, el Paso 3 lo trata como cualquier otro archivo ajeno (ver [3.1](#31-archivos-fuera-de-formato)); si es solo el puntero de una versión anterior, es `/plugin-migrate` quien ofrece eliminarlo. Su presencia o ausencia **nunca** hace que el harness se considere incompleto. `README.md` es distinto: **no tiene una plantilla de secciones fija**: es un documento libre del proyecto, y su única regla de conformidad es tener, cerca del inicio, la descripción de qué hace el proyecto (o ese repositorio, en un submódulo) en 1-2 párrafos, sin que `arch-init` toque el resto de su contenido — ver [3.4 README.md raíz — descripción del proyecto](#34-readmemd-raíz--descripción-del-proyecto).
 
@@ -86,8 +85,8 @@ Los archivos del harness que **ya existan** en el proyecto se revisan en el Paso
 > No crearlos en un submódulo sin preguntar (ni en uno "Solo specs" bajo ninguna circunstancia), ni asumir
 > que un submódulo comparte los del padre.
 >
-> **Único vs. por repositorio.** `.agents/MEMORY.md` y `.sdd-devkit/settings.json` son artefactos **únicos**
-> de la solución: viven solo en la raíz principal, nunca en un submódulo — y todos los skills los resuelven subiendo desde el directorio de trabajo hasta la raíz principal, así que dentro de un submódulo **no** se busca, crea ni referencia un `.sdd-devkit/settings.json` propio. `AGENTS.md` y
+> **Único vs. por repositorio.** `.sdd-devkit/settings.json` es un artefacto **único**
+> de la solución: vive solo en la raíz principal, nunca en un submódulo — y todos los skills lo resuelven subiendo desde el directorio de trabajo hasta la raíz principal, así que dentro de un submódulo **no** se busca, crea ni referencia un `.sdd-devkit/settings.json` propio. `AGENTS.md` y
 > `README.md` **no** son únicos: cada repositorio —la raíz principal y cada submódulo— tiene el suyo propio,
 > porque un agente puede trabajar directamente dentro de un submódulo sin pasar por la raíz principal y
 > necesita encontrar ahí sus propias instrucciones. `docs/adr/README.md`/`docs/standards/README.md` siguen
@@ -227,17 +226,16 @@ Si durante 2.1 o 2.2 hace falta alguna aclaración adicional del usuario para po
 Antes de escribir cualquier archivo, verificar si ya existe y aplicar [Idempotencia / reejecución](#idempotencia--reejecución): un archivo del harness que ya exista **nunca se deja con un formato distinto al de su plantilla**. Lo que sigue describe el caso en que el archivo **no** existe.
 
 **Multi-repo:** no todo este paso opera sobre un único repositorio. `AGENTS.md` y `README.md`
-(puntos 1 y 7) se crean **en el repositorio de especificaciones y en cada submódulo** — cada uno con su
-propio contenido, ver `references/multi-repo.md § 4`. `.agents/MEMORY.md`, `.sdd-devkit/settings.json` y
-`.gitignore` (puntos 2, 5 y 6) son **únicos**: solo en el repositorio de especificaciones, nunca en un
-submódulo. Los índices de arquitectura (puntos 3 y 4) siguen su propia lógica por raíz; ver la nota ahí y
+(puntos 1 y 6) se crean **en el repositorio de especificaciones y en cada submódulo** — cada uno con su
+propio contenido, ver `references/multi-repo.md § 4`. `.sdd-devkit/settings.json` y
+`.gitignore` (puntos 4 y 5) son **únicos**: solo en el repositorio de especificaciones, nunca en un
+submódulo. Los índices de arquitectura (puntos 2 y 3) siguen su propia lógica por raíz; ver la nota ahí y
 `references/multi-repo.md § 6`.
 
-1. **`AGENTS.md`** — copiar `assets/agents-template.md` tal cual (fuentes de contexto, el comentario de `# Reglas generales` y la sección `# Stack tecnológico` con su comentario, sin rellenar el stack). **Excepción — repositorio clasificado "Solo specs":** omitir, de la sección Fuentes de contexto, las líneas de `docs/adr/README.md` y `docs/standards/README.md` — este repositorio nunca los recibe (puntos 3-4 de abajo), así que apuntar a ellos dejaría un enlace roto. **Multi-repo:** en cada submódulo, copiar en cambio `assets/agents-submodule-template.md` — su sección Fuentes de contexto apunta al `.agents/MEMORY.md` y al `README.md` del repositorio de especificaciones en vez de tener los suyos propios, y a los índices de arquitectura locales o del padre según si ese submódulo recibió los suyos (puntos 3-4 de abajo, sujetos a la misma excepción de "Solo specs"); ver `references/multi-repo.md § 4.2`. El repositorio de especificaciones mismo es siempre "Solo specs" (§ 8 de esa referencia), así que su propio `AGENTS.md` **siempre** omite esas dos líneas — no es una excepción condicional ahí, es la regla.
-2. **`.agents/MEMORY.md`** — copiar `assets/memory-template.md` tal cual. **Multi-repo:** solo en el repositorio de especificaciones; nunca crear este archivo dentro de un submódulo.
-3. **`docs/adr/README.md`** — copiar `assets/adr-index-template.md` tal cual.
-4. **`docs/standards/README.md`** — copiar `assets/standards-index-template.md` tal cual.
-   Los puntos 3 y 4 se escriben en la **raíz de arquitectura** — pero **nunca** en un repositorio clasificado
+1. **`AGENTS.md`** — copiar `assets/agents-template.md` tal cual (fuentes de contexto, el comentario de `# Reglas generales` y la sección `# Stack tecnológico` con su comentario, sin rellenar el stack). **Excepción — repositorio clasificado "Solo specs":** omitir, de la sección Fuentes de contexto, las líneas de `docs/adr/README.md` y `docs/standards/README.md` — este repositorio nunca los recibe (puntos 2-3 de abajo), así que apuntar a ellos dejaría un enlace roto. **Multi-repo:** en cada submódulo, copiar en cambio `assets/agents-submodule-template.md` — su sección Fuentes de contexto apunta además al `AGENTS.md` y al `README.md` del repositorio de especificaciones (reglas generales y descripción de la solución completa), y a los índices de arquitectura locales o del padre según si ese submódulo recibió los suyos (puntos 2-3 de abajo, sujetos a la misma excepción de "Solo specs"); ver `references/multi-repo.md § 4.2`. El repositorio de especificaciones mismo es siempre "Solo specs" (§ 8 de esa referencia), así que su propio `AGENTS.md` **siempre** omite esas dos líneas — no es una excepción condicional ahí, es la regla.
+2. **`docs/adr/README.md`** — copiar `assets/adr-index-template.md` tal cual.
+3. **`docs/standards/README.md`** — copiar `assets/standards-index-template.md` tal cual.
+   Los puntos 2 y 3 se escriben en la **raíz de arquitectura** — pero **nunca** en un repositorio clasificado
    **"Solo specs"** (Paso 1.2): no hay código ahí que una decisión de arquitectura pueda describir, así que
    ni se preguntan ni se crean, sin excepción — esto no es un opt-in/opt-out, es automático. En el resto de
    casos, la raíz principal **siempre** los recibe —`AGENTS.md` los referencia y sin ellos el puntero queda
@@ -252,16 +250,16 @@ submódulo. Los índices de arquitectura (puntos 3 y 4) siguen su propia lógica
    `docs/adr/README.md` + `docs/standards/README.md`, con su serie `ADR-XXX` independiente. Este bootstrap
    es la **única** excepción a la regla de «una raíz por invocación» del catálogo. Ver
    `references/multi-repo.md § 6`.
-5. **`.sdd-devkit/settings.json`** — copiar `assets/settings-template.json`, reemplazando `<código>` en `language` por el idioma resuelto en [Resolución de idioma](#resolución-de-idioma) (ISO 639-1). El resto de claves son la **configuración mínima obligatoria** del schema y se escriben con los valores de la plantilla; no preguntarlas aquí ni ofrecer configurarlas — el usuario las ajusta editando el archivo. **Única excepción:** si el Paso 1.2 identificó un **proyecto de pruebas contra un sistema externo**, escribir `implementation.scope: "tests"` en lugar del `"code"` de la plantilla (y, si el archivo ya existía sin esa clave, agregarla con ese valor). Es lo que activa el modo pruebas de `work-implement`, `work-integrate` y `quality-check`. **Multi-repo:** solo en el repositorio de especificaciones; nunca crear este archivo dentro de un submódulo.
+4. **`.sdd-devkit/settings.json`** — copiar `assets/settings-template.json`, reemplazando `<código>` en `language` por el idioma resuelto en [Resolución de idioma](#resolución-de-idioma) (ISO 639-1). El resto de claves son la **configuración mínima obligatoria** del schema y se escriben con los valores de la plantilla; no preguntarlas aquí ni ofrecer configurarlas — el usuario las ajusta editando el archivo. **Única excepción:** si el Paso 1.2 identificó un **proyecto de pruebas contra un sistema externo**, escribir `implementation.scope: "tests"` en lugar del `"code"` de la plantilla (y, si el archivo ya existía sin esa clave, agregarla con ese valor). Es lo que activa el modo pruebas de `work-implement`, `work-integrate` y `quality-check`. **Multi-repo:** solo en el repositorio de especificaciones; nunca crear este archivo dentro de un submódulo.
 
 > **Este archivo es JSON validado por schema, no markdown.** Debe cumplir [`schemas/settings.schema.json`](../../schemas/settings.schema.json): las **6** claves de primer nivel (`language`, `specification`, `implementation`, `verification`, `git`, `projectManagement`) son **obligatorias** — la lista viva es la de `required` en el schema, no esta enumeración. `$schema` es opcional (ruta al schema para el editor; ningún skill la resuelve). Fuera de esa, el schema **no admite propiedades adicionales** y `language` solo acepta los códigos de su `enum`. Cuando `projectManagement` queda en `"enabled": false`, el schema **no exige** el resto de sus claves: dejarlas fuera. `specification` es distinto: `changesPath`, `currentPath`, `archivedPath` y `testCases` son obligatorios siempre. `testCases` es un **objeto** que exige `mode` (`ask`/`always`/`never`) y `createDetailsMode` (booleano), ambos obligatorios.
 
-6. **`.gitignore`** — asegurar que incluye `.sdd-devkit/.env`: es el lugar reservado para secretos locales del harness (credenciales del gestor de proyectos u otras herramientas); no se versiona. Si `.gitignore` no existe, crearlo con esa línea; si existe y no la tiene, añadirla. **No** crear el archivo `.env`. **Multi-repo:** solo en el repositorio de especificaciones — el `.env` que ignora tampoco existe en un submódulo.
-7. **`README.md` (raíz)** — asegurar que incluya, cerca del inicio del archivo, una descripción de **qué hace el proyecto** en **máximo 1-2 párrafos**. Es el sexto archivo del harness, pero no pasa por la comparación de plantilla fija del Paso 3 — ver [3.4](#34-readmemd-raíz--descripción-del-proyecto). **Multi-repo:** en cada submódulo se aplica la misma regla, pero describiendo **ese repositorio en particular** en vez de la solución completa; ver `references/multi-repo.md § 4.3`.
+5. **`.gitignore`** — asegurar que incluye `.sdd-devkit/.env`: es el lugar reservado para secretos locales del harness (credenciales del gestor de proyectos u otras herramientas); no se versiona. Si `.gitignore` no existe, crearlo con esa línea; si existe y no la tiene, añadirla. **No** crear el archivo `.env`. **Multi-repo:** solo en el repositorio de especificaciones — el `.env` que ignora tampoco existe en un submódulo.
+6. **`README.md` (raíz)** — asegurar que incluya, cerca del inicio del archivo, una descripción de **qué hace el proyecto** en **máximo 1-2 párrafos**. Es el quinto archivo del harness, pero no pasa por la comparación de plantilla fija del Paso 3 — ver [3.4](#34-readmemd-raíz--descripción-del-proyecto). **Multi-repo:** en cada submódulo se aplica la misma regla, pero describiendo **ese repositorio en particular** en vez de la solución completa; ver `references/multi-repo.md § 4.3`.
 
 ### Idempotencia / reejecución
 
-Un proyecto existente puede ya tener alguno de los archivos del harness, escrito a mano o por otra herramienta. **Ninguno de ellos se deja como estaba si no cumple su propia regla de conformidad.** Para los que tienen plantilla fija (`AGENTS.md`, `.agents/MEMORY.md`, `.sdd-devkit/settings.json`, `docs/adr/README.md`, `docs/standards/README.md`), el harness solo funciona si tienen la estructura que el resto del catálogo espera leer (secciones, títulos y marcadores de las plantillas de `assets/`); comparar su estructura contra la plantilla correspondiente y aplicar una de estas tres salidas. **Multi-repo:** para `AGENTS.md` esta comparación se repite **por cada copia** (raíz principal y cada submódulo), cada una contra la plantilla que le corresponde (`agents-template.md` en la raíz, `agents-submodule-template.md` en un submódulo) — ver `references/multi-repo.md § 4.5`.
+Un proyecto existente puede ya tener alguno de los archivos del harness, escrito a mano o por otra herramienta. **Ninguno de ellos se deja como estaba si no cumple su propia regla de conformidad.** Para los que tienen plantilla fija (`AGENTS.md`, `.sdd-devkit/settings.json`, `docs/adr/README.md`, `docs/standards/README.md`), el harness solo funciona si tienen la estructura que el resto del catálogo espera leer (secciones, títulos y marcadores de las plantillas de `assets/`); comparar su estructura contra la plantilla correspondiente y aplicar una de estas tres salidas. **Multi-repo:** para `AGENTS.md` esta comparación se repite **por cada copia** (raíz principal y cada submódulo), cada una contra la plantilla que le corresponde (`agents-template.md` en la raíz, `agents-submodule-template.md` en un submódulo) — ver `references/multi-repo.md § 4.5`.
 
 `CLAUDE.md` **no entra en esta tabla**: no es un archivo del harness. Si existe con contenido propio que en realidad es material de `AGENTS.md`, se trata como «contenido ajeno» (mostrarlo y proponer reubicarlo vía `/plugin-migrate`); si es solo el puntero `@AGENTS.md` de una versión anterior, no se toca aquí — `/plugin-migrate` es quien ofrece eliminarlo.
 
@@ -271,7 +269,7 @@ Un proyecto existente puede ya tener alguno de los archivos del harness, escrito
 | **Formato divergente** — es reconociblemente el mismo archivo (mismo propósito) pero le faltan secciones, tiene otros títulos, otro orden, o perdió los comentarios-marcador | **Delegar la normalización en `/plugin-migrate`** (ver 3.1) y continuar con el resto del flujo. |
 | **Contenido ajeno** — el archivo existe con un propósito distinto al del harness | No sobrescribir. Mostrar el contenido actual y preguntar si fusionar, reemplazar o dejar como está. |
 
-`README.md`, el sexto, no tiene plantilla de secciones ni pasa por esta tabla: su conformidad se decide solo por si ya trae, o no, una descripción vigente del proyecto — ver [3.4](#34-readmemd-raíz--descripción-del-proyecto).
+`README.md`, el quinto, no tiene plantilla de secciones ni pasa por esta tabla: su conformidad se decide solo por si ya trae, o no, una descripción vigente del proyecto — ver [3.4](#34-readmemd-raíz--descripción-del-proyecto).
 
 > **`.sdd-devkit/settings.json` se completa, no se reescribe.** Si ya existe, **nunca** se sobrescribe: conservar los valores del usuario y limitarse a **agregar las claves obligatorias que falten** con los valores de la plantilla. Si le falta `language`, escribir ahí el idioma resuelto. Si tiene claves o valores que el schema rechaza (p. ej. claves de una versión anterior del plugin), no corregirlos por cuenta propia: sugerir `/plugin-migrate` e informarlo en el cierre (Paso 5.3).
 
@@ -287,13 +285,13 @@ El stack que un `AGENTS.md` existente ya describa se conserva en cualquier caso 
 
 ### 3.3 Harness ya completo
 
-Si los seis archivos existen y **todos** están conformes (los cinco con plantilla fija conformes — normalizados vía `/plugin-migrate` si hizo falta — y `README.md` con su descripción vigente), informar que el proyecto ya está inicializado y preguntar si se desea continuar igualmente para revisar/completar el resto (Paso 4 en adelante) o terminar aquí.
+Si los cinco archivos existen y **todos** están conformes (los cuatro con plantilla fija conformes — normalizados vía `/plugin-migrate` si hizo falta — y `README.md` con su descripción vigente), informar que el proyecto ya está inicializado y preguntar si se desea continuar igualmente para revisar/completar el resto (Paso 4 en adelante) o terminar aquí.
 
 **Multi-repo:** esta verificación cubre el repositorio de especificaciones **y cada submódulo** — `AGENTS.md` y `README.md` deben estar conformes en todos ellos (cada uno contra la plantilla que le corresponde), no solo en la raíz principal, antes de dar el harness por completo.
 
 ### 3.4 README.md raíz — descripción del proyecto
 
-A diferencia de los otros cinco archivos del harness, `README.md` no tiene una plantilla de secciones fija: es un documento libre del proyecto, no una plantilla del catálogo. `arch-init` solo garantiza que tenga, cerca del inicio, una descripción de **qué hace el proyecto** — no toca el resto de su contenido (instalación, badges, licencia, contribución, tabla de contenidos, etc.), ni le impone secciones.
+A diferencia de los otros cuatro archivos del harness, `README.md` no tiene una plantilla de secciones fija: es un documento libre del proyecto, no una plantilla del catálogo. `arch-init` solo garantiza que tenga, cerca del inicio, una descripción de **qué hace el proyecto** — no toca el resto de su contenido (instalación, badges, licencia, contribución, tabla de contenidos, etc.), ni le impone secciones.
 
 1. **De dónde sale la descripción:**
    - **Sin código:** la necesidad capturada en el [Paso 2.1](#21-preguntar-qué-se-quiere-desarrollar) — qué problema resuelve y para quién.
@@ -355,7 +353,7 @@ Presentar la lista consolidada de candidatos agrupada por dominio funcional, con
 
 ### 5.2 Actualizar el stack
 
-Reemplazar el comentario bajo `# Stack tecnológico` en `AGENTS.md` con el stack definitivo — lenguaje(s), framework(s) y versión, gestor de paquetes/build, y las capas de testing configuradas en el 4.2. **`AGENTS.md` es la única fuente del stack** — no se repite en `.agents/MEMORY.md` (ese archivo no lleva sección de stack; ver plantilla). Este es el **único** momento del flujo en que se escribe esa sección.
+Reemplazar el comentario bajo `# Stack tecnológico` en `AGENTS.md` con el stack definitivo — lenguaje(s), framework(s) y versión, gestor de paquetes/build, y las capas de testing configuradas en el 4.2. **`AGENTS.md` es la única fuente del stack** — no se repite en ningún otro archivo del harness. Este es el **único** momento del flujo en que se escribe esa sección.
 
 **Repositorio "Solo specs":** no hay stack que escribir — reemplazar el comentario de la plantilla por
 `No aplica — repositorio de solo especificaciones` en vez de un stack. Sigue siendo el único momento del
@@ -373,7 +371,7 @@ suelto, sí tiene hijos cuyo stack resumir. Formato exacto en `references/multi-
 
 Confirmar al usuario que el harness inicial quedó listo, resumiendo: **topología** (repo único, o repo de especificaciones + submódulos con sus rutas), punto de partida (situación del Paso 1.2 — por submódulo si es multi-repo), repositorio git (creado o ya existía), archivos del harness creados, **archivos fuera de formato** (normalizados vía `/plugin-migrate`, o dejados como estaban por decisión del usuario — Paso 3.1), **un `.sdd-devkit/settings.json` preexistente cuyos valores el schema rechaza** (Paso 3, si se detectó), stack definitivo (por submódulo si aplica), compuerta de calidad configurada (por submódulo si aplica), y — si aplica — los ADR/estándares creados con sus rutas, agrupados por raíz de arquitectura: los del Paso 5.1 y, si la situación fue "con implementación", también los que creó `arch-discover` en su propia Fase 5 (retenidos del Paso 4.1).
 
-Después, ofrecer el siguiente paso natural con la herramienta de preguntas estructuradas — **es una sugerencia, no un paso bloqueante**: *"¿Quieres continuar con...?"*. Las opciones dependen del `implementation.scope` que quedó escrito en `.sdd-devkit/settings.json` (Paso 3, punto 5), en este orden:
+Después, ofrecer el siguiente paso natural con la herramienta de preguntas estructuradas — **es una sugerencia, no un paso bloqueante**: *"¿Quieres continuar con...?"*. Las opciones dependen del `implementation.scope` que quedó escrito en `.sdd-devkit/settings.json` (Paso 3, punto 4), en este orden:
 
 - **`implementation.scope: "code"`** (el valor por defecto) → `Iniciar un nuevo requerimiento (requirement-refine)` / `Escribir la primera historia de usuario (work-define)` / `Planificar tareas técnicas o de mantenimiento (work-plan)` / `Nada por ahora`.
 - **`implementation.scope: "tests"`** (proyecto de pruebas contra un sistema externo) → `Conectar con el gestor de proyectos y traer historias de usuario para planificar sus casos de prueba` / `Crear casos de prueba a partir de un requerimiento (requirement-refine → test-define)` / `Nada por ahora`. En este modo **no** se ofrecen `requirement-refine` como arranque de desarrollo (PRD/SRS), `work-define` (crear historias) ni `work-plan`: el repositorio no especifica ni construye el sistema, solo lo prueba; `requirement-refine` entra solo para formalizar el `RQ-XXX` que `test-define` necesita.
@@ -398,7 +396,6 @@ No confirmar el cierre antes de que `AGENTS.md` tenga el stack ya escrito.
 | `references/examples.md` | Ejemplos completos por situación (sin código, con código base, con implementación, reejecución, archivos fuera de formato, multirepo, solo specs, proyecto base por argumento). Leer ante dudas de comportamiento. |
 | `assets/agents-template.md` | Paso 3 — plantilla de `AGENTS.md` de la raíz principal (repo único, o repositorio de especificaciones en multi-repo). |
 | `assets/agents-submodule-template.md` | Paso 3 — plantilla de `AGENTS.md` de un submódulo, solo multi-repo (Fuentes de contexto distinta a la de la raíz). |
-| `assets/memory-template.md` | Paso 3 — plantilla de `.agents/MEMORY.md`. |
 | `assets/adr-index-template.md` | Paso 3 — plantilla de `docs/adr/README.md`. |
 | `assets/standards-index-template.md` | Paso 3 — plantilla de `docs/standards/README.md`. |
 | `assets/settings-template.json` | Paso 3 — plantilla de `.sdd-devkit/settings.json`. |
@@ -417,18 +414,18 @@ No confirmar el cierre antes de que `AGENTS.md` tenga el stack ya escrito.
 - Preguntar qué es una URL que vino con indicador (`base` / `existing`), o la topología cuando la cantidad de URLs ya la decide; y, al revés, **asumir** base o existente para una URL sin indicador. Tampoco fundir la pregunta base/existente con la de topología en un solo enunciado: son dos preguntas distintas, cada una con sus etiquetas fijas.
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - Rellenar `# Stack tecnológico` en `AGENTS.md` antes del Paso 5, aunque el stack ya se conozca desde el Paso 1 o el Paso 2.
-- Escribir el stack (o duplicarlo) en `.agents/MEMORY.md` — ese archivo no lleva sección de stack; `AGENTS.md` es la única fuente.
+- Crear un archivo de memoria aparte de `AGENTS.md` (en la raíz o en un submódulo): las reglas y la memoria persistente del proyecto viven **solo** en `AGENTS.md`, bajo `# Reglas generales`.
 - Dar por bueno un archivo del harness que ya existía solo porque existe, sin comparar su estructura contra la plantilla de `assets/` (Paso 3).
 - Normalizar por cuenta propia un archivo del harness fuera de formato en vez de delegarlo en `/plugin-migrate` — la lógica de migración vive solo en ese skill.
 - Descartar contenido del archivo original porque no encaja en ninguna sección de la plantilla, en vez de conservarlo al final.
 - Crear los índices de arquitectura de un submódulo sin preguntar, o dar por hecho que un submódulo comparte los del repo principal — cada raíz de arquitectura lleva los suyos y su propia serie `ADR-XXX`.
-- Sacar `AGENTS.md`, `.agents/MEMORY.md` o `.sdd-devkit/settings.json` de la raíz principal para meterlos en un submódulo: el harness es uno solo, solo los índices de arquitectura son por raíz.
+- Sacar `AGENTS.md` o `.sdd-devkit/settings.json` de la raíz principal para meterlos en un submódulo: el harness es uno solo, solo los índices de arquitectura son por raíz.
 - Inferir la topología (repo único vs. multi-repo) del contenido del directorio en vez de preguntarla en el Paso 1.0 — a diferencia de la situación del 1.2, no hay señal de código que la determine con confianza.
 - Ejecutar el Paso 1.1 (`git init`) tanto sobre el directorio de invocación como sobre el repositorio de especificaciones recién creado en modo multi-repo — el 1.0 ya lo resuelve una sola vez.
 - Clasificar la situación (1.2) o detectar/conseguir el stack (1.3/2) "para el proyecto" en general cuando es multi-repo, en vez de una vez por cada submódulo.
-- Crear `.agents/MEMORY.md` o `.sdd-devkit/settings.json` dentro de un submódulo, o duplicarlos ahí desde el repositorio de especificaciones — son artefactos únicos de la solución, solo en la raíz principal.
+- Crear `.sdd-devkit/settings.json` dentro de un submódulo, o duplicarlo ahí desde el repositorio de especificaciones — es un artefacto único de la solución, solo en la raíz principal.
 - **No** crear `AGENTS.md` o `README.md` en un submódulo (o copiar ahí, sin adaptar, el `AGENTS.md` de la raíz principal) — cada repositorio necesita el suyo propio, y el de un submódulo usa `assets/agents-submodule-template.md`, no `assets/agents-template.md`.
-- Escribir en el `AGENTS.md` de un submódulo una sección Fuentes de contexto que apunte a un `.agents/MEMORY.md` o `README.md` locales — esos archivos no existen ahí; el include debe apuntar al repositorio de especificaciones (`../.agents/MEMORY.md`, `../README.md`).
+- Copiar en el `AGENTS.md` de un submódulo las reglas generales de la solución, u omitir de su sección Fuentes de contexto los includes al repositorio de especificaciones (`@../AGENTS.md`, `@../README.md`) — las reglas y la descripción de la solución completa viven ahí, no en el submódulo.
 - Consolidar los candidatos de ADR/estándares (Paso 4) o la compuerta de calidad de varios submódulos en una sola lista o una sola invocación de `arch-manage` — cada submódulo es su propia raíz de arquitectura y se documenta por separado.
 - Escribir el stack completo de todos los submódulos en el `AGENTS.md` del repositorio de especificaciones en vez de en el `AGENTS.md` de cada uno — la raíz principal solo resume con una tabla que enlaza a cada uno (`references/multi-repo.md § 7`).
 - Duplicar la lista de submódulos en `.sdd-devkit/settings.json` o en cualquier otro archivo del harness — `.gitmodules` ya es la fuente de verdad.
@@ -440,7 +437,7 @@ No confirmar el cierre antes de que `AGENTS.md` tenga el stack ya escrito.
 - Dejar en el `AGENTS.md` de un repositorio "Solo specs" las líneas de Fuentes de contexto que apuntan a `docs/adr/README.md`/`docs/standards/README.md` — quedarían apuntando a archivos que nunca se crean.
 - Escribir un stack (o dejar el comentario de la plantilla sin resolver) en el `AGENTS.md` de un repositorio "Solo specs" en vez de `No aplica — repositorio de solo especificaciones`.
 - Redactar el stack fuera del Paso 5.2, o borrar el que un `AGENTS.md` existente ya describía.
-- Sobrescribir un `AGENTS.md`/`.agents/MEMORY.md`/etc. existente con contenido propio del usuario sin preguntar primero.
+- Sobrescribir un `AGENTS.md` (u otro archivo del harness) existente con contenido propio del usuario sin preguntar primero.
 - **Crear un `CLAUDE.md`** (ni siquiera como puntero `@AGENTS.md`, ni en la raíz ni en un submódulo): ya no forma parte del harness. Tampoco dar el harness por incompleto porque falte, ni borrar uno existente — eliminar el puntero de una versión anterior es de `/plugin-migrate`.
 - **Sobrescribir un `.sdd-devkit/settings.json` que ya existía** en vez de conservar sus valores y agregar solo las claves obligatorias que falten (Paso 3).
 - Escribir en `.sdd-devkit/settings.json` claves que el schema no declara (`$schema` incluido) o el resto de claves de un bloque que quedó en `"enabled": false` — `additionalProperties: false` rechaza el archivo.
@@ -464,7 +461,7 @@ No confirmar el cierre antes de que `AGENTS.md` tenga el stack ya escrito.
 - Escribir más de 1-2 párrafos de descripción en el `README.md` raíz, o agregarle secciones que el usuario no pidió (instalación, features, badges, tabla de contenidos, roadmap).
 - Sobrescribir, reordenar o reformular el resto del `README.md` raíz al agregar/actualizar la descripción — solo se toca ese fragmento.
 - Inventar la descripción del `README.md` raíz sin evidencia (README/manifiesto previos, código, o la necesidad del Paso 2.1) en vez de preguntarle al usuario en una sola pregunta abierta.
-- Tratar el `README.md` raíz como uno de los cinco archivos con plantilla fija: exigirle secciones, títulos u orden que su regla de conformidad (3.4) no pide.
+- Tratar el `README.md` raíz como uno de los cuatro archivos con plantilla fija: exigirle secciones, títulos u orden que su regla de conformidad (3.4) no pide.
 
 ---
 

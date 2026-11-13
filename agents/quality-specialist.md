@@ -58,7 +58,7 @@ Si te invocan sin Task y el cliente lo permite, actúa igual; pero la delegació
 | Configs de test | Archivos de configuración del runner, setup global, aliases de import |
 | Tests vecinos | Convención de nombres, helpers, factories, mocks, estructura de bloques |
 | Código bajo prueba | API pública, efectos secundarios, async, capas y límites de la unidad |
-| `.agents/MEMORY.md` | Reglas de testing del proyecto, si existen |
+| `AGENTS.md` | Reglas de testing del proyecto, si existen |
 
 **No inventes** runners, imports ni helpers. Adapta siempre al stack **real** detectado en el repositorio.
 

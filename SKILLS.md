@@ -16,7 +16,7 @@ Skills que preparan y mantienen la base del proyecto — arquitectura y control 
 
 **Cuándo:** preparar un proyecto (nuevo o existente, uno o varios repositorios) para trabajar con el plugin.
 
-**Produce:** los archivos base del proyecto (`AGENTS.md`, memoria, configuración, índices de arquitectura) y una compuerta de calidad mínima. Al terminar sugiere el siguiente paso: en un proyecto de código, iniciar un requerimiento (`requirement-refine`), `work-define` o `work-plan`; en un proyecto de pruebas (`implementation.scope: tests`), conectar el gestor de proyectos (con su URL) para traer historias y planificar sus casos de prueba, o crear casos de prueba desde un requerimiento (`requirement-refine` tipo RQ → `test-define`).
+**Produce:** los archivos base del proyecto (`AGENTS.md`, configuración, índices de arquitectura) y una compuerta de calidad mínima. Al terminar sugiere el siguiente paso: en un proyecto de código, iniciar un requerimiento (`requirement-refine`), `work-define` o `work-plan`; en un proyecto de pruebas (`implementation.scope: tests`), conectar el gestor de proyectos (con su URL) para traer historias y planificar sus casos de prueba, o crear casos de prueba desde un requerimiento (`requirement-refine` tipo RQ → `test-define`).
 
 **Según el punto de partida:**
 
@@ -44,7 +44,7 @@ Skills que preparan y mantienen la base del proyecto — arquitectura y control 
 **Si pasas URLs como argumento**, cada una lleva un indicador: `base` es un proyecto base (plantilla o semilla) — se clona y queda como remote `upstream`, no como `origin` —; `existing` es el repositorio del proyecto, que se clona tal cual. Una URL → monorepo; dos o más → multirepo (cada una es un submódulo del repo de especificaciones). Sin indicador, el skill pregunta cuál de los dos es.
 
 - «Inicializa el proyecto para agentes»
-- «Prepara este repo: AGENTS.md, MEMORY y arquitectura»
+- «Prepara este repo: AGENTS.md y arquitectura»
 - «Bootstrapea el harness; queremos una API en NestJS con Postgres»
 
 ---

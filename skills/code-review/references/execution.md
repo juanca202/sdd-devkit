@@ -78,7 +78,7 @@ BASE_COMMIT=$( git rev-parse --short "$BASE" )
 Antes de juzgar el diff, entender contra qué se juzga:
 
 1. **Patrones del repo:** estructura de carpetas, convenciones de naming, manejo de errores, inyección de dependencias, librerías ya adoptadas. Leer los vecinos de los archivos tocados, no solo el diff.
-2. **Límites arquitectónicos declarados:** si el repo documenta su arquitectura (`docs/architecture/`, ADRs, `.agents/MEMORY.md`), leer lo relevante para saber qué dependencias están permitidas entre capas.
+2. **Límites arquitectónicos declarados:** si el repo documenta su arquitectura (`docs/architecture/`, ADRs, `AGENTS.md`), leer lo relevante para saber qué dependencias están permitidas entre capas.
 3. **Criterios de aceptación** del artefacto origen, si el trabajo viene de una US/WI/FT: son la vara de la dimensión semántica.
 
 Un hallazgo que ignora el patrón vigente del repo o una decisión ya tomada en un ADR es ruido; este paso lo evita.

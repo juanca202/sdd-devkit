@@ -14,11 +14,11 @@ cada copia contra la plantilla que le corresponde.
 ## 1. Archivos del harness fuera del formato de su plantilla
 
 **Plantillas vigentes:** `${PLUGIN_ROOT}/skills/arch-init/assets/` — `agents-template.md` (raíz) /
-`agents-submodule-template.md` (submódulo), `memory-template.md`, `adr-index-template.md`,
-`standards-index-template.md`. **`CLAUDE.md` ya no tiene plantilla: dejó de ser parte del harness** — ver
-la familia 8.
+`agents-submodule-template.md` (submódulo), `adr-index-template.md`,
+`standards-index-template.md`. **`CLAUDE.md` y `.agents/MEMORY.md` ya no tienen plantilla: dejaron de ser parte
+del harness** — ver las familias 7 y 11.
 
-**Detección:** `AGENTS.md`, `.agents/MEMORY.md`, `docs/adr/README.md` o
+**Detección:** `AGENTS.md`, `docs/adr/README.md` o
 `docs/standards/README.md` existe pero es **reconociblemente el mismo archivo** (mismo propósito) con
 otro formato: le faltan secciones de la plantilla, tiene otros títulos u otro orden, o perdió los
 comentarios-marcador (`<!-- … -->` que `arch-manage` usa como punto de inserción en los índices).
@@ -30,7 +30,7 @@ preguntar si fusionar, reemplazar o dejar como está.
 1. **Estructura desde la plantilla:** secciones, títulos exactos, orden y comentarios-marcador.
    Restaurar todo marcador que falte — sin ellos `arch-manage` no tiene punto de inserción.
 2. **Reubicar el contenido propio** en la sección equivalente: reglas sueltas de un `AGENTS.md`
-   artesanal → `# Reglas generales`; preferencias de un `MEMORY.md` propio → `## Preferencias`;
+   artesanal → `# Reglas generales`;
    entradas ya listadas en un índice → líneas en el formato del marcador
    (`- [ADR-XXX: Título](ADR-XXX-slug.md)` / `- [Nombre del estándar](<slug>.md)`), ordenadas por id.
 3. **Excepción del stack:** si el `AGENTS.md` original ya describía el stack, ese contenido se
@@ -209,7 +209,7 @@ en cada repositorio un `CLAUDE.md` con una sola línea (`@AGENTS.md`) como punte
 
 ## 8. Referencias internas a rutas movidas
 
-**Detección:** tras aplicar las familias 3, 4, 6, 7, 9 o 10, quedan en el repositorio citas a las rutas antiguas
+**Detección:** tras aplicar las familias 3, 4, 6, 7, 9, 10 u 11, quedan en el repositorio citas a las rutas antiguas
 (secciones Referencias de US/TK/WI, índices, prosa de documentos del proyecto).
 
 **Normalización:** reescribirlas según el mapeo viejo → nuevo de esta corrida. Es el **último paso** de
@@ -299,3 +299,67 @@ documentación de arquitectura: `docs/architecture/[capability]/` no tiene `wire
    Referencias de US/TK/WI y cualquier documento de `docs/architecture/` que los citara, según el mapeo
    `docs/architecture/[capability]/wireframes/WF-XXX-…` → `<artefacto>/wireframes/WF-XXX-…`. En los SRS,
    quitar además la columna «Capability» de la tabla de la sección 11. El mapeo completo va en el reporte.
+
+## 11. `.agents/MEMORY.md` heredado del harness
+
+**Estructura vigente:** el harness **no incluye `.agents/MEMORY.md`**. Versiones anteriores de `arch-init`
+creaban ese archivo en la raíz principal como memoria de preferencias del proyecto, y lo incluían desde la
+sección Fuentes de contexto de `AGENTS.md` (`@.agents/MEMORY.md`; `@../.agents/MEMORY.md` en un submódulo).
+Hoy las reglas y la memoria persistente del proyecto viven **solo** en `AGENTS.md`, bajo
+`# Reglas generales`.
+
+**Detección** (cualquiera de estas señales; en multi-repo, por repositorio):
+
+- Existe `.agents/MEMORY.md`.
+- La sección Fuentes de contexto de un `AGENTS.md` conserva la línea `@.agents/MEMORY.md` (raíz) o
+  `@../.agents/MEMORY.md` (submódulo, a cualquier profundidad de `../`).
+
+**Normalización:**
+
+1. **Reubicar el contenido** de `.agents/MEMORY.md` en el `AGENTS.md` del **mismo repositorio**, con la
+   mecánica de la familia 1: preferencias y reglas operativas → `# Reglas generales`, conservando la
+   redacción; contenido sin sección equivalente → al final bajo su propio encabezado. Si el archivo describía
+   el stack y `AGENTS.md` no, aplica la excepción del stack de la familia 1; si ambos lo describen y
+   discrepan, no fusionar por cuenta propia: mostrar ambos y preguntar. Un `MEMORY.md` que es solo el stub
+   de la plantilla anterior (título, párrafo introductorio y comentario, sin entradas) no tiene nada que
+   reubicar.
+2. **Actualizar Fuentes de contexto:** quitar la línea `@.agents/MEMORY.md` del `AGENTS.md` de la raíz; en
+   el de cada submódulo, sustituir la línea `@../.agents/MEMORY.md` por la vigente de
+   `agents-submodule-template.md` (`@../AGENTS.md`, con la misma profundidad de `../`).
+3. **Eliminar `.agents/MEMORY.md`** una vez vaciado y confirmado el diff, y la carpeta `.agents/` si queda
+   vacía (si tiene otro contenido, es del usuario: no tocarla). La eliminación va en el plan con su propia
+   confirmación. Antes de proponerla, verificar que ese repositorio tiene su `AGENTS.md` — si no lo tiene, no
+   borrar nada: informarlo y sugerir `/arch-init` primero.
+
+Si el usuario declina, dejar el archivo intacto y registrar en el cierre que su contenido no lo verá el
+resto del catálogo, que lee `AGENTS.md`.
+
+## 12. Referencias a archivos del proyecto sin enlace
+
+**Regla vigente** (`${PLUGIN_ROOT}/references/linking.md`): en artefactos, documentos e informes, toda
+mención a un archivo o carpeta existente del proyecto —un identificador con archivo propio (`US-XXX`,
+`TK-XXX`, `WI-XXX`, `FT-XXX`, `RS-XXX`, `RQ-XXX`, `TC-XXX`, `SRS-XXX`, `ADR-XXX`, `MD-XXX`, `API-XXX`,
+`FL-XXX`, `DG-XXX`, `WF-XXX`), una ruta, «el README de X»— es un enlace Markdown que lo abre. Versiones
+anteriores del catálogo escribían el identificador o la ruta en código (`` `WF-001` ``,
+`` `docs/architecture/core/` ``) sin enlace.
+
+**Detección** (bajo `<changesPath>`, `<currentPath>`, `<archivedPath>`, `docs/architecture/`, `docs/adr/`,
+`docs/standards/` y `docs/audits/`): un identificador de la lista, o una ruta relativa a la raíz del
+repo, que aparece **fuera de un enlace** (`[...](...)`), fuera de un bloque de código o de un comando, y
+cuyo archivo **existe** en el repositorio. Se excluyen las marcas ocultas y el frontmatter, los campos
+que leen los scripts del harness, los nombres de rama y los mensajes de commit, y los identificadores sin
+archivo propio (`AC-XXX`, `FR-XXX`, `NFR-XXX`, `BR-XXX`, `CR-XXX`) — ver «Qué no se enlaza» en
+`linking.md`.
+
+**Normalización:** envolver cada mención en su enlace, con el identificador o la ruta como texto y la
+ruta **relativa al archivo que contiene el enlace** como destino, resolviendo siempre el archivo real en
+disco (`WF-001` → el único `WF-001-*.md` que exista en la carpeta que corresponda; una ruta en código →
+esa ruta). Si el identificador es ambiguo (dos artefactos con el mismo id en carpetas distintas, p. ej.
+uno activo y uno archivado), no adivinar: listar las opciones y preguntar. Dentro de un mismo párrafo
+basta enlazar la primera aparición; en tablas y listas, cada celda. **No se cambia la redacción**, solo
+se añade el enlace. Una mención cuyo archivo no existe no es un hallazgo de esta familia: se reporta
+como enlace roto o referencia huérfana en el cierre, sin inventar destino.
+
+Esta familia corre **después** de todas las que mueven rutas (3, 4, 6, 7, 9, 10) y de la 8, para enlazar
+contra el layout ya vigente. Como puede tocar muchos archivos, el plan la presenta con el **conteo por
+carpeta** y una muestra del antes/después; el usuario puede aprobarla por carpeta.

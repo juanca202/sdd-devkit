@@ -64,9 +64,8 @@ específico (una salida propia, una excepción de ruta).
 
 | Artefacto | Ruta | Skill propietario |
 |-----------|------|-------------------|
-| Memoria del harness | `.agents/MEMORY.md` | `arch-init` |
 | Configuración del plugin (incluye el idioma) | `.sdd-devkit/settings.json` | `arch-init` |
-| Instrucciones para agentes | `AGENTS.md` | `arch-init` |
+| Instrucciones para agentes (reglas y memoria persistente del proyecto) | `AGENTS.md` | `arch-init` |
 | ADR | `<raíz-arq>/docs/adr/ADR-XXX-[slug].md` | `arch-manage` · índice `<raíz-arq>/docs/adr/README.md`: lo crea `arch-init`, lo mantiene `arch-manage` |
 | Estándar de dominio | `<raíz-arq>/docs/standards/[slug].md` (o `<raíz-arq>/docs/standards/[slug]/README.md`) | `arch-manage` · índice `<raíz-arq>/docs/standards/README.md`: lo crea `arch-init`, lo mantiene `arch-manage` |
 | Fitness functions | `<raíz-arq>/scripts/arch/verify.<ext>` + `<raíz-arq>/scripts/arch/checks/[slug-estándar].<ext>` | `arch-manage` |

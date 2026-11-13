@@ -9,7 +9,7 @@ Procedimiento paso a paso para **crear** y **actualizar** Historias de Usuario, 
 Cuando se indique **preguntar, pedir, confirmar, validar o sugerir** algo al usuario, hacerlo mediante la **herramienta de preguntas estructuradas**, en lugar de redactar la pregunta como prosa libre. Reglas:
 
 - **Opciones cortas y mutuamente excluyentes** (2–4 por pregunta) cuando la respuesta admita categorías; usar entrada libre solo si no hay forma razonable de enumerar opciones (p. ej. el texto del valor de negocio).
-- **No repreguntar** lo que ya está respondido en el contexto, en `.agents/MEMORY.md` o en el `README.md` que se está editando.
+- **No repreguntar** lo que ya está respondido en el contexto, en `AGENTS.md` o en el `README.md` que se está editando.
 - **Recopilación inicial (antes de redactar):** el límite de **tres preguntas por bloque** es solo el tamaño de cada tanda, **no un tope al total de preguntas**. El agente debe preguntar **todo lo que necesite** hasta tener el contexto del requerimiento claro y libre de lagunas antes de redactar; si hacen falta más de tres preguntas, **encadenar tantas tandas como sea necesario** (no conformarse con una sola). La regla es agrupar los huecos en tandas —no ir descubriendo turno a turno— pero nunca omitir una pregunta necesaria por respetar el límite por bloque.
 - **Confirmaciones de flujo (después de redactar o en cierre Draft):** **una pregunta por turno** cuando sea posible; si hay más de tres lagunas, encadenar tandas como en el paso 6 del flujo de creación.
 - **Fallback**: si el agente no expone esta herramienta, formular la pregunta en prosa con opciones enumeradas (1, 2, 3…).

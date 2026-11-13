@@ -42,7 +42,7 @@ No continúes hasta haber leído y aplicado `escalation.md`.
 
 | Fuente | Qué extraer |
 |--------|-------------|
-| `.agents/MEMORY.md` | Reglas de dominio y convenciones del proyecto |
+| `AGENTS.md` | Reglas generales, convenciones y stack del proyecto |
 | `<changesPath>/user-stories/US-*/` | US existentes, numeración libre, `README.md`, `TK-*.md`, `progress.md` |
 | `<archivedPath>/user-stories/US-*/` · `<archivedPath>/work-items/WI-*/` | Trabajo **archivado por decisión del usuario** (normalmente cerrado e integrado, pero el estado no restringe el archivado: mirar su `progress.md`). Se lee (contexto e historial) y **cuenta para la numeración libre**: un ID archivado sigue ocupado. No se escribe dentro. |
 | `<changesPath>/work-items/WI-*/` | Tareas de mantenimiento existentes, con su `README.md` y `progress.md` |
@@ -69,7 +69,7 @@ Regla de fallback y numeración sobre `<archivedPath>/`: ver [`../references/arc
 | Glosario | `docs/glossary.md` |
 | ADR (decisión) | `docs/adr/ADR-XXX-<slug>.md` (id `ADR-XXX`) — relativo a la **raíz de arquitectura** |
 | Estándar de dominio (reglas vigentes) | `docs/standards/<dominio>.md` o `docs/standards/<dominio>/README.md` (identificado por nombre, sin código; agrupa requisitos `<estándar>/<requisito>` en RFC 2119) — relativo a la **raíz de arquitectura** |
-| Memoria del proyecto | `.agents/MEMORY.md` |
+| Reglas y memoria del proyecto | `AGENTS.md` |
 
 ## Prohibiciones absolutas
 

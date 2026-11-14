@@ -266,7 +266,7 @@ Un proyecto existente puede ya tener alguno de los archivos del harness, escrito
 | Estado del archivo existente | Qué hacer |
 | ---------------------------- | --------- |
 | **Ya conforme** — tiene todas las secciones de la plantilla, con sus títulos y en su orden | No tocar. Continuar como si ya estuviera creado. |
-| **Formato divergente** — es reconociblemente el mismo archivo (mismo propósito) pero le faltan secciones, tiene otros títulos, otro orden, o perdió los comentarios-marcador | **Delegar la normalización en `/plugin-migrate`** (ver 3.1) y continuar con el resto del flujo. |
+| **Formato divergente** — es reconociblemente el mismo archivo (mismo propósito) pero le faltan secciones, tiene otros títulos, otro orden, perdió los comentarios-marcador, o —en los índices `docs/adr/README.md` y `docs/standards/README.md`— lista sus entradas fuera de la tabla de la plantilla (`| ADR | Estado |` / `| Nombre | Estado |`; p. ej. como lista `- [ADR-XXX: Título](…)` de versiones anteriores, o sin la columna de estado), o —en el `AGENTS.md` de la raíz principal— le falta la regla fija «Especificaciones archivadas: solo lectura» de `# Reglas generales` | **Delegar la normalización en `/plugin-migrate`** (ver 3.1) y continuar con el resto del flujo. |
 | **Contenido ajeno** — el archivo existe con un propósito distinto al del harness | No sobrescribir. Mostrar el contenido actual y preguntar si fusionar, reemplazar o dejar como está. |
 
 `README.md`, el quinto, no tiene plantilla de secciones ni pasa por esta tabla: su conformidad se decide solo por si ya trae, o no, una descripción vigente del proyecto — ver [3.4](#34-readmemd-raíz--descripción-del-proyecto).

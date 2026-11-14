@@ -31,8 +31,14 @@ preguntar si fusionar, reemplazar o dejar como está.
    Restaurar todo marcador que falte — sin ellos `arch-manage` no tiene punto de inserción.
 2. **Reubicar el contenido propio** en la sección equivalente: reglas sueltas de un `AGENTS.md`
    artesanal → `# Reglas generales`;
-   entradas ya listadas en un índice → líneas en el formato del marcador
-   (`- [ADR-XXX: Título](ADR-XXX-slug.md)` / `- [Nombre del estándar](<slug>.md)`), ordenadas por id.
+   entradas ya listadas en un índice → **filas de la tabla** del marcador, con el `status` leído del
+   frontmatter de cada documento — nunca inferido del índice anterior: en el índice de ADR,
+   `| ADR | Estado |` con filas `| [ADR-XXX: Título](ADR-XXX-slug.md) | <status> |` ordenadas por id; en
+   el de estándares, `| Nombre | Estado |` con filas `| [Nombre del estándar](<slug>.md) | <status> |`
+   (o `<slug>/README.md`), en el orden en que ya estaban. Un índice que todavía lista sus entradas como
+   `- [ADR-XXX: Título](…)` / `- [Nombre del estándar](…)` (formato de versiones anteriores) o en una
+   tabla sin la columna `Estado` **es un hallazgo de esta familia** aunque conserve título y marcador:
+   se convierte a la tabla.
 3. **Excepción del stack:** si el `AGENTS.md` original ya describía el stack, ese contenido se
    **preserva** bajo `# Stack tecnológico` (reemplaza el comentario de la plantilla). Si no decía nada
    del stack, la sección queda con el comentario de la plantilla — la rellena `arch-init` en su cierre,

@@ -224,6 +224,13 @@ porque el estado no restringe el archivado. **Leerlo es siempre legítimo** (con
 regenerar el `progress.md` **para y avisa**: «`US-042` está archivado; para retomarlo hay que
 desarchivarlo primero». Desarchivar es mover la carpeta de vuelta a `<changesPath>` — decisión del usuario.
 
+> **La prohibición también rige fuera de los skills.** Esta referencia solo la lee un skill en ejecución;
+> para el trabajo libre con el agente, la misma regla vive en el `AGENTS.md` de la raíz principal, bajo
+> `# Reglas generales` («Especificaciones archivadas: solo lectura»): la escribe `arch-init` desde su
+> plantilla y `/plugin-migrate` la añade en proyectos anteriores. Un skill o agente que, al propagar un
+> cambio «por consistencia», encuentre que tocaría algo bajo `<archivedPath>`, **no lo edita**: lo lista
+> al usuario como desactualizado.
+
 > **Nunca crear la carpeta en la ruta activa porque «no estaba».** Deja dos carpetas con el mismo
 > identificador y el guard de destino lo descubre mucho después.
 
@@ -233,6 +240,7 @@ desarchivarlo primero». Desarchivar es mover la carpeta de vuelta a `<changesPa
 |-------|--------------------|---------|
 | **`coverage-verify`** | Su `criteria-coverage.md`, dentro de la carpeta del artefacto | Es un **derivado** del artefacto, no trabajo nuevo; revalidar la cobertura de algo archivado es una consulta. |
 | **`work-integrate`** | Solo la línea `Resolución:` de un `BUG-XXX` archivado, al integrar el `bug-fix` que lo cita (`Fixed (WI-YYY)`) | Es el cierre de trazabilidad del incidente, no trabajo nuevo. |
+| **`plugin-migrate`** | La **normalización estructural** (formato, frontmatter, enlaces, rutas) de artefactos archivados, dentro del plan que el usuario aprueba | Cambia la forma, no el contenido: lo archivado debe seguir siendo legible por el catálogo vigente. |
 | **`work-implement` en [modo corrección](../skills/work-implement/SKILL.md#modo-correccion-delegado-desde-quality-check)** | **Nada dentro de la carpeta.** Continúa el flujo en vez de parar; la nota de retrabajo va al informe de `quality-check`. | La corrección llega en el cierre, cuando el archivado puede haber ocurrido. |
 
 > **Efecto sobre `coverage-verify`.** Su `SPEC_FINGERPRINT` incluye las rutas de la carpeta; el `git mv`

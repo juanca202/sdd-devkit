@@ -363,3 +363,29 @@ como enlace roto o referencia huérfana en el cierre, sin inventar destino.
 Esta familia corre **después** de todas las que mueven rutas (3, 4, 6, 7, 9, 10) y de la 8, para enlazar
 contra el layout ya vigente. Como puede tocar muchos archivos, el plan la presenta con el **conteo por
 carpeta** y una muestra del antes/después; el usuario puede aprobarla por carpeta.
+
+## 13. `AGENTS.md` sin la regla de especificaciones archivadas
+
+**Estructura vigente:** el `AGENTS.md` de la **raíz principal** (el repositorio que contiene
+`.sdd-devkit/settings.json`; en multi-repo, el de especificaciones) trae bajo `# Reglas generales` la regla
+fija «Especificaciones archivadas: solo lectura» de `agents-template.md`. Como `AGENTS.md` se carga en
+toda sesión, la regla protege `<archivedPath>` también cuando se trabaja **sin invocar ningún skill** —
+la prohibición de escribir de `${PLUGIN_ROOT}/references/archive.md` solo la leen los skills. Versiones
+anteriores de `arch-init` no la incluían.
+
+**Detección:** ese `AGENTS.md` existe y su sección `# Reglas generales` no contiene la regla de la
+plantilla ni una regla propia equivalente (una que declare de solo lectura la carpeta de
+`specification.archivedPath` o su ruta literal). Los `AGENTS.md` de los submódulos **no** son hallazgo:
+heredan la regla por `@../AGENTS.md` y la plantilla de submódulo no la lleva. Si no hay `AGENTS.md` en la
+raíz principal, tampoco: sugerir `/arch-init`.
+
+**Normalización:** insertar la regla, copiada **tal cual** de
+`${PLUGIN_ROOT}/skills/arch-init/assets/agents-template.md` (con su comentario-marcador), como **primera**
+regla de `# Reglas generales`, sin tocar ni reordenar las reglas del usuario. Si el usuario ya tenía una
+regla propia sobre el mismo tema que la contradice (p. ej. «mantener sincronizados los specs archivados»),
+no decidir por cuenta propia: mostrar ambas y preguntar cuál queda. Cuando la familia 1 ya va a normalizar
+ese mismo `AGENTS.md`, la regla entra con la estructura de la plantilla y esta familia no añade un
+hallazgo aparte.
+
+Si el usuario declina, registrar en el cierre que los specs archivados quedan protegidos solo dentro de
+los skills del catálogo, no en el trabajo libre con el agente.

@@ -9,7 +9,7 @@ satisface**. Es un flujo de auditoría: no corrige el test ni el código.
 TC-XXX
     │
     ▼
-1. Localizar el test case          ← requisito/AC que verifica, comportamiento esperado
+1. Localizar el test case          ← requerimiento/AC que verifica, comportamiento esperado
     │
     ▼
 2. Investigar el contexto          ← US/WI/FT, AC, código, tests vecinos, ADRs
@@ -60,8 +60,8 @@ implementación lo satisface?». Confirmarla con el usuario antes de investigar.
 
 1. **Auditar, no reparar.** Este flujo emite un **veredicto**; corregir el TC es de
    `test-define`, corregir el código es de `work-plan` → `work-implement`.
-2. **El requisito manda, no el test.** La vara de medir es el `AC-XXX` o la regla de
-   negocio, no lo que el test afirma hoy. Si test y requisito discrepan, el sospechoso
+2. **El requerimiento manda, no el test.** La vara de medir es el `AC-XXX` o la regla de
+   negocio, no lo que el test afirma hoy. Si test y requerimiento discrepan, el sospechoso
    por defecto es el test.
 3. **Un test en verde no prueba nada por sí solo.** Hay que comprobar que **fallaría**
    si el comportamiento se rompiera. Esa pregunta —«¿podría estar pasando aunque
@@ -78,15 +78,15 @@ implementación lo satisface?». Confirmarla con el usuario antes de investigar.
    ejecución, resultado esperado, datos de prueba, estado. Si el TC vive en el gestor
    de proyectos, leerlo por MCP —incluidos los pasos en su campo dedicado— antes de
    preguntar nada.
-2. **Identificar qué requisito verifica:** el `AC-XXX` (o la regla de negocio `BR-XX`)
+2. **Identificar qué requerimiento verifica:** el `AC-XXX` (o la regla de negocio `BR-XX`)
    al que está trazado. Si el TC no declara trazabilidad, buscarla en el artefacto
    padre y **anotar la ausencia de traza como hallazgo**.
 3. **Identificar el comportamiento esperado** en una frase, con las palabras del
-   requisito, no con las del test. Esa frase es la referencia contra la que se
+   requerimiento, no con las del test. Esa frase es la referencia contra la que se
    comparará todo lo demás.
 
-Si no se puede establecer qué requisito verifica el TC —no hay traza y el artefacto no
-lo aclara—, **detenerse** y resolverlo con el usuario: sin requisito no hay vara de
+Si no se puede establecer qué requerimiento verifica el TC —no hay traza y el artefacto no
+lo aclara—, **detenerse** y resolverlo con el usuario: sin requerimiento no hay vara de
 medir.
 
 ## Paso 2 — Investigar el contexto necesario
@@ -109,8 +109,8 @@ Responder las cinco preguntas, **cada una con evidencia**:
 
 | # | Pregunta | Qué mirar | Si la respuesta es «no» |
 |---|----------|-----------|--------------------------|
-| 1 | **¿El escenario corresponde realmente al requisito?** | Comparar precondiciones y pasos contra el enunciado del `AC-XXX` | El TC verifica otra cosa: escenario incorrecto |
-| 2 | **¿El resultado esperado está correctamente definido?** | ¿Es observable, único y verificable? ¿Coincide con el requisito, no con la salida actual del sistema? | Resultado esperado mal definido o copiado del comportamiento real |
+| 1 | **¿El escenario corresponde realmente al requerimiento?** | Comparar precondiciones y pasos contra el enunciado del `AC-XXX` | El TC verifica otra cosa: escenario incorrecto |
+| 2 | **¿El resultado esperado está correctamente definido?** | ¿Es observable, único y verificable? ¿Coincide con el requerimiento, no con la salida actual del sistema? | Resultado esperado mal definido o copiado del comportamiento real |
 | 3 | **¿Falta algún caso?** | Límites, valor nulo/vacío, error, permisos, concurrencia, variantes del `AC-XXX` no cubiertas por ningún otro TC | TC Incomplete |
 | 4 | **¿Verifica comportamiento o detalles de implementación?** | Aserciones sobre estructura interna, llamadas a colaboradores, orden de invocación, campos privados | Test acoplado a la implementación |
 | 5 | **¿Podría estar pasando aunque exista un bug?** | Aserción ausente o débil; aserción sobre el valor equivocado; mock que devuelve el resultado correcto en vez de ejercitar el código; fixture que nunca alcanza la rama; expectativa congelada (snapshot regenerado); test en *skip*/filtrado/fuera del glob; error tragado (`catch` sin rethrow, promesa sin `await`) | **Falso negativo** — el hallazgo más grave de este flujo |
@@ -130,7 +130,7 @@ con severidad alta y se comprueba si el mismo patrón aparece en tests vecinos.
    automatizada y cuáles no — ahí suelen esconderse los falsos negativos.
 4. **Comparar implementación vs. comportamiento esperado**, condición por condición.
    Cuando discrepen, aislar el punto exacto de la divergencia (archivo y símbolo) y
-   decidir cuál de los dos está mal: el código o el requisito.
+   decidir cuál de los dos está mal: el código o el requerimiento.
 
 Si existe la prueba **automatizada** correspondiente al TC, ejecutarla cuando el
 entorno lo permita y contrastar el resultado real con lo que el TC afirma. Si no
@@ -143,10 +143,10 @@ secundarios):
 
 | Veredicto | Cuándo | Handoff |
 |-----------|--------|---------|
-| **TC OK · Implementation OK** | El TC verifica el requisito y el código lo cumple | Ninguno. Si el TC no tiene prueba automatizada, `coverage-verify` para confirmar la cobertura |
+| **TC OK · Implementation OK** | El TC verifica el requerimiento y el código lo cumple | Ninguno. Si el TC no tiene prueba automatizada, `coverage-verify` para confirmar la cobertura |
 | **TC OK · Implementation Wrong** | El TC está bien planteado y el código no lo satisface | Flujo **Analizar issue** de este mismo skill: hay un defecto que diagnosticar y corregir con el ciclo 🔴→🟢 |
-| **TC Wrong** | El escenario no corresponde al requisito, o el resultado esperado está mal definido (preguntas 1-2) | `test-define` para corregirlo |
-| **TC Incomplete** | Cubre el requisito solo en parte; faltan casos (pregunta 3) | `test-define` para ampliarlo o añadir TCs hermanos |
+| **TC Wrong** | El escenario no corresponde al requerimiento, o el resultado esperado está mal definido (preguntas 1-2) | `test-define` para corregirlo |
+| **TC Incomplete** | Cubre el requerimiento solo en parte; faltan casos (pregunta 3) | `test-define` para ampliarlo o añadir TCs hermanos |
 | **TC Coupled to Implementation** | Verifica detalles internos en lugar de comportamiento (pregunta 4) | `test-define` para reformularlo; si el arreglo es de la prueba automatizada, `work-plan` (WI `test-improvement`) |
 | **False Negative** | El TC pasa pese a existir un defecto (pregunta 5) | **Dos** handoffs: flujo **Analizar issue** para el defecto, y `test-define` (o WI `test-improvement`) para el test que no lo detecta |
 | **Ambiguous Requirement** | La discrepancia nace del `AC-XXX`, no del test ni del código | Flujo **Analizar decisiones pendientes** o `work-define`; no es un bug |
@@ -168,7 +168,7 @@ implementación vs. esperado, evidencia).
   traza que no tiene.
 - Corregir el TC o el código desde este flujo: solo se emite el veredicto.
 - Confundir «TC Wrong» con «implementación incorrecta»: hay que decidir cuál de
-  los dos discrepa del requisito, y sostenerlo con evidencia.
+  los dos discrepa del requerimiento, y sostenerlo con evidencia.
 - Registrar un falso negativo como simple «test incompleto»: la severidad es distinta.
 - Omitir los tests vecinos y quedarse solo con el TC de entrada — los solapamientos y
   contradicciones entre TCs son parte del hallazgo.

@@ -6,7 +6,7 @@ Esta plantilla es la referencia canónica del informe de auditoría de cumplimie
 (Architecture Compliance Checking). El skill arch-audit la lee antes de redactar cada informe.
 La UNIDAD AUDITABLE es el CRITERIO de cumplimiento (una fila `<estándar>/CR-XXX` dentro de un estándar de
 dominio técnico o funcional en docs/standards/ — que se identifica por su nombre, sin código),
-agrupado por su requisito (`<estándar>/<slug-requisito>`, una agrupación legible que da contexto) y
+agrupado por su requerimiento (`<estándar>/<slug-requerimiento>`, una agrupación legible que da contexto) y
 redactado de forma medible, con RFC 2119 cuando es normativa. Se audita el cumplimiento de esos
 criterios y de AGENTS.md contra el estado real del repo, citando el ADR de origen de cada criterio.
 Mantener la estructura: resumen → hallazgos agrupados por prioridad → fitness functions → reglas no
@@ -26,7 +26,7 @@ fecha/hora que lo confirma. Cada revalidación posterior agrega además una entr
 **Veredicto:** {{símbolo + etiqueta en el idioma resuelto: `✅` APPROVED | `❌` REJECTED | `⚠️` APPROVED_WITH_NOTES}} {{si hubo alguna revalidación, agregar aquí mismo "(revalidado YYYY-MM-DD HH:MM)" con la fecha/hora de la última entrada de ## Revalidaciones; omitir si no hubo ninguna}}
 **Fecha:** {{YYYY-MM-DD}}
 **Repositorio:** {{nombre/ruta del repo o subproyecto auditado}}
-**Alcance:** {{criterios auditados y estándares/requisitos de contexto cubiertos + fuentes AGENTS.md — p. ej. "14 criterios en 4 estándares (Testing, API, Persistence, Security) · 2 en Draft excluidos + AGENTS.md raíz"}}
+**Alcance:** {{criterios auditados y estándares/requerimientos de contexto cubiertos + fuentes AGENTS.md — p. ej. "14 criterios en 4 estándares (Testing, API, Persistence, Security) · 2 en Draft excluidos + AGENTS.md raíz"}}
 **Método:** {{descripción corta de lo que realmente se usó — herramientas de inspección y fitness functions ejecutadas, p. ej. "grep + lectura de package.json/composer.json; runner node scripts/arch/verify.mjs ejecutado". No se corre el build ni la suite completa.}}
 
 ## Resumen
@@ -52,8 +52,8 @@ Repetir el bloque siguiente por cada hallazgo. Si no hay hallazgos, escribir "Si
 
 ### {{api/CR-001 | AGENTS.md §Regla}} — {{título del criterio}}
 
-**Criterio:** {{api/CR-001 (requisito `api/api-protocol`, estándar de dominio «API Standards») | N/A si es regla de AGENTS.md}}
-**Fuente:** {{docs/standards/api.md → requisito «API protocol» → CR-001 | AGENTS.md §APIs}}
+**Criterio:** {{api/CR-001 (requerimiento `api/api-protocol`, estándar de dominio «API Standards») | N/A si es regla de AGENTS.md}}
+**Fuente:** {{docs/standards/api.md → requerimiento «API protocol» → CR-001 | AGENTS.md §APIs}}
 **Decisión de origen:** {{ADR-012 (docs/adr/ADR-012-graphql.md) | N/A si es regla de AGENTS.md}}
 **Enfoque:** {{bloqueante | warning | N/A si es regla de AGENTS.md}}
 **Regla auditada (RFC 2119):** {{enunciado con su palabra clave — p. ej. "Toda API expuesta **MUST** implementarse en GraphQL"}}
@@ -76,8 +76,8 @@ Repetir el bloque siguiente por cada hallazgo. Si no hay hallazgos, escribir "Si
 
 ### {{<estándar>/CR-XXX | AGENTS.md §Regla}} — {{título}}
 
-**Criterio:** {{<estándar>/CR-XXX (requisito `<estándar>/<slug-requisito>`, estándar «Nombre») | N/A}}
-**Fuente:** {{docs/standards/<slug>.md → requisito «…» → CR-XXX}}
+**Criterio:** {{<estándar>/CR-XXX (requerimiento `<estándar>/<slug-requerimiento>`, estándar «Nombre») | N/A}}
+**Fuente:** {{docs/standards/<slug>.md → requerimiento «…» → CR-XXX}}
 **Decisión de origen:** {{ADR-XXX | N/A}}
 **Enfoque:** {{bloqueante | warning | N/A}}
 **Regla auditada (RFC 2119):** {{enunciado}}
@@ -99,8 +99,8 @@ Repetir el bloque siguiente por cada hallazgo. Si no hay hallazgos, escribir "Si
 
 ### {{<estándar>/CR-XXX | AGENTS.md §Regla}} — {{título}}
 
-**Criterio:** {{<estándar>/CR-XXX (requisito `<estándar>/<slug-requisito>`, estándar «Nombre») | N/A}}
-**Fuente:** {{docs/standards/<slug>.md → requisito «…» → CR-XXX}}
+**Criterio:** {{<estándar>/CR-XXX (requerimiento `<estándar>/<slug-requerimiento>`, estándar «Nombre») | N/A}}
+**Fuente:** {{docs/standards/<slug>.md → requerimiento «…» → CR-XXX}}
 **Decisión de origen:** {{ADR-XXX | N/A}}
 **Enfoque:** {{bloqueante | warning | N/A}}
 **Regla auditada (RFC 2119):** {{enunciado}}
@@ -188,7 +188,7 @@ decisión sin criterio, pero que la próxima auditoría o el mantenimiento del h
 Ejemplos: una fitness function ejecutada individualmente porque no está registrada en el archivo de
 checks de su estándar (scripts/arch/checks/<slug-estándar>.<ext>); un runner o checks escritos en un
 lenguaje ajeno al stack del repo; un estándar o ADR fuera de la convención de arch-manage (sin frontmatter o sin la clave "domain", sin "emits",
-o con los criterios en tablas por requisito en vez de la tabla única); una dependencia que el
+o con los criterios en tablas por requerimiento en vez de la tabla única); una dependencia que el
 usuario rechazó instalar (Fase 3.5). Si no hay ninguna, omitir esta sección o escribir "Ninguna.".
 -->
 - {{criterio o archivo afectado}} — {{qué se observó y qué acción se sugiere, si aplica}}

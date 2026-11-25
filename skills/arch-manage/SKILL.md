@@ -4,14 +4,14 @@ description: >
   Crear o actualizar la arquitectura documentada del proyecto: Architecture Decision Records
   (ADR, en docs/adr/) y estándares de arquitectura por dominio (en docs/standards/), en la
   raíz del repositorio al que pertenece el código (repo principal o submódulo). Un ADR
-  registra el "por qué" de una decisión (histórico, inmutable); un estándar agrupa los requisitos
+  registra el "por qué" de una decisión (histórico, inmutable); un estándar agrupa los requerimientos
   verificables de un dominio — el "qué hay que cumplir hoy". Cada decisión que fija una regla
   actualiza el estándar de su dominio, no crea uno nuevo.
   Activar para documentar, registrar o cambiar el estado de una decisión arquitectónica o norma del
   proyecto, aunque no use las palabras "ADR" o "estándar".
   Frases: "registrar decisión", "documentar por qué usamos X", "decision record",
   "cambiar ADR a Accepted", "marcar como Superseded", "crear/actualizar ADR", "ADR-XXX", "definir un
-  estándar", "añadir un requisito".
+  estándar", "añadir un requerimiento".
   Usar también ante una tensión arquitectónica que deba quedar documentada.
 license: MIT
 ---
@@ -34,11 +34,11 @@ de esta versión: **el ADR es la decisión; el estándar es la norma de dominio 
 
 | | **ADR** (`docs/adr/`) | **Estándar** (`docs/standards/`) |
 |---|---|---|
-| Qué es | El registro de **una decisión** arquitectónica en un punto del tiempo | Un documento normativo de **dominio** (p. ej. *Testing Standards*) que **agrupa varios requisitos** |
+| Qué es | El registro de **una decisión** arquitectónica en un punto del tiempo | Un documento normativo de **dominio** (p. ej. *Testing Standards*) que **agrupa varios requerimientos** |
 | Granularidad | Fino: una decisión | **Amplio: un dominio** entero, alimentado por muchas decisiones |
 | Pregunta que responde | *¿Por qué* elegimos X sobre Y? | *¿Qué* debe cumplir el proyecto hoy en este dominio, y *cómo* se verifica |
 | Naturaleza | Histórico, narrativo, **inmutable** una vez `Accepted` | **Vivo y prescriptivo**; crece y se actualiza a medida que llegan nuevas decisiones |
-| Contenido | Contexto, drivers, decisión, alternativas, consecuencias | Requisitos redactados con **RFC 2119 / RFC 8174** (MUST/SHOULD/MAY…), cada uno con su descripción normativa y excepciones, y sus **criterios de cumplimiento** (`CR-XXX`) verificables, agrupados en una tabla única al final del documento |
+| Contenido | Contexto, drivers, decisión, alternativas, consecuencias | Requerimientos redactados con **RFC 2119 / RFC 8174** (MUST/SHOULD/MAY…), cada uno con su descripción normativa y excepciones, y sus **criterios de cumplimiento** (`CR-XXX`) verificables, agrupados en una tabla única al final del documento |
 | Verificación | No se audita en sí mismo (es historia) | **Es lo que audita `arch-audit`**: cada **criterio de cumplimiento** (CR) con su fitness function |
 | Relación | **Emite/actualiza** criterios de cumplimiento (`emits`) dentro de un estándar de dominio | **Nace de** los ADR que aportaron sus criterios (`source_adrs`) |
 
@@ -49,25 +49,25 @@ de esta versión: **el ADR es la decisión; el estándar es la norma de dominio 
 > un dominio de negocio/DDD (bounded context) ni un dominio de internet. Se agrupa por *aspecto de
 > arquitectura*, no por feature de negocio.
 
-La clave de esta versión: **un estándar no es "usar PHPUnit para unit tests".** Ese es un *requisito*.
+La clave de esta versión: **un estándar no es "usar PHPUnit para unit tests".** Ese es un *requerimiento*.
 El estándar es **"Testing Standards"**, el documento de dominio (identificado por su **nombre**, sin
-código) que contiene ese requisito («Unit testing») y todos los demás del mismo dominio.
+código) que contiene ese requerimiento («Unit testing») y todos los demás del mismo dominio.
 
 - Decides *"unit tests con PHPUnit"* → no creas el estándar "usar PHPUnit"; creas (o actualizas) el
-  estándar de dominio **`Testing Standards`** (`docs/standards/testing.md`) y añades dentro el requisito
+  estándar de dominio **`Testing Standards`** (`docs/standards/testing.md`) y añades dentro el requerimiento
   **Unit testing**: *"Las pruebas unitarias **DEBEN** implementarse con PHPUnit."* (en un estándar en
   inglés sería *"Unit tests **MUST** be implemented with PHPUnit."* — ver sección
   "Resolución de idioma" más abajo)
 - Después decides *"e2e con Playwright"* → **no** creas un estándar nuevo: **añades** al mismo
-  `Testing Standards` el requisito **E2E testing**: *"Las pruebas end-to-end **DEBEN** implementarse con
+  `Testing Standards` el requerimiento **E2E testing**: *"Las pruebas end-to-end **DEBEN** implementarse con
   Playwright."*
 
-Así el estándar de dominio va agregando requisitos. Dentro de cada requisito, la unidad **verificable
+Así el estándar de dominio va agregando requerimientos. Dentro de cada requerimiento, la unidad **verificable
 y trazable** es el **criterio de cumplimiento** (`CR-XXX`): cada CR mide algo concreto (p. ej. cobertura
-≥ 80%), traza a su ADR de origen y —si es automatizable— tiene su propia fitness function. Un requisito
+≥ 80%), traza a su ADR de origen y —si es automatizable— tiene su propia fitness function. Un requerimiento
 agrupa uno o varios CR.
 
-> **Requisitos en lenguaje normativo (RFC 2119 / RFC 8174).** Cada requisito del estándar se redacta
+> **Requerimientos en lenguaje normativo (RFC 2119 / RFC 8174).** Cada requerimiento del estándar se redacta
 > con la palabra clave normativa correspondiente, **en MAYÚSCULAS** (solo en mayúsculas tienen el
 > significado normativo, según RFC 8174) **y en el idioma de preferencia** (ver sección
 > "Resolución de idioma" más abajo):
@@ -86,9 +86,9 @@ agrupa uno o varios CR.
 > | OPTIONAL | OPCIONAL |
 
 > **Regla práctica:** toda decisión se registra como **ADR**. Si además establece una regla continua,
-> esa regla entra como **un requisito** en el estándar de su dominio (creándolo si el dominio aún no
+> esa regla entra como **un requerimiento** en el estándar de su dominio (creándolo si el dominio aún no
 > tiene estándar, o ampliándolo si ya existe). Una decisión puntual e histórica (p. ej. "en 2026
-> migramos de MySQL a Postgres") es un ADR sin requisito: no hay norma continua que cumplir.
+> migramos de MySQL a Postgres") es un ADR sin requerimiento: no hay norma continua que cumplir.
 
 Las plantillas canónicas están en `assets/adr-template.md` y `assets/standard-template.md`.
 **Leer la que corresponda antes de redactar.**
@@ -110,12 +110,12 @@ Según las respuestas, el input cae en uno de tres casos:
 
 | Caso | El input es… | Qué se produce | Ruta |
 |---|---|---|---|
-| **A. Solo ADR** | Una decisión puntual/histórica **sin** regla continua que cumplir (p. ej. "en 2026 migramos de MySQL a Postgres", "adoptamos Vite como bundler") | Un **ADR** con `emits: []`. **No** toca `docs/standards/` | [Crear una decisión (ADR)](#flujo-crear-una-decisión-adr-y-su-requisito-de-estándar), deteniéndose en el paso 4 (rama "No") |
-| **B. ADR + estándar** | Una decisión **que además** fija una regla continua y verificable (p. ej. "las APIs son GraphQL", "unit tests con PHPUnit y cobertura ≥ 80%") | Un **ADR** (el porqué) **y** su(s) **criterio(s) de cumplimiento** emitido(s) al estándar del dominio (el qué verificable) | [Crear una decisión (ADR) y su requisito de estándar](#flujo-crear-una-decisión-adr-y-su-requisito-de-estándar), completo |
-| **C. Solo estándar / requisito** | Una regla o convención verificable **sin decisión nueva** que documentar: refinar un umbral, aclarar una excepción, o añadir/editar un requisito o criterio en un dominio existente | Un **requisito/criterio** en un estándar. Idealmente traza a un ADR; si no existe, ofrecer crearlo, pero **se permite** dejar constancia de que su decisión de origen está pendiente | [Crear o actualizar un estándar / requisito directamente](#flujo-crear-o-actualizar-un-estándar--requisito-directamente) |
+| **A. Solo ADR** | Una decisión puntual/histórica **sin** regla continua que cumplir (p. ej. "en 2026 migramos de MySQL a Postgres", "adoptamos Vite como bundler") | Un **ADR** con `emits: []`. **No** toca `docs/standards/` | [Crear una decisión (ADR)](#flujo-crear-una-decisión-adr-y-su-requerimiento-de-estándar), deteniéndose en el paso 4 (rama "No") |
+| **B. ADR + estándar** | Una decisión **que además** fija una regla continua y verificable (p. ej. "las APIs son GraphQL", "unit tests con PHPUnit y cobertura ≥ 80%") | Un **ADR** (el porqué) **y** su(s) **criterio(s) de cumplimiento** emitido(s) al estándar del dominio (el qué verificable) | [Crear una decisión (ADR) y su requerimiento de estándar](#flujo-crear-una-decisión-adr-y-su-requerimiento-de-estándar), completo |
+| **C. Solo estándar / requerimiento** | Una regla o convención verificable **sin decisión nueva** que documentar: refinar un umbral, aclarar una excepción, o añadir/editar un requerimiento o criterio en un dominio existente | Un **requerimiento/criterio** en un estándar. Idealmente traza a un ADR; si no existe, ofrecer crearlo, pero **se permite** dejar constancia de que su decisión de origen está pendiente | [Crear o actualizar un estándar / requerimiento directamente](#flujo-crear-o-actualizar-un-estándar--requerimiento-directamente) |
 
 > **Independencia de los dos documentos.** Un ADR **puede no tener estándar** (`emits: []`, caso A) y un
-> requisito/criterio **puede no tener ADR** registrado (caso C). No forzar la creación del otro documento
+> requerimiento/criterio **puede no tener ADR** registrado (caso C). No forzar la creación del otro documento
 > solo por simetría: se crea el que el alcance del input justifique.
 
 ### Regla de oro: no mezclar el alcance de cada documento
@@ -125,7 +125,7 @@ El ADR y el estándar se enlazan **por referencia**, nunca duplicando contenido:
 - **El ADR contiene solo el *porqué*** — contexto, drivers, decisión, alternativas, consecuencias — y
   `emits` (las referencias `<estándar>/CR-XXX` que fija). **Nunca** aloja el enunciado normativo
   (MUST/SHOULD…) ni los criterios verificables: el ADR **emite** la regla, no la **contiene**.
-- **El estándar contiene solo el *qué hay que cumplir hoy*** — requisitos con su descripción normativa
+- **El estándar contiene solo el *qué hay que cumplir hoy*** — requerimientos con su descripción normativa
   (RFC 2119) y sus criterios de cumplimiento (`CR-XXX`) verificables — y `source_adrs`. **Nunca** aloja el porqué,
   los drivers ni las alternativas: eso es historia y vive en el ADR.
 - **El enlace es cruzado, no copiado:** `emits` (ADR) ↔ `source_adrs` (estándar). Si
@@ -194,7 +194,7 @@ Recopilar en **una sola tanda de preguntas** al inicio usando la herramienta de 
 | **Raíz de arquitectura** (`<raíz-arq>`): repo principal o submódulo | Detección de submódulos + alcance de la decisión | **Preguntar** si hay repositorios anidados; no preguntar si no los hay |
 | Problema / tensión arquitectónica | Descripción del usuario | Preguntar |
 | Decisión concreta | Descripción del usuario | Preguntar |
-| ¿Establece una regla continua? (→ requisito de estándar) y ¿de qué **dominio**? (ver [`references/functional-domains.md`](references/functional-domains.md)) | Inferir del alcance; confirmar con el usuario | Preguntar si es ambiguo |
+| ¿Establece una regla continua? (→ requerimiento de estándar) y ¿de qué **dominio**? (ver [`references/functional-domains.md`](references/functional-domains.md)) | Inferir del alcance; confirmar con el usuario | Preguntar si es ambiguo |
 | Decisores | Indicado por el usuario | Preguntar siempre |
 | Stack tecnológico | `package.json`, `pom.xml`, etc. | Preguntar |
 | Alternativas consideradas | Solo si el usuario las mencionó | Omitir la sección si no las mencionó |
@@ -206,16 +206,16 @@ Recopilar en **una sola tanda de preguntas** al inicio usando la herramienta de 
 
 ## Validación de conflictos (solo al crear)
 
-Antes de redactar un ADR nuevo o de añadir un requisito, **con la raíz de arquitectura ya resuelta**:
+Antes de redactar un ADR nuevo o de añadir un requerimiento, **con la raíz de arquitectura ya resuelta**:
 
-1. Leer títulos y la sección clave (`## Decisión` de los ADR; los requisitos de los estándares de `docs/standards/`) **dentro de `<raíz-arq>`**. Un ADR de otra raíz no es un conflicto: son series independientes. Si la decisión parece contradecir la arquitectura de la raíz principal desde un submódulo (o al revés), señalarlo al usuario como tensión entre raíces en vez de tratarlo como duplicado.
-2. Si hay conflicto (misma tecnología/componente ya cubierto por un ADR `Accepted` o por un requisito `Active`, contradicción directa, o duplicación):
+1. Leer títulos y la sección clave (`## Decisión` de los ADR; los requerimientos de los estándares de `docs/standards/`) **dentro de `<raíz-arq>`**. Un ADR de otra raíz no es un conflicto: son series independientes. Si la decisión parece contradecir la arquitectura de la raíz principal desde un submódulo (o al revés), señalarlo al usuario como tensión entre raíces en vez de tratarlo como duplicado.
+2. Si hay conflicto (misma tecnología/componente ya cubierto por un ADR `Accepted` o por un requerimiento `Active`, contradicción directa, o duplicación):
    - **No redactar**; informar al usuario con enlace(s) al artefacto en conflicto.
-   - Sugerir: (a) actualizar el existente, (b) crear ADR nuevo marcando el anterior como `Superseded`, o (c) ajustar el alcance/requisito.
+   - Sugerir: (a) actualizar el existente, (b) crear ADR nuevo marcando el anterior como `Superseded`, o (c) ajustar el alcance/requerimiento.
 
 ---
 
-## Flujo: Crear una decisión (ADR) y su requisito de estándar
+## Flujo: Crear una decisión (ADR) y su requerimiento de estándar
 
 > Aplica a los casos **A** (solo ADR) y **B** (ADR + estándar) de la [clasificación del input](#clasificar-el-input-antes-de-redactar-adr-estándar-o-ambos). El paso 4 bifurca entre ambos. Mantener separado el alcance: el ADR solo registra el porqué y `emits`; el enunciado normativo y los criterios viven en el estándar.
 
@@ -233,23 +233,23 @@ Antes de redactar un ADR nuevo o de añadir un requisito, **con la raíz de arqu
    - **No** (decisión puntual o histórica) → `emits: []`. No toca estándares. Fin del bloque de estándares.
    - **Sí** → identificar el **dominio técnico/funcional** clasificándolo con [`references/functional-domains.md`](references/functional-domains.md) (proponer otro solo si no encaja en ninguno) y continuar al paso 5.
 5. **Ubicar o crear el estándar de dominio** en `docs/standards/` (identificado por su **nombre**, sin código):
-   - **Si ya existe** un estándar para ese dominio (p. ej. `docs/standards/testing.md` o `docs/standards/testing/README.md`) → **actualizarlo**: añadir (o modificar) el **requisito** correspondiente, sin reescribir los requisitos existentes.
+   - **Si ya existe** un estándar para ese dominio (p. ej. `docs/standards/testing.md` o `docs/standards/testing/README.md`) → **actualizarlo**: añadir (o modificar) el **requerimiento** correspondiente, sin reescribir los requerimientos existentes.
    - **Si no existe** → **crearlo** desde `assets/standard-template.md` con `name` (p. ej. `Testing Standards`), `domain` (slug), `status: Draft` (o `Active` si ya rige), `last_update` = hoy y `source_adrs`.
      - **Forma simple:** `docs/standards/<slug>.md`.
      - **Forma con documentos adicionales:** si el estándar necesita archivos de apoyo (guías, ejemplos, matrices), crear la carpeta `docs/standards/<slug>/`, escribir el estándar en `docs/standards/<slug>/README.md` y colocar los documentos adicionales dentro de esa carpeta (enlazados con rutas relativas desde el estándar). Si un estándar simple pasa a necesitar extras, migrarlo de `<slug>.md` a `<slug>/README.md`.
-6. **Redactar el requisito y proponer sus criterios de cumplimiento** (campos exactos en [`references/conventions.md`](references/conventions.md)):
-   - Un bloque `## <Nombre del requisito>` con: `**ID:** <slug-requisito>`, `**Estado:** Active` (los otros valores, `Deprecated` y `Superseded`, son para retirarlo después sin borrarlo), el párrafo de qué es / cómo se usa / cómo se implementa, que **debe incluir el enunciado normativo con RFC 2119** (MUST/SHOULD/MAY… en mayúsculas), y `### Excepciones`. **No** incluir aquí los criterios de cumplimiento: van todos juntos en la tabla única `## Criterios de cumplimiento`, al final del documento (antes de `## Referencias`). La **verificación se registra por criterio (CR)**, no a nivel de requisito; el origen (ADR) se traza a nivel de documento en `source_adrs`.
-   - **Los CR no se escriben directamente: se proponen y el usuario elige.** Cada criterio define un **resultado arquitectónico medible y su umbral**, no una decisión de implementación — la tecnología o herramienta con que se logra o verifica pertenece a la implementación, salvo que sea explícitamente una restricción arquitectónica (ver el objetivo en [`references/fitness-functions.md`](references/fitness-functions.md)). Derivar los criterios candidatos del requisito, investigar el **mecanismo de verificación** de cada uno, presentarlos en una **tabla de propuesta simplificada** (`#`, criterio, enfoque y la herramienta con la que se verificaría — sin comandos ni código, que aún no existen) y preguntar al usuario **cuáles quiere crear** y **para cuáles quiere la fitness function ahora** — flujo completo en [`references/fitness-functions.md`](references/fitness-functions.md). Solo lo seleccionado se escribe.
-   - Añadir a la tabla única `## Criterios de cumplimiento` la fila (o filas) `CR-XXX` **seleccionadas**: `ID` (`CR-XXX`, correlativo único en el estándar), `Requisito` (el `ID` del requisito al que pertenece), `Descripción` (medible, con RFC 2119 si es normativa), `Automatizable` (yes/no), `Enfoque` (`bloqueante`/`warning`; por defecto `bloqueante`) y `Verificación` (si la verificación ya existe, el enlace al archivo donde vive — el archivo de checks del estándar, o la evidencia externa —; `Pending` si aún no).
+6. **Redactar el requerimiento y proponer sus criterios de cumplimiento** (campos exactos en [`references/conventions.md`](references/conventions.md)):
+   - Un bloque `## <Nombre del requerimiento>` con: `**ID:** <slug-requerimiento>`, `**Estado:** Active` (los otros valores, `Deprecated` y `Superseded`, son para retirarlo después sin borrarlo), el párrafo de qué es / cómo se usa / cómo se implementa, que **debe incluir el enunciado normativo con RFC 2119** (MUST/SHOULD/MAY… en mayúsculas), y `### Excepciones`. **No** incluir aquí los criterios de cumplimiento: van todos juntos en la tabla única `## Criterios de cumplimiento`, al final del documento (antes de `## Referencias`). La **verificación se registra por criterio (CR)**, no a nivel de requerimiento; el origen (ADR) se traza a nivel de documento en `source_adrs`.
+   - **Los CR no se escriben directamente: se proponen y el usuario elige.** Cada criterio define un **resultado arquitectónico medible y su umbral**, no una decisión de implementación — la tecnología o herramienta con que se logra o verifica pertenece a la implementación, salvo que sea explícitamente una restricción arquitectónica (ver el objetivo en [`references/fitness-functions.md`](references/fitness-functions.md)). Derivar los criterios candidatos del requerimiento, investigar el **mecanismo de verificación** de cada uno, presentarlos en una **tabla de propuesta simplificada** (`#`, criterio, enfoque y la herramienta con la que se verificaría — sin comandos ni código, que aún no existen) y preguntar al usuario **cuáles quiere crear** y **para cuáles quiere la fitness function ahora** — flujo completo en [`references/fitness-functions.md`](references/fitness-functions.md). Solo lo seleccionado se escribe.
+   - Añadir a la tabla única `## Criterios de cumplimiento` la fila (o filas) `CR-XXX` **seleccionadas**: `ID` (`CR-XXX`, correlativo único en el estándar), `Requerimiento` (el `ID` del requerimiento al que pertenece), `Descripción` (medible, con RFC 2119 si es normativa), `Automatizable` (yes/no), `Enfoque` (`bloqueante`/`warning`; por defecto `bloqueante`) y `Verificación` (si la verificación ya existe, el enlace al archivo donde vive — el archivo de checks del estándar, o la evidencia externa —; `Pending` si aún no).
    - **Enlazar en ambos sentidos:** añadir la referencia global de cada CR (`<slug-estándar>/CR-XXX`, p. ej. `testing/CR-001`) al `emits` del ADR, y el `ADR-XXX` a `source_adrs` del estándar (a nivel de documento).
-7. **Crear las fitness functions que el usuario seleccionó en el paso 6** — flujo completo en [`references/fitness-functions.md`](references/fitness-functions.md): **instalar y configurar** la herramienta ya decidida en la propuesta si hace falta, y registrar el chequeo en el **archivo de checks de su estándar** (`scripts/arch/checks/<slug-estándar>.<ext>`, un archivo por estándar, con la trazabilidad `CR-XXX` en comentarios y líneas de salida), asegurando el **runner** `scripts/arch/verify.<ext>` — ambos escritos en el **lenguaje del stack del repo** (p. ej. Node en un proyecto Angular/React/Vue). Al quedar registrado el chequeo, **volver a la fila del CR** y poner en `Verificación` el enlace al archivo de checks (los CR seleccionados sin fitness function se quedan en `Pending`). La verificación cuelga de **cada criterio de cumplimiento**, no del requisito, del ADR ni del estándar entero.
+7. **Crear las fitness functions que el usuario seleccionó en el paso 6** — flujo completo en [`references/fitness-functions.md`](references/fitness-functions.md): **instalar y configurar** la herramienta ya decidida en la propuesta si hace falta, y registrar el chequeo en el **archivo de checks de su estándar** (`scripts/arch/checks/<slug-estándar>.<ext>`, un archivo por estándar, con la trazabilidad `CR-XXX` en comentarios y líneas de salida), asegurando el **runner** `scripts/arch/verify.<ext>` — ambos escritos en el **lenguaje del stack del repo** (p. ej. Node en un proyecto Angular/React/Vue). Al quedar registrado el chequeo, **volver a la fila del CR** y poner en `Verificación` el enlace al archivo de checks (los CR seleccionados sin fitness function se quedan en `Pending`). La verificación cuelga de **cada criterio de cumplimiento**, no del requerimiento, del ADR ni del estándar entero.
 8. **Ofrecer instalar dependencias referenciadas ausentes** — flujo en [`references/dependencies.md`](references/dependencies.md) (no repite las herramientas de fitness function ya resueltas en el paso 7).
 9. **Actualizar los índices `README.md`** (los de `<raíz-arq>`, nunca los de otra raíz):
    - `docs/adr/README.md`: el índice es una **tabla** `| ADR | Estado |`. Añadir la fila `| [ADR-XXX: Título](ADR-XXX-slug.md) | <status> |` en orden ascendente de identificador: el nombre va **enlazado a su archivo** y `Estado` es el `status` del frontmatter del ADR, con su valor canónico sin traducir (`Draft` · `Proposed` · `Accepted` · `Deprecated` · `Superseded`). Si el ADR nuevo supersede a otro, actualizar en la misma pasada la fila del ADR reemplazado a `Superseded`. Nunca añadir entradas como lista (`- [ADR-XXX…]`): si el índice existente todavía usa lista u otro formato, no mezclar formatos — sugerir `/plugin-migrate` para normalizarlo a la tabla.
    - `docs/standards/README.md`: el índice es una **tabla** `| Nombre | Estado |`. Si el estándar de dominio es nuevo, añadir al final la fila `| [Nombre del estándar](<slug>.md) | <status> |` (forma simple) o `| [Nombre del estándar](<slug>/README.md) | <status> |` (forma carpeta): el nombre va **enlazado a su archivo** y `Estado` es el `status` del frontmatter del estándar, con su valor canónico sin traducir (`Draft` · `Active` · `Deprecated` · `Superseded`). Si ya existía, no duplicar: solo actualizar su `Estado` si el `status` cambió (p. ej. `Draft` → `Active`) o su enlace si migró de `<slug>.md` a `<slug>/README.md`. Igual que en el de ADR, nunca añadir entradas como lista: si el índice existente usa otro formato, sugerir `/plugin-migrate`.
    - **Si el índice no existe todavía y la carpeta ya tenía documentos previos** (p. ej. `docs/adr/ADR-001-*.md` y `ADR-002-*.md` ya existían pero nunca hubo `docs/adr/README.md`): al crear el índice por primera vez, listar **todos** los documentos existentes en la carpeta (`ls docs/adr/*.md` / `docs/standards/*.md` o `*/README.md`), no solo el que se acaba de crear, cada documento con el `status` leído de su propio frontmatter — el índice debe reflejar el estado real de la carpeta desde su primera versión, en el mismo orden ascendente que usaría en adelante. Si la carpeta no tenía nada más, el índice arranca con la única entrada nueva.
    - Crearlos desde su plantilla si no existen (`${PLUGIN_ROOT}/skills/arch-init/assets/adr-index-template.md` y `standards-index-template.md`: encabezado, marcador y tabla). Nunca reordenar ni eliminar entradas.
-10. **Confirmar** mostrando: la **raíz de arquitectura** usada (ruta relativa al repo principal; indicarlo explícitamente cuando no sea la raíz principal), ruta del ADR, estándar de dominio y requisito(s) añadido(s)/actualizado(s), líneas de índice, y —si aplica— la fitness function creada (en qué archivo de checks quedó), el comando del runner (`node scripts/arch/verify.mjs` en un repo Node, o el equivalente del stack; con el slug del estándar para correr solo ese) **y desde qué directorio se ejecuta** — el runner vive en `<raíz-arq>/scripts/arch/` y se corre desde `<raíz-arq>` y las dependencias instaladas.
+10. **Confirmar** mostrando: la **raíz de arquitectura** usada (ruta relativa al repo principal; indicarlo explícitamente cuando no sea la raíz principal), ruta del ADR, estándar de dominio y requerimiento(s) añadido(s)/actualizado(s), líneas de índice, y —si aplica— la fitness function creada (en qué archivo de checks quedó), el comando del runner (`node scripts/arch/verify.mjs` en un repo Node, o el equivalente del stack; con el slug del estándar para correr solo ese) **y desde qué directorio se ejecuta** — el runner vive en `<raíz-arq>/scripts/arch/` y se corre desde `<raíz-arq>` y las dependencias instaladas.
 
 ---
 
@@ -264,28 +264,28 @@ la decisión ya tomada — para cambiar de rumbo se crea un ADR nuevo que supers
 4. Si el nuevo estado es `Superseded`:
    - Marcar `status: Superseded` y `superseded_by: ADR-XXX`. Si el usuario no lo indicó, preguntar antes de guardar.
    - En el ADR reemplazante, fijar `supersedes: ADR-<anterior>`.
-   - **Revisar los criterios emitidos** (`emits`): si la decisión superseded había fijado criterios de cumplimiento (CR) que ya no rigen, actualizarlos o retirarlos de su estándar de dominio (marcando el `**Estado:**` del requisito, o el `status` del estándar entero, como `Deprecated`/`Superseded` según alcance), y enlazar el CR reemplazante si lo hay. Un ADR obsoleto no debe dejar criterios vivos huérfanos.
+   - **Revisar los criterios emitidos** (`emits`): si la decisión superseded había fijado criterios de cumplimiento (CR) que ya no rigen, actualizarlos o retirarlos de su estándar de dominio (marcando el `**Estado:**` del requerimiento, o el `status` del estándar entero, como `Deprecated`/`Superseded` según alcance), y enlazar el CR reemplazante si lo hay. Un ADR obsoleto no debe dejar criterios vivos huérfanos.
    Si el nuevo estado es `Deprecated`: `status: Deprecated`, actualizar `last_update`, registrar el motivo en `## Referencias` y aplicar el mismo repaso a sus criterios.
-5. Actualizar `docs/adr/README.md` si cambió el título **o el `status`**: la columna `Estado` de la fila del ADR debe coincidir siempre con el `status` de su frontmatter. En una supersesión se actualizan **las dos filas** (la del ADR reemplazado → `Superseded`; la del reemplazante, si su estado cambió). El formato de la fila es el del [paso 9 del flujo de creación](#flujo-crear-una-decisión-adr-y-su-requisito-de-estándar).
+5. Actualizar `docs/adr/README.md` si cambió el título **o el `status`**: la columna `Estado` de la fila del ADR debe coincidir siempre con el `status` de su frontmatter. En una supersesión se actualizan **las dos filas** (la del ADR reemplazado → `Superseded`; la del reemplazante, si su estado cambió). El formato de la fila es el del [paso 9 del flujo de creación](#flujo-crear-una-decisión-adr-y-su-requerimiento-de-estándar).
 6. **Confirmar** mostrando los campos modificados y el impacto en criterios emitidos.
 
 ---
 
-## Flujo: Crear o actualizar un estándar / requisito directamente
+## Flujo: Crear o actualizar un estándar / requerimiento directamente
 
 > Aplica al caso **C** de la [clasificación del input](#clasificar-el-input-antes-de-redactar-adr-estándar-o-ambos): una regla verificable sin decisión nueva. No arrastrar aquí el porqué/drivers/alternativas — eso, si hace falta documentarlo, es un ADR aparte.
 
 A veces se refina una regla sin una decisión nueva (afinar un umbral, ampliar el alcance, aclarar una
-excepción, añadir un requisito a un dominio existente). El estándar es **vivo**: se edita.
+excepción, añadir un requerimiento a un dominio existente). El estándar es **vivo**: se edita.
 
 1. **Todo criterio de cumplimiento (CR) debería trazar a un ADR** (`source_adrs`). Si se pide añadir un criterio
    sin decisión registrada, ofrecer crear primero el ADR de origen (flujo de arriba). Si el usuario
    prefiere no crearlo, permitir el CR dejando constancia de que su decisión de origen está
    pendiente de documentar (lo señalará `arch-audit`).
 2. Resolver `<raíz-arq>` si aún no está fijada e identificar el estándar de dominio **dentro de ella** (o crearlo, `docs/standards/<slug>.md` o `docs/standards/<slug>/README.md` si lleva documentos adicionales; dominio según [`references/functional-domains.md`](references/functional-domains.md)).
-3. Añadir o editar el bloque de requisito (`ID`, `status`, descripción con el enunciado normativo en RFC 2119, `Excepciones`). Si el cambio implica **CR nuevos**, pasar antes por la **propuesta y selección** de [`references/fitness-functions.md`](references/fitness-functions.md) (tabla simplificada de criterios candidatos → el usuario elige cuáles crear), y escribir solo los seleccionados como filas `CR-XXX` en la tabla única `## Criterios de cumplimiento`, al final del documento (`Requisito`, `Descripción`, `Automatizable`, `Enfoque`, `Verificación`; ver [`references/conventions.md`](references/conventions.md)). Actualizar `last_update` a hoy.
+3. Añadir o editar el bloque de requerimiento (`ID`, `status`, descripción con el enunciado normativo en RFC 2119, `Excepciones`). Si el cambio implica **CR nuevos**, pasar antes por la **propuesta y selección** de [`references/fitness-functions.md`](references/fitness-functions.md) (tabla simplificada de criterios candidatos → el usuario elige cuáles crear), y escribir solo los seleccionados como filas `CR-XXX` en la tabla única `## Criterios de cumplimiento`, al final del documento (`Requerimiento`, `Descripción`, `Automatizable`, `Enfoque`, `Verificación`; ver [`references/conventions.md`](references/conventions.md)). Actualizar `last_update` a hoy.
 4. Reevaluar la fitness function de cada CR afectado: si cambió su descripción, ajustar su chequeo en el archivo de checks de su estándar (`scripts/arch/checks/<slug-estándar>.<ext>`; ver [`references/fitness-functions.md`](references/fitness-functions.md)).
-5. Si el nuevo estado del estándar o de un requisito es `Deprecated`/`Superseded`, enlazar el reemplazo. Siempre que cambie el `status` **del estándar** (cualquier transición, también `Draft` → `Active`) o su nombre, actualizar su fila en `docs/standards/README.md`: la columna `Estado` debe coincidir con el `status` del frontmatter. El estado de un requisito suelto no se refleja en el índice.
+5. Si el nuevo estado del estándar o de un requerimiento es `Deprecated`/`Superseded`, enlazar el reemplazo. Siempre que cambie el `status` **del estándar** (cualquier transición, también `Draft` → `Active`) o su nombre, actualizar su fila en `docs/standards/README.md`: la columna `Estado` debe coincidir con el `status` del frontmatter. El estado de un requerimiento suelto no se refleja en el índice.
 6. **Confirmar** los cambios.
 
 ---
@@ -294,8 +294,8 @@ excepción, añadir un requisito a un dominio existente). El estándar es **vivo
 
 - **Narrar el flujo interno**: anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, o ir enumerando los pasos en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - Mezclar el alcance de ADR y estándar: meter el enunciado normativo (RFC 2119) o los criterios de cumplimiento dentro del ADR, o el contexto/alternativas/consecuencias dentro del estándar. Cada uno contiene solo lo suyo y se enlazan por referencia (`emits` ↔ `source_adrs`).
-- Crear un estándar nuevo por cada decisión en vez de añadir un requisito al estándar de dominio existente — el estándar es de **dominio**, no de decisión.
-- Redactar un ADR o un requisito sin pasar primero por la [Validación de conflictos](#validación-de-conflictos-solo-al-crear): duplicar o contradecir un ADR `Accepted` o un requisito `Active` ya existente.
+- Crear un estándar nuevo por cada decisión en vez de añadir un requerimiento al estándar de dominio existente — el estándar es de **dominio**, no de decisión.
+- Redactar un ADR o un requerimiento sin pasar primero por la [Validación de conflictos](#validación-de-conflictos-solo-al-crear): duplicar o contradecir un ADR `Accepted` o un requerimiento `Active` ya existente.
 - Reescribir la decisión de un ADR `Accepted` en vez de crear uno nuevo que lo supersede — un ADR es histórico e inmutable una vez aceptado.
 - Marcar un ADR `Superseded`/`Deprecated` sin revisar los criterios (`emits`) que fijó: dejar CR huérfanos vigentes en un estándar cuando la decisión que los originó ya no rige.
 - Escribir los `CR-XXX` en el estándar sin presentar antes la **tabla de propuesta** y dejar que el usuario elija cuáles crear — los criterios se proponen, no se imponen (`references/fitness-functions.md`).
@@ -326,13 +326,13 @@ mantiene ligero):
 **Plantillas y activos (`assets/` — copiar/rellenar al redactar):**
 
 - `assets/adr-template.md` — plantilla del ADR. Leer antes de escribir un ADR.
-- `assets/standard-template.md` — plantilla del estándar (requisitos + tabla de `CR-XXX`). Leer antes de crear/editar un estándar.
+- `assets/standard-template.md` — plantilla del estándar (requerimientos + tabla de `CR-XXX`). Leer antes de crear/editar un estándar.
 - `assets/arch-fitness/` — implementación de referencia del runner, en Node (`verify.mjs`, `checks/example.mjs.template`, `README.md` con el contrato). En un repo Node se copia al crear el runner; en otro stack se genera el equivalente en ese lenguaje con el mismo contrato.
 
 **Referencias de consulta (`references/` — leer bajo demanda):**
 
 - [`references/functional-domains.md`](references/functional-domains.md) — catálogo de los 9 dominios funcionales canónicos. Leer al **clasificar el dominio** de un estándar (casos B/C).
-- [`references/conventions.md`](references/conventions.md) — convenciones de identidad, numeración y **frontmatter** de ADR / estándar / requisito / CR. Leer al escribir frontmatter o identificadores.
+- [`references/conventions.md`](references/conventions.md) — convenciones de identidad, numeración y **frontmatter** de ADR / estándar / requerimiento / CR. Leer al escribir frontmatter o identificadores.
 - [`references/fitness-functions.md`](references/fitness-functions.md) — cómo **proponer los criterios (CR) con su mecanismo de verificación** para que el usuario elija cuáles crear, cómo crear la **fitness function** de los seleccionados, registrarla en el archivo de checks de su estándar y mantener el **runner** `scripts/arch/verify.<ext>`. Leer **antes de escribir CR nuevos**, al automatizar un CR o al tocar el runner.
 - [`references/dependencies.md`](references/dependencies.md) — flujo para ofrecer **instalar dependencias** ausentes que referencia la decisión. Leer tras crear los documentos si referencian una tecnología concreta.
 

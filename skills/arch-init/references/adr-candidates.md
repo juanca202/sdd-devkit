@@ -1,6 +1,6 @@
 # Candidatos de ADR/estándar desde las decisiones de arch-init
 
-Leer esta referencia en el **Paso 4.1** de `SKILL.md` (se vuelve a usar, sin releer, en el Paso 5.1). No inventa un catálogo genérico de "problemas típicos": usa el mismo modelo de **dominios funcionales** y de **decisión → requisito** que `arch-manage` y `arch-discover` ya definen.
+Leer esta referencia en el **Paso 4.1** de `SKILL.md` (se vuelve a usar, sin releer, en el Paso 5.1). No inventa un catálogo genérico de "problemas típicos": usa el mismo modelo de **dominios funcionales** y de **decisión → requerimiento** que `arch-manage` y `arch-discover` ya definen.
 
 ## 1. Dominios funcionales canónicos
 
@@ -38,7 +38,7 @@ Si el Paso 1.2 clasificó "con implementación", el Paso 4.1 delega en un **suba
 Si no hubo `arch-discover` (situación "con código base" o "sin código", tras el Paso 2 si aplicó), no hay nada que "descubrir" en código que todavía no existe o que es puro scaffold por defecto: los candidatos salen de las decisiones que **arch-init tomó en esta misma ejecución**, y **estos sí** alimentan la lista consolidada del § 3:
 
 1. **Del Paso 1.3 o del Paso 2** (según cuál haya aplicado): el stack elegido/detectado — lenguaje, framework principal, y cualquier librería clave que haya implicado comparar alternativas reales (no el resto de dependencias transitivas). Si vino de una investigación con `work-research` (Paso 2.2), ya se cuenta con "Alternativas consideradas" listas del informe (`RS-XXX`). Si el stack vino del Paso 1.3 (detectado, "con código base") no hay alternativas de primera mano — no inventarlas; documentar igual como ADR con `emits: []` si el usuario lo quiere, o dejarlo pasar si es la elección obvia y trivial de un scaffold.
-2. **Del Paso 4.2** (en **cualquier** situación, incluida "con implementación"): el framework de unit testing y, si se aceptaron, las capas adicionales (E2E, API testing) — esto se consolida en **un solo candidato** de dominio `testing`, con un requisito por capa (igual que el ejemplo canónico de `arch-discover`: "unit tests con X" + "e2e con Y" → un estándar *Testing Standards* con dos requisitos). Este candidato **sí** entra a la lista consolidada del § 3 aunque la situación haya sido "con implementación", porque es una decisión que toma `arch-init` en el 4.2, no algo que `arch-discover` pudiera haber minado del código existente.
+2. **Del Paso 4.2** (en **cualquier** situación, incluida "con implementación"): el framework de unit testing y, si se aceptaron, las capas adicionales (E2E, API testing) — esto se consolida en **un solo candidato** de dominio `testing`, con un requerimiento por capa (igual que el ejemplo canónico de `arch-discover`: "unit tests con X" + "e2e con Y" → un estándar *Testing Standards* con dos requerimientos). Este candidato **sí** entra a la lista consolidada del § 3 aunque la situación haya sido "con implementación", porque es una decisión que toma `arch-init` en el 4.2, no algo que `arch-discover` pudiera haber minado del código existente.
 
 No proponer candidatos triviales (la elección obvia por defecto de un scaffold sin comparación real) — mismo criterio de exclusión que `arch-discover`.
 

@@ -99,7 +99,7 @@ Reglas de la confirmación:
 
 | Artefacto | Origen | Destino |
 |-----------|--------|---------|
-| Especificación de requisitos | `<changesPath>/requirements/SRS-XXX-{nombre-corto}/` | `<archivedPath>/requirements/SRS-XXX-{nombre-corto}/` |
+| Especificación de requerimientos | `<changesPath>/requirements/SRS-XXX-{nombre-corto}/` | `<archivedPath>/requirements/SRS-XXX-{nombre-corto}/` |
 | Documento de producto (PRD) | `<changesPath>/requirements/PRD-XXX-{nombre-corto}/` | `<archivedPath>/requirements/PRD-XXX-{nombre-corto}/` |
 | Requerimiento externo (solo certificar) | `<changesPath>/requirements/RQ-XXX-{slug}/` | `<archivedPath>/requirements/RQ-XXX-{slug}/` |
 | Historia de usuario | `<changesPath>/user-stories/US-XXX-{nombre-corto}/` | `<archivedPath>/user-stories/US-XXX-{nombre-corto}/` |

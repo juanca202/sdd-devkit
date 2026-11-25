@@ -71,7 +71,7 @@ específico (una salida propia, una excepción de ruta).
 | Fitness functions | `<raíz-arq>/scripts/arch/verify.<ext>` + `<raíz-arq>/scripts/arch/checks/[slug-estándar].<ext>` | `arch-manage` |
 | Definition of Done | `docs/policies/definition-of-done.md` | **Ninguno — lo escribe y lo mantiene el equipo.** Los skills lo leen; ningún skill del plugin lo genera ni ofrece generarlo. |
 | Documento de producto (PRD) | `docs/specs/changes/requirements/PRD-XXX-[nombre-corto]/README.md` | `requirement-refine` (el insumo original queda en `references/`; `test-define` añade `test-cases/`). Al promoverse pasa a `SRS-XXX-…` con el mismo número |
-| Especificación de requisitos (SRS) | `docs/specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md` | `requirement-refine` (idem) |
+| Especificación de requerimientos (SRS) | `docs/specs/changes/requirements/SRS-XXX-[nombre-corto]/README.md` | `requirement-refine` (idem) |
 | Requerimiento externo (RQ) — solo certificar lo que un tercero definió | `docs/specs/changes/requirements/RQ-XXX-[slug]/README.md` | `requirement-refine` (tipo RQ; el documento fuente queda en `references/`, una copia por versión; `test-define` añade `test-cases/`) |
 | Historia de usuario | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/README.md` | `work-define` |
 | Tarea técnica de una US | `docs/specs/changes/user-stories/US-XXX-[nombre-corto]/TK-XXX-[kebab-case].md` | `work-plan` |
@@ -155,7 +155,7 @@ runner de fitness functions, versionados junto a su código.
 | Prefijo | Artefacto | Alcance del secuencial |
 |---------|-----------|------------------------|
 | `ADR-XXX` | Architecture Decision Record | Global, sobre el `docs/adr/` **de su raíz de arquitectura** |
-| `RQ-XXX` · `PRD-XXX` · `SRS-XXX` | Requerimiento externo · Documento de producto · Especificación de requisitos | **Un solo secuencial** compartido por los tres prefijos, sobre todas las carpetas `RQ-*`, `PRD-*` y `SRS-*` de `docs/specs/changes/requirements/` **+ el archivo**. Un PRD promovido conserva el número como `SRS-XXX`; un número nunca se reutiliza |
+| `RQ-XXX` · `PRD-XXX` · `SRS-XXX` | Requerimiento externo · Documento de producto · Especificación de requerimientos | **Un solo secuencial** compartido por los tres prefijos, sobre todas las carpetas `RQ-*`, `PRD-*` y `SRS-*` de `docs/specs/changes/requirements/` **+ el archivo**. Un PRD promovido conserva el número como `SRS-XXX`; un número nunca se reutiliza |
 | `AC-XXX` | Criterio de aceptación | Por documento padre (`US`, `WI`, `FT`, `RQ`, `SRS`); inmutable. Un `BUG-XXX` no tiene `AC-XXX` |
 | `H-XX` · `EV-XX` | Hallazgo · Evidencia de un incidente | Por documento `BUG-XXX` |
 | `OB-XX` · `SC-XX` | Objetivo con métrica · Escenario de uso (PRD/SRS) | Por documento `PRD-XXX`/`SRS-XXX` |

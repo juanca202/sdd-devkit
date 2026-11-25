@@ -1,6 +1,6 @@
 # SDD Devkit
 
-![version](https://img.shields.io/badge/version-2.4.5-blue) ![license](https://img.shields.io/badge/license-MIT-green)
+![version](https://img.shields.io/badge/version-2.5.0-blue) ![license](https://img.shields.io/badge/license-MIT-green)
 
 **SDD Devkit** es un framework de SDD (Spec-Driven Development), distribuido como [Agent Plugin](https://agent-plugins.org/), cuyo objetivo es ayudarte en la preparación, planificación e implementación de proyectos de desarrollo. Su flujo:
 
@@ -215,7 +215,7 @@ flowchart TD
     class J exitPoint
 ```
 
-Las historias alimentan tu framework de terceros; al cerrar, `work-integrate`/`pr-create` corren igual las puertas de calidad sobre el entregable. Lo que genere tu framework (sus propias specs, planes o tareas) no lo toca SDD Devkit — solo archiva sus propios artefactos (requisitos, historias, tareas de mantenimiento e investigaciones), y solo cuando tú lo pides al skill que los produjo con el modificador `archive`.
+Las historias alimentan tu framework de terceros; al cerrar, `work-integrate`/`pr-create` corren igual las puertas de calidad sobre el entregable. Lo que genere tu framework (sus propias specs, planes o tareas) no lo toca SDD Devkit — solo archiva sus propios artefactos (requerimientos, historias, tareas de mantenimiento e investigaciones), y solo cuando tú lo pides al skill que los produjo con el modificador `archive`.
 
 
 

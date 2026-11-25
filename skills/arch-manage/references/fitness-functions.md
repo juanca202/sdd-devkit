@@ -1,6 +1,6 @@
 # Fitness functions y runner de validaciones de arquitectura
 
-Leer al **proponer los criterios de cumplimiento (CR)** de un requisito nuevo o actualizado, cuando un
+Leer al **proponer los criterios de cumplimiento (CR)** de un requerimiento nuevo o actualizado, cuando un
 CR es **apto para automatizar** y hay que crear/registrar su fitness function, o cuando hay que
 crear/tocar el runner. Cubre tres cosas: (1) la **propuesta de criterios** que el usuario selecciona,
 (2) la fitness function del CR y (3) el runner que las orquesta.
@@ -27,20 +27,20 @@ uno pasado por argumento.
 ## Propuesta de criterios y selección del usuario
 
 Cada **criterio de cumplimiento** (`CR-XXX`) de un estándar es una regla **verificable**. Al añadir un
-requisito (o al ampliar uno existente), **no se escriben los CR directamente**: primero se **propone**
+requerimiento (o al ampliar uno existente), **no se escriben los CR directamente**: primero se **propone**
 al usuario el conjunto de criterios candidatos —cada uno con el **mecanismo concreto** con el que se
 verificaría— y el usuario **elige cuáles quiere crear**. Solo lo seleccionado se escribe en el estándar
 y se implementa.
 
 > **Ningún criterio se escribe ni se instala nada antes de la selección.** Esta fase es de propuesta:
-> el bloque `## <Requisito>` del estándar puede escribirse antes (es la norma, no el criterio), pero
+> el bloque `## <Requerimiento>` del estándar puede escribirse antes (es la norma, no el criterio), pero
 > **ninguna fila `CR-XXX`** de la tabla `## Criterios de cumplimiento`, ni nada en `scripts/arch/`, ni
 > ninguna instalación con el gestor de paquetes, hasta que el usuario haya elegido.
 
 ### 1. Derivar los criterios candidatos
 
-A partir del requisito, listar los CR candidatos: cada aspecto **medible y comprobable** de forma
-independiente. Un requisito casi siempre da más de uno (p. ej. «Unit testing» → cobertura mínima,
+A partir del requerimiento, listar los CR candidatos: cada aspecto **medible y comprobable** de forma
+independiente. Un requerimiento casi siempre da más de uno (p. ej. «Unit testing» → cobertura mínima,
 framework obligatorio, ubicación/nombrado de los archivos de test). Preferir criterios **atómicos**
 (uno mide una sola cosa) frente a uno grande que mezcla varias comprobaciones.
 
@@ -130,7 +130,7 @@ Reglas de la tabla:
 
 - **Una fila por candidato**, redactada ya con RFC 2119 en el idioma del estándar — es el texto que
   acabará en la columna `Descripción` del CR.
-- **Sin columnas `Requisito` ni `Automatizable`.** El requisito es el mismo para toda la tanda (ya
+- **Sin columnas `Requerimiento` ni `Automatizable`.** El requerimiento es el mismo para toda la tanda (ya
   quedó claro en la conversación) y la aptitud para automatizar se deduce de la columna
   `Verificación`: si dice `Manual`, no es automatizable. La clasificación del paso 2a se sigue
   haciendo y se usa internamente para la ronda 2 de preguntas y para las filas del estándar, pero
@@ -170,10 +170,10 @@ No crear, escribir ni instalar nada sin esta aprobación explícita.
 
 - **Candidato no seleccionado** → no se escribe: no entra en la tabla del estándar y no deja rastro. Si
   el usuario lo descartó por desacuerdo de fondo (no por prioridad), vale la pena mencionarlo en
-  `### Excepciones` del requisito.
+  `### Excepciones` del requerimiento.
 - **Seleccionado, no automatizable** → fila del CR con `Automatizable: no`; en `Verificación`, el
-  enlace al archivo o job de la evidencia externa registrada en el requisito si la hay, `Pending` si no
-  la hay; explicar en el requisito cómo se verifica manualmente.
+  enlace al archivo o job de la evidencia externa registrada en el requerimiento si la hay, `Pending` si no
+  la hay; explicar en el requerimiento cómo se verifica manualmente.
 - **Seleccionado y automatizable, sin fitness function ahora** → `Automatizable: yes`,
   `Verificación: Pending`. `arch-audit` lo reportará como sugerencia.
 - **Seleccionado y con fitness function** → crear la fitness function (siguiente sección) y registrarla.
@@ -279,8 +279,8 @@ el comando ya están decididos (paso 2b de la propuesta) — aquí se instalan y
    referencia `CR-XXX`. Así `arch-audit` lo descubre y lo ejecuta, y además queda incluido en el runner.
 
 > **En invocación en lote** (p. ej. desde `arch-discover`), acumular los candidatos de todos los
-> requisitos del lote y presentar **una sola tabla de propuesta** al final —con una columna extra
-> `Estándar`— en vez de una tabla por requisito. Las dos rondas de selección y la pregunta de instalar
+> requerimientos del lote y presentar **una sola tabla de propuesta** al final —con una columna extra
+> `Estándar`— en vez de una tabla por requerimiento. Las dos rondas de selección y la pregunta de instalar
 > herramientas de verificación ausentes se hacen también **una sola vez** para todo el lote (con las
 > opciones agregadas del paso 4). Los chequeos del lote se registran cada uno en el archivo de checks
 > de su estándar (`checks/<slug-estándar>.<ext>`).

@@ -53,7 +53,7 @@ qué forma tiene la conclusión.
 
 | Dominio | Señales típicas | Qué produce |
 |---------|-----------------|-------------|
-| **Producto** | "¿qué construir?", "benchmarking", "¿qué features tiene X?", viabilidad de negocio | Hallazgos sobre requisitos, mercado o usuarios |
+| **Producto** | "¿qué construir?", "benchmarking", "¿qué features tiene X?", viabilidad de negocio | Hallazgos sobre requerimientos, mercado o usuarios |
 | **Arquitectura** | "¿cómo estructurarlo?", "¿qué patrón?", "¿monolito o microservicio?", "ADR" | Comparativa de patrones, recomendación de diseño |
 | **Técnica** | "¿es viable?", "¿cómo funciona X?", "¿qué librería?", "¿rendimiento?" | Evaluación técnica, comparativa de herramientas |
 | **Cambio** | "¿qué impacto?", "¿qué se rompe si?", "refactor de", "¿compatibilidad?" | Análisis de impacto, riesgos, enfoque de cambio a alto nivel |

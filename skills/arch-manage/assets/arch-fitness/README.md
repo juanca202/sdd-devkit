@@ -3,7 +3,7 @@
 Este directorio agrupa las **fitness functions** de arquitectura del proyecto:
 chequeos automatizados que validan que el código respeta los **criterios de
 cumplimiento** (`CR-XXX`) de los estándares de dominio (`docs/standards/`). Cada CR
-(p. ej. «cobertura ≥ 80%» dentro del requisito «Unit testing» de *Testing Standards*)
+(p. ej. «cobertura ≥ 80%» dentro del requerimiento «Unit testing» de *Testing Standards*)
 es una regla verificable; los ADR (`docs/adr/`) registran la decisión que lo fijó.
 
 Los scripts se escriben en el **lenguaje del stack del repositorio**: Node

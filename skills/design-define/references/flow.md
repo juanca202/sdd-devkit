@@ -103,10 +103,10 @@ Produce, para cada pantalla de un artefacto con UI, el par `wireframes/WF-XXX-{s
    - El id es secuencial de 3 dígitos dentro de `wireframes/` del artefacto; el slug es kebab-case del nombre de la pantalla, fijado al crear — renombrar la pantalla después no renombra los archivos.
 4. **Presentar el lote completo en una sola respuesta**, dirigida al usuario (es la única salida de este skill que no es dato para el llamador): por pantalla, `WF-XXX`, nombre, enlace al `.md` y al `.svg` para abrirlos con facilidad, y la imagen embebida (`![…](ruta)`) junto al enlace si el entorno renderiza imágenes en markdown. Nunca pegar código SVG en la respuesta ni mostrar una imagen sin decir a qué archivo corresponde.
 5. **Preguntar una sola vez**, con todo el lote ya listado, si hay cambios: `[Aprobar todos tal cual]` / `[Hay cambios que hacer]`. Con más de una pantalla y respuesta «hay cambios», usar **selección múltiple** para que el usuario señale en qué pantalla(s) (ver [`${PLUGIN_ROOT}/references/asking.md`](../../../references/asking.md)); con una sola pantalla, pasar directo al siguiente punto.
-6. **Por cada pantalla señalada**, capturar la descripción del cambio (respuesta libre) y aplicarlo: actualizar el SVG, registrar la observación textual y su resolución en la tabla **Historial de cambios** del `.md`, y **anotar si la observación implica un requisito nuevo o modificado** (`FR-XXX`/`AC-XXX`) — anotarlo, no aplicarlo: la edición del artefacto de origen es del skill llamador.
+6. **Por cada pantalla señalada**, capturar la descripción del cambio (respuesta libre) y aplicarlo: actualizar el SVG, registrar la observación textual y su resolución en la tabla **Historial de cambios** del `.md`, y **anotar si la observación implica un requerimiento nuevo o modificado** (`FR-XXX`/`AC-XXX`) — anotarlo, no aplicarlo: la edición del artefacto de origen es del skill llamador.
 7. **Volver a presentar el lote actualizado** (solo las pantallas que cambiaron) y repetir la pregunta hasta `[Aprobar todos tal cual]` o hasta que el usuario indique que deja algo pendiente. Fijar en el frontmatter de cada `.md` el estado final (`Approved` / `Proposed`) y su marca oculta (`Approved` / `Proposed`).
    - **Sin canal de respuesta** (sesión desatendida, o subagente sin interacción): generar el lote, dejar todos en `Proposed` y devolverlos así; nunca marcar aprobado lo que nadie aprobó.
-8. **Devolver** (modo delegado) o **resumir** (modo directo): por cada `WF-XXX`, nombre de pantalla, ruta del `.md` (copiable tal cual, relativa a la carpeta del artefacto: `wireframes/WF-001-login.md`), ruta del `.svg`, estado de revisión y, si las hay, las observaciones con impacto en requisitos (texto de la observación + a qué `FR-XXX`/`AC-XXX` afecta o que es uno nuevo). El llamador indexa las rutas en su artefacto (sección 11 del SRS, Referencias de la US/WI) con el **mismo estado** que la cabecera del `.md`, y aplica el impacto en sus requisitos. En modo directo, ofrecer añadir la fila de índice al artefacto, sin editarlo sin confirmación.
+8. **Devolver** (modo delegado) o **resumir** (modo directo): por cada `WF-XXX`, nombre de pantalla, ruta del `.md` (copiable tal cual, relativa a la carpeta del artefacto: `wireframes/WF-001-login.md`), ruta del `.svg`, estado de revisión y, si las hay, las observaciones con impacto en requerimientos (texto de la observación + a qué `FR-XXX`/`AC-XXX` afecta o que es uno nuevo). El llamador indexa las rutas en su artefacto (sección 11 del SRS, Referencias de la US/WI) con el **mismo estado** que la cabecera del `.md`, y aplica el impacto en sus requerimientos. En modo directo, ofrecer añadir la fila de índice al artefacto, sin editarlo sin confirmación.
 
 **Cambio sobre un wireframe ya aprobado** (el usuario pide un ajuste de UI después): misma mecánica desde el punto 6 con el `WF-XXX` existente — nunca un id nuevo para la misma pantalla —, el estado vuelve a `Proposed` hasta re-aprobación, y la observación queda en su Historial.
 
@@ -138,9 +138,9 @@ artefacto: docs/specs/changes/requirements/SRS-003-portal-proveedores/
 wireframes:
   - WF-001: Carga de facturas → wireframes/WF-001-carga-facturas.md (svg: wireframes/WF-001-carga-facturas.svg) · Approved
   - WF-002: Consulta de estado → wireframes/WF-002-consulta-estado.md (svg: wireframes/WF-002-consulta-estado.svg) · Proposed
-impacto-en-requisitos:
+impacto-en-requerimientos:
   - WF-002: «el filtro por fecha debe permitir rango, no solo día» → modifica FR-004
-  - WF-002: «mostrar el motivo de rechazo en la fila» → requisito nuevo (sin FR aún)
+  - WF-002: «mostrar el motivo de rechazo en la fila» → requerimiento nuevo (sin FR aún)
 no-generados:
   - Pantalla «Login»: cubierta por SSO corporativo, el usuario pidió no wireframearla
 ```
@@ -168,7 +168,7 @@ no-generados:
 - SVG en escala de grises, baja/media fidelidad, `viewBox` acorde al tipo de solución, **enlazado** desde el `.md` (nunca pegado)
 - Lote completo generado antes de la primera pregunta; una sola pregunta de aprobación por vuelta; cada cambio en el Historial de cambios
 - `status` del frontmatter de cada `WF-XXX` coherente con lo que el usuario respondió; nada aprobado sin respuesta del usuario
-- Respuesta final con ruta, estado e impacto en requisitos de cada `WF-XXX` — sin haber editado el artefacto de origen
+- Respuesta final con ruta, estado e impacto en requerimientos de cada `WF-XXX` — sin haber editado el artefacto de origen
 
 **Contenido:**
 
@@ -252,7 +252,7 @@ Posición: **transversal** al pipeline `requirement-refine` → `work-define` �
 | | |
 |--|--|
 | **Entrada** | Pedido directo del usuario, o delegación vía subagente desde `requirement-refine` (wireframes de un SRS con UI), `work-define` (US que define modelos/APIs/flujos, o wireframes de una US con UI que no los hereda) o `work-plan` (TK/WI con definiciones técnicas sin especificación). |
-| **Salida** | Carpeta `docs/architecture/[capability]/` creada o actualizada — `README.md` como índice, y `models/`, `apis/`, `flows/`, `diagrams/` con un archivo por elemento enlazado desde los índices —; lista de referencias ya formadas (ruta de archivo, más ancla de operación cuando se cita un endpoint) entregada al llamador o al usuario. En el flujo de wireframes: pares `wireframes/WF-XXX-{slug}.md` + `.svg` en la carpeta del artefacto de origen, revisados con el usuario, y la lista de rutas + estado + impacto en requisitos entregada al llamador. |
+| **Salida** | Carpeta `docs/architecture/[capability]/` creada o actualizada — `README.md` como índice, y `models/`, `apis/`, `flows/`, `diagrams/` con un archivo por elemento enlazado desde los índices —; lista de referencias ya formadas (ruta de archivo, más ancla de operación cuando se cita un endpoint) entregada al llamador o al usuario. En el flujo de wireframes: pares `wireframes/WF-XXX-{slug}.md` + `.svg` en la carpeta del artefacto de origen, revisados con el usuario, y la lista de rutas + estado + impacto en requerimientos entregada al llamador. |
 | **Hacia requirement-refine / work-define / work-plan** | El skill llamador inserta las referencias en la sección Referencias de su artefacto (US, TK o WI) o la tabla de wireframes (sección 11 del SRS, Referencias de la US), y aplica a sus `FR-XXX`/`AC-XXX` el impacto que este skill reportó. Este skill nunca edita esos artefactos. |
 | **Hacia work-implement** | Las TK/WI en Ready referencian los elementos de esta capability como fuente de implementación; la fecha de última actualización del README permite detectar si la capability cambió después de redactada la TK/WI. |
 | **Conflicto con la US** | Si al especificar se descubre que la US es inconsistente o incompleta, reportarlo; la corrección de la US se hace con `work-define`, nunca desde aquí. |

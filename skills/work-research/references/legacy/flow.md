@@ -1,7 +1,7 @@
 # Flujo · Analizar legado (código → features y pruebas inferidas)
 
 Procedimiento del flujo **Analizar legado** de `work-research`: a partir de **código existente**
-(un módulo, una carpeta o un repo) sin requisitos escritos o con **cobertura de
+(un módulo, una carpeta o un repo) sin requerimientos escritos o con **cobertura de
 pruebas inadecuada**, reconstruye por ingeniería inversa lo que el código hace y, por
 cada comportamiento descubierto, **crea un Feature (`FT-XXX`)** documentado, para
 después poder cubrir ese código con pruebas.

@@ -51,7 +51,7 @@ determinista.}}
 
 ## Causa raíz
 
-**Categoría:** {{Defecto de lógica | Contrato roto | Estado/concurrencia | Integración | Requisito mal especificado}}
+**Categoría:** {{Defecto de lógica | Contrato roto | Estado/concurrencia | Integración | Requerimiento mal especificado}}
 **Localización:** `{{ruta/al/archivo.ext}}` › `{{símbolo}}` {{(líneas ~NN-NN)}}
 
 {{Por qué el código produce el comportamiento observado: qué condición, qué valor, qué
@@ -64,7 +64,7 @@ evidencia directa.}}
 
 **Alcance de la regresión:** {{qué otros llamadores o módulos usan el símbolo afectado}}
 
-> {{Si la categoría es «Requisito mal especificado»: el código hace lo especificado y lo
+> {{Si la categoría es «Requerimiento mal especificado»: el código hace lo especificado y lo
 > especificado está mal. Este flujo se detiene aquí — handoff a `work-define`, no a un
 > bug-fix. Borrar esta nota si no aplica.}}
 

@@ -158,7 +158,7 @@ raíz, situación de las pruebas y corrección se marcan `N/A — repositorio so
    - **Contrato roto** (tipo, nulo, formato, encoding, zona horaria)
    - **Estado/concurrencia** (carrera, caché sucia, transacción)
    - **Integración** (dependencia externa, versión, configuración)
-   - **Requisito mal especificado** (el código hace lo especificado; lo especificado
+   - **Requerimiento mal especificado** (el código hace lo especificado; lo especificado
      está mal) → esto **no** es un bug de código: hacer *handoff* a `work-define` en
      lugar de proponer un fix.
 5. **Determinar la regresión.** Si se puede, identificar desde cuándo existe

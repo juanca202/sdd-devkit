@@ -40,7 +40,7 @@
       "properties": {
         "changesPath": {
           "type": "string",
-          "description": "Ruta relativa a la raíz del repositorio donde viven las especificaciones que cambian el sistema: historias de usuario (user-stories/US-XXX-…), tareas de mantenimiento (work-items/WI-XXX-…), incidentes (incidents/BUG-XXX-…), requisitos (requirements/SRS-XXX-…) e investigaciones sueltas (research/RS-XXX-…). Ej: docs/specs/changes/. Reemplaza a la antigua basePath."
+          "description": "Ruta relativa a la raíz del repositorio donde viven las especificaciones que cambian el sistema: historias de usuario (user-stories/US-XXX-…), tareas de mantenimiento (work-items/WI-XXX-…), incidentes (incidents/BUG-XXX-…), requerimientos (requirements/SRS-XXX-…) e investigaciones sueltas (research/RS-XXX-…). Ej: docs/specs/changes/. Reemplaza a la antigua basePath."
         },
         "currentPath": {
           "type": "string",
@@ -148,7 +148,7 @@
     },
     "verification": {
       "type": "object",
-      "description": "Puertas de verificación de cierre (quality-check, code-review, cobertura de requisitos) y su política de corrección.",
+      "description": "Puertas de verificación de cierre (quality-check, code-review, cobertura de requerimientos) y su política de corrección.",
       "required": [
         "qualityCheck",
         "codeReview",

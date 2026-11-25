@@ -149,7 +149,7 @@ conservan**: siguen vigentes).
    `Creado por` / `Reportado por` → `created_by` / `reported_by` · `Requerimiento` → `requirement` ·
    `Spike de origen` → `spike` · `Promovido a SRS` → `promoted_from` + `promoted_at` · `Aprobación de
    negocio` → `business_approval` · `Dueño de la definición` → `definition_owner` · `Documento fuente` →
-   `source_document` (`name`, `path`) · `Tipo de solución` → `solution_type` + `responsive` · `Requisitos
+   `source_document` (`name`, `path`) · `Tipo de solución` → `solution_type` + `responsive` · `Requerimientos
    relacionados` → `related` · `Work Item (<Sistema>)` → `work_item` (`system` = el nombre corto entre
    paréntesis, `id` = el número, `url` = el destino del enlace) · `INVEST` / `DoR` (indicadores 🟢/🟡/🔴)
    → `invest` / `dor` (`met`, `partial`, `not_met`, `total`).
@@ -176,8 +176,8 @@ omite y queda como laguna reportada, para cerrarse con el skill dueño. Los cons
 
 ## 6. Estándares de dominio con formato anterior
 
-**Detección:** un `docs/standards/…` con tablas de criterios **por requisito** en vez de la tabla única
-`## Criterios de cumplimiento`, sin columna `Requisito`, o con la columna `Verificación` en
+**Detección:** un `docs/standards/…` con tablas de criterios **por requerimiento** en vez de la tabla única
+`## Criterios de cumplimiento`, sin columna `Requerimiento`, o con la columna `Verificación` en
 `yes`/`no`/`TODO`/`N/A` en vez de **enlace o `Pending`**.
 
 **Normalización:** consolidar en la tabla única (ids `CR-XXX` conservados); en `Verificación`, si el
@@ -395,3 +395,28 @@ hallazgo aparte.
 
 Si el usuario declina, registrar en el cierre que los specs archivados quedan protegidos solo dentro de
 los skills del catálogo, no en el trabajo libre con el agente.
+
+## 14. Casos de prueba con el tipo `Visual Test`
+
+**Valores vigentes de `test_type`** (`${PLUGIN_ROOT}/skills/test-define/SKILL.md`, Paso 3): `Manual`, o uno
+o varios de `Unit`, `Integration`, `API Test`, `Content Test`, `Style Test`, `E2E`. Versiones anteriores
+tenían un único tipo `Visual Test` para toda verificación de interfaz que no fuera un recorrido completo;
+hoy se separa en `Content Test` (qué se muestra: textos, etiquetas, mensajes, datos visibles) y
+`Style Test` (cómo se ve: layout, colores, tipografía, espaciado, snapshots).
+
+**Detección** (bajo `<changesPath>`, `<currentPath>` y `<archivedPath>`): un `TC-XXX-*.md` cuyo
+`test_type` contiene `Visual Test`, la columna «Tipo de prueba» de un índice `test-cases/README.md` que lo
+lista, la columna `Tipo` de un `criteria-coverage.md` que lo usa, o el `test_type` del frontmatter de un
+incidente (`incidents/BUG-XXX-*/README.md`).
+
+**Normalización:** por cada TC, decidir el reemplazo **leyendo sus pasos y su resultado esperado**, no el
+título: `Style Test` si solo verifica apariencia; `Content Test` si solo verifica el contenido mostrado;
+`[Content Test, Style Test]` si verifica ambas cosas. Si el TC no permite decidirlo, **preguntar** en vez
+de asumir (por defecto se propone `Style Test`, que es lo que `Visual Test` describía). Se conserva la
+posición del tipo en la lista (entre `API Test` y `E2E`) y no se toca nada más del TC. Después, regenerar
+el índice `test-cases/README.md` de cada carpeta afectada con el valor nuevo y reemplazar el tipo en las
+filas de los informes que lo citaban (en un incidente, por el tipo con el que realmente se ejecutó la prueba); un TC que pasa a dos tipos **no** añade filas a un
+`criteria-coverage.md` ya emitido: eso lo recalcula `coverage-verify` en su siguiente corrida.
+
+Si el usuario declina, registrar en el cierre que esos TC quedan con un tipo que `work-implement` y
+`coverage-verify` ya no reconocen.

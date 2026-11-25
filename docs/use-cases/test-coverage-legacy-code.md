@@ -1,10 +1,10 @@
 # Caso de uso: Cobertura de pruebas en código existente
 
-Recorrido end-to-end para cubrir con pruebas código ya implementado y sin requisitos escritos (o con cobertura inadecuada), usando SDD Devkit desde el descubrimiento por ingeniería inversa hasta el entregable. Ver el flujo completo del skill en [work-research → Analizar legado](../../skills/work-research/references/legacy/flow.md).
+Recorrido end-to-end para cubrir con pruebas código ya implementado y sin requerimientos escritos (o con cobertura inadecuada), usando SDD Devkit desde el descubrimiento por ingeniería inversa hasta el entregable. Ver el flujo completo del skill en [work-research → Analizar legado](../../skills/work-research/references/legacy/flow.md).
 
 ```mermaid
 flowchart TD
-    A["Código existente<br/>(sin requisitos o con cobertura inadecuada)"] --> B["Descubrimiento de features<br/>**/work-research** Analizar legado"]
+    A["Código existente<br/>(sin requerimientos o con cobertura inadecuada)"] --> B["Descubrimiento de features<br/>**/work-research** Analizar legado"]
     B --> C{"¿Discovery en Ready<br/>(features aceptados)?"}
     C -->|"No / lagunas sin resolver"| H["Análisis humano<br/>(evidencia, posibles bugs, alcance)"]
     H -.->|"con más información"| B
@@ -28,7 +28,7 @@ flowchart TD
     class NOTE note
 ```
 
-1. **Inicio**: un módulo, carpeta o repo con código ya implementado, sin requisitos escritos o con cobertura de pruebas inadecuada.
+1. **Inicio**: un módulo, carpeta o repo con código ya implementado, sin requerimientos escritos o con cobertura de pruebas inadecuada.
 2. **Descubrimiento** (`work-research`, flujo *Analizar legado*): reconstruye por ingeniería inversa el comportamiento del código — elementos técnicos → casos de uso → capabilities → features → cohesión → reglas de negocio — y produce el `discovery.md`.
 3. **Condición — ¿discovery en `Ready`?**
    - **No** (lagunas: evidencia `⚠️ Sin evidencia`, features sin veredicto Aceptado, posibles bugs sin decisión): el flujo no crea features todavía. Pasa a **análisis humano**, que resuelve las lagunas o decide si un comportamiento dudoso se preserva o se trata como bug. Con esa información, se reintenta el discovery.
@@ -42,7 +42,7 @@ flowchart TD
 | Situación | Camino correcto |
 |-----------|------------------|
 | El código tiene un defecto real, no solo falta de pruebas | Registrarlo como incidente `BUG-XXX` con `work-plan` y seguir [Fix a bug](fix-a-bug.md) |
-| El código ya tiene requisitos documentados (`US-XXX`/`WI-XXX`) pero sin pruebas | `test-define` directamente sobre esa US/WI, sin pasar por `work-research` |
+| El código ya tiene requerimientos documentados (`US-XXX`/`WI-XXX`) pero sin pruebas | `test-define` directamente sobre esa US/WI, sin pasar por `work-research` |
 | Se busca escribir funcionalidad nueva, no cubrir la ya existente | `work-define` (nueva US) o `work-plan` (WI de otro tipo) — un `FT-XXX` nunca produce código funcional |
 | Solo se quiere el diagnóstico del código legado, sin automatizar pruebas | `work-research` (flujo *Analizar legado*) hasta el discovery/features, sin invocar `test-define` ni `work-implement` |
 | Se quiere refactorizar el código, no solo cubrirlo | [Refactorización de código](refactor.md) — conviene cubrir primero con este caso antes de refactorizar a ciegas |

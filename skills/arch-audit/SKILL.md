@@ -29,15 +29,15 @@ el "ser" del repositorio.
 
 La distinción entre ADR y estándar (ver `arch-manage`) determina qué se audita. **La unidad auditable
 es el criterio de cumplimiento** (`CR-XXX`, una fila verificable dentro de un estándar de dominio
-técnico o funcional), no el estándar entero, ni el requisito como bloque, ni el ADR:
+técnico o funcional), no el estándar entero, ni el requerimiento como bloque, ni el ADR:
 
 - **El "deber ser" son los criterios de cumplimiento de los estándares** (`docs/standards/`, en
   estándares `Active`) y las reglas de `AGENTS.md`. Cada criterio (`CR-XXX`) está redactado de forma
   medible, con RFC 2119 cuando es normativa (MUST/SHOULD/MAY…): un `MUST` incumplido es un hallazgo de
   mayor peso que un `SHOULD`. Un estándar de dominio (p. ej. *Testing Standards*) se audita **criterio
-  por criterio** (`testing/CR-001`, `testing/CR-002`…), agrupados y contextualizados por su requisito.
-- **El requisito es la agrupación legible que da contexto, no la unidad auditada.** Un requisito
-  (`## <Nombre>` con `**ID:** <slug>`, referencia `<estándar>/<slug-requisito>` p. ej.
+  por criterio** (`testing/CR-001`, `testing/CR-002`…), agrupados y contextualizados por su requerimiento.
+- **El requerimiento es la agrupación legible que da contexto, no la unidad auditada.** Un requerimiento
+  (`## <Nombre>` con `**ID:** <slug>`, referencia `<estándar>/<slug-requerimiento>` p. ej.
   `testing/unit-testing`) reúne una o varias filas de criterios `CR-XXX` bajo `### Criterios de
   cumplimiento`. Sirve para leer y ubicar los criterios, pero lo que se audita es cada `CR-XXX`.
 - **El ADR es contexto, no la norma auditada.** Un ADR registra el *por qué* de una decisión; es
@@ -58,7 +58,7 @@ resto del documento son **relativas a la raíz de arquitectura auditada** (`<ra�
 submódulo), que se resuelve en la [Fase 0](#fase-0--raíz-de-arquitectura-nueva-auditoría-o-revalidación);
 `AGENTS.md` se lee de la raíz principal.
 
-- `docs/standards/` — todos los estándares de dominio (técnico o funcional) y sus **criterios de cumplimiento** (`CR-XXX`), agrupados por requisito, priorizando los de estándares `Active` (obligatorios). Criterios en estándares `Draft` se listan pero no generan hallazgo con prioridad ni afectan el veredicto; `Deprecated`/`Superseded` no generan hallazgos salvo que el código siga dependiendo de ellos.
+- `docs/standards/` — todos los estándares de dominio (técnico o funcional) y sus **criterios de cumplimiento** (`CR-XXX`), agrupados por requerimiento, priorizando los de estándares `Active` (obligatorios). Criterios en estándares `Draft` se listan pero no generan hallazgo con prioridad ni afectan el veredicto; `Deprecated`/`Superseded` no generan hallazgos salvo que el código siga dependiendo de ellos.
 - `AGENTS.md` (y `AGENTS.md` anidados por subcarpeta, si existen) — cada regla explícita del documento.
 - `docs/adr/` — **solo como trazabilidad**: para cada criterio auditado, citar su ADR de origen; y para detectar ADR `Accepted` con regla enforceable que aún no fijó ningún criterio.
 
@@ -76,7 +76,7 @@ ejecuta; si es apto pero no existe (`Verificación: Pending`), **sugiere crearla
 
 **Salida:** un único informe en el `docs/audits/arch-audit-YYYY-MM-DD.md` **de la raíz auditada**, agrupado por prioridad
 (alta / media / baja), donde cada hallazgo referencia el criterio incumplido (`<estándar>/CR-XXX`, con
-el requisito que lo agrupa, su estándar de dominio y su ADR de origen) o la regla de AGENTS.md, lista
+el requerimiento que lo agrupa, su estándar de dominio y su ADR de origen) o la regla de AGENTS.md, lista
 evidencias y archivos infractores, propone una acción y fija un estado. El informe incluye además una
 sección de **fitness functions**: cuáles existen y su resultado al ejecutarlas, y cuáles faltan
 (criterios aptos sin fitness function) con la sugerencia de crearlas.
@@ -203,7 +203,7 @@ En una **Nueva auditoría desde cero** se ignora el histórico para el análisis
 
 ## Fase 1 — Recopilar las normas (el "deber ser")
 
-1. **Estándares, sus requisitos y sus criterios** — listar y leer:
+1. **Estándares, sus requerimientos y sus criterios** — listar y leer:
    ``bash
    ls docs/standards/*.md 2>/dev/null || echo "No hay estándares"
    ``
@@ -214,25 +214,25 @@ En una **Nueva auditoría desde cero** se ignora el histórico para el análisis
    `domain`** (estándar escrito a mano o por otra herramienta), usar el nombre del archivo/carpeta como
    `domain` de facto y señalarlo como observación (estándar fuera de la convención de `arch-manage`) — no bloquea la
    auditoría de sus criterios. Dentro del
-   documento, cada **requisito** (`## <Nombre>` con `**ID:** <slug-requisito>` y `**Estado:**`;
-   referencia `<slug-estándar>/<slug-requisito>`) es una **agrupación legible**. **Leer ese estado**
-   (si falta el campo, tratarlo como `Active`): los criterios de un requisito `Deprecated` o
+   documento, cada **requerimiento** (`## <Nombre>` con `**ID:** <slug-requerimiento>` y `**Estado:**`;
+   referencia `<slug-estándar>/<slug-requerimiento>`) es una **agrupación legible**. **Leer ese estado**
+   (si falta el campo, tratarlo como `Active`): los criterios de un requerimiento `Deprecated` o
    `Superseded` se **listan pero no generan hallazgo con prioridad ni afectan el veredicto** —igual
    que los de un estándar `Draft`—, salvo que el código siga dependiendo de ellos. Es lo que permite
    retirar una norma suelta sin tumbar el estándar entero. los criterios de todos los
-   requisitos viven juntos en la tabla única `## Criterios de cumplimiento`, al final del documento
+   requerimientos viven juntos en la tabla única `## Criterios de cumplimiento`, al final del documento
    (antes de `## Referencias`). Extraer **de cada fila `CR-XXX`** (la unidad auditable; referencia
-   global `<slug-estándar>/CR-XXX`): `ID` (`CR-XXX`), `Requisito` (slug del requisito al que
+   global `<slug-estándar>/CR-XXX`): `ID` (`CR-XXX`), `Requerimiento` (slug del requerimiento al que
    pertenece), `Descripción` (medible, con su palabra clave RFC 2119 si es normativa),
    `Automatizable` (yes/no), `Enfoque` (`bloqueante` | `warning`; por defecto
    `bloqueante`) y `Verificación` (un **enlace** al archivo donde vive la verificación — el archivo de checks de su
    estándar, `scripts/arch/checks/<slug-estándar>.<ext>`, o la evidencia externa registrada en el
-   requisito —; `Pending` = pendiente). **Si el estándar no sigue esa
-   estructura** (una tabla `### Criterios de cumplimiento` dentro de cada requisito en vez de la tabla única,
-   sin columna `Requisito`, o con `TODO`/`N/A`/`yes`/`no` en `Verificación` en vez del enlace o `Pending`), leer esas
+   requerimiento —; `Pending` = pendiente). **Si el estándar no sigue esa
+   estructura** (una tabla `### Criterios de cumplimiento` dentro de cada requerimiento en vez de la tabla única,
+   sin columna `Requerimiento`, o con `TODO`/`N/A`/`yes`/`no` en `Verificación` en vez del enlace o `Pending`), leer esas
    tablas igual, señalarlo como observación y **sugerir `/plugin-migrate`** para normalizarlo — la
    migración no se hace desde aquí, y no bloquea la auditoría. **Cada criterio `CR-XXX` es una entrada en la lista de reglas a auditar**,
-   contextualizado por el requisito que lo agrupa.
+   contextualizado por el requerimiento que lo agrupa.
 
 2. **ADRs — solo trazabilidad y huecos.** Listar `docs/adr/*.md`. Para cada criterio auditado, tener a
    mano su ADR de origen para citarlo (el ADR referencia en `emits` los criterios que fija, p. ej.
@@ -253,7 +253,7 @@ En una **Nueva auditoría desde cero** se ignora el histórico para el análisis
    `AGENTS.md §<sección>` (p. ej. `AGENTS.md §APIs`).
 
    **Regla duplicada con un criterio existente:** si una regla de `AGENTS.md` repite, en sustancia,
-   el mismo contenido normativo que un `CR-XXX` ya extraído en el paso 1 (mismo requisito, mismo
+   el mismo contenido normativo que un `CR-XXX` ya extraído en el paso 1 (mismo requerimiento, mismo
    MUST/SHOULD), **no** crear una entrada separada en la lista de reglas a auditar. Fusionarla bajo
    ese `CR-XXX`: agregar `AGENTS.md §<sección>` como fuente adicional (junto al estándar) en el campo
    `Fuente` del hallazgo, y evaluarla una sola vez. Solo tratarla como regla independiente si añade
@@ -266,7 +266,7 @@ En una **Nueva auditoría desde cero** se ignora el histórico para el análisis
    lenguaje equivocado).
 
 Construir una **lista de reglas a auditar**: cada entrada = un **criterio de cumplimiento**
-(`<estándar>/CR-XXX`, con el requisito que lo agrupa) o una regla de AGENTS.md, con su enunciado, su ADR
+(`<estándar>/CR-XXX`, con el requerimiento que lo agrupa) o una regla de AGENTS.md, con su enunciado, su ADR
 de origen si aplica, su `Enfoque` (bloqueante/warning) si es un criterio, y su prioridad tentativa (ver
 criterios abajo).
 
@@ -308,7 +308,7 @@ Guías de verificación:
 ### Estados de cada criterio
 
 - **✅ `COMPLIANT`** — sin evidencia en contra (o la fitness function pasa).
-- **⚠️ `PARTIAL`** — mayoría cumple pero hay excepciones (como el ejemplo de `api/CR-001`, el criterio de protocolo del requisito `api/api-protocol`).
+- **⚠️ `PARTIAL`** — mayoría cumple pero hay excepciones (como el ejemplo de `api/CR-001`, el criterio de protocolo del requerimiento `api/api-protocol`).
 - **❌ `NON_COMPLIANT`** — la regla no se respeta o hay infracciones sustanciales (o la fitness function falla).
 - **❔ `UNVERIFIABLE`** — no se puede determinar por inspección estática ni con una fitness function ejecutable.
 
@@ -354,7 +354,7 @@ corrida) en [`references/fitness-function-heuristics.md`](references/fitness-fun
 (por convención vive en `scripts/arch/checks/<slug-estándar>.<ext>`, p. ej. `checks/testing.mjs`),
 ejecutar ese estándar vía el runner con su slug (`node scripts/arch/verify.mjs testing`) y leer la
 línea del `CR-XXX` (salvo que la corrida del paso 0 ya lo haya cubierto); si no hay archivo de checks,
-la verificación es evidencia externa — buscarla en el requisito. Si `Automatizable: yes` pero
+la verificación es evidencia externa — buscarla en el requerimiento. Si `Automatizable: yes` pero
 `Verificación: Pending`, el criterio es apto pero aún no tiene fitness function → va a las sugerencias
 (paso 3). Si `Automatizable: no`, no automatizarlo.
 
@@ -404,10 +404,10 @@ flujo de `Comportamiento en Revalidación` descrito en la Fase 0 — no se reesc
 2. Asegurar el directorio: `docs/audits/` **de `<raíz-arq>`** (crearlo si no existe) — nunca el del repo principal cuando se auditó un submódulo.
 3. Leer `assets/audit-template.md` y redactar `docs/audits/arch-audit-<hoy>.md` siguiendo su estructura:
    - Encabezado con fecha, repositorio, alcance, método y **veredicto** (`APPROVED` | `REJECTED` | `APPROVED_WITH_NOTES`, siguiendo el patrón de `coverage-verify`).
-     - **Alcance:** ser específico — indicar la **raíz de arquitectura auditada** (ruta relativa al repo principal, o «raíz principal»), cuántos criterios se auditaron y sobre cuántos estándares/requisitos de contexto, el desglose por estado de los excluidos, más las fuentes de AGENTS.md consideradas. Ejemplo: `submódulo packages/engine · 14 criterios en 4 estándares · 1 Draft, 1 Superseded excluidos + AGENTS.md raíz`.
+     - **Alcance:** ser específico — indicar la **raíz de arquitectura auditada** (ruta relativa al repo principal, o «raíz principal»), cuántos criterios se auditaron y sobre cuántos estándares/requerimientos de contexto, el desglose por estado de los excluidos, más las fuentes de AGENTS.md consideradas. Ejemplo: `submódulo packages/engine · 14 criterios en 4 estándares · 1 Draft, 1 Superseded excluidos + AGENTS.md raíz`.
      - **Método:** no es un texto fijo — describir en una frase corta qué se usó realmente en esta auditoría: las técnicas de inspección aplicadas (p. ej. `grep`, lectura de manifiestos) y las fitness functions ejecutadas. Aclarar que no se corre el build ni la suite completa.
    - **Resumen** con la tabla de conteos por prioridad y estado, seguida de 1-3 frases con la lectura global de la salud arquitectónica del repo.
-   - Hallazgos **agrupados por prioridad** (alta → media → baja). Por cada hallazgo: el criterio (con su referencia `<estándar>/CR-XXX`, el requisito que lo agrupa, el nombre de su estándar de dominio, su ADR de origen y su `Enfoque` bloqueante/warning) o la regla de AGENTS.md incumplida, `status`, `Evidencias` (✔ a favor / ✖ en contra), `Incumplimientos` (rutas de archivos), y `Acción sugerida`. Si el criterio tiene fitness function, incluir en `Evidencias` el resultado de ejecutarla (PASS/FAIL/WARN + comando).
+   - Hallazgos **agrupados por prioridad** (alta → media → baja). Por cada hallazgo: el criterio (con su referencia `<estándar>/CR-XXX`, el requerimiento que lo agrupa, el nombre de su estándar de dominio, su ADR de origen y su `Enfoque` bloqueante/warning) o la regla de AGENTS.md incumplida, `status`, `Evidencias` (✔ a favor / ✖ en contra), `Incumplimientos` (rutas de archivos), y `Acción sugerida`. Si el criterio tiene fitness function, incluir en `Evidencias` el resultado de ejecutarla (PASS/FAIL/WARN + comando).
    - **Fitness functions**: indicar si existe el **runner** (`scripts/arch/verify.<ext>`, en el lenguaje del stack del repo) y su resultado conjunto (criterios PASS / WARN / FAIL); una sub-tabla de las **existentes** (criterio `CR-XXX`, enfoque, herramienta, comando, si está registrada en el archivo de checks de su estándar, resultado PASS/FAIL/WARN/No ejecutable) y una lista de las **sugeridas** (criterio apto sin fitness function → qué medir, herramienta y esbozo). Si hay dos o más fitness functions sueltas y no existe el runner, recomendarlo aquí.
    - Sección de reglas **`UNVERIFIABLE`**.
    - Sección de **Decisiones sin criterio** (opcional): ADR `Accepted` con regla enforceable que no fijó ningún criterio (`emits: []`) → sugerir emitirlo vía `arch-manage`.
@@ -456,7 +456,7 @@ planificar la remediación de los hallazgos de alta prioridad.
 
 - **No narrar el flujo interno.** Nada de anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, ni ir enumerando las fases en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - **Auditar, no arreglar.** Este skill diagnostica y propone; no modifica código de la aplicación ni "corrige" incumplimientos por iniciativa propia. Tampoco crea las fitness functions: las **sugiere**. La única excepción es instalar/configurar dependencias faltantes (Fase 3.5), y solo con aprobación explícita del usuario.
-- **El criterio de cumplimiento (CR) es la unidad auditable; el requisito es la agrupación legible y el ADR es contexto.** Se audita el cumplimiento de los criterios (`CR-XXX`) de los estándares de dominio (y reglas de AGENTS.md), criterio por criterio, según su término RFC 2119 y su `Enfoque` (bloqueante/warning), agrupados por su requisito y citando el ADR de origen para trazabilidad. No se audita un ADR como si fuera la norma.
+- **El criterio de cumplimiento (CR) es la unidad auditable; el requerimiento es la agrupación legible y el ADR es contexto.** Se audita el cumplimiento de los criterios (`CR-XXX`) de los estándares de dominio (y reglas de AGENTS.md), criterio por criterio, según su término RFC 2119 y su `Enfoque` (bloqueante/warning), agrupados por su requerimiento y citando el ADR de origen para trazabilidad. No se audita un ADR como si fuera la norma.
 - **Ejecución acotada.** Solo se ejecutan las fitness functions / chequeos de arquitectura detectados, con comandos de solo lectura. Nunca correr scripts de propósito desconocido, ni comandos que desplieguen o modifiquen el repo más allá de la instalación de dependencias aprobada en la Fase 3.5; ante la duda, preguntar antes de ejecutar.
 - **Rutas reales, no ejemplos.** Los `src/UserController.php` del ejemplo son ilustrativos; en el informe deben ir siempre rutas verdaderas del repo auditado.
 - **No inventar reglas ni veredictos.** Solo se auditan normas que existan en `docs/standards/` o `AGENTS.md`. Ante evidencia ambigua, preferir ⚠️ o ❔ y explicar la duda, en vez de afirmar un incumplimiento.

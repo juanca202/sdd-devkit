@@ -34,7 +34,7 @@ flowchart TD
 ```
 
 1. **Inicio**: una historia de usuario que existe en el gestor de proyectos (`projectManagement` en `.sdd-devkit/settings.json`), con su descripción y criterios de aceptación, cuya funcionalidad ya está implementada.
-2. **Sincronización de la historia** (`work-define`): con `sync #id` trae una historia que no existe en local, o actualiza una que ya existe mostrando el diff por sección y aplicando solo lo confirmado. Mapea los campos del work item a la plantilla, codifica los criterios como `AC-XXX` (inmutables una vez asignados) y **nunca escribe en el gestor**: la dirección es únicamente gestor → repositorio. Un `#id` sin modificador no importa nada: el skill pregunta.
+2. **Sincronización de la historia** (`work-define`): con `sync #id` trae una historia que no existe en local, o actualiza una que ya existe mostrando el diff por sección y aplicando solo lo confirmado. Mapea los campos del work item a la plantilla, codifica los criterios como `AC-XXX` (inmutables una vez asignados) y **nunca escribe en el gestor**: la dirección es únicamente gestor → repositorio. Si la historia tiene una épica enlazada, la registra como su requerimiento (`requirement`) y `requirement-refine` la descarga como `RQ-<id>`; lo que ese RQ necesita confirmar se pregunta en la misma tanda. Un `#id` sin modificador no importa nada: el skill pregunta.
 3. **Condición — ¿US en `Ready`?**
    - **No** (criterios ausentes, ambiguos o sin resolver): no se definen casos de prueba todavía. Se completa la historia en el gestor o con `work-define`, y se repite la sincronización.
    - **Sí**: se continúa con los casos de prueba.
@@ -54,7 +54,7 @@ flowchart TD
 | La historia ya está redactada en local y solo faltan las pruebas | `test-define` directamente sobre esa US, sin pasar por `sync` |
 | Un criterio cambió en el gestor después de definir los casos | `sync US-XXX` y luego `test-define` para ajustar los `TC-XXX` afectados (los marca `Draft` u `Obsolete`) |
 | La historia aún no está implementada | Planificar e implementar primero con `work-plan` + `work-implement` (tareas `TK-XXX`, con sus pruebas en TDD); este flujo solo automatiza sobre código existente |
-| El código no tiene requisitos escritos, ni historia en el gestor | [Cobertura de pruebas en código existente](test-coverage-legacy-code.md) |
+| El código no tiene requerimientos escritos, ni historia en el gestor | [Cobertura de pruebas en código existente](test-coverage-legacy-code.md) |
 | Una prueba fiel al `TC-XXX` revela un defecto real | Registrarlo como incidente `BUG-XXX` con `work-plan` y seguir [Fix a bug](fix-a-bug.md) para su diagnóstico y corrección (en un repo solo de pruebas, la corrección se planifica en el repositorio de la aplicación) |
 | La historia está archivada en `<archivedPath>/` | El trabajo está cerrado: desarchivarla antes de definir casos o escribir dentro de ella |
 

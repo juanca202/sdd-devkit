@@ -19,9 +19,9 @@ Detalla **cómo** ejecutar las verificaciones automatizadas paso a paso y cómo 
 ### Paso 1 — Detectar entorno
 
 1. Identificar el ecosistema y cargar lo relativo a ese stack desde [`stacks.md`](stacks.md) (categoría por check, comando, parseo). Si no se detecta stack o el monorepo es ambiguo, parar y preguntar.
-2. **Resolver el conjunto de pruebas de la corrida:** las dos **fijas** (unit, coverage) más **e2e si el repo tiene config** y las **configuradas** en el estándar de testing — leer `docs/standards/testing.md` o, si el estándar usa la forma con carpeta, `docs/standards/testing/README.md`; tomar un bloque `## <Requisito>` por clase de prueba, con su `ID`, su `**Estado:**` (solo `Active` cuenta) y su enunciado RFC 2119 para fijar la categoría (DEBE → Bloqueante; DEBERÍA/PUEDE → Condicional). **Si no existe estándar de testing, la corrida son solo las dos fijas más e2e si hay config** — no es error ni se avisa. Detalle en [`SKILL.md` → Suites de prueba](../SKILL.md#suites-de-prueba-fijas-y-configuradas).
+2. **Resolver el conjunto de pruebas de la corrida:** las dos **fijas** (unit, coverage) más **e2e si el repo tiene config** y las **configuradas** en el estándar de testing — leer `docs/standards/testing.md` o, si el estándar usa la forma con carpeta, `docs/standards/testing/README.md`; tomar un bloque `## <Requerimiento>` por clase de prueba, con su `ID`, su `**Estado:**` (solo `Active` cuenta) y su enunciado RFC 2119 para fijar la categoría (DEBE → Bloqueante; DEBERÍA/PUEDE → Condicional). **Si no existe estándar de testing, la corrida son solo las dos fijas más e2e si hay config** — no es error ni se avisa. Detalle en [`SKILL.md` → Suites de prueba](../SKILL.md#suites-de-prueba-fijas-y-configuradas).
 3. **Resolver si hay validaciones de arquitectura:** `ls scripts/arch/verify.* scripts/arch/checks/* 2>/dev/null` (lo crea `arch-manage`). Si hay runner, el check de arquitectura entra en la corrida y en el conjunto vigente de `quality-check-run.json`; si no hay nada, es `N/A` y su fila se omite. **No inventar un comando** ni promover a runner un script que no lo sea.
-4. Resolver el comando concreto de cada check (scripts del manifiesto + *fallback* canónico); para una suite configurada, usar como pista lo que su requisito diga sobre herramienta y ubicación, y **preguntar** si no se resuelve con certeza.
+4. Resolver el comando concreto de cada check (scripts del manifiesto + *fallback* canónico); para una suite configurada, usar como pista lo que su requerimiento diga sobre herramienta y ubicación, y **preguntar** si no se resuelve con certeza.
 5. Capturar metadata: stack detectado, rama (`git rev-parse --abbrev-ref HEAD`), commit corto (`git rev-parse --short HEAD`) y working tree. **`workingTreeClean` se evalúa con los mismos pathspecs del fingerprint** (`git status --porcelain -uall -- "${EXC[@]}"` vacío), no con un `git status` pelado: si no, el árbol saldría «sucio» por los propios artefactos de la tubería —el informe que esta corrida está a punto de escribir— y `coverage-verify` publicaría un caveat falso en cada reporte.
 6. **Normalizar el `.gitignore`** (ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas)): comprobar con `git check-ignore -q .sdd-devkit/quality-check-run.json` si la caché ya está ignorada y, solo si no lo está, añadir la línea `.sdd-devkit/quality-check-run.json` (creando el archivo si no existe). El `.gitignore` está **excluido** de la receta del fingerprint precisamente para que esta edición no desplace la clave; aun así se hace aquí, antes del paso 7, para que cualquier otro efecto lateral quede antes de calcularla.
 7. Calcular el **fingerprint canónico del estado del código** (recipe exacto en [Fingerprint canónico](#fingerprint-canónico); es el mismo que usan `code-review` y `coverage-verify`). Clave de frescura de la caché de pruebas (ver [Caché de corrida de pruebas](#caché-de-corrida-de-pruebas)).
@@ -59,7 +59,7 @@ En otro caso, ejecutar **secuencialmente** (no en paralelo) los checks Bloqueant
 3. **validaciones de arquitectura** — solo si el Paso 1 encontró runner. Ejecutar el runner completo del repo (`node scripts/arch/verify.mjs` o el equivalente del stack), **sin acotar por estándar**: la caché es de la corrida entera. FAIL si exit ≠ 0. Capturar el comando y un `summary` corto con el número de criterios evaluados y de violaciones. Sin runner → `N/A` y **fila omitida**.
 4. **unit tests** — comando del stack; *fallback* canónico.
 5. **coverage** — PASS/FAIL según la regla del catálogo de checks (`SKILL.md`). Sin ninguna herramienta ni config de cobertura en el repo → `N/A` con nota en Próximas acciones, no `SKIPPED`.
-6. **suites configuradas** — una por cada requisito vigente del estándar de testing (integración, contrato, mutación…), en el **orden en que el estándar las declara**. Si el estándar no declara ninguna, este punto no existe: **no inventar una suite** ni partir la unitaria para simular una. Una suite configurada que necesite la aplicación compilada (rendimiento, carga, accesibilidad sobre la app desplegada) se ejecuta **después de build**, junto a e2e.
+6. **suites configuradas** — una por cada requerimiento vigente del estándar de testing (integración, contrato, mutación…), en el **orden en que el estándar las declara**. Si el estándar no declara ninguna, este punto no existe: **no inventar una suite** ni partir la unitaria para simular una. Una suite configurada que necesite la aplicación compilada (rendimiento, carga, accesibilidad sobre la app desplegada) se ejecuta **después de build**, junto a e2e.
 7. **build** — en Java/Go/Rust/.NET cubre la compilación.
 8. **e2e** — solo si hay script/tarea/perfil e2e o config Playwright/Cypress. **No es fija:** sin config queda en `N/A` y **la fila se omite** del informe, salvo que el estándar de testing la declare (entonces es `SKIPPED` y sí se lista).
 9. **sonar** — si falta `sonar-project.properties` → `N/A`. Si hay config y red falla → FAIL informativo.
@@ -99,7 +99,7 @@ En otro caso, ejecutar **secuencialmente** (no en paralelo) los checks Bloqueant
 Rellenar la plantilla [`../assets/quality-check-template.md`](../assets/quality-check-template.md) (ver [Formato del informe](#formato-del-informe)):
 
 1. Calcular el veredicto con la tabla de Veredicto (`SKILL.md`): considera Bloqueantes/Condicionales-presentes (las filas `N/A` no cuentan).
-2. Tabla resumen de checks: una fila por check ejecutado, `SKIPPED` o `⏸️` (cortado por el fail-fast), con la **etiqueta en el idioma resuelto** de la tabla de [Formato del informe](#formato-del-informe). Las dos **suites fijas** (unit, coverage) llevan fila siempre, incluso en `N/A`; **el resto de checks en `N/A` se omiten**. Las **configuradas**, una por requisito vigente del estándar de testing. Rellenar además la línea **Estándar de testing** del encabezado (ruta y requisitos vigentes, o «sin estándar de testing»).
+2. Tabla resumen de checks: una fila por check ejecutado, `SKIPPED` o `⏸️` (cortado por el fail-fast), con la **etiqueta en el idioma resuelto** de la tabla de [Formato del informe](#formato-del-informe). Las dos **suites fijas** (unit, coverage) llevan fila siempre, incluso en `N/A`; **el resto de checks en `N/A` se omiten**. Las **configuradas**, una por requerimiento vigente del estándar de testing. Rellenar además la línea **Estándar de testing** del encabezado (ruta y requerimientos vigentes, o «sin estándar de testing»).
 3. Detalle de checks **solo** para FAIL o `SKIPPED`; truncar a 10 errores por check (`… y N más`).
 4. "Próximas acciones": FAIL Bloqueantes/Condicionales en orden de ejecución → warnings de linter → Sonar → `SKIPPED` por config ausente/rota → recomendaciones (cobertura sin tooling; **suite presente en el repo pero no declarada en el estándar de testing**, con la sugerencia de declararla vía `arch-manage`).
 
@@ -157,7 +157,7 @@ escribir el informe, **nunca** al revés.
 Reglas al rellenar:
 - Sustituir cada `{{…}}` de la plantilla por el valor real; el informe publicado no debe conservar placeholders ni el bloque de comentario inicial.
 - Incluir solo las filas de checks que aplican, **con una excepción**: las dos suites fijas (unit, coverage) se listan siempre, aunque estén en `N/A`. Cualquier otro check en `N/A` —e2e sin config, tipado o linter sin stack detectable, build ausente, sonar sin configurar, o lo excluido por un modificador del usuario— **no lleva fila**, y no se compensa con una nota al pie: si no aplicó, no aparece. Renumerar la columna `#` sobre las filas que queden.
-- Las filas de **suites configuradas** salen del estándar de testing, una por requisito vigente y en su orden de declaración. Ninguna otra: no añadir una suite por haberla detectado en el repo.
+- Las filas de **suites configuradas** salen del estándar de testing, una por requerimiento vigente y en su orden de declaración. Ninguna otra: no añadir una suite por haberla detectado en el repo.
 - El detalle de checks va **solo** para FAIL o SKIPPED (truncar a 10 errores por check con `… y N más`).
 
 ---
@@ -243,7 +243,7 @@ directorio, devolver los resultados en la respuesta y advertir que no habrá reu
 (`PASS`/`FAIL`/`SKIPPED`/`N/A`) y un `summary` corto — el esquema completo y la semántica de cada campo están
 en [Esquema `quality-check-run.json`](#esquema-quality-check-runjson). Mapeo check → entrada: `unit tests` → `unit`, `coverage` → `coverage`, `e2e` → `e2e`,
 `validaciones de arquitectura` → `architecture`, cada
-suite configurada → el `ID` de su requisito en el estándar (p. ej. `integration-testing`), con su referencia
+suite configurada → el `ID` de su requerimiento en el estándar (p. ej. `integration-testing`), con su referencia
 global en `standard` (p. ej. `testing/integration-testing`), y —solo en corrida completa— `tipado` → `checks[].typecheck`, `linter` → `lint`, `build` → `build`, `sonar` → `sonar`. Las **dos fijas se emiten siempre**, con `result: "N/A"` si el repo no las
 tiene, para que el consumidor no tenga que distinguir «ausente» de «no aplica». **`e2e`, `architecture` y las configuradas se emiten
 solo si existen** —config e2e en el repo, runner en `scripts/arch/`, o la suite declarada en el estándar—: no inventar entradas que nadie declara.
@@ -268,7 +268,7 @@ resultado pudiera depender de eso, tratar la caché como no concluyente. Si el �
 estaba sucio, `workingTreeClean: false` queda registrado como señal para el consumidor.
 
 > **El estándar de testing vive en `docs/`, que el fingerprint excluye.** Añadir, retirar o desactivar un
-> requisito de pruebas **no** invalida la caché: un `quality-check-run.json` con el conjunto de suites anterior se
+> requerimiento de pruebas **no** invalida la caché: un `quality-check-run.json` con el conjunto de suites anterior se
 > dará por fresco. Al leer la caché en `tests-only`, comparar su `suites[]` con el conjunto vigente resuelto
 > en el Paso 1 y, **si no coinciden, tratarla como obsoleta** y re-ejecutar. Es la única comprobación de
 > frescura que no depende del `FINGERPRINT`, y hace falta justamente porque el estándar es documentación.
@@ -293,8 +293,8 @@ estaba sucio, `workingTreeClean: false` queda registrado como señal para el con
 | Repo **sin estándar de testing** (`docs/standards/testing.md` no existe) | Corrida de **solo las dos fijas**, más e2e si el repo tiene config. No es error ni `SKIPPED`: no hay suites configuradas que ejecutar. Opcionalmente, recomendar en Próximas acciones crear el estándar vía `arch-manage`. |
 | Suite **declarada en el estándar** que no se puede ejecutar (sin script, tarea o herramienta) | `SKIPPED` → `INCOMPLETE`. El estándar es la declaración de que ese check debe correr. |
 | Suite declarada cuyo comando **no se resuelve con certeza** | Preguntar al usuario; no adivinar un comando ni partir la suite unitaria para simularla. |
-| Requisito del estándar con `**Estado:** Deprecated` o `Superseded` | No ejecutar ni listar: dejó de ser exigible. |
-| Suite **presente en el repo pero no declarada** en el estándar (p. ej. script `test:it` sin requisito) | No ejecutarla y no bloquear. Anotarla en Próximas acciones como recomendación de declararla en el estándar (`arch-manage`). |
+| Requerimiento del estándar con `**Estado:** Deprecated` o `Superseded` | No ejecutar ni listar: dejó de ser exigible. |
+| Suite **presente en el repo pero no declarada** en el estándar (p. ej. script `test:it` sin requerimiento) | No ejecutarla y no bloquear. Anotarla en Próximas acciones como recomendación de declararla en el estándar (`arch-manage`). |
 | Suite de integración no distinguible de la unitaria, con el estándar declarándola | `SKIPPED` → `INCOMPLETE`. No contar la suite unitaria como integración ni inventar un comando. |
 | Repo **sin runner de arquitectura** (`scripts/arch/verify.*` y `scripts/arch/checks/*` no existen) | `N/A`: **omitir la fila** y no emitir entrada `architecture` en `suites[]`. No afecta al veredicto. Opcionalmente, recomendar en Próximas acciones crear las fitness functions vía `arch-manage`. |
 | Runner de arquitectura presente pero **no ejecutable** (falta runtime o dependencia, comando roto) | `SKIPPED` → `INCOMPLETE`. Que el repo declare el runner es la declaración de que ese check debe correr. No sustituirlo por una inspección manual del código. |
@@ -304,7 +304,7 @@ estaba sucio, `workingTreeClean: false` queda registrado como señal para el con
 | Coverage bajo umbral configurado | `FAIL` (`❌`). |
 | Coverage sin umbrales configurados y exit 0 | `PASS` (`✅`). |
 | E2E **Condicional** con config presente pero tool ausente/rota | `SKIPPED` → `INCOMPLETE`. |
-| Repositorio solo de pruebas (`implementation.scope: tests`) con specs API/E2E/Visual contra un sistema externo | **No ejecutarlos y no listarlos**: `N/A` por política, nunca `SKIPPED`, aunque el estándar de testing los declare. Solo corren tipado, linter, build y `unit`/`coverage` del código propio del repo. Un rojo de esos specs no es `FAIL` de este repo: es un hallazgo registrado en `test-cases-automation.md` (ver `work-implement/references/test-cases.md` § Modo pruebas). |
+| Repositorio solo de pruebas (`implementation.scope: tests`) con specs API/E2E/Content/Style contra un sistema externo | **No ejecutarlos y no listarlos**: `N/A` por política, nunca `SKIPPED`, aunque el estándar de testing los declare. Solo corren tipado, linter, build y `unit`/`coverage` del código propio del repo. Un rojo de esos specs no es `FAIL` de este repo: es un hallazgo registrado en `test-cases-automation.md` (ver `work-implement/references/test-cases.md` § Modo pruebas). |
 | E2E sin config ni script de e2e | `N/A`: **omitir la fila** del informe y no emitir entrada en `suites[]`. No afecta veredicto. **Salvo** que el estándar de testing declare e2e — entonces es `SKIPPED` y sí lleva fila (ver la fila de suite declarada no ejecutable). |
 | Build **N/A** (Python sin empaquetado) | Omitir fila; no afecta veredicto. |
 | `sonar-scanner` no disponible o falta `sonar-project.properties` | `N/A`. No afecta veredicto. |

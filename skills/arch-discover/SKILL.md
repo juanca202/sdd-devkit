@@ -15,16 +15,16 @@ nunca se documentaron formalmente.
 Cada hallazgo se traduce en artefactos de dos tipos (ver el skill `arch-manage` para la distinción completa):
 
 - Un **ADR** — la *decisión* histórica: por qué se eligió algo. Todo hallazgo relevante produce un ADR candidato.
-- Un **requisito** dentro de un **estándar de dominio** — la *regla viva* que el código sigue hoy (`docs/standards/`). El estándar es **amplio** (un **dominio técnico o funcional** entero: *Testing Standards*, *API Standards*…; un aspecto de arquitectura, no un dominio de negocio/DDD) y agrupa varios requisitos; cada requisito se redacta con RFC 2119/8174 (MUST/SHOULD/MAY…). Un hallazgo que es una norma continua y verificable propone **un requisito**, dentro del estándar de dominio que le corresponde (agrupándolo con otros del mismo dominio). La unidad verificable fina —el **criterio de cumplimiento** (`CR-XXX`), que pertenece a un requisito pero vive en la tabla única del estándar— la propone `arch-manage` al crear el documento, para que el usuario elija cuáles crear; en descubrimiento basta con proponer el requisito y su regla.
+- Un **requerimiento** dentro de un **estándar de dominio** — la *regla viva* que el código sigue hoy (`docs/standards/`). El estándar es **amplio** (un **dominio técnico o funcional** entero: *Testing Standards*, *API Standards*…; un aspecto de arquitectura, no un dominio de negocio/DDD) y agrupa varios requerimientos; cada requerimiento se redacta con RFC 2119/8174 (MUST/SHOULD/MAY…). Un hallazgo que es una norma continua y verificable propone **un requerimiento**, dentro del estándar de dominio que le corresponde (agrupándolo con otros del mismo dominio). La unidad verificable fina —el **criterio de cumplimiento** (`CR-XXX`), que pertenece a un requerimiento pero vive en la tabla única del estándar— la propone `arch-manage` al crear el documento, para que el usuario elija cuáles crear; en descubrimiento basta con proponer el requerimiento y su regla.
 
 Ejemplo: detectar "unit tests con PHPUnit" y "e2e con Playwright" son **dos decisiones** (dos ADR),
-pero **un solo estándar de dominio** *Testing Standards* con **dos requisitos** («Unit testing»,
+pero **un solo estándar de dominio** *Testing Standards* con **dos requerimientos** («Unit testing»,
 «E2E testing»). En cambio detectar "hubo una migración de Webpack a Vite" es una decisión histórica
 (**ADR** sin criterio de cumplimiento): no hay una norma continua que cumplir, solo un hecho.
 
-El output es una **lista priorizada de candidatos**, agrupando los requisitos por estándar de dominio.
+El output es una **lista priorizada de candidatos**, agrupando los requerimientos por estándar de dominio.
 El usuario decide cuáles documentar; el skill luego invoca `arch-manage` para cada uno aprobado, que
-crea el ADR y —cuando aplique— añade su requisito al estándar de dominio (creándolo o ampliándolo).
+crea el ADR y —cuando aplique— añade su requerimiento al estándar de dominio (creándolo o ampliándolo).
 Este skill es **autocontenido**: cuando se invoca (directamente o como subagente desde otro skill,
 p. ej. `arch-init`), corre sus cinco fases hasta el final, incluida la creación de los artefactos
 aprobados — nadie más los vuelve a crear después.
@@ -110,7 +110,7 @@ Desde `<raíz-arq>` (sustituir por su ruta si no es el directorio actual):
 ```bash
 ls docs/adr/*.md docs/standards/*.md 2>/dev/null || echo "No hay ADRs ni estándares"
 ```
-Para cada uno, leer solo lo clave (`## Decisión` de los ADR; el `title`/`domain` y los requisitos `## <…>` de los estándares); no cargar el documento completo si hay muchos.
+Para cada uno, leer solo lo clave (`## Decisión` de los ADR; el `title`/`domain` y los requerimientos `## <…>` de los estándares); no cargar el documento completo si hay muchos.
 
 ---
 
@@ -125,18 +125,18 @@ Para cada señal encontrada, evaluar si amerita documentarse usando estos criter
 - Un desarrollador nuevo podría cuestionarla razonablemente
 
 **Excluir si:**
-- Ya está cubierta por un ADR o por un requisito de estándar existente
+- Ya está cubierta por un ADR o por un requerimiento de estándar existente
 - Es la opción por defecto obvia del stack (ej: usar Jest en un proyecto CRA)
 - Es una decisión de implementación, no arquitectónica
 
-### Clasificar cada candidato: ¿fija un requisito? ¿de qué dominio técnico/funcional?
+### Clasificar cada candidato: ¿fija un requerimiento? ¿de qué dominio técnico/funcional?
 
-Por cada candidato, además de la decisión (ADR), determinar si hay una **regla viva** que documentar como **requisito** dentro de un **estándar de dominio**:
+Por cada candidato, además de la decisión (ADR), determinar si hay una **regla viva** que documentar como **requerimiento** dentro de un **estándar de dominio**:
 
-- **Decisión + requisito** — el código sigue hoy una norma continua y verificable (p. ej. "las APIs son GraphQL", "el dominio no importa infraestructura", "unit tests con PHPUnit"). Proponer el ADR **y** el requisito, indicando **a qué estándar de dominio pertenece** (agrupándolo con otros candidatos del mismo dominio bajo un solo estándar).
+- **Decisión + requerimiento** — el código sigue hoy una norma continua y verificable (p. ej. "las APIs son GraphQL", "el dominio no importa infraestructura", "unit tests con PHPUnit"). Proponer el ADR **y** el requerimiento, indicando **a qué estándar de dominio pertenece** (agrupándolo con otros candidatos del mismo dominio bajo un solo estándar).
 - **Solo decisión (ADR)** — una elección histórica o puntual sin una regla continua que cumplir (una migración ya ejecutada, la adopción inicial de un runtime). Proponer solo el ADR.
 
-**Agrupar por dominio:** varios candidatos del mismo dominio se consolidan en **un** estándar. P. ej. "unit tests con PHPUnit" + "e2e con Playwright" + "cobertura ≥ 80%" → un estándar *Testing Standards* con tres requisitos.
+**Agrupar por dominio:** varios candidatos del mismo dominio se consolidan en **un** estándar. P. ej. "unit tests con PHPUnit" + "e2e con Playwright" + "cobertura ≥ 80%" → un estándar *Testing Standards* con tres requerimientos.
 
 ### Categorías / dominios típicos a buscar
 
@@ -150,7 +150,7 @@ candidato en uno de ellos — proponer un dominio nuevo solo si de verdad no enc
 
 Leer [`references/candidate-presentation.md`](references/candidate-presentation.md) para el formato
 exacto (con ejemplo) en el que se muestra la lista al usuario, agrupada por prioridad (🔴 alta / 🟡
-media / ⚪ baja) e indicando a qué estándar de dominio aportaría cada requisito. Al final de la lista,
+media / ⚪ baja) e indicando a qué estándar de dominio aportaría cada requerimiento. Al final de la lista,
 preguntar con la herramienta de preguntas estructuradas cuáles documentar (esa referencia trae la
 pregunta exacta y sus opciones).
 
@@ -164,16 +164,16 @@ Por cada candidato aprobado por el usuario:
    - El título sugerido de la decisión
    - La evidencia encontrada (como contexto para el `## Contexto` del ADR)
    - La decisión inferida
-   - **Si fija un requisito:** el enunciado de la regla en lenguaje RFC 2119 y **el estándar de dominio** al que pertenece (para que `arch-manage` cree o amplíe ese estándar)
+   - **Si fija un requerimiento:** el enunciado de la regla en lenguaje RFC 2119 y **el estándar de dominio** al que pertenece (para que `arch-manage` cree o amplíe ese estándar)
    - Las alternativas implícitas detectadas (si las hay)
    - Los **Decisores**, acordados una sola vez para todo el lote, de modo que `arch-manage` no vuelva a preguntar lo mismo por cada artefacto
    - La **raíz de arquitectura (`<raíz-arq>`)** resuelta en la Fase 1, para que `arch-manage` escriba ahí y **no vuelva a preguntarla** por cada documento del lote
 
-2. Dejar que `arch-manage` ejecute su flujo completo: crea el ADR y, cuando corresponda, añade el requisito al estándar de dominio (creándolo o ampliándolo), **propone los criterios de cumplimiento candidatos con su mecanismo de verificación para que el usuario elija cuáles crear**, escribe los seleccionados como `CR-XXX` con su `Enfoque` (bloqueante/warning), enlaza `emits` (a nivel de CR) / `source_adrs` y crea las fitness functions elegidas. En lote, esa propuesta y selección se presenta **una sola vez para todos los candidatos aprobados** (una tabla con columna `Estándar`), no una por documento.
+2. Dejar que `arch-manage` ejecute su flujo completo: crea el ADR y, cuando corresponda, añade el requerimiento al estándar de dominio (creándolo o ampliándolo), **propone los criterios de cumplimiento candidatos con su mecanismo de verificación para que el usuario elija cuáles crear**, escribe los seleccionados como `CR-XXX` con su `Enfoque` (bloqueante/warning), enlaza `emits` (a nivel de CR) / `source_adrs` y crea las fitness functions elegidas. En lote, esa propuesta y selección se presenta **una sola vez para todos los candidatos aprobados** (una tabla con columna `Estándar`), no una por documento.
 
-3. **Agrupar por dominio en el lote:** procesar juntos los candidatos del mismo dominio para que sus requisitos caigan en el **mismo** estándar (no crear un estándar por candidato).
+3. **Agrupar por dominio en el lote:** procesar juntos los candidatos del mismo dominio para que sus requerimientos caigan en el **mismo** estándar (no crear un estándar por candidato).
 
-   **Propuesta de criterios, una sola vez para el lote.** Los ADR y los bloques de requisito se crean candidato a candidato, pero la **propuesta y selección de los criterios de cumplimiento** (con su mecanismo de verificación) se acumula y se presenta **al final del lote**, en una sola tabla con columna `Estándar`, con una única tanda de preguntas. No lanzar la selección por cada candidato.
+   **Propuesta de criterios, una sola vez para el lote.** Los ADR y los bloques de requerimiento se crean candidato a candidato, pero la **propuesta y selección de los criterios de cumplimiento** (con su mecanismo de verificación) se acumula y se presenta **al final del lote**, en una sola tabla con columna `Estándar`, con una única tanda de preguntas. No lanzar la selección por cada candidato.
 
 4. Una vez creado cada artefacto, continuar con el siguiente candidato aprobado.
 
@@ -188,8 +188,8 @@ como subagente (p. ej. `arch-init`) debe dejarlo correr hasta aquí — no hay u
 - **No narrar el flujo interno.** Nada de anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, ni ir enumerando las fases en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - **No inventar decisiones ni reglas.** Si la evidencia es ambigua, mencionar la incertidumbre en "Evidencia" y marcarlo como baja prioridad.
 - **No proponer documentos triviales.** "Usamos Git" no es un ADR.
-- **No repetir trabajo.** Si ya existe un ADR o un requisito de estándar que cubre el hallazgo, omitir el candidato y mencionarlo en un pie de página: "X hallazgos omitidos por estar ya documentados."
-- **Distinguir decisión de regla, y agrupar por dominio.** No todo ADR fija un requisito; proponer requisito solo cuando hay una norma continua y verificable. Consolidar los requisitos del mismo dominio en un solo estándar (no un estándar por regla).
+- **No repetir trabajo.** Si ya existe un ADR o un requerimiento de estándar que cubre el hallazgo, omitir el candidato y mencionarlo en un pie de página: "X hallazgos omitidos por estar ya documentados."
+- **Distinguir decisión de regla, y agrupar por dominio.** No todo ADR fija un requerimiento; proponer requerimiento solo cuando hay una norma continua y verificable. Consolidar los requerimientos del mismo dominio en un solo estándar (no un estándar por regla).
 - **Priorizar calidad sobre cantidad.** Mejor 4 candidatos sólidos que 12 rellenos.
 - **Una raíz por corrida.** El descubrimiento cubre **una** raíz de arquitectura: no mezclar hallazgos del repo principal y de un submódulo en el mismo lote, ni escribir sus documentos en la raíz equivocada. Para cubrir otra raíz, otra corrida.
 

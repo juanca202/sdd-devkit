@@ -12,7 +12,7 @@ Plantilla canónica del reporte de trazabilidad (coverage-verify).
   valores canónicos. Ver ../../references/verdicts.md.
 - Valores canónicos permitidos (en la celda va SÍMBOLO + ETIQUETA en el idioma resuelto):
   · Estado: `COVERED` (✅) | `PARTIAL` (⚠️) | `UNCOVERED` (❌)
-  · Tipo: Manual | Unit | Integration | API Test | Visual Test | E2E | — (sin TC ni artefacto)
+  · Tipo: Manual | Unit | Integration | API Test | Content Test | Style Test | E2E | — (sin TC ni artefacto)
   · Evidencia: ruta del artefacto · ruta del TC en filas Manual · — (intención no materializada)
   · Ejecución: quality-check | Manual | — (no se ejecutó)
   · Resultado: `PASS` | `FAIL` | `NOT_RUN` | `UNCOVERED` | `N/A`

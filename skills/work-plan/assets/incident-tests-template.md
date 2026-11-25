@@ -6,7 +6,7 @@ repository: sistema-bajo-prueba       # obligatorio para Ready: nombre del siste
 test_case: ../../user-stories/US-XXX-slug/test-cases/TC-XXX-slug.md   # TC que detectó el hallazgo; si no nace de un TC, omitir y explicar en Descripción cómo se observó
 criterion: AC-XXX                     # identificador verbatim del criterio que el TC verifica (AC-XXX, 1.1, R-3, …); omitir si no hay TC
 parent: US-XXX                        # US-XXX | WI-XXX | FT-XXX del TC; omitir si no hay TC
-test_type: API Test                   # API Test | Visual Test | E2E | Manual — el nivel con el que se ejecutó
+test_type: API Test                   # API Test | Content Test | Style Test | E2E | Manual — el nivel con el que se ejecutó
 automated_test: "nombre del caso en el runner — ruta/al/spec.ext"   # incluye el ID del TC; omitir si la ejecución fue manual
 environment: "QA · build 1.4.2 · Chrome 130"   # nombre del ambiente (nunca la URL ni valores del .env) · build/versión · navegador/dispositivo si aplica
 executed_at: "YYYY-MM-DD HH:mm"

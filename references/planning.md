@@ -85,9 +85,9 @@ if (specification) {
 }
 console.log('');
 if (scope === 'tests') {
-  console.log('- implementation.scope = tests -> test-define: este repositorio solo contiene pruebas contra un sistema desplegado cuyo codigo NO esta aqui. Tipo de prueba permitido: Manual, o una combinacion de API Test / Visual Test / E2E. Unit e Integration NO existen en este repo (son pruebas de desarrollo, viven junto al codigo): no asignarlos, no ofrecerlos y no preguntar por ellos. Un criterio que solo se podria verificar desde dentro del codigo se cubre por su efecto observable (API/E2E) o queda Manual con la razon en Observaciones.');
+  console.log('- implementation.scope = tests -> test-define: este repositorio solo contiene pruebas contra un sistema desplegado cuyo codigo NO esta aqui. Tipo de prueba permitido: Manual, o una combinacion de API Test / Content Test / Style Test / E2E. Unit e Integration NO existen en este repo (son pruebas de desarrollo, viven junto al codigo): no asignarlos, no ofrecerlos y no preguntar por ellos. Un criterio que solo se podria verificar desde dentro del codigo se cubre por su efecto observable (API/E2E) o queda Manual con la razon en Observaciones.');
 } else {
-  console.log('- implementation.scope = code -> test-define: los cinco tipos de prueba (Unit, Integration, API Test, Visual Test, E2E) estan disponibles.');
+  console.log('- implementation.scope = code -> test-define: los seis tipos de prueba (Unit, Integration, API Test, Content Test, Style Test, E2E) estan disponibles.');
 }
 "
 ```

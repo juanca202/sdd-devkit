@@ -38,7 +38,7 @@ Copiar el patron del stack del repo; la orden exacta sale de los scripts del man
 
 ## Modo pruebas (`implementation.scope: tests`)
 
-Cuando la politica de implementacion resolvio `scope = tests` (repositorio de pruebas contra un sistema desplegado, ver [`test-cases.md` § Modo pruebas](test-cases.md#modo-pruebas-implementationscope-tests)), **todas** las pruebas del proyecto son API, E2E o visuales, asi que la fila «Playwright / Cypress: no se ejecutan en iteracion» de la tabla de arriba **no aplica**: no habria nada que ejecutar hasta el cierre. La regla de tres niveles se conserva; cambia solo que se corre en cada nivel:
+Cuando la politica de implementacion resolvio `scope = tests` (repositorio de pruebas contra un sistema desplegado, ver [`test-cases.md` § Modo pruebas](test-cases.md#modo-pruebas-implementationscope-tests)), **todas** las pruebas del proyecto son API, E2E, de contenido o de estilo, asi que la fila «Playwright / Cypress: no se ejecutan en iteracion» de la tabla de arriba **no aplica**: no habria nada que ejecutar hasta el cierre. La regla de tres niveles se conserva; cambia solo que se corre en cada nivel:
 
 | Momento | `scope: tests` — que se ejecuta | Que NO se ejecuta |
 |---------|--------------------------------------|-------------------|

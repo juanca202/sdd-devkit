@@ -109,7 +109,7 @@ Todo esto son **identificadores**, no contenido:
   `work-define`, `work-plan` y el archivado; no es una puerta de cierre).
 - Los **valores** de los campos de estado, aunque su etiqueta visible sí se traduzca:
   `Draft` / `Ready` (únicos valores) en US, TK, WI, BUG, RQ, PRD, SRS y RS, `Draft` / `Ready` / `Obsolete` en un TC, `Pending` / `In Progress` / `Done` **solo** en `progress.md` y en `test-cases-automation.md` (nunca en el frontmatter de una especificación),
-  `Unit` / `Integration` / `API Test` / `Visual Test` / `E2E` / `Manual` como tipo de prueba,
+  `Unit` / `Integration` / `API Test` / `Content Test` / `Style Test` / `E2E` / `Manual` como tipo de prueba,
   `Proposed` / `Approved` como estado de revisión de un `WF-XXX`, `Proposed` / `Approved` como estado de un
   `FR-XXX`/`NFR-XXX`, `Open` / `Fixing (…)` / `Fixed (…)` / `Discarded` en la `Resolución` de un incidente `BUG-XXX` y `Open` / `Replanned (…)` / `Re-spiked (…)` /
   `Discarded` en la `Resolución` de un WI de tipo `spike`, `Pending` / `Ready` en los casos golden master, `Always` / `Intermittent` /

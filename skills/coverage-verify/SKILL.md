@@ -13,7 +13,7 @@ El trazado primario es para **historias de usuario** (`US-XXX`) con sus **criter
 
 > **Qué hace:** lee, mapea, **obtiene los resultados de pruebas delegando en `quality-check`** y reporta. Es una actividad de **verificación**, no de desarrollo.
 >
-> **No ejecuta pruebas por sí mismo.** La ejecución de la batería de pruebas se **delega en `quality-check`**: si existe una corrida previa fresca de `quality-check` (sin cambios en el código desde entonces), se **reutilizan** sus resultados; si no, se invoca `quality-check` en modo `tests-only` para producirlos. Ver [Resultados de pruebas: delegación en quality-check](#resultados-de-pruebas-delegación-en-quality-check). **Repositorio solo de pruebas (`implementation.scope: tests`).** Allí `quality-check` **no ejecuta** los specs contra el sistema desplegado (API, E2E, Visual) —validan otro sistema, no el repo—, así que `quality-check-run.json` no trae sus resultados y **no se le invoca en `tests-only` para obtenerlos**. La fuente de ejecución es **`test-cases-automation.md`** del artefacto padre, que `work-implement` dejó al cerrar la unidad: cada archivo de `Pruebas` es evidencia; una línea en `Hallazgos` para el `TC-XXX` significa `Resultado = FAIL`; sin hallazgo, `PASS`. En la matriz, `Ejecución = work-implement`. **Ese `FAIL` no descubre el criterio:** existe una prueba fiel al TC, así que el criterio queda `COVERED`, y el fallo se reporta como hallazgo del sistema bajo prueba en «Observaciones y pendientes», con el `WI-XXX` de seguimiento si lo hay. Detectar ese rojo es el objetivo del repo, no una deuda de cobertura, y no degrada el veredicto. Con `scope: code` o sin la clave, esta nota no aplica.
+> **No ejecuta pruebas por sí mismo.** La ejecución de la batería de pruebas se **delega en `quality-check`**: si existe una corrida previa fresca de `quality-check` (sin cambios en el código desde entonces), se **reutilizan** sus resultados; si no, se invoca `quality-check` en modo `tests-only` para producirlos. Ver [Resultados de pruebas: delegación en quality-check](#resultados-de-pruebas-delegación-en-quality-check). **Repositorio solo de pruebas (`implementation.scope: tests`).** Allí `quality-check` **no ejecuta** los specs contra el sistema desplegado (API, E2E, Content, Style) —validan otro sistema, no el repo—, así que `quality-check-run.json` no trae sus resultados y **no se le invoca en `tests-only` para obtenerlos**. La fuente de ejecución es **`test-cases-automation.md`** del artefacto padre, que `work-implement` dejó al cerrar la unidad: cada archivo de `Pruebas` es evidencia; una línea en `Hallazgos` para el `TC-XXX` significa `Resultado = FAIL`; sin hallazgo, `PASS`. En la matriz, `Ejecución = work-implement`. **Ese `FAIL` no descubre el criterio:** existe una prueba fiel al TC, así que el criterio queda `COVERED`, y el fallo se reporta como hallazgo del sistema bajo prueba en «Observaciones y pendientes», con el `WI-XXX` de seguimiento si lo hay. Detectar ese rojo es el objetivo del repo, no una deuda de cobertura, y no degrada el veredicto. Con `scope: code` o sin la clave, esta nota no aplica.
 >
 > **Reporte idempotente.** Si no han cambiado ni el código, ni las pruebas, ni los criterios y casos de prueba del artefacto desde la última vez que se generó el `criteria-coverage.md`, **no se genera un documento nuevo**: se devuelven los mismos resultados del reporte existente. Ver [Reutilización del reporte (idempotencia)](#reutilización-del-reporte-idempotencia).
 >
@@ -49,9 +49,9 @@ El tipo se determina por el identificador que indique el usuario o por la ruta d
 | **Historia de usuario** | `US-XXX` | Sección **Criterios de aceptación** del `README.md` de la US (lista plana, habitualmente `AC-XXX`) | El identificador de cada criterio, en el orden en que aparecen |
 | **Tarea de mantenimiento** | `WI-XXX` | Sección **## Criterios de aceptación** del `README.md` del WI (`WI-XXX-[kebab]/README.md`) | El identificador de cada criterio, en el orden en que aparecen |
 | **Feature (funcionalidad ya implementada)** | `FT-XXX` | Sección **## Criterios de aceptación** del `README.md` del feature (`<currentPath>/FT-XXX-[slug]/README.md`) | El identificador de cada criterio, en el orden en que aparecen |
-| **Cualquier otro artefacto de especificación** | Ruta o nombre que indique el usuario | La sección de criterios del documento (puede llamarse «Criterios de aceptación», «Requisitos», «Acceptance Criteria»…) | El identificador de cada criterio, tal como aparece |
+| **Cualquier otro artefacto de especificación** | Ruta o nombre que indique el usuario | La sección de criterios del documento (puede llamarse «Criterios de aceptación», «Requerimientos», «Acceptance Criteria»…) | El identificador de cada criterio, tal como aparece |
 
-> **El requisito no es el formato, es que exista identificador.** En todo el flujo, «criterio» se refiere al identificador **tal como está escrito en el artefacto** — `AC-012`, `1.3`, `R-3`, `CA-07` son todos válidos. **Nunca normalizar ni renombrar**: el vínculo de trazabilidad debe ser buscable literalmente tanto en el artefacto como en los TCs que produjo `test-define`. Si el trabajo **no tiene criterios**, o los tiene sin identificador, no hay nada que trazar → **bloquear** (ver «Cuándo bloquear»).
+> **El requerimiento no es el formato, es que exista identificador.** En todo el flujo, «criterio» se refiere al identificador **tal como está escrito en el artefacto** — `AC-012`, `1.3`, `R-3`, `CA-07` son todos válidos. **Nunca normalizar ni renombrar**: el vínculo de trazabilidad debe ser buscable literalmente tanto en el artefacto como en los TCs que produjo `test-define`. Si el trabajo **no tiene criterios**, o los tiene sin identificador, no hay nada que trazar → **bloquear** (ver «Cuándo bloquear»).
 
 > **FT — validar cobertura de funcionalidad ya implementada.** Un `FT-XXX` es el
 > registro de una funcionalidad **ya implementada** (inferida de código legacy por el
@@ -166,7 +166,7 @@ Los valores de la columna `status` son **canónicos**: en el reporte se escribe 
 >
 > **El `status` del TC filtra la cobertura.** La fuente primaria es la **columna `status` del índice** `test-cases/README.md`; si el índice no la trae, abrir el `TC-XXX-*.md` y leer la clave `status` de su frontmatter. Los **valores** (`Draft`/`Ready`/`Obsolete`) son canónicos y no se traducen. Un TC **`Obsolete`** no cuenta como cobertura (dejar Observación); uno **`Draft`** cuenta como cobertura `PARTIAL` (aún no está listo para respaldar el criterio); solo los **`Ready`** cuentan como cobertura plena. Si el TC no trae el campo, tratarlo como `Ready`. Esto es distinto del `status` del **artefacto**, que este skill no exige (ver «Cuándo bloquear»).
 >
-> **Manual por diseño vs. pendiente de automatizar.** `test-define` distingue los dos casos en el campo **Tipo de prueba** del TC: `Manual` significa *no se automatiza por decisión de diseño*; cualquier otro valor (`Unit`, `Integration`, `API Test`, `Visual Test`, `E2E`) significa *debería existir artefacto automatizado*. Respetar esa declaración: un criterio con TCs `Manual` que lo cubren por completo es `COVERED` (sus filas van con `Ejecución = Manual` y `Resultado = N/A`), no una deuda; un criterio con TCs automatizables **sin** artefacto es `PARTIAL` o `UNCOVERED`. No penalizar una decisión de diseño ni disimular una automatización pendiente.
+> **Manual por diseño vs. pendiente de automatizar.** `test-define` distingue los dos casos en el campo **Tipo de prueba** del TC: `Manual` significa *no se automatiza por decisión de diseño*; cualquier otro valor (`Unit`, `Integration`, `API Test`, `Content Test`, `Style Test`, `E2E`) significa *debería existir artefacto automatizado*. Respetar esa declaración: un criterio con TCs `Manual` que lo cubren por completo es `COVERED` (sus filas van con `Ejecución = Manual` y `Resultado = N/A`), no una deuda; un criterio con TCs automatizables **sin** artefacto es `PARTIAL` o `UNCOVERED`. No penalizar una decisión de diseño ni disimular una automatización pendiente.
 >
 > **Un TC con varios tipos declarados se cubre por tipo.** Si un TC declara `Unit, E2E` y solo existe el test unitario, el criterio **no** es `COVERED`: la fila `E2E` de la matriz queda en `UNCOVERED` y el criterio baja a `PARTIAL`, con el tipo faltante nombrado en Observaciones. La matriz muestra esa asimetría fila a fila (ver [Vistas del reporte](#vistas-del-reporte-cobertura-por-criterio-y-matriz)).
 
@@ -205,7 +205,7 @@ Semántica de las columnas:
 |---------|--------------|---------|
 | **Criterio** | Identificador **verbatim** del artefacto, repetido en cada fila suya | `AC-012`, `1.3`, `R-3`… |
 | **TC** | Caso de prueba que produjo `test-define` | `TC-XXX` · `—` si el criterio no tiene TC documentado (fila **derivada** de un test hallado, o hueco total) |
-| **Tipo** | El `Tipo de prueba` **declarado en el TC**; en filas derivadas, el tipo del artefacto hallado | `Manual` · `Unit` · `Integration` · `API Test` · `Visual Test` · `E2E` · `—` (sin TC y sin artefacto) |
+| **Tipo** | El `Tipo de prueba` **declarado en el TC**; en filas derivadas, el tipo del artefacto hallado | `Manual` · `Unit` · `Integration` · `API Test` · `Content Test` · `Style Test` · `E2E` · `—` (sin TC y sin artefacto) |
 | **Evidencia** | La prueba concreta que respalda la fila | Ruta del artefacto automatizado · ruta del TC para filas `Manual` · `—` si esa intención no está materializada |
 | **Ejecución** | **Quién** produjo el resultado | `quality-check` · `work-implement` (solo en `scope: tests`: resultado leído de `test-cases-automation.md`) · `Manual` · `—` (no se ejecutó) |
 | **Resultado** | Qué dio esa prueba. Valores **canónicos**; en el reporte va la etiqueta en el idioma resuelto | `PASS` · `FAIL` · `NOT_RUN` (hay artefacto, no corrió) · `UNCOVERED` (no hay evidencia para ese tipo) · `N/A` (manual por diseño) |
@@ -267,74 +267,16 @@ archivos desde la última generación, no se produce un reporte nuevo** — se d
 `criteria-coverage.md` existente. Esto evita rehacer el mapeo y volver a delegar la ejecución de pruebas cuando nada
 cambió.
 
-> **Contexto de ejecución.** Como `quality-check`, este skill es una **compuerta de cierre** (al integrar o
-> antes del PR), no corre por tarea ni durante la implementación. La frescura se evalúa sobre la rama
-> **consolidada** del cierre. En el pipeline típico de cierre `pr-create` corre `quality-check` **primero**
-> (produce `quality-check-run.json` fresco) y luego `coverage-verify`, que reutiliza esa corrida — sin doble
-> ejecución de pruebas; y si el código tampoco cambió desde el último `criteria-coverage.md`, este Paso 0 lo
-> devuelve sin regenerarlo.
+La frescura se decide con **dos claves**: `FINGERPRINT` (el código y los tests; el canónico de la tubería) y
+`SPEC_FINGERPRINT` (los criterios y los `TC-XXX` del artefacto, excluyendo el propio `criteria-coverage.md`).
+En el **Paso 0** se calculan ambas —siempre, haya reporte previo o no— y el reporte existente se devuelve sin
+regenerar **solo si** coinciden las dos con las de su marca de pie, no registra una ejecución fallida
+(`NOT_RUN` por entorno) y el usuario no pasó `revalidate`; en cualquier otro caso se ejecuta el flujo completo
+y se regraban al guardar (Paso 7).
 
-**Clave de frescura — dos hashes, porque el reporte depende de dos cosas distintas.**
-
-| Clave | Qué cubre | Cómo se calcula |
-|-------|-----------|-----------------|
-| `FINGERPRINT` | **El código y los tests.** El fingerprint canónico de la tubería, idéntico al de `quality-check` y `code-review`: excluye toda carpeta oculta, cualquier `docs/`, toda la documentación en texto (`*.md`, `*.rst`, `*.adoc`, `LICENSE*`, `CHANGELOG*`…) y el `.gitignore`, para que ni escribir un archivo generado ni editar documentación invalide la caché: **solo se mueve cuando cambia el código**. Receta exacta en [`${PLUGIN_ROOT}/references/fingerprint.md`](../../references/fingerprint.md). | Sobre todo el árbol, menos las exclusiones |
-| `SPEC_FINGERPRINT` | **Los criterios y los casos de prueba** del artefacto que se valida: su `README.md` y su carpeta `test-cases/`. Viven bajo `docs/specs/`, que el `FINGERPRINT` excluye — sin esta segunda clave, reescribir un criterio no invalidaría nada. | Sobre la **carpeta del artefacto**, excluyendo su propio `criteria-coverage.md` |
-
-`bash
-NO_REPORT=":(exclude)${ARTEFACTO%/}/criteria-coverage.md"
-SPEC_FINGERPRINT=$( { git -C "$ROOT" ls-files -s              -- "$ARTEFACTO" "$NO_REPORT"; \
-                      git -C "$ROOT" status --porcelain -uall -- "$ARTEFACTO" "$NO_REPORT"; \
-                      git -C "$ROOT" diff                     -- "$ARTEFACTO" "$NO_REPORT"; \
-                    } | git hash-object --stdin )
-`
-
-donde `$ARTEFACTO` es la carpeta del trabajo (`<changesPath>/user-stories/US-042-…/`) o, si el artefacto es un archivo suelto, su ruta. Se reutiliza el reporte **solo si coinciden los dos**.
-
-> **La exclusión del propio reporte no es opcional.** El `criteria-coverage.md` vive **dentro** de `$ARTEFACTO`: sin `$NO_REPORT`, escribirlo en el Paso 7 movería el `SPEC_FINGERPRINT`, la marca de pie guardaría el hash de *antes* de escribir, y ninguna corrida posterior coincidiría — la idempotencia no se dispararía **nunca**. La clave cubre las **entradas** del reporte, no su salida; es el mismo motivo por el que el `FINGERPRINT` excluye `**/criteria-coverage.md`.
->
-> **Y tiene que ser una ruta literal interpolando `$ARTEFACTO`, no un glob.** `':(exclude,glob)**/criteria-coverage.md'` junto a un pathspec **positivo** hace que git excluya **todo**: las tres órdenes devuelven vacío, la clave queda fija en el hash del blob vacío, y entonces la idempotencia se dispara siempre y un criterio editado nunca invalida el reporte. El `EXC` del `FINGERPRINT` puede usar globs porque ahí no hay pathspec positivo.
-
-> **Por qué dos claves y no una.** Meter `docs/` entero en el `FINGERPRINT` haría que escribir cualquier informe invalidara las tres cachés — el problema que las exclusiones resuelven. Acotar la segunda clave a **la carpeta del artefacto** captura exactamente lo que este reporte traza, sin arrastrar el resto de la documentación. Y a diferencia de «detectar que el usuario editó los criterios», es una comprobación **determinista**: no depende de que el cambio haya ocurrido en esta sesión, ni de que alguien lo mencione.
-
-> **Lo que sigue sin cubrirse:** criterios que viven **fuera del repo** (un ticket de un tracker, un documento externo). Ahí no hay nada que hashear; si el artefacto es externo, decirlo en el reporte y pedir `revalidate` cuando cambie.
-
-> **Un solo cálculo por corrida, con una excepción.** Ambos hashes se computan una vez, en el Paso 0. El
-> `FINGERPRINT` sirve para las **dos** comprobaciones de frescura —la del `criteria-coverage.md` (Paso 0) y la del
-> `quality-check-run.json` (Paso 4, delegación)—; el `SPEC_FINGERPRINT` solo para la primera. Los dos se regraban en el
-> Paso 7. La delegación en `tests-only` no toca código (y el `.gitignore` que puede normalizar está excluido de
-> la receta), así que el `FINGERPRINT` calculado en el Paso 0 sigue siendo válido al grabar: **no hace falta
-> recalcularlo**. Si aun así el valor guardado por `quality-check` en `quality-check-run.json` no coincide con el del
-> Paso 0, algo cambió el código en medio: tratar la caché como obsoleta, no como fresca.
-
-**Comportamiento (Paso 0 del flujo):**
-
-1. Resolver la ubicación del trabajo y **calcular `FINGERPRINT` y `SPEC_FINGERPRINT`**. Siempre, haya reporte
-   previo o no: el Paso 7 los necesita para grabar la marca de pie, también en la primera validación.
-2. Buscar su `criteria-coverage.md`. Si no existe → generar normal (no hay caché).
-3. Si existe, leer los hashes guardados en su marca de pie
-   (`<!-- coverage-verify:verdict=<canónico> · fingerprint=<hash> · spec=<hash> · generated=YYYY-MM-DD -->`) y reutilizarlo **solo si
-   se cumple todo**: coinciden **los dos** hashes, el reporte **no** registra una ejecución fallida, y el
-   usuario no pasó `revalidate`.
-   - **Se cumple** → **no regenerar**: devolver el veredicto y el resumen del reporte existente tal cual,
-     e indicar al usuario que no hubo cambios desde la última validación ({{fecha guardada}}). No reescribir
-     el archivo, no delegar en `quality-check`.
-   - **Falla algo**, no hay marca de pie (reportes antiguos), o el usuario pide `revalidate` →
-     ejecutar el flujo completo (Pasos 1-7) y **regrabar** ambos hashes al guardar (Paso 7).
-4. La marca de pie **se conserva** en el documento publicado (no se elimina como el bloque de instrucciones
-   de la plantilla). Si está **ilegible o incompleta** (un hash que no parsea, marca truncada, o falta el
-   campo `spec=`), no intentar repararla ni adivinar: tratar
-   la caché como ausente, regenerar y regrabarla.
-
-> **Un reporte que no pudo ejecutar las pruebas nunca se sirve desde caché.** Si el reporte existente tiene
-> filas en `NOT_RUN` porque la delegación no fue posible (sin red, sin runner, el usuario declinó), su
-> `⚠️` describe un fallo **de entorno**, no del código. Congelarlo significaría arrastrar ese «no se pudo
-> comprobar» para siempre aunque el entorno ya funcione. Regenerar y volver a intentar la delegación.
-
-> Un cambio en una **carpeta oculta** (`.sdd-devkit/`, `.github/`…), en `docs/` fuera de la carpeta del
-> artefacto, o en un `criteria-coverage.md` **no** cuenta como cambio: están excluidos, así que ningún artefacto
-> que generen este skill, `quality-check`, `code-review` o `arch-audit` desplaza la clave. Los criterios y los
-> `TC-XXX` **sí** cuentan, vía `SPEC_FINGERPRINT`.
+**Antes de ejecutar el Paso 0, DEBES leer [`references/report-reuse.md`](references/report-reuse.md)**: la
+receta exacta de `SPEC_FINGERPRINT`, por qué son dos claves, el formato de la marca de pie, qué hacer si está
+ilegible y qué cambios no cuentan.
 
 ---
 
@@ -366,7 +308,7 @@ una **corrida completa** de la rama, este artefacto vive en una **ubicación fij
 
 **Mapeo a la matriz.** Cada entrada `suites[]` de `quality-check-run.json` trae `type` y `result`
 (`PASS`/`FAIL`/`SKIPPED`/`N/A`). Las **dos fijas** —`unit`, `coverage`— vienen siempre; `e2e` solo si el repo la ejecuta, y el resto son
-**suites configuradas** en el estándar de testing del repo, cuyo `type` es el `ID` del requisito que las
+**suites configuradas** en el estándar de testing del repo, cuyo `type` es el `ID` del requerimiento que las
 declara (p. ej. `integration-testing`, `contract-testing`) y que traen su referencia global en `standard`
 (p. ej. `testing/integration-testing`). **Pueden no existir**: si el estándar no declara integración, no hay
 entrada para ella —y **no** hay que buscar una clave fija llamada `integration`—, así que una fila de tipo
@@ -488,6 +430,7 @@ Posición: **validación / cierre de calidad** — después de `work-implement`.
 | `references/flow.md` | Flujo paso a paso (Pasos 0-7), delegación de la ejecución de pruebas en `quality-check` (caché `quality-check-run.json` / `tests-only`) y checklist completo. Leer antes de ejecutar el flujo. |
 | `references/examples.md` | Ejemplos por tipo (US / WI, sin criterios, sin runner, criterio sin prueba) y anti-patrones. Leer ante dudas de comportamiento. |
 | `assets/criteria-coverage-template.md` | Plantilla canónica del reporte de trazabilidad. Leer antes de redactar el reporte. |
+| `references/report-reuse.md` | Reutilización del reporte: cálculo de `FINGERPRINT` y `SPEC_FINGERPRINT`, marca de pie y comportamiento del Paso 0. Leer antes de ejecutar el Paso 0. |
 
 ### Referencias compartidas del plugin
 
@@ -498,4 +441,3 @@ Posición: **validación / cierre de calidad** — después de `work-implement`.
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/frontmatter.md`](../../references/frontmatter.md): **Frontmatter** — cabecera YAML de todo artefacto: claves y valores en inglés, cómo se lee `status` y el resto de campos. *Al crear, leer o actualizar cualquier artefacto.*
 - [`${PLUGIN_ROOT}/references/escalation.md`](../../references/escalation.md): **Límite de intentos** — cuántos intentos consecutivos se hacen sobre un mismo problema que no se resuelve antes de escalar al usuario, y qué hacer al agotarlos. *Lectura obligatoria antes de ejecutar el skill.*
-

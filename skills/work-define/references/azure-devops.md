@@ -30,7 +30,8 @@ leer `System.WorkItemType`:
 | `System.WorkItemType` | Acción |
 |-----------------------|--------|
 | `User Story` · `Product Backlog Item` · `Requirement` (CMMI) | **Sincronizar** como `US-<id>` (crear o actualizar). |
-| `Feature` · `Epic` | **No** es una historia: parar y ofrecer listar sus hijos (`Child`) de tipo historia para sincronizarlos uno a uno o en lote. |
+| `Feature` | **No** es una historia: parar y ofrecer listar sus hijos (`Child`) de tipo historia para sincronizarlos uno a uno o en lote. |
+| `Epic` | **No** es una historia, es un requerimiento: remitir a `/requirement-refine sync #<id>` (lo descarga como `RQ-<id>`) y ofrecer además listar sus historias hijas para sincronizarlas. |
 | `Task` | Es un `TK-XXX`/`WI-XXX`: remitir a `/work-plan sync #<id>`. |
 | `Bug` | Es un incidente `BUG-XXX`: remitir a `/work-plan sync #<id>` (lo materializa en `<changesPath>/incidents/`); para diagnosticarlo, «Analizar issue» de `work-research`. |
 | `Test Case` | Es un `TC-XXX`: remitir a `/test-define sync #<id>`. |
@@ -49,7 +50,8 @@ la tabla, **no adivinar** (ver la base común).
 | `Microsoft.VSTS.Common.AcceptanceCriteria` | **Criterios de aceptación** | Un criterio por ítem. Ver «Identificadores de los criterios» abajo. Si el campo no existe en el proceso y los criterios vienen dentro de la descripción (encabezado «Criterios de aceptación» / «Acceptance Criteria»), extraerlos de ahí. |
 | `System.State` | `status` (frontmatter) | Solo orienta: `New` / `Proposed` / `To Do` → `Draft`. `Active` / `Approved` / `Committed` / `Ready` → candidata a `Ready`, **que se concede únicamente si pasa los criterios de Ready del skill**; si no los pasa, `Draft` con las lagunas en Observaciones y el estado de ADO anotado. `Resolved` / `Closed` / `Done` → avisar: la historia ya está cerrada en ADO; sincronizar solo si el usuario lo confirma (típico en `implementation.scope: tests`, donde se documenta para probar lo que ya existe). |
 | `System.Tags`, `System.AreaPath`, `System.IterationPath` | **Contexto** (una línea «Gestión: …») | Registrar, no interpretar. |
-| Relaciones `Parent` (Feature/Epic) | **Contexto** | Citar «Feature #<id>: título» como agrupación funcional. No crea artefactos. |
+| Relación `Parent` a un `Feature` | **Contexto** | Citar «Feature #<id>: título» como agrupación funcional. No crea artefactos. |
+| `Epic` enlazado (`Parent` directo, `Parent` del Feature padre, o `Related`) | `requirement` (frontmatter) y **Referencias** | Es el **requerimiento de origen** de la historia: se enlaza a su `RQ-XXX`, que `/requirement-refine` descarga si aún no existe. Ver [Épica enlazada → requerimiento](#épica-enlazada--requerimiento-rq-xxx). |
 | Relaciones `Related` / `Predecessor` a otras historias | **Dependencias** (tablas INVEST/DoR de `story-validation.md`) y Observaciones | Si la otra historia ya existe localmente (`work_item.id: <id>` en su frontmatter), enlazarla; si no, citar el `#<id>` de ADO. |
 | Adjuntos y comentarios | **Observaciones** | Citar como fuentes («ver comentario del <fecha> en ADO»); **no** copiar su contenido a la especificación. Si un comentario cambia un criterio, es una laguna que el usuario debe confirmar. |
 | `Microsoft.VSTS.Scheduling.StoryPoints` / `Effort` | **Complejidad** (`story-validation.md`) | Solo si la escala coincide con la Fibonacci de la plantilla; si no, anotar el valor de ADO en Observaciones y dejar la complejidad sin fijar. |
@@ -82,12 +84,48 @@ desarchivar lo decide el usuario).
 ## Actualizar — qué compara y qué escribe
 
 Leer el work item y la US local, y presentar **un diff por sección**: título, Descripción, Criterios de
-aceptación (por identificador), Contexto de gestión. Aplicar **solo lo que el usuario confirme**, con las
+aceptación (por identificador), Contexto de gestión y requerimiento de origen (la [épica enlazada](#épica-enlazada--requerimiento-rq-xxx): si la US no tiene `requirement` y el work item sí tiene épica, se resuelve y se enlaza). Aplicar **solo lo que el usuario confirme**, con las
 reglas del flujo «Actualizar una historia»: los `AC-XXX` existentes son inmutables (un criterio nuevo en
 ADO toma el siguiente libre; uno eliminado en ADO se marca `Obsolete`, no se borra); si cambia el
 enunciado de un criterio que ya tiene `Casos de prueba:`, avisar de la desalineación y sugerir
 `test-define`. `status`, INVEST y DoR se recalculan como en cualquier actualización. Tampoco se
 **escribe en ADO**.
+
+## Épica enlazada → requerimiento (`RQ-XXX`)
+
+Al sincronizar una historia (crear **o** actualizar), si tiene una épica enlazada, la épica se registra como
+su requerimiento de origen y se descarga como `RQ-XXX`. **Descargarla no se pregunta**: es parte de la bajada.
+Lo que el RQ necesita confirmar va en la **tanda única** del `sync`, no en una pregunta aparte (paso 4).
+
+1. **Detectar la épica.** Leer las relaciones del work item. Cuenta como épica enlazada un work item de tipo
+   `Epic` alcanzado por: `Parent` directo de la historia; `Parent` del `Feature` padre (subir la jerarquía,
+   una lectura por nivel); o un vínculo `Related` directo. Si hay más de una, la de la cadena `Parent` es el
+   requerimiento y las demás se citan en Contexto; si hay varias y ninguna está en la cadena `Parent`,
+   **preguntar** cuál es. Sin épica → este apartado no aplica y `requirement` no se toca.
+2. **Buscar su documento local.** En `<changesPath>/requirements/` y `<archivedPath>/requirements/`, un
+   `RQ-<id-épica>-*`, o un `RQ-*`/`PRD-*`/`SRS-*` cuyo frontmatter tenga `work_item.id: <id-épica>`.
+3. **Si no existe, descargarla:** handoff a `/requirement-refine` con el tipo `rq`, el `#<id-épica>` y la
+   pista **`origen=work-define-sync`** — como subagente si el cliente lo permite. Ese skill lee la épica y
+   crea el RQ en `Draft` según su [delta de ADO](../../requirement-refine/references/azure-devops.md) **sin
+   preguntar nada**, y devuelve la ruta del `README.md`, el `RQ-<id-épica>` y lo que queda **por confirmar**
+   (tabla de `AC-XXX`, Cobertura de la fuente, dueño de la definición). `work-define` **no escribe** el RQ ni
+   su carpeta. En un lote, las épicas distintas se resuelven **una vez cada una** y **antes** de crear las
+   historias.
+4. **Confirmar en la tanda única.** Lo pendiente de cada RQ nuevo se presenta **junto con** las demás
+   preguntas del `sync` (repositorios, lagunas), en la misma tanda. Las respuestas se devuelven a
+   `/requirement-refine`, que las aplica y fija el `status` (`Ready` si todo quedó confirmado; si no,
+   `Draft`). Un RQ que ya existía no añade preguntas.
+5. **Enlazar.** En la US: `requirement: ../../requirements/RQ-<id-épica>-[slug]/README.md` en el frontmatter y, en
+   **Referencias**, la línea «Requerimiento de origen» de la plantilla, con el enlace al `README.md` del RQ y «Epic #<id>: título». Si el documento está
+   archivado, se enlaza en su ruta de archivo y se informa; no se desarchiva ni se vuelve a descargar.
+6. **Si la US ya tenía `requirement`** apuntando a otro documento (p. ej. el `SRS-XXX` del que se
+   descompuso), no se sobrescribe: mostrar ambos y preguntar cuál queda; el otro se conserva en Referencias.
+
+Qué **no** cambia: los `AC-XXX` de la historia salen de **su** work item, no del RQ (el vínculo es
+trazabilidad, no herencia de criterios); un RQ en `Draft` no baja la US a `Draft`; el RQ no se modifica
+desde aquí; y con `push` la relación con la épica **no se escribe** en ADO. Sin MCP no se pueden leer las
+relaciones: si el usuario indica el `#id` de la épica al pegar el contenido, se sigue desde el paso 2; si
+no, se omite y se dice en el cierre.
 
 ## Ejemplo
 
@@ -96,9 +134,14 @@ enunciado de un criterio que ya tiene `Casos de prueba:`, avisar de la desalinea
 - *Comportamiento:* lee #4821 (`User Story`, `Active`), mapea título y descripción, extrae cinco criterios
   de `AcceptanceCriteria` sin código y les asigna `AC-001…AC-005`, pregunta el repositorio afectado, crea
   `<changesPath>/user-stories/US-4821-pago-con-tarjeta/README.md` con `work_item` (`system: ADO`, `id: 4821`),
-  INVEST/DoR calculados y `status: Ready` (pasa los criterios). Cierra: «Sincronizada US-4821 desde ADO
-  (#4821): creada → <changesPath>/user-stories/US-4821-pago-con-tarjeta/» y ofrece `/test-define` según
-  `createMode`.
+  INVEST/DoR calculados y `status: Ready` (pasa los criterios). El `Parent` de #4821 es el Feature #4700,
+  cuyo `Parent` es el Epic #4500: no hay ningún documento con `work_item.id: 4500`, así que
+  `/requirement-refine` lo descarga como `RQ-4500-pagos-digitales` (sus criterios y su dueño se confirman en
+  la misma tanda en que se pregunta el repositorio) y la US lleva
+  `requirement: ../../requirements/RQ-4500-pagos-digitales/README.md`; el Feature #4700 queda citado en
+  Contexto. Cierra: «Sincronizada US-4821 desde ADO (#4821): creada →
+  <changesPath>/user-stories/US-4821-pago-con-tarjeta/ · requerimiento RQ-4500 (Epic #4500), Ready» y ofrece
+  `/test-define` según `createMode`.
 
 ## Subida (`push`)
 
@@ -120,6 +163,9 @@ Si el work item sincronizado tiene relaciones «Tested By» (o una Test Suite co
 
 - Crear o modificar el work item en ADO sin `push` explícito; con `push`, tocar el estado, el tipo o el padre, o crear un segundo work item para una US que ya tiene `work_item`.
 - Sincronizar un `Feature`/`Epic` como si fuera una historia, o una `Task`/`Bug` como US.
+- Abrir una tanda de preguntas aparte para el RQ, o confirmar sus criterios por cuenta propia sin devolver las respuestas a `/requirement-refine`.
+- Redactar el `RQ-XXX` de la épica desde aquí en vez de delegarlo en `/requirement-refine`, descargar una épica que ya tiene documento local, o tratar un `Feature` como requerimiento.
+- Copiar a la historia los criterios de la épica, o sobrescribir en silencio un `requirement` que ya apuntaba a otro documento.
 - Crear una segunda US local para un `#id` que ya tiene carpeta o `work_item` registrado.
 - Conceder `Ready` solo porque en ADO está `Active`, sin pasar los criterios de Ready del skill.
 - Completar criterios, dependencias o repositorios con lo que «probablemente» quiso decir el work item.

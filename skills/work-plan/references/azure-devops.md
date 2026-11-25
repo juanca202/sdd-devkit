@@ -55,7 +55,8 @@ Obtener el work item por `id` y leer `System.WorkItemType`:
 |-----------------------|-----------------|----------------|
 | `Bug` | **`BUG-<id>-[slug]/`** en `<changesPath>/incidents/` | Siempre. Nunca un `WI`. |
 | `Task` | `TK-<id>-[slug].md` o `WI-<id>-[slug]/` | Leer la relación `Parent`: si apunta a una `User Story`/`PBI` que existe localmente (`US-<id>-*` o `work_item.id: <id>`, en ruta activa o archivo) → `TK` dentro de esa US; si apunta a una historia que **no** existe localmente → preguntar (`/work-define sync #<padre>` primero, o crear como WI); sin padre historia → `WI`. |
-| `User Story` · `Product Backlog Item` · `Requirement` · `Feature` · `Epic` | — | Remitir a `/work-define sync #<id>`. |
+| `User Story` · `Product Backlog Item` · `Requirement` · `Feature` | — | Remitir a `/work-define sync #<id>`. |
+| `Epic` | — | Remitir a `/requirement-refine sync #<id>`. |
 | `Test Case` | — | Remitir a `/test-define sync #<id>`. |
 | `Issue` · `Impediment` · otros | — | Preguntar al usuario qué espera. |
 

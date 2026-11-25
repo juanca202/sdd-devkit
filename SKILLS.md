@@ -233,7 +233,7 @@ Skills del ciclo de vida de un requerimiento: de la idea a un Pull Request merge
 | **`PRD-XXX` — aprobar producto** | Problema, objetivos y métricas, actores y escenarios, alcance, `FR-XXX` priorizados y `AC-XXX` de negocio; sin decisiones técnicas. | Negocio aprobó alcance y prioridades | `work-define`, `test-define`, promover a SRS |
 | **`SRS-XXX` — implementar** | PRD + stack, repositorios, NFR con umbral, interfaces, datos, método de verificación. | Se puede implementar sin repreguntar | `work-define`, `work-plan`, `test-define`, `arch-init` |
 
-Cada tipo tiene su plantilla; PRD y SRS comparten numeración de secciones. Si hay interfaz, wireframes `WF-XXX` en `wireframes/` dentro de la carpeta del documento, generados y revisados por `design-define` vía subagente. Los tres prefijos comparten **un solo secuencial**; un PRD se **promueve** a SRS completando solo el bloque de ingeniería y conservando el número (`PRD-004` → `SRS-004`). Los tres se archivan aquí.
+Cada tipo tiene su plantilla; PRD y SRS comparten numeración de secciones. Si hay interfaz, wireframes `WF-XXX` en `wireframes/` dentro de la carpeta del documento, generados y revisados por `design-define` vía subagente. Con el gestor de proyectos vinculado, `sync #id` **descarga una épica** como `RQ-<id>` (el número es el id del gestor); también lo hace `work-define sync` cuando la historia sincronizada tiene una épica enlazada. Los tres prefijos comparten **un solo secuencial**; un PRD se **promueve** a SRS completando solo el bloque de ingeniería y conservando el número (`PRD-004` → `SRS-004`). Los tres se archivan aquí.
 
 **Estados:** `Draft` (quedan cosas por resolver) · `Ready` (según el DoR de cada tipo).
 
@@ -245,6 +245,7 @@ Cada tipo tiene su plantilla; PRD y SRS comparten numeración de secciones. Si h
 /requirement-refine prd app de disputas de cargos para socios
 /requirement-refine rq <adjuntar DTG-003 del cliente>
 /requirement-refine srs PRD-004          ← promover a SRS-004
+/requirement-refine sync #4500           ← descargar la épica #4500 del gestor como RQ-4500
 /requirement-refine actualiza SRS-002: cambia el stack a Auth0
 /requirement-refine estructura este requerimiento: <pegar ticket>
 /requirement-refine SRS-003 archive
@@ -261,7 +262,7 @@ Cada tipo tiene su plantilla; PRD y SRS comparten numeración de secciones. Si h
 
 ### work-define
 
-**Cuándo:** crear o actualizar una historia de usuario. Puede partir de una necesidad descrita por ti, de una especificación ya resuelta con `requirement-refine`, o del informe de un spike viable (`spike-report.md`): en ese caso mapea las preguntas validadas a criterios de aceptación sin volver a preguntarte lo que el informe ya responde. Con el gestor de proyectos vinculado, también **sincroniza** una historia que ya existe allí (`sync #id`): la crea localmente si falta o la actualiza si existe — solo con ese modificador explícito; un `#id` suelto no sincroniza nada, pregunta.
+**Cuándo:** crear o actualizar una historia de usuario. Puede partir de una necesidad descrita por ti, de una especificación ya resuelta con `requirement-refine`, o del informe de un spike viable (`spike-report.md`): en ese caso mapea las preguntas validadas a criterios de aceptación sin volver a preguntarte lo que el informe ya responde. Con el gestor de proyectos vinculado, también **sincroniza** una historia que ya existe allí (`sync #id`): la crea localmente si falta o la actualiza si existe, y si tiene una épica enlazada la registra como su requerimiento (`requirement`) y la descarga como `RQ-XXX` con `requirement-refine` — solo con ese modificador explícito; un `#id` suelto no sincroniza nada, pregunta.
 
 **Produce:** una historia de usuario (`<changesPath>/user-stories/`) con criterios de aceptación; si toca UI y no hereda wireframes, los pide a `design-define` vía subagente, que los genera en `wireframes/` dentro de la carpeta de la historia (`WF-XXX`), y los enlaza desde la historia.
 

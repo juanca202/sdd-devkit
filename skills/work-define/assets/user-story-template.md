@@ -7,7 +7,7 @@ updated: YYYY-MM-DD
 repositories: [frontend-web, api-catalogo]
 invest: { met: 0, partial: 0, not_met: 0, total: 6 }
 dor: { met: 0, partial: 0, not_met: 0, total: 6 }
-requirement: ../../requirements/SRS-XXX-slug/README.md   # solo si la US nació descomponiendo un SRS-XXX; omitir si no
+requirement: ../../requirements/SRS-XXX-slug/README.md   # solo si la US nació descomponiendo un SRS-XXX, o si al sincronizarla tenía una épica enlazada (entonces RQ-XXX); omitir si no
 spike: ../../work-items/WI-XXX-slug/README.md            # solo si la US formaliza el resultado de un WI-XXX de tipo spike; omitir si no
 work_item:                                               # solo con tracker vinculado; omitir el objeto entero si no hay
   system: ADO
@@ -27,7 +27,9 @@ frontmatter como línea `**Campo:**` bajo el título.
     story-validation-template.md), nunca aparte. total = filas evaluadas (INVEST: 6; DoR: 6 menos las N/A, que
     no cuentan). Recalcular al tocar las tablas; en Draft sin validar, todo a 0.
   requirement: solo si la US nació descomponiendo un SRS-XXX de requirement-refine — ruta a su README.md; es
-    la trazabilidad inversa de su tabla «Historias de usuario derivadas». Omitir la clave si no proviene de un SRS.
+    la trazabilidad inversa de su tabla «Historias de usuario derivadas». También la pobla sync cuando el work
+    item tiene una épica enlazada: ruta al README.md del RQ-XXX que requirement-refine descargó de esa épica.
+    Omitir la clave en cualquier otro caso.
   spike: solo si la US formaliza el resultado de un WI-XXX de tipo spike — ruta a su README.md; el informe y
     la rama spike/ van en Referencias. Omitir la clave si no proviene de un spike.
   work_item: system = nombre corto del proveedor (p. ej. ADO). Lo pobla work-define solo al sincronizar
@@ -104,6 +106,7 @@ docs/architecture/[capability]/models/MD-XXX-{slug}.md, apis/API-XXX-{slug}.md (
 operación #<método-ruta> cuando se cita un endpoint concreto, p. ej. apis/API-001-facturas.md#post-invoices),
 flows/FL-XXX-{slug}.md o diagrams/DG-XXX-{slug}.md.
 -->
+- **Requerimiento de origen:** {{[RQ-XXX](../../requirements/RQ-XXX-{slug}/README.md) — Epic #id: título; solo si al sincronizar la historia tenía una épica enlazada; omitir si no}}
 - **Diseño / prototipo:** {{enlace markdown al diseño o prototipo}}
 - **Wireframe:** {{[WF-XXX: pantalla](wireframes/WF-XXX-{slug}.md) — {{Proposed / Approved}}, uno por pantalla; si se hereda del SRS, enlazarlo en su carpeta; omitir si la US no tiene UI}}
 - **Archivo local:** {{enlace markdown al archivo en assets/}}

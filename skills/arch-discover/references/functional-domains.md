@@ -6,7 +6,7 @@ son los **dominios funcionales canónicos** — los mismos nueve que usa `arch-m
 con columnas para descubrimiento). Al proponer un candidato, clasificar su estándar en uno de ellos y
 **proponer un dominio nuevo solo si no encaja en ninguno**.
 
-| Dominio funcional (`slug`) | Ejemplos de señales | Requisitos que suele agrupar |
+| Dominio funcional (`slug`) | Ejemplos de señales | Requerimientos que suele agrupar |
 |---|---|---|
 | **Calidad y pruebas** (`testing`) | Herramienta unit/e2e, cobertura, mocking, Quality Gates | unit testing, e2e testing, umbral de cobertura |
 | **Arquitectura y diseño** (`architecture`) | Capas (controller/service/repo), DDD, hexagonal, CQRS, límites de módulo | límites de capa, imports permitidos, desacoplamiento |
@@ -20,7 +20,7 @@ con columnas para descubrimiento). Al proponer un candidato, clasificar su está
 
 **Agrupar por dominio:** varios candidatos del mismo dominio se consolidan en **un** estándar. P. ej.
 "unit tests con PHPUnit" + "e2e con Playwright" + "cobertura ≥ 80%" → un estándar *Testing Standards*
-con tres requisitos, no tres estándares distintos.
+con tres requerimientos, no tres estándares distintos.
 
 **Desempate — convenciones de commits/versionado:** una convención de mensajes de commit (Conventional
 Commits u otra) o de versionado de releases (SemVer) siempre clasifica en **Infraestructura y DevOps**

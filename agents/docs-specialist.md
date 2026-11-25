@@ -68,7 +68,7 @@ Regla de fallback y numeración sobre `<archivedPath>/`: ver [`../references/arc
 | Documentación técnica | `docs/architecture/` |
 | Glosario | `docs/glossary.md` |
 | ADR (decisión) | `docs/adr/ADR-XXX-<slug>.md` (id `ADR-XXX`) — relativo a la **raíz de arquitectura** |
-| Estándar de dominio (reglas vigentes) | `docs/standards/<dominio>.md` o `docs/standards/<dominio>/README.md` (identificado por nombre, sin código; agrupa requisitos `<estándar>/<requisito>` en RFC 2119) — relativo a la **raíz de arquitectura** |
+| Estándar de dominio (reglas vigentes) | `docs/standards/<dominio>.md` o `docs/standards/<dominio>/README.md` (identificado por nombre, sin código; agrupa requerimientos `<estándar>/<requerimiento>` en RFC 2119) — relativo a la **raíz de arquitectura** |
 | Reglas y memoria del proyecto | `AGENTS.md` |
 
 ## Prohibiciones absolutas

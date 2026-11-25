@@ -75,7 +75,7 @@ normaliza (ver [`../skills/plugin-migrate/references/migrations.md`](../skills/p
   `spike-report`) siguen llevando su **marca oculta** al pie, con `verdict=…`: es el contrato de las puertas
   de cierre y lo define [`verdicts.md`](verdicts.md). Esta referencia no los toca.
 - Los **estándares** de `docs/standards/` ya tenían frontmatter (`arch-manage`); el `**Estado:**` de cada
-  bloque `## <Requisito>` es un campo del cuerpo, no de la cabecera, y se conserva.
+  bloque `## <Requerimiento>` es un campo del cuerpo, no de la cabecera, y se conserva.
 - Las **secciones por unidad** de `progress.md` y `test-cases-automation.md` (una por `TK-XXX`/`TC-XXX`
   implementado) siguen siendo secciones del cuerpo con su propia marca `<!-- unit:id=… · status=… -->`:
   el frontmatter describe el documento, no cada unidad.

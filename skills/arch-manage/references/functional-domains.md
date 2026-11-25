@@ -20,7 +20,7 @@ ser «\<Dominio\> Standards» (p. ej. `testing` → *Testing Standards*, `api` �
 
 > **Regla de clasificación.** Preferir **siempre** uno de estos nueve dominios. **Solo si el estándar
 > no encaja en ninguno**, proponer un dominio nuevo (con un `slug` kebab-case, corto y consistente con
-> el estilo de la tabla) y **confirmarlo con el usuario** antes de crear el archivo. Un requisito que
+> el estilo de la tabla) y **confirmarlo con el usuario** antes de crear el archivo. Un requerimiento que
 > parece de dos dominios normalmente pertenece al de su *aspecto principal*: p. ej. "los linters deben
 > pasar antes de merge" es `testing`/Quality Gate si es un gate de CI, o `coding-style` si es la regla
 > de formato en sí — elegir según qué se está normando, no dividirlo. Una convención de mensajes de

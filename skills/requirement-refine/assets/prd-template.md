@@ -33,7 +33,7 @@ srs-template.md y los ids FR/NFR/BR/AC/OB/SC se conservan.
 Reglas de contenido:
   - Rigor igual que un SRS en lo que contiene: FR-XXX con RFC 2119, prioridad y estado; AC-XXX
     verificables en términos de negocio. Lo que el PRD recorta es el CONTEXTO DE IMPLEMENTACIÓN, no la
-    calidad del requisito.
+    calidad del requerimiento.
   - Sin stack, repositorios ni decisiones de diseño, aunque el insumo mencione tecnologías: una
     tecnología solo aparece como RESTRICCIÓN de negocio en 2.3 («debe convivir con el core bancario X»).
   - NFR-XXX cualitativos (sin cifra ni umbral) son válidos aquí y se cuantifican al promover.
@@ -91,7 +91,7 @@ Ids OB-01, OB-02, … inmutables.
 
 ## 2. Descripción general del producto
 
-<!-- Contexto; no declara requisitos verificables — esos van en las secciones 5 en adelante. -->
+<!-- Contexto; no declara requerimientos verificables — esos van en las secciones 5 en adelante. -->
 
 ### 2.1 Perspectiva del producto
 
@@ -99,7 +99,7 @@ Ids OB-01, OB-02, … inmutables.
 
 ### 2.2 Funciones del producto
 
-{{resumen de alto nivel de lo que habilita, en 3-6 líneas; el detalle verificable va en Requisitos funcionales}}
+{{resumen de alto nivel de lo que habilita, en 3-6 líneas; el detalle verificable va en Requerimientos funcionales}}
 
 ### 2.3 Restricciones del producto
 
@@ -138,10 +138,10 @@ existe / se reutiliza» NO tiene FR-XXX propio; una «En el alcance» sí lo tie
 - {{otro supuesto que, de no cumplirse, cambia el alcance}}
 - {{dependencia con otro proceso, área, proveedor o requerimiento}}
 
-### 2.6 Requisitos diferidos a futuras versiones
+### 2.6 Requerimientos diferidos a futuras versiones
 
 <!-- Sección opcional. Lo identificado pero fuera de esta versión — normalmente Prioridad «Baja». -->
-| Requisito | Motivo del diferimiento | Versión objetivo |
+| Requerimiento | Motivo del diferimiento | Versión objetivo |
 | --------- | ------------------------- | ------------------ |
 | {{FR-XXX / NFR-XXX}} | {{por qué no entra}} | {{si se conoce, o «Por definir»}} |
 
@@ -160,13 +160,13 @@ Pendiente — se completa al promover a SRS.
 
 Pendiente — se completa al promover a SRS.
 
-## 5. Requisitos funcionales
+## 5. Requerimientos funcionales
 
 <!--
 Id secuencial FR-001, FR-002, … con categoría, prioridad, estado y enunciado RFC 2119 en MAYÚSCULAS.
 Categorías: Reglas de negocio · Casos de uso · Flujos de proceso · Procesamiento de datos · Integraciones · Interacción de usuario · Salidas del sistema
 Detalle en ${PLUGIN_ROOT}/references/requirement-criteria.md. Prioridad: Esencial · Alta · Media · Baja
-(quality-criteria.md#prioridad). Estado: Proposed · Approved (quality-criteria.md#estado-por-requisito).
+(quality-criteria.md#prioridad). Estado: Proposed · Approved (quality-criteria.md#estado-por-requerimiento).
 Capacidades, no pantallas ni tablas: «El sistema DEBE permitir al socio disputar un cargo», no «un botón
 Disputar en la pantalla de movimientos». Sus AC-XXX viven en la sección 12.
 -->
@@ -175,7 +175,7 @@ Disputar en la pantalla de movimientos». Sus AC-XXX viven en la sección 12.
 | FR-001 | {{categoría}} | {{Esencial / Alta / Media / Baja}} | {{Proposed / Approved}} | {{enunciado RFC 2119 en MAYÚSCULAS}} |
 | FR-002 | {{…}} | {{…}} | {{…}} | {{…}} |
 
-## 6. Requisitos no funcionales (expectativas de calidad)
+## 6. Requerimientos no funcionales (expectativas de calidad)
 
 <!--
 Expectativas de calidad del NEGOCIO, cualitativas: sin cifra ni umbral («debe responder con agilidad
@@ -213,7 +213,7 @@ Pendiente — se completa al promover a SRS. {{Opcional: nombrar por su función
 
 Pendiente — se completa al promover a SRS.
 
-## 9. Requisitos de datos (obligaciones de negocio)
+## 9. Requerimientos de datos (obligaciones de negocio)
 
 <!--
 Solo lo que el NEGOCIO exige sobre los datos: qué datos sensibles o personales maneja, cuánto tiempo
@@ -262,7 +262,7 @@ Una fila por criterio de aceptación. Id AC-001, AC-002, … secuencial global e
 puede tener varios AC; un AC pertenece a un solo FR/NFR), INMUTABLES. El criterio se redacta en
 términos de negocio, observables y verificables («el socio recibe la confirmación de la disputa en la
 misma sesión»), nunca con términos vagos sin medida.
-Origen: de dónde salió el requisito (references/raw-requirement.md por defecto). «Depende de» opcional.
+Origen: de dónde salió el requerimiento (references/raw-requirement.md por defecto). «Depende de» opcional.
 Método de verificación: SIEMPRE «Pendiente» en un PRD — lo fija el rol ARCH al promover, sin cambiar el id.
 Consumidores: test-define genera TC-XXX de aceptación sobre estos AC (en test-cases/ de esta carpeta,
 padre PRD-XXX; al promover, el padre pasa a SRS-XXX); work-define los hereda citando el AC de origen en
@@ -271,7 +271,7 @@ cada AC de la US. test-define añade bajo esta tabla la línea «Casos de prueba
 | ID | AC | Origen | Depende de | Método de verificación | Criterio de aceptación |
 | -- | -- | ------ | ---------- | ---------------------- | ---------------------- |
 | FR-001 | AC-001 | {{`references/raw-requirement.md` u otro archivo}} | {{FR-XXX / «Ninguna»}} | Pendiente | {{condición observable, en lenguaje de negocio}} |
-| FR-001 | AC-002 | {{…}} | {{…}} | Pendiente | {{segundo criterio del mismo requisito, si lo hay}} |
+| FR-001 | AC-002 | {{…}} | {{…}} | Pendiente | {{segundo criterio del mismo requerimiento, si lo hay}} |
 
 ## 13. Riesgos de producto
 
@@ -313,7 +313,7 @@ cada AC de la US. test-define añade bajo esta tabla la línea «Casos de prueba
 | Objetivos y métricas de éxito definidos (1.4) | {{Met / Not Met / Partial}} | {{al menos un OB-XX con métrica directa o proxy}} |
 | Alcance y fuera de alcance claros (1.2) | {{Met / Not Met / Partial}} | {{}} |
 | Actores y escenarios de uso (2.4) | {{Met / Not Met / Partial}} | {{cada actor con al menos un SC-XX}} |
-| Requisitos funcionales completos y priorizados (5) | {{Met / Not Met / Partial}} | {{todos Approved}} |
+| Requerimientos funcionales completos y priorizados (5) | {{Met / Not Met / Partial}} | {{todos Approved}} |
 | Expectativas de calidad revisadas (6) | {{Met / Not Met / Partial / N/A}} | {{cualitativas; cubre Seguridad, Rendimiento, Fiabilidad/Disponibilidad}} |
 | Interfaz de usuario y wireframes revisados (8.1, 11) | {{Met / Not Met / Partial / N/A}} | {{N/A si no hay UI}} |
 | Obligaciones de datos identificadas (9) | {{Met / Not Met / Partial / N/A}} | {{}} |

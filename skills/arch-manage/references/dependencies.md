@@ -1,11 +1,11 @@
 # Dependencias referenciadas por la decisión
 
-Leer cuando el ADR o el requisito recién creado referencia una tecnología concreta que **quizá no esté
+Leer cuando el ADR o el requerimiento recién creado referencia una tecnología concreta que **quizá no esté
 instalada** en el proyecto. Ofrecer instalarla solo **después de crear los artefactos** y con aprobación
 explícita del usuario.
 
 1. **Extraer las dependencias concretas** que la decisión implica, del `## Decisión` del ADR y del
-   enunciado del requisito. Contar solo dependencias reales e instalables (p. ej. `PHPUnit`, `Playwright`,
+   enunciado del requerimiento. Contar solo dependencias reales e instalables (p. ej. `PHPUnit`, `Playwright`,
    `GraphQL → @apollo/server`, `Prisma`), no conceptos abstractos ("arquitectura hexagonal" no es una
    dependencia). No inventar nombres de paquete: si el exacto no es claro, preguntarlo. **No incluir aquí**
    las herramientas de verificación de una fitness function (dependency-cruiser, ArchUnit, import-linter,

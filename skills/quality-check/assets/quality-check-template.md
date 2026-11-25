@@ -60,7 +60,7 @@ Suites de prueba: fijas y configuradas):
   - CONFIGURADAS (filas 5 y 6 del ejemplo —integración, contrato— que es ilustrativo, no una lista
     cerrada): una fila por cada clase de prueba que declare el estándar de testing del repo
     (`docs/standards/testing.md` o `docs/standards/testing/README.md`), en el orden en que el estándar
-    la declara. Sin estándar de testing, o sin más requisitos que los de las fijas, estas filas
+    la declara. Sin estándar de testing, o sin más requerimientos que los de las fijas, estas filas
     simplemente no existen — NO inventar una suite que el estándar no declara.
 Renumerar la columna `#` de forma correlativa sobre las filas que queden; no dejar huecos por las
 filas omitidas. El orden relativo de los checks no cambia.

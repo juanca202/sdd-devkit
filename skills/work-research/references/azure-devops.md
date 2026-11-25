@@ -84,7 +84,7 @@ continuar antes de invertir la investigación.
 | `Microsoft.VSTS.TCM.Steps` (Steps) | Pasos de ejecución y resultado esperado de cada paso |
 | `Microsoft.VSTS.TCM.LocalDataSource` / parámetros | Datos de prueba y variantes |
 | `Microsoft.VSTS.TCM.AutomationStatus` | Si el TC está automatizado; un `Not Automated` es ya un hueco de cobertura |
-| Relación `Tests` / `Tested By` | El requisito o historia que el TC dice verificar — la traza a auditar |
+| Relación `Tests` / `Tested By` | El requerimiento o historia que el TC dice verificar — la traza a auditar |
 | Test Suite / Test Plan que lo contienen | Contexto de agrupación; útil para localizar TCs hermanos |
 
 Notas transversales:

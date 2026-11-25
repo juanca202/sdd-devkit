@@ -4,18 +4,18 @@ Convención: sustituir manualmente cada {{texto}}. No es un motor de plantillas.
 Un ESTÁNDAR es un documento normativo de DOMINIO. "Dominio" aquí = un **dominio técnico o funcional**
 del proyecto: un área o aspecto transversal (testing, API, persistencia, seguridad, frontend,
 observabilidad, CI, modularidad…). NO es un dominio de negocio/DDD (bounded context) ni un dominio de
-internet. Ej.: "Testing Standards", "API Standards". Es más AMPLIO que un ADR y AGREGA varios requisitos.
-No se crea un estándar por decisión; cada decisión (ADR) añade o actualiza UN REQUISITO dentro del
+internet. Ej.: "Testing Standards", "API Standards". Es más AMPLIO que un ADR y AGREGA varios requerimientos.
+No se crea un estándar por decisión; cada decisión (ADR) añade o actualiza UN REQUERIMIENTO dentro del
 estándar de dominio que corresponda.
-Ej.: "usar PHPUnit para unit tests" NO es un estándar — es el requisito «Unit testing» del estándar
-"Testing Standards"; si luego se decide Playwright para e2e, se AÑADE el requisito «E2E testing» al
+Ej.: "usar PHPUnit para unit tests" NO es un estándar — es el requerimiento «Unit testing» del estándar
+"Testing Standards"; si luego se decide Playwright para e2e, se AÑADE el requerimiento «E2E testing» al
 MISMO estándar, no se crea uno nuevo.
 
-El estándar se identifica por su NOMBRE. Cada requisito describe qué es / cómo se usa /
+El estándar se identifica por su NOMBRE. Cada requerimiento describe qué es / cómo se usa /
 cómo se implementa, incluyendo el enunciado normativo con palabra clave RFC 2119 / RFC 8174
 en MAYÚSCULAS en el idioma de preferencia (MUST/DEBE, SHOULD/DEBERÍA, MAY/PUEDE…). La unidad
-verificable es el **criterio de cumplimiento** (`CR-XXX`): pertenece a un requisito, pero **no vive
-dentro de su bloque** — todos los criterios de cumplimiento del estándar, de todos sus requisitos, se
+verificable es el **criterio de cumplimiento** (`CR-XXX`): pertenece a un requerimiento, pero **no vive
+dentro de su bloque** — todos los criterios de cumplimiento del estándar, de todos sus requerimientos, se
 listan juntos en la sección `## Criterios de cumplimiento`, al final del documento, antes de
 `## Referencias`. Es lo que audita `arch-audit`. El estándar
 es vivo (se actualiza); el ADR es historia inmutable.
@@ -33,8 +33,8 @@ Ubicación (dos formas):
 de este estándar (recíproco de `emits`).
 `status`: `Superseded` cuando otro estándar lo reemplaza por completo; en ese caso añadir
 `superseded_by: <slug>`. Un estándar entero rara vez muere: lo habitual es que muera un
-requisito suelto, y para eso está el `**Estado:**` de cada bloque `## <Requisito>` — un
-requisito `Deprecated` o `Superseded` deja de contar en la auditoría, pero se conserva en el
+requerimiento suelto, y para eso está el `**Estado:**` de cada bloque `## <Requerimiento>` — un
+requerimiento `Deprecated` o `Superseded` deja de contar en la auditoría, pero se conserva en el
 documento para no perder el rastro de por qué existió.
 -->
 ---
@@ -52,17 +52,17 @@ tags: [{{testing}}]
 {{qué dominio cubre este estándar y a qué partes del proyecto aplica; un párrafo corto}}
 
 <!--
-Un bloque `## <Requisito>` por cada requisito del dominio. Al documentar una decisión nueva del MISMO
-dominio, se AÑADE otro bloque de requisito aquí (o se actualiza uno existente) — no se crea un
-estándar nuevo. Cada requisito tiene un slug estable (`ID`) único dentro de este estándar; agrupa
-uno o varios **criterios de cumplimiento** y sirve de referencia legible (`<slug-del-estándar>/<slug-del-requisito>`,
-p. ej. testing/unit-testing). El bloque del requisito solo trae la descripción normativa y `### Excepciones` — sus
+Un bloque `## <Requerimiento>` por cada requerimiento del dominio. Al documentar una decisión nueva del MISMO
+dominio, se AÑADE otro bloque de requerimiento aquí (o se actualiza uno existente) — no se crea un
+estándar nuevo. Cada requerimiento tiene un slug estable (`ID`) único dentro de este estándar; agrupa
+uno o varios **criterios de cumplimiento** y sirve de referencia legible (`<slug-del-estándar>/<slug-del-requerimiento>`,
+p. ej. testing/unit-testing). El bloque del requerimiento solo trae la descripción normativa y `### Excepciones` — sus
 criterios de cumplimiento se redactan más abajo, en la tabla única `## Criterios de cumplimiento`.
 
-La unidad verificable y trazable NO es el requisito, sino cada **criterio de cumplimiento** (`CR-XXX`).
+La unidad verificable y trazable NO es el requerimiento, sino cada **criterio de cumplimiento** (`CR-XXX`).
 La sección `## Criterios de cumplimiento`, al final del documento (antes de `## Referencias`), reúne en
-una sola tabla los criterios medibles de TODOS los requisitos de arriba (p. ej. cobertura ≥ 80%), cada
-uno con ID `CR-XXX` (único en el estándar, correlativo a través de todos los requisitos), si es
+una sola tabla los criterios medibles de TODOS los requerimientos de arriba (p. ej. cobertura ≥ 80%), cada
+uno con ID `CR-XXX` (único en el estándar, correlativo a través de todos los requerimientos), si es
 Automatizable (fitness function) y su Verificación (enlace al archivo donde vive, o Pending si aún no existe). Un CR es lo que un ADR
 referencia en `emits` mediante su referencia global `<slug-del-estándar>/CR-XXX` (p. ej.
 testing/CR-001). Su fitness function vive en el archivo de checks del ESTÁNDAR —
@@ -71,18 +71,18 @@ por estándar escrito en el lenguaje del stack del repo — donde el chequeo del
 referencia CR-XXX en comentarios y líneas de salida. El runner scripts/arch/verify.<ext> los ejecuta
 todos, o solo el de un estándar pasando su slug como argumento.
 
-Si un requisito necesita documentos de apoyo (guías, ejemplos, matrices), usar la forma de carpeta
-(docs/standards/<slug>/) y enlazarlos con rutas relativas desde el requisito.
+Si un requerimiento necesita documentos de apoyo (guías, ejemplos, matrices), usar la forma de carpeta
+(docs/standards/<slug>/) y enlazarlos con rutas relativas desde el requerimiento.
 -->
 
-## {{Título del requisito}}
+## {{Título del requerimiento}}
 **ID:** {{slug}}
 **Estado:** {{Active | Deprecated | Superseded}}
 
-{{Describe el requisito, su propósito, cuándo y dónde aplica, y cómo debe implementarse en el proyecto. Incluye las herramientas, convenciones, estructura o ubicación habitual cuando corresponda. La descripción PUEDE contener un enunciado normativo utilizando palabras clave RFC 2119 (MUST, SHOULD, MAY o sus equivalentes en el idioma del documento) para indicar las obligaciones, recomendaciones u opciones aplicables.}}
+{{Describe el requerimiento, su propósito, cuándo y dónde aplica, y cómo debe implementarse en el proyecto. Incluye las herramientas, convenciones, estructura o ubicación habitual cuando corresponda. La descripción PUEDE contener un enunciado normativo utilizando palabras clave RFC 2119 (MUST, SHOULD, MAY o sus equivalentes en el idioma del documento) para indicar las obligaciones, recomendaciones u opciones aplicables.}}
 
 ### Excepciones
-{{Casos en los que el requisito no aplica o puede incumplirse justificadamente, o "Ninguna".}}
+{{Casos en los que el requerimiento no aplica o puede incumplirse justificadamente, o "Ninguna".}}
 
 ## {{E2E testing}}
 **ID:** {{slug}}
@@ -94,13 +94,13 @@ Si un requisito necesita documentos de apoyo (guías, ejemplos, matrices), usar 
 
 ## Criterios de cumplimiento
 <!--
-Tabla ÚNICA para todo el estándar: reúne los criterios de cumplimiento de TODOS los requisitos de
-arriba — no se repite esta sección por requisito. Los criterios de cumplimiento son la UNIDAD
-verificable y trazable, no el requisito. Ej.: el requisito «Unit testing» puede tener el criterio
+Tabla ÚNICA para todo el estándar: reúne los criterios de cumplimiento de TODOS los requerimientos de
+arriba — no se repite esta sección por requerimiento. Los criterios de cumplimiento son la UNIDAD
+verificable y trazable, no el requerimiento. Ej.: el requerimiento «Unit testing» puede tener el criterio
 «cobertura ≥ 80%» (CR-001).
 Columnas:
   - ID: `CR-XXX` (prefijo + 3 dígitos), único en el estándar, correlativo a través de todos los
-    requisitos. Su referencia global es `<estándar>/CR-XXX` (p. ej. testing/CR-001); es lo que el ADR
+    requerimientos. Su referencia global es `<estándar>/CR-XXX` (p. ej. testing/CR-001); es lo que el ADR
     de origen lista en `emits`.
   - Descripción: qué se mide (umbral, check, evidencia); si el criterio es normativo, usar palabra clave
     RFC 2119 en MAYÚSCULAS en el idioma de preferencia.
@@ -112,7 +112,7 @@ Columnas:
     checks de su estándar — scripts/arch/checks/<slug-del-estándar>.<ext>, p. ej.
     [checks/testing.mjs](../../scripts/arch/checks/testing.mjs) desde docs/standards/<slug>.md (un ../
     adicional en la forma de carpeta docs/standards/<slug>/README.md) —, donde el chequeo se identifica
-    por su referencia CR-XXX; o el archivo/URL de la evidencia externa registrada en el requisito
+    por su referencia CR-XXX; o el archivo/URL de la evidencia externa registrada en el requerimiento
     (archivo, job CI, etc.). Pending = aún no existe. Nunca yes/no a secas: el enlace hace la
     verificación navegable desde la propia tabla.
 -->
@@ -120,7 +120,7 @@ Columnas:
 | ID | Descripción | Automatizable | Enfoque | Verificación |
 |----|-------------|-------------|---------|----------------|
 | CR-{{001}} | Cobertura de pruebas unitarias **DEBE** ser ≥ {{80%}} | {{yes \| no}} | {{bloqueante \| warning}} | {{[checks/<slug-estándar>.<ext>](../../scripts/arch/checks/<slug-estándar>.<ext>) \| Pending}} |
-| CR-{{002}} | {{…otro criterio del mismo requisito, si aplica}} | {{yes \| no}} | {{bloqueante \| warning}} | {{[checks/<slug-estándar>.<ext>](../../scripts/arch/checks/<slug-estándar>.<ext>) \| Pending}} |
+| CR-{{002}} | {{…otro criterio del mismo requerimiento, si aplica}} | {{yes \| no}} | {{bloqueante \| warning}} | {{[checks/<slug-estándar>.<ext>](../../scripts/arch/checks/<slug-estándar>.<ext>) \| Pending}} |
 | CR-{{003}} | Los flujos críticos definidos por producto **DEBEN** tener cobertura e2e con Playwright | {{yes \| no}} | {{bloqueante \| warning}} | {{[checks/<slug-estándar>.<ext>](../../scripts/arch/checks/<slug-estándar>.<ext>) \| Pending}} |
 
 ## Referencias

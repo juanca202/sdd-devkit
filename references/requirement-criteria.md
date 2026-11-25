@@ -1,8 +1,8 @@
-# Vocabulario de requisitos y criterios: RFC 2119 y categorías (compartida)
+# Vocabulario de requerimientos y criterios: RFC 2119 y categorías (compartida)
 
 Referencia transversal del plugin **SDD Devkit**. Vocabulario único para **enunciar y clasificar**
-cualquier requisito o criterio verificable del catálogo: `AC-XXX` de una historia (`work-define`),
-`FR-XXX` / `NFR-XXX` / `BR-XX` de un SRS (`requirement-refine`) y los requisitos de un estándar que
+cualquier requerimiento o criterio verificable del catálogo: `AC-XXX` de una historia (`work-define`),
+`FR-XXX` / `NFR-XXX` / `BR-XX` de un SRS (`requirement-refine`) y los requerimientos de un estándar que
 `quality-check` clasifica como bloqueantes o condicionales. Cada skill declara solo su delta (a qué
 identificadores aplica y sus reglas propias); la tabla y los catálogos viven aquí.
 
@@ -24,7 +24,7 @@ MAYÚSCULAS, en el idioma resuelto por [`language.md`](language.md).
 
 ## Categorías
 
-Todo requisito o criterio declara **una** categoría de primer nivel. Si abarca más de una, se divide.
+Todo requerimiento o criterio declara **una** categoría de primer nivel. Si abarca más de una, se divide.
 
 ### Categorías funcionales
 

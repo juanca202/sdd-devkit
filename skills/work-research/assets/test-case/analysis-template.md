@@ -40,7 +40,7 @@ recomendación» del README; el detalle vive aquí.
 
 ## 1. El test case
 
-**Comportamiento esperado según el requisito**
+**Comportamiento esperado según el requerimiento**
 
 > {{Una frase, con las palabras del AC-XXX o de la regla de negocio — no con las del test.}}
 
@@ -53,7 +53,7 @@ recomendación» del README; el detalle vive aquí.
 | Resultado esperado | {{…}} |
 | Datos de prueba | {{…}} |
 
-**Traza declarada:** {{`AC-XXX` | ⚠️ el TC no declara a qué requisito responde — hallazgo}}
+**Traza declarada:** {{`AC-XXX` | ⚠️ el TC no declara a qué requerimiento responde — hallazgo}}
 
 ## 2. Contexto revisado
 
@@ -72,7 +72,7 @@ recomendación» del README; el detalle vive aquí.
 
 | # | Pregunta | Respuesta | Evidencia |
 |---|----------|-----------|-----------|
-| 1 | ¿El escenario corresponde realmente al requisito? | {{Sí / No}} | {{…}} |
+| 1 | ¿El escenario corresponde realmente al requerimiento? | {{Sí / No}} | {{…}} |
 | 2 | ¿El resultado esperado está correctamente definido? | {{Sí / No}} | {{…}} |
 | 3 | ¿Falta algún caso? | {{No / Sí: …}} | {{límite, nulo, error, permisos, concurrencia…}} |
 | 4 | ¿Verifica comportamiento o detalles de implementación? | {{Comportamiento / Implementación}} | {{aserción concreta}} |
@@ -100,7 +100,7 @@ recomendación» del README; el detalle vive aquí.
 
 **Implementación vs. comportamiento esperado**
 
-| Condición del requisito | Esperado | Implementado | ¿Coincide? |
+| Condición del requerimiento | Esperado | Implementado | ¿Coincide? |
 |-------------------------|----------|--------------|------------|
 | {{…}} | {{…}} | {{…}} | {{Sí / **No** → divergencia en `{{archivo›símbolo}}`}} |
 

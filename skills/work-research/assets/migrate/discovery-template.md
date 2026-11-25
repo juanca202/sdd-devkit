@@ -31,7 +31,7 @@ El informe principal (README.md) lo enlaza en su sección "Archivos adicionales"
 
 - Ambiente accesible vía web: {{Sí | No}}
 - URL del ambiente de pruebas: {{URL o N/A}}
-- Notas de acceso: {{restricciones o requisitos de acceso, si aplica}}
+- Notas de acceso: {{restricciones o requerimientos de acceso, si aplica}}
 
 ## Mapeo Tecnológico
 

@@ -443,6 +443,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/project-management.md`](../../references/project-management.md): **Gestor de proyectos** — si la integración está activa, proveedor y datos de conexión. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/project-managers/azure-devops.md`](../../references/project-managers/azure-devops.md): **Azure DevOps** — MCP, URL, límites, sincronización. *Solo si el `provider` resuelto es `azure-devops`.*
+- [`${PLUGIN_ROOT}/references/project-managers/jira.md`](../../references/project-managers/jira.md): **Jira** — MCP, clave del issue, URL, límites, sincronización. *Solo si el `provider` resuelto es `jira`.*
 
 ---
 

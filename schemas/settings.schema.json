@@ -346,6 +346,14 @@
         "project": {
           "type": "string",
           "description": "Clave del proyecto (Jira) o nombre del proyecto (Azure DevOps)."
+        },
+        "testManagement": {
+          "type": "string",
+          "description": "Herramienta que gestiona los casos de prueba cuando el provider es jira (Jira no los trae de serie). zephyr: Zephyr de SmartBear, casos como objetos propios. issue-type: los casos son issues de Jira (Xray, Zephyr Squad antiguo o un tipo propio). Opcional: sin la clave se asume zephyr. Se ignora con azure-devops.",
+          "enum": [
+            "zephyr",
+            "issue-type"
+          ]
         }
       },
       "dependencies": {

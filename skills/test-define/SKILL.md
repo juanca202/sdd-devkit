@@ -20,7 +20,7 @@ Carga el archivo correspondiente cuando vayas a ejecutar la tarea; el detalle í
 
 | Necesitas… | Archivo |
 | ---------- | ------- |
-| Integración condicional con un gestor de proyectos: detalle específico de cada proveedor (creación de work items, campos, IDs, vinculación al artefacto padre) | `references/<proveedor>.md` (p. ej. [`references/azure-devops.md`](references/azure-devops.md) para Azure DevOps) — leer solo si la integración está activa (ver [Resolución de la integración con el gestor de proyectos](#resolución-de-la-integración-con-el-gestor-de-proyectos)) |
+| Integración condicional con un gestor de proyectos: detalle específico de cada proveedor (creación de work items, campos, IDs, vinculación al artefacto padre) | `references/<proveedor>.md` (p. ej. [`references/azure-devops.md`](references/azure-devops.md) para Azure DevOps; un proveedor sin casos de prueba propios, como Jira, delega en un módulo por herramienta de pruebas bajo `references/test-managers/`) — leer solo si la integración está activa (ver [Resolución de la integración con el gestor de proyectos](#resolución-de-la-integración-con-el-gestor-de-proyectos)) |
 | **Sincronizar** casos de prueba desde el gestor de proyectos (`sync <#TC \| #US \| URL>`): crea los que falten y actualiza los que existan — solo con integración activa | [Flujo: sincronizar TCs](#flujo-sincronizar-tcs-desde-el-gestor-de-proyectos-sync) y, por proveedor, la sección «Lectura» de `references/<proveedor>.md` (p. ej. [`references/azure-devops.md`](references/azure-devops.md#lectura-sync)) |
 | Estructura del archivo de un caso de prueba | [`assets/test-case-template.md`](assets/test-case-template.md) |
 | Qué hacer cuando el requerimiento llega **en bruto** (texto o documento ajeno al proyecto): handoff a `/requirement-refine` | [Requerimiento en bruto → handoff](#requerimiento-en-bruto--handoff-a-requirement-refine) |
@@ -37,6 +37,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 - [`${PLUGIN_ROOT}/references/artifacts.md`](../../references/artifacts.md): **Artefactos** — rutas del harness, identificadores, archivado. *Al resolver una ruta o calcular un ID.*
 - [`${PLUGIN_ROOT}/references/project-management.md`](../../references/project-management.md): **Gestor de proyectos** — si la integración está activa, proveedor y datos de conexión. *Lectura obligatoria antes de ejecutar el skill.*
 - [`${PLUGIN_ROOT}/references/project-managers/azure-devops.md`](../../references/project-managers/azure-devops.md): **Azure DevOps** — MCP, URL, límites, sincronización. *Solo si el `provider` resuelto es `azure-devops`.*
+- [`${PLUGIN_ROOT}/references/project-managers/jira.md`](../../references/project-managers/jira.md): **Jira** — MCP, clave del issue, URL, límites, sincronización. *Solo si el `provider` resuelto es `jira`.*
 
 ---
 

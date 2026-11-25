@@ -44,18 +44,21 @@ if (!pm || pm.enabled !== true) {
   console.log('- No escribir el campo de vinculo al work item en el encabezado de los documentos.');
 } else {
   const provider = pm.provider;
-  const providerRef = { 'azure-devops': 'project-managers/azure-devops.md' }[provider];
+  const providerRef = { 'azure-devops': 'project-managers/azure-devops.md', 'jira': 'project-managers/jira.md' }[provider];
 
   console.log('Integracion con gestor de proyectos: **ACTIVADA**.');
   console.log('- provider = ' + provider);
   console.log('- host = ' + pm.host);
   console.log('- workspace = ' + pm.workspace + '  (organizacion o subdominio)');
   console.log('- project = ' + pm.project + '  (clave del proyecto en Jira; nombre del proyecto en Azure DevOps)');
+  if (provider === 'jira') {
+    console.log('- testManagement = ' + (pm.testManagement || 'zephyr') + '  (herramienta de casos de prueba; ' + (pm.testManagement ? 'declarada' : 'por defecto, la clave no esta declarada') + '). test-define lee su modulo en skills/test-define/references/test-managers/.');
+  }
 
   if (providerRef) {
     console.log('');
     console.log('**Ahora DEBES leer la referencia del proveedor: ' + providerRef + '** (relativa a references/), y seguir unicamente sus pasos.');
-    console.log('Estos cuatro valores son la unica fuente de conexion: no preguntarlos al usuario ni inferirlos del MCP.');
+    console.log('Estos valores son la unica fuente de conexion: no preguntarlos al usuario ni inferirlos del MCP.');
   } else {
     console.log('');
     console.log('**No hay referencia para ese provider en references/project-managers/.** Informar al usuario y continuar con ID secuencial local; no improvisar la integracion.');

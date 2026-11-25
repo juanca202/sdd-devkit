@@ -84,5 +84,6 @@ Integración opcional con un sistema de tickets externo, usada por `work-plan`, 
 | `host` | URL | URL base de la instancia (ej. `https://tu-organizacion.atlassian.net`). Obligatorio cuando `enabled: true`. |
 | `workspace` | texto | Organización o subdominio en el servicio externo. Obligatorio cuando `enabled: true`. |
 | `project` | texto | Clave del proyecto (Jira) o nombre del proyecto (Azure DevOps). Obligatorio cuando `enabled: true`. |
+| `testManagement` | `zephyr` · `issue-type` | Solo con `provider: jira`, que no trae casos de prueba de serie: qué herramienta los gestiona. `zephyr` (por defecto si se omite): Zephyr de SmartBear, donde los casos son objetos propios con clave `PAG-T123` y requieren una herramienta MCP de Zephyr. `issue-type`: los casos son issues de Jira (Xray, Zephyr Squad antiguo o un tipo de issue propio). Opcional; con `azure-devops` se ignora. Para añadir otra herramienta, ver [`skills/test-define/references/jira.md`](skills/test-define/references/jira.md). |
 
 Los secretos nunca van en `settings.json`: credenciales del gestor de proyectos o de cualquier herramienta local viven en `.sdd-devkit/.env` (no versionado; `arch-init` lo deja en `.gitignore`).

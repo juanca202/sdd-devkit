@@ -52,6 +52,7 @@ Lo que sí exige el plugin instalado es que la carpeta `references/` viaje junto
 | [`artifacts.md`](artifacts.md) | Layout del harness (rutas de cada artefacto), **resolución de la raíz de arquitectura** (repo principal vs. submódulo), identificadores y numeración, y el contrato de archivado | Todo el ciclo de trabajo y de arquitectura |
 | [`project-management.md`](project-management.md) | Integración con el gestor de proyectos resuelta desde `.sdd-devkit/settings.json`: si está activada, con qué proveedor y con qué datos de conexión (`host`, `workspace`, `project`) | `work-plan`, `test-define`, `work-research`, `work-define`, `requirement-refine` |
 | [`project-managers/azure-devops.md`](project-managers/azure-devops.md) | Delta del proveedor Azure DevOps: verificación del MCP, URL del work item, el ID de ADO sobre el secuencial local, límites de formato y contrato de sincronización | `work-plan`, `test-define`, `work-research`, `work-define`, `requirement-refine` |
+| [`project-managers/jira.md`](project-managers/jira.md) | Delta del proveedor Jira: verificación del MCP, clave del issue y número local, URL, tipos de issue y estados por proyecto, límites de formato y contrato de sincronización | `work-plan`, `test-define`, `work-research`, `work-define`, `requirement-refine` |
 
 ## Cómo referenciarlo desde un `SKILL.md`
 

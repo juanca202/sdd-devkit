@@ -56,6 +56,7 @@ Reglas transversales del catálogo; viven en la raíz del plugin, no en este ski
 - [`${PLUGIN_ROOT}/references/asking.md`](../../references/asking.md): **Preguntas** — mecanismo estructurado, ritmo, fallback. *Antes de la primera pregunta.* Este skill declara una excepción de ritmo (cierre de lagunas por tandas de hasta 3) — ver la tabla de excepciones en ese archivo.
 - [`${PLUGIN_ROOT}/references/project-management.md`](../../references/project-management.md): **Gestor de proyectos** — si la integración está activa, proveedor y datos de conexión. *Solo con el modificador `sync` o el handoff `origen=work-define-sync`.*
 - [`${PLUGIN_ROOT}/references/project-managers/azure-devops.md`](../../references/project-managers/azure-devops.md): **Azure DevOps** — MCP, URL, clave `work_item`, normalización del HTML. *Solo si el `provider` resuelto es `azure-devops` y se usa `sync`.*
+- [`${PLUGIN_ROOT}/references/project-managers/jira.md`](../../references/project-managers/jira.md): **Jira** — MCP, clave del issue, URL, clave `work_item`, normalización de la Descripción. *Solo si el `provider` resuelto es `jira` y se usa `sync`.*
 
 ---
 

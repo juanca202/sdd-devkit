@@ -47,6 +47,20 @@ tappables o un selector) en lugar de redactar la pregunta como prosa libre. No u
 - **No proponer un default implícito** cuando la respuesta condiciona operaciones destructivas o de
   git: listar los candidatos detectados como opciones.
 
+## Subagentes: no pueden preguntar
+
+Un subagente **no tiene** la herramienta de preguntas estructuradas ni otro canal hacia el usuario:
+corre de principio a fin sin interacción. Por eso:
+
+- **No delegar en un subagente un paso que pregunta al usuario** (elegir candidatos, seleccionar
+  criterios, aprobar una instalación, confirmar una escritura). Ese paso se ejecuta en la
+  **conversación principal**. A un subagente solo se le delega trabajo sin preguntas: inspección de
+  código, investigación, o escritura con **todas** las decisiones ya tomadas y pasadas en la instrucción.
+- **Un skill que corre como subagente y llega a una pregunta no decide por el usuario ni la omite.**
+  Se detiene sin escribir lo que dependía de esa respuesta y devuelve al invocador, como resultado, la
+  propuesta o tabla que iba a mostrar y las preguntas pendientes con sus opciones. El invocador las
+  plantea en la conversación principal y continúa con las respuestas.
+
 ## Herramienta no disponible
 
 Si una herramienta necesaria para responder no está disponible (el MCP del gestor de proyectos, el MCP

@@ -25,9 +25,16 @@ pero **un solo estándar de dominio** *Testing Standards* con **dos requerimient
 El output es una **lista priorizada de candidatos**, agrupando los requerimientos por estándar de dominio.
 El usuario decide cuáles documentar; el skill luego invoca `arch-manage` para cada uno aprobado, que
 crea el ADR y —cuando aplique— añade su requerimiento al estándar de dominio (creándolo o ampliándolo).
-Este skill es **autocontenido**: cuando se invoca (directamente o como subagente desde otro skill,
-p. ej. `arch-init`), corre sus cinco fases hasta el final, incluida la creación de los artefactos
-aprobados — nadie más los vuelve a crear después.
+Este skill es **autocontenido**: cuando se invoca (directamente o desde otro skill, p. ej. `arch-init`),
+corre sus cinco fases hasta el final, incluida la creación de los artefactos aprobados — nadie más los
+vuelve a crear después.
+
+> **Dónde corre cada fase.** Las Fases 1, 4 y 5 **preguntan al usuario** (raíz de arquitectura,
+> candidatos a documentar, y —dentro de `arch-manage`— criterios de cumplimiento, fitness functions e
+> instalaciones), así que corren siempre en la **conversación principal**: un subagente no puede
+> preguntar ([`asking.md`](../../references/asking.md#subagentes-no-pueden-preguntar)). Solo la
+> **inspección** (Fases 2 y 3) puede delegarse en un subagente de solo lectura, que devuelve la lista
+> de candidatos con su evidencia y no escribe ni decide nada.
 
 ---
 
@@ -169,7 +176,7 @@ pregunta exacta y sus opciones).
 
 Por cada candidato aprobado por el usuario:
 
-1. Invocar el skill `arch-manage` pasando como contexto:
+1. Invocar el skill `arch-manage` **en la conversación principal** (no en un subagente: su flujo pregunta al usuario) pasando como contexto:
    - El título sugerido de la decisión
    - La evidencia encontrada (como contexto para el `## Contexto` del ADR)
    - La decisión inferida
@@ -188,12 +195,14 @@ Por cada candidato aprobado por el usuario:
 
 Este skill no deja candidatos "aceptados pero pendientes de crear": todo lo que el usuario aprueba en
 la Fase 4 queda creado al final de la Fase 5, en la misma ejecución. Un skill que invoque `arch-discover`
-como subagente (p. ej. `arch-init`) debe dejarlo correr hasta aquí — no hay un modo que se detenga antes.
+(p. ej. `arch-init`) debe dejarlo correr hasta aquí, en la conversación principal — no hay un modo que
+se detenga antes.
 
 ---
 
 ## Notas de comportamiento
 
+- **Nunca saltarse la Fase 4 ni la propuesta de criterios de `arch-manage`**, ni resolverlas sin el usuario porque el skill fue invocado por otro: son las dos decisiones que el usuario toma en este flujo.
 - **No narrar el flujo interno.** Nada de anunciar que se resuelve el idioma o la política, que se lee `settings.json`, que se carga una referencia, ni ir enumerando las fases en voz alta. Al usuario se le comunica el resultado, las preguntas que el flujo exija y lo que quede pendiente — no la maquinaria.
 - **No inventar decisiones ni reglas.** Si la evidencia es ambigua, mencionar la incertidumbre en "Evidencia" y marcarlo como baja prioridad.
 - **No proponer documentos triviales.** "Usamos Git" no es un ADR.

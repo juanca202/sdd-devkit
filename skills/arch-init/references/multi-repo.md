@@ -218,8 +218,8 @@ harness de ese repositorio se considere incompleto.
 Repetir `references/adr-candidates.md` y `references/quality-gate.md` completos por cada submódulo, usando
 ese submódulo como la `<raíz-arq>` que ambas referencias resuelven. No consolidar los candidatos de
 distintos submódulos en una sola lista ni en una sola invocación de `arch-manage`: cada raíz de arquitectura
-se documenta y se delega por separado (la nota del Paso 4.1 sobre "pasar la raíz de arquitectura a los
-subagentes" aplica una vez por submódulo). El resumen del cierre (Paso 5.3) sí agrega los resultados de
+se documenta y se delega por separado (la nota del Paso 4.1 sobre "pasar la raíz de arquitectura" aplica
+una vez por submódulo). El resumen del cierre (Paso 5.3) sí agrega los resultados de
 todos los submódulos en un solo reporte para el usuario.
 
 ## 6. Índices de arquitectura: todos por defecto, salvo "Solo specs"

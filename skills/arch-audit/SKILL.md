@@ -246,7 +246,7 @@ En una **Nueva auditoría desde cero** se ignora el histórico para el análisis
 
 3. **AGENTS.md** — leer el/los archivo(s):
    ``bash
-   find . -maxdepth 3 -iname "AGENTS.md" -not -path "*/node_modules/*" 2>/dev/null
+   find . -maxdepth 3 -iname "AGENTS.md" -not -path "*/node_modules/*" -not -path "*/vendor/*" -not -path "*/.venv/*" -not -path "*/target/*" 2>/dev/null
    ``
    Descomponer el documento en **reglas atómicas y verificables**. Ignorar prosa de contexto sin
    una regla accionable. A cada regla asignarle un identificador estable con el formato
@@ -295,8 +295,8 @@ el tipo de regla:
 | Tecnología obligatoria/prohibida (p. ej. "usar GraphQL, no REST") | `grep -rn` de patrones de la tecnología permitida y de la prohibida; contar ocurrencias y ubicarlas |
 | Estructura / capas (p. ej. "Controller → Service → Repository") | `find` de carpetas esperadas; detectar archivos que saltan capas |
 | Convención de nombres/ubicación | `grep`/`find` sobre rutas y nombres de archivo |
-| Dependencia permitida/prohibida | Leer manifiestos (`package.json`, `pom.xml`, `pyproject.toml`, `*.csproj`, `go.mod`, `Cargo.toml`) |
-| Prohibiciones de código (p. ej. "no usar `any`", "no `console.log`") | `grep -rn` del antipatrón |
+| Dependencia permitida/prohibida | Leer manifiestos (`package.json`, `pom.xml`/`build.gradle`, `pyproject.toml`, `composer.json`, `*.csproj`, `go.mod`, `Cargo.toml`, `Gemfile`…) |
+| Prohibiciones de código (p. ej. "no usar `any`", "no `console.log`", "no `System.out.println`", "no `print()` en producción") | `grep -rn` del antipatrón |
 | Límites de módulo / imports | `grep -rn` de imports que cruzan fronteras no permitidas |
 
 Guías de verificación:
@@ -351,8 +351,9 @@ corrida) en [`references/fitness-function-heuristics.md`](references/fitness-fun
 
 **Primero, leer la fila del criterio (`CR-XXX`) en la tabla `## Criterios de cumplimiento` de su estándar** (lo escribe
 `arch-manage`). Es la fuente más fiable: si `Verificación` trae un enlace, resolver el archivo enlazado
-(por convención vive en `scripts/arch/checks/<slug-estándar>.<ext>`, p. ej. `checks/testing.mjs`),
-ejecutar ese estándar vía el runner con su slug (`node scripts/arch/verify.mjs testing`) y leer la
+(por convención vive en `scripts/arch/checks/<slug-estándar>.<ext>`, p. ej. `checks/testing.mjs` o
+`checks/testing.py`), ejecutar ese estándar vía el runner con su slug y el runtime del stack
+(`node scripts/arch/verify.mjs testing`, `python scripts/arch/verify.py testing`…) y leer la
 línea del `CR-XXX` (salvo que la corrida del paso 0 ya lo haya cubierto); si no hay archivo de checks,
 la verificación es evidencia externa — buscarla en el requerimiento. Si `Automatizable: yes` pero
 `Verificación: Pending`, el criterio es apto pero aún no tiene fitness function → va a las sugerencias
@@ -367,8 +368,8 @@ Si la fila no existe o está incompleta (estándares antiguos, o ADR sin criteri
 
 Ejecutar **solo** el chequeo de arquitectura, no la suite completa, usando el comando más acotado disponible:
 
-- Preferir el runner (`node scripts/arch/verify.mjs` o el equivalente del stack, con el slug del estándar para acotar; paso 0) cuando exista; si no, el archivo de checks del estándar localizado por convención (`scripts/arch/checks/<slug-estándar>.<ext>`), el `README`, `package.json` (script `arch`/`fitness`/`depcruise`) o `Makefile`.
-- Ejemplos: `npx depcruise --config .dependency-cruiser.js src`, `mvn -Dtest=*ArchTest test`, `lint-imports`, `pytest -k arch`.
+- Preferir el runner (`node scripts/arch/verify.mjs` o el equivalente del stack, con el slug del estándar para acotar; paso 0) cuando exista; si no, el archivo de checks del estándar localizado por convención (`scripts/arch/checks/<slug-estándar>.<ext>`), el `README`, el manifiesto de tareas del stack — `package.json`, `composer.json`, `Makefile`… — (tarea `test:arch`/`test-arch`/`testArch`, o nombres anteriores como `arch`/`fitness`/`depcruise`; nunca `test:all`, que corre además las suites de pruebas).
+- Ejemplos: `npx depcruise --config .dependency-cruiser.js src`, `mvn -Dtest=*ArchTest test`, `lint-imports`, `pytest -k arch`, `vendor/bin/deptrac analyse`, `dotnet test --filter Category=Architecture`, `go-arch-lint check`.
 - Si el comando exacto es ambiguo o requiere instalar dependencias pesadas, **preguntar al usuario** con la herramienta de preguntas estructuradas antes de ejecutarlo, mostrando el comando propuesto. No ejecutar nada destructivo ni que modifique el repo.
 - Capturar: comando corrido, resultado (**PASS / FAIL / WARN**), y las líneas relevantes de la salida (violaciones concretas con sus rutas). Un criterio `warning` que falla se reporta como **WARN** (no cambia el veredicto ejecutable). Si falla por entorno (falta un runtime/dependencia), registrar **No ejecutable** con el motivo, no marcarlo como incumplimiento.
 

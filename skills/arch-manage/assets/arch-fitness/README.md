@@ -34,7 +34,8 @@ scripts/arch/
   de cada CR se implementa dentro del script: un chequeo `bloqueante` que falla
   produce `FAIL` y hace salir el script con código ≠ 0; uno `warning` produce
   `WARN` sin cambiar el código de salida. Cada chequeo invoca la herramienta real
-  (dependency-cruiser, ESLint, runner del framework…) — no duplica su lógica.
+  (dependency-cruiser, ArchUnit, import-linter, runner del framework… — la del
+  stack) — no duplica su lógica.
 
 ## Contrato (igual en cualquier stack)
 
@@ -68,9 +69,10 @@ Solo un estándar:
 node scripts/arch/verify.mjs testing
 ```
 
-O, si el repo lo cablea, mediante el mecanismo nativo del stack
-(`npm run arch`, un target de `Makefile`, un job de CI, etc.). En un stack
-no-Node, el comando es el equivalente del runner generado
+Si el repo tiene un mecanismo de tareas, el runner también queda cableado como
+`test:arch` (`npm run test:arch`, `composer test:arch`, `make test-arch`, …), y
+`test:all` ejecuta todas las suites de pruebas del repo, incluida esta. En un
+stack no-Node, el comando directo es el equivalente del runner generado
 (`python scripts/arch/verify.py`, `php scripts/arch/verify.php`, …).
 
 ## Añadir una validación

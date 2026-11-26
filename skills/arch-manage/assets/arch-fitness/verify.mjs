@@ -29,7 +29,7 @@
 // checks/<slug-estándar>.mjs (lo hace el skill `arch-manage`).
 //
 // Uso:   node scripts/arch/verify.mjs [slug-estándar ...]
-//        (o `npm run arch` / target equivalente si el repo lo cablea)
+//        (o `npm run test:arch` / tarea `test:arch` equivalente si el repo lo cablea)
 // =============================================================================
 import { readdirSync, existsSync } from 'node:fs';
 import { spawnSync } from 'node:child_process';

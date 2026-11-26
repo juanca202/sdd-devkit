@@ -30,7 +30,7 @@ reutilizable aquí si es **fresca**, con las **mismas reglas que las demás entr
 - **La caché aporta la corrida, no el juicio.** El reparto por `CR-XXX`, la clasificación de
   incumplimientos y el veredicto se hacen igual, aquí, sobre esa salida. Si la salida cacheada no
   permite resolver un `CR-XXX` concreto (resumen agregado, sin la línea del criterio), ejecutar el
-  runner acotado a ese estándar (`node scripts/arch/verify.mjs <slug>`) en vez de inferirlo.
+  runner acotado a ese estándar (`node scripts/arch/verify.mjs <slug>` o el equivalente del stack) en vez de inferirlo.
 
 ### El runner
 
@@ -44,14 +44,14 @@ ls scripts/arch/verify.* scripts/arch/checks/* 2>/dev/null
 
 - **Si existe**, es la vía preferida: una sola corrida acotada valida todos los criterios con fitness
   function. Ejecutar el runner con el runtime del stack (`node scripts/arch/verify.mjs`,
-  `python scripts/arch/verify.py`, etc., o el alias nativo del repo — `npm run arch`, target de
-  `Makefile`, etc.) aplicando las mismas cautelas del paso 2 (no correr build/suite completa; si
+  `python scripts/arch/verify.py`, etc., o su tarea `test:arch` — `npm run test:arch`,
+  `make test-arch`, etc. —; **nunca `test:all`**, que corre además las suites de pruebas) aplicando las mismas cautelas del paso 2 (no correr build/suite completa; si
   requiere instalar dependencias pesadas, preguntar antes). Cada archivo de `checks/` agrupa las
   fitness functions de **un estándar** (`checks/<slug-estándar>.<ext>`, p. ej. `checks/testing.mjs`) e
   imprime una línea de protocolo por criterio — `PASS|FAIL|WARN <estándar>/CR-XXX — detalle`:
   **mapear cada línea a su criterio por esa referencia** y alimentar ese resultado al estado del
   criterio en la Fase 2. Para auditar un solo estándar, el runner acepta su slug como argumento
-  (`node scripts/arch/verify.mjs testing`). El resumen final (criterios PASS / WARN / FAIL) y el
+  (`node scripts/arch/verify.mjs testing`, `python scripts/arch/verify.py testing`…). El resumen final (criterios PASS / WARN / FAIL) y el
   código de salida agregado resumen la salud arquitectónica ejecutable: el runner sale con código ≠ 0
   **solo** si falla algún criterio `bloqueante`; un criterio `warning` que falla se reporta como `WARN`
   pero **no** cambia el código de salida ni el veredicto ejecutable.
@@ -72,6 +72,10 @@ ls scripts/arch/verify.* scripts/arch/checks/* 2>/dev/null
 | JS/TS | `dependency-cruiser` (`.dependency-cruiser.js`), `ts-arch`, reglas ESLint de `import/no-restricted-paths`, `eslint-plugin-boundaries` |
 | .NET | `NetArchTest`, `ArchUnitNET` |
 | Python | `import-linter` (`.importlinter`), `pytest-arch` |
+| PHP | `deptrac` (`deptrac.yaml`), PHPArkitect (`phparkitect.php`), tests de arquitectura de Pest |
+| Go | `go-arch-lint` (`.go-arch-lint.yml`), `arch-go`, reglas `depguard` de `golangci-lint` |
+| Ruby | `packwerk` (`packwerk.yml`, `package.yml`) |
+| Dart / Flutter | reglas de `import_lint` / `custom_lint` en `analysis_options.yaml` |
 | Cualquiera | runner `scripts/arch/verify.<ext>` + `scripts/arch/checks/<slug-estándar>.<ext>` en el lenguaje del stack (ver Fase 2B paso 0); otros scripts en `scripts/`, `tools/`, `arch/` con nombres como `check-architecture`, `fitness`, `compliance`; jobs de CI (`.github/workflows/*`, `.gitlab-ci.yml`, `azure-pipelines.yml`) con pasos de arquitectura |
 
 Esta misma tabla es la que respalda la "Herramienta sugerida" del paso 3 de la Fase 2B (criterios aptos
@@ -80,10 +84,11 @@ sin fitness function).
 ## Comandos de rastreo genérico
 
 ```bash
-grep -rniE "archunit|dependency-cruiser|import-linter|netarchtest|ts-arch|fitness|arch.?test|boundaries" \
-  . --include="*.*" -l 2>/dev/null | grep -viE "node_modules|/.git/" | head -40
-find . -type f \( -iname "*archtest*" -o -iname "*fitness*" -o -iname ".dependency-cruiser*" -o -iname ".importlinter" \) \
-  -not -path "*/node_modules/*" 2>/dev/null
+grep -rniE "archunit|dependency-cruiser|import-linter|netarchtest|ts-arch|deptrac|phparkitect|go-arch-lint|arch-go|packwerk|fitness|arch.?test|boundaries" \
+  . --include="*.*" -l 2>/dev/null | grep -viE "/(node_modules|vendor|\.venv|venv|target|obj|\.gradle|\.dart_tool|\.git)/" | head -40
+find . -type f \( -iname "*archtest*" -o -iname "*fitness*" -o -iname ".dependency-cruiser*" -o -iname ".importlinter" \
+  -o -iname "deptrac.y*ml" -o -iname "phparkitect.php" -o -iname ".go-arch-lint.y*ml" -o -iname "packwerk.yml" \) \
+  -not -path "*/node_modules/*" -not -path "*/vendor/*" -not -path "*/.venv/*" -not -path "*/target/*" 2>/dev/null
 ```
 
 Mapear cada fitness function encontrada al criterio que valida: en un archivo de checks

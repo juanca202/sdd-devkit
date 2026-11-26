@@ -13,7 +13,8 @@ fijada por un ADR). Este principio rige tanto la **redacción de los CR** (resul
 como la propuesta: la herramienta de verificación es el *mecanismo*, nunca el criterio en sí.
 
 **El modelo, en una línea:** los scripts de verificación se escriben en el **lenguaje del stack del
-repositorio** (Node en un proyecto Angular/React/Vue/Node, Python en uno Python, PHP en uno PHP…), hay
+repositorio** (Node en un proyecto Angular/React/Vue/Node, Python en uno Python, PHP en uno PHP… —
+tabla en "Runner de validaciones"), hay
 **un archivo de checks por estándar** (no por criterio) en `scripts/arch/checks/<slug-estándar>.<ext>`,
 y un **runner** único (`scripts/arch/verify.<ext>`) que ejecuta todos los estándares por defecto o solo
 uno pasado por argumento.
@@ -72,9 +73,10 @@ mantenimiento** de verificar ese criterio en ese stack — nunca improvisar un s
 existe una manera establecida de hacerlo. Esta investigación va **aquí**, antes de preguntar: la
 propuesta debe mostrarle al usuario el mecanismo real (herramienta + comando), no un "ya veremos".
 
-- Detectar el stack (manifiestos: `package.json`, `pom.xml`, `pyproject.toml`, `*.csproj`, `go.mod`,
-  etc.). El stack detectado determina también el **lenguaje** del runner y de los archivos de checks
-  (ver "Runner de validaciones" más abajo).
+- Detectar el stack (manifiestos: `package.json`, `pom.xml`/`build.gradle`, `pyproject.toml`,
+  `composer.json`, `*.csproj`, `go.mod`, `Cargo.toml`, `Gemfile`, `pubspec.yaml`, etc.). El stack
+  detectado determina también el **lenguaje** del runner y de los archivos de checks (ver "Runner de
+  validaciones" más abajo).
 - **Si no hay ningún manifiesto de dependencias en el repo** (no hay ecosistema de paquetes que
   instalar — p. ej. un repo de scripts sueltos, de infraestructura pura, o de documentación): no
   hay gestor de paquetes con el que instalar una herramienta externa. En ese caso, el **script
@@ -87,17 +89,18 @@ propuesta debe mostrarle al usuario el mecanismo real (herramienta + comando), n
   chequeo (p. ej. ya usa `dependency-cruiser` para otra regla, o ya hay tests con ArchUnit) — en
   ese caso, **añadir la regla ahí**, no montar una herramienta nueva en paralelo.
 - Investigar además si esa herramienta corre ya como **compuerta de calidad propia del proyecto** —
-  tiene su propio script en `package.json`/`Makefile`/CI (`lint`, `test`, `stylelint`, cobertura…).
-  Si es así, el mecanismo de verificación del CR es **auditar la configuración**, no **re-ejecutar la
-  herramienta**: la fitness function comprueba de forma estática que la regla o el umbral está
+  tiene su propia tarea en el manifiesto del stack (`package.json`, `composer.json`, Gradle/Maven,
+  `pyproject.toml`…), `Makefile` o CI (`lint`, `test`, cobertura…). Si es así, el mecanismo de
+  verificación del CR es **auditar la configuración**, no **re-ejecutar la herramienta**: la fitness function comprueba de forma estática que la regla o el umbral está
   correctamente cableado en la configuración (registrado, con la severidad o el umbral esperado), y
   deja que sea esa otra compuerta la que reporte los incumplimientos reales del código. Re-ejecutarla
   desde el check de arch duplica el trabajo (la misma suite o el mismo linter corren varias veces por
-  `npm run arch`) y acopla dos compuertas que deben poder correr por separado.
+  corrida del runner) y acopla dos compuertas que deben poder correr por separado.
 - Si no hay nada montado, identificar la herramienta **más común y eficiente** para ese tipo de
   chequeo en ese stack: dependency-cruiser / ESLint boundaries (JS/TS), ArchUnit (JVM),
-  import-linter (Python), NetArchTest (.NET), un runner del propio framework (p. ej. cobertura de
-  PHPUnit), o el mecanismo nativo equivalente de otros stacks.
+  import-linter (Python), NetArchTest (.NET), deptrac / PHPArkitect (PHP), `go-arch-lint` (Go),
+  packwerk (Ruby), un runner del propio framework (p. ej. cobertura de PHPUnit), o el mecanismo
+  nativo equivalente de otros stacks.
 - Si el tipo de chequeo no encaja con claridad en ese catálogo, o hay duda real sobre cuál es la
   opción más establecida, **investigar** (documentación oficial de las herramientas candidatas, o
   delegar en un subagente con el mismo criterio que usa `work-research`) antes de decidir — no
@@ -117,7 +120,8 @@ su incumplimiento no debería frenar un merge (p. ej. umbrales en adopción prog
 
 Mostrar **todos** los candidatos en una tabla **simplificada**, antes de preguntar nada. La tabla se lee
 en el chat: su único propósito es que el usuario identifique y seleccione opciones, no documentar la
-implementación. Solo tres columnas:
+implementación. Solo tres columnas (el ejemplo es de un repo Node; en otro stack la columna
+Verificación nombra las herramientas de ese stack — pytest-cov, JaCoCo, PHPUnit, ArchUnit…):
 
 | # | Criterio propuesto | Enfoque | Verificación |
 |---|--------------------|---------|--------------|
@@ -197,9 +201,9 @@ el comando ya están decididos (paso 2b de la propuesta) — aquí se instalan y
 
    Si el usuario ya aceptó instalarla al seleccionar el criterio (la propuesta indicaba «requiere
    instalar»), no repreguntar. Al instalar: usar el gestor de paquetes del ecosistema detectado
-   (`npm`/`pnpm`/`yarn`, `pip`/`poetry`/`uv`, Maven/Gradle, `dotnet add package`, `go get`,
-   `cargo add`, etc.), como dependencia de desarrollo, y aplicar la **configuración mínima** para que
-   quede operativa (mismo criterio que [`references/dependencies.md`](dependencies.md),
+   (`npm`/`pnpm`/`yarn`, `pip`/`poetry`/`uv`, Maven/Gradle, `composer`, `dotnet add package`, `go get`,
+   `cargo add`, `bundle add`, etc.), como dependencia de desarrollo, y aplicar la **configuración
+   mínima** para que quede operativa (mismo criterio que [`references/dependencies.md`](dependencies.md),
    pero resuelto en este paso — no repetir la pregunta en el paso 8 del flujo principal para esta
    misma herramienta). Si rechaza instalar pero quiere seguir, volver al paso 2b de la propuesta con
    la alternativa que proponga y **reproponerle el mecanismo**; si no hay ninguna viable sin instalar
@@ -215,16 +219,33 @@ el comando ya están decididos (paso 2b de la propuesta) — aquí se instalan y
 
    **Excepción: la herramienta ya es una compuerta propia del repo** (resuelto en el paso 2b de la
    propuesta). En ese caso el chequeo **no invoca la herramienta** para buscar violaciones vivas —
-   nada de `execSync('npx eslint . --format json')` para contar mensajes, ni de correr
-   `ng test --coverage` para leer el resultado. En su lugar, **lee o importa su configuración de forma
-   estática** y verifica el cableado: que la regla esté registrada con la severidad esperada, o que el
-   umbral configurado sea ≥ el que exige el CR. Ejemplos del patrón correcto en un proyecto Angular:
-   importar `eslint.config.mjs` en memoria (`await import(...)`) e inspeccionar que la regla esté en
-   severidad `error` — útil extraerlo a un helper reutilizable tipo
-   `scripts/arch/lib/eslint-config.mjs` con
-   `requireRuleSeverity(config, ruleId, minSeverity, { contains, label })` cuando varios CR auditan el
-   mismo config —; o leer el umbral de cobertura de `angular.json` y confirmar que sea ≥ el requerido,
-   sin ejecutar la suite. Las violaciones reales las reporta la compuerta dueña de la herramienta
+   nada de lanzar el linter como subproceso para contar mensajes (`npx eslint . --format json`,
+   `ruff check --output-format json`, `mvn checkstyle:check`…), ni de correr la suite con cobertura
+   (`ng test --coverage`, `pytest --cov`, `mvn verify`…) para leer el resultado. En su lugar, **lee o
+   importa su configuración de forma estática** y verifica el cableado: que la regla esté registrada
+   con la severidad esperada, o que el umbral configurado sea ≥ el que exige el CR. El patrón es el
+   mismo en cualquier stack; solo cambia el archivo de configuración que se lee:
+
+   | Stack | Regla de linter cableada | Umbral de cobertura cableado |
+   |---|---|---|
+   | JS/TS | `eslint.config.*` importado en memoria (severidad de la regla) | `coverage.thresholds` de `vitest.config.*`, `coverageThreshold` de `jest.config.*`, `check` de `karma.conf.js` |
+   | Python | `[tool.ruff.lint]` de `pyproject.toml`, `.flake8`, `pylintrc` | `fail_under` en `[tool.coverage.report]` de `pyproject.toml` o en `.coveragerc` |
+   | JVM | `checkstyle.xml`, `detekt.yml`, reglas PMD | `jacocoTestCoverageVerification` en `build.gradle`, `jacoco:check` en `pom.xml` |
+   | PHP | `phpstan.neon`, `.php-cs-fixer.php`, `phpcs.xml` | sin umbral nativo en PHPUnit: el script de Composer o de CI que lo impone |
+   | .NET | severidades `dotnet_diagnostic.*` en `.editorconfig`, `Directory.Build.props` | propiedad `Threshold` de coverlet en el `.csproj` |
+   | Go / Rust | `.golangci.yml` / `clippy.toml` y `[lints]` de `Cargo.toml` | sin umbral nativo: el script o job de CI que lo impone |
+
+   La tabla orienta dónde buscar; el archivo que cuenta es **el que el repo usa de verdad** para esa
+   compuerta (confirmarlo leyendo su tarea de `lint`/`test`), y en un stack no listado se aplica el
+   mismo patrón sobre su archivo de configuración equivalente. Si el umbral o la regla **no están
+   declarados en ningún archivo** (viven solo como bandera en un comando de CI), el chequeo lee ese
+   comando del manifiesto o del pipeline; si tampoco es legible de forma estática, el criterio queda
+   con `Verificación: Pending` y se le explica al usuario.
+
+   Cuando varios CR auditan el mismo archivo de configuración, extraer la lectura a un helper
+   reutilizable en `scripts/arch/lib/` (p. ej., en un repo Node, `lib/eslint-config.mjs` con
+   `requireRuleSeverity(config, ruleId, minSeverity, { contains, label })`; en otro stack, el módulo
+   equivalente en su lenguaje). Las violaciones reales las reporta la compuerta dueña de la herramienta
    (`lint`, `test`…), no el check de arch — y la **descripción que imprime el chequeo** debe dejar
    claro que audita cableado, no comportamiento (ver «Redacción de la descripción», a continuación):
    son la misma idea vista desde el código y desde el texto que se imprime.
@@ -273,9 +294,9 @@ el comando ya están decididos (paso 2b de la propuesta) — aquí se instalan y
 5. **Referenciar en la fila del CR:** poner `Automatizable: yes`, el `Enfoque` (`bloqueante`/`warning`) y,
    en `Verificación`, el **enlace markdown al archivo de checks** donde quedó registrado el chequeo —
    ruta relativa desde el documento del estándar, p. ej.
-   `[checks/testing.mjs](../../scripts/arch/checks/testing.mjs)` desde `docs/standards/<slug>.md` (un
-   `../` adicional en la forma de carpeta). El archivo sigue viviendo en su ubicación por convención
-   (`scripts/arch/checks/<slug-estándar>.<ext>`) y dentro el chequeo del CR se identifica por su
+   `[checks/testing.mjs](../../scripts/arch/checks/testing.mjs)` (repo Node; `testing.py`, `testing.php`…
+   en otro stack) desde `docs/standards/<slug>.md` (un `../` adicional en la forma de carpeta). El archivo sigue
+   viviendo en su ubicación por convención (`scripts/arch/checks/<slug-estándar>.<ext>`) y dentro el chequeo del CR se identifica por su
    referencia `CR-XXX`. Así `arch-audit` lo descubre y lo ejecuta, y además queda incluido en el runner.
 
 > **En invocación en lote** (p. ej. desde `arch-discover`), acumular los candidatos de todos los
@@ -295,38 +316,59 @@ defecto**, o **solo las de un estándar** pasando su slug como argumento. La fit
 puede seguir existiendo en su ubicación natural; el runner no la reemplaza, la **orquesta**.
 
 **El runner y los checks se escriben en el lenguaje del stack del repositorio** — no en shell por
-defecto: Node (`verify.mjs`) en un proyecto Angular/React/Vue/Node, Python (`verify.py`) en uno Python,
-PHP (`verify.php`) en uno PHP, etc. Así el script es multiplataforma por naturaleza (el mismo archivo
-corre en macOS, Linux y Windows con el runtime que el equipo ya tiene instalado) y no hay que mantener
-pares por sistema operativo. Solo si el repo **no tiene ningún runtime de stack** (p. ej. documentación
-o infraestructura pura), usar POSIX shell (`verify.sh` + `checks/<slug>.sh`) como último recurso, con el
-mismo contrato.
+defecto. Así el script es multiplataforma por naturaleza (el mismo archivo corre en macOS, Linux y
+Windows con el runtime que el equipo ya tiene instalado) y no hay que mantener pares por sistema
+operativo. El archivo se llama **siempre `verify.<ext>`** (en minúsculas, con la extensión del
+lenguaje): `quality-check` y `arch-audit` lo descubren por ese nombre (`scripts/arch/verify.*`).
+
+| Stack del repo | Runner | Comando |
+|---|---|---|
+| Node / JS / TS (Angular, React, Vue…) | `verify.mjs` | `node scripts/arch/verify.mjs` |
+| Python | `verify.py` | `python scripts/arch/verify.py` |
+| PHP | `verify.php` | `php scripts/arch/verify.php` |
+| Ruby | `verify.rb` | `ruby scripts/arch/verify.rb` |
+| Go | `verify.go` | `go run scripts/arch/verify.go` |
+| JVM (JDK 11+) | `verify.java` (un solo archivo fuente) | `java scripts/arch/verify.java` |
+| Dart / Flutter | `verify.dart` | `dart run scripts/arch/verify.dart` |
+
+Reglas para lo que la tabla no cubre:
+
+- **Stack no listado con runtime capaz de ejecutar un archivo suelto** → mismo patrón: `verify.<ext>`
+  ejecutado con ese runtime.
+- **Stack cuyo tooling no ejecuta un archivo suelto** (p. ej. .NET o Rust sin soporte de scripts en la
+  versión que usa el repo, o un JDK anterior a 11) → **preguntar al usuario** con qué runtime ya
+  disponible en el repo y en su CI quiere el runner; no elegir uno por él ni añadir un proyecto
+  compilable solo para esto.
+- **Repo sin ningún runtime de stack** (p. ej. documentación o infraestructura pura) → POSIX shell
+  (`verify.sh` + `checks/<slug>.sh`) como último recurso, con el mismo contrato.
 
 ### Convención
 
+Ejemplo en un repo Node (en otro stack cambia solo la extensión):
+
 ```
 scripts/arch/
-├── verify.mjs             # Runner (ext. según stack: .mjs, .py, .php…): ejecuta los checks/<slug>.<ext>
+├── verify.mjs             # Runner: ejecuta los checks/<slug>.<ext>
 └── checks/
     ├── testing.mjs        # UN archivo por ESTÁNDAR (nombre = slug del estándar en docs/standards/)
     └── frontend.mjs       # Dentro, un chequeo por CR con su trazabilidad (CR-XXX en salida y comentarios)
 ```
 
 - **`scripts/arch/verify.<ext>`** — el runner. Sin argumentos ejecuta **todos** los estándares
-  (`node scripts/arch/verify.mjs`); con argumento, **solo** el estándar indicado
-  (`node scripts/arch/verify.mjs testing`) — un slug sin check registrado es un error. Reenvía la
-  salida de cada check, imprime un resumen (criterios `PASS`/`WARN`/`FAIL`) y sale con código `0` salvo
-  que algún check salga `≠ 0` (es decir, salvo que algún CR **bloqueante** haya fallado; los `WARN` no
+  (p. ej. `node scripts/arch/verify.mjs`, `python scripts/arch/verify.py`); con argumento, **solo** el
+  estándar indicado (`node scripts/arch/verify.mjs testing`, `python scripts/arch/verify.py testing`)
+  — un slug sin check registrado es un error. Reenvía la salida de cada check, imprime un resumen
+  (criterios `PASS`/`WARN`/`FAIL`) y sale con código `0` salvo que algún check salga `≠ 0` (es decir, salvo que algún CR **bloqueante** haya fallado; los `WARN` no
   cambian el código de salida). Apto como gate de CI o local. **Descubre los checks por convención: no
   se edita al añadir validaciones.**
 - **`scripts/arch/checks/<slug-estándar>.<ext>`** — las fitness functions de **un estándar** completo
-  (p. ej. `testing.mjs`), un chequeo por cada CR automatizable. Contrato del check: imprime una línea de
-  protocolo por criterio (`PASS|FAIL|WARN <slug-estándar>/CR-XXX — detalle`) y sale con código `0` si
-  ningún CR bloqueante falló, `≠ 0` si alguno falló. La **trazabilidad al criterio** va en el propio
+  (p. ej. `testing.mjs` en Node, `testing.py` en Python), un chequeo por cada CR automatizable.
+  Contrato del check: imprime una línea de protocolo por criterio
+  (`PASS|FAIL|WARN <slug-estándar>/CR-XXX — detalle`) y sale con código `0` si ningún CR bloqueante falló, `≠ 0` si alguno falló. La **trazabilidad al criterio** va en el propio
   chequeo: su referencia `CR-XXX` en la línea de salida y un comentario junto al chequeo. Cada chequeo
   invoca la herramienta real de la fitness function (dependency-cruiser, ArchUnit, import-linter,
-  NetArchTest, runner del framework o un script propio) — si el chequeo real vive en otra herramienta,
-  el bloque solo la invoca, no duplica su lógica.
+  NetArchTest, deptrac, runner del framework o un script propio — la del stack); si el chequeo real
+  vive en otra herramienta, el bloque solo la invoca, no duplica su lógica.
 
 Los archivos de referencia de esta convención están en `assets/arch-fitness/` (`verify.mjs`,
 `checks/example.mjs.template` y un `README.md` con el contrato) — son la **implementación de referencia
@@ -351,10 +393,45 @@ Al crear una fitness function seleccionada (sección anterior), registrarla:
    `assets/arch-fitness/checks/example.mjs.template` (o el equivalente del stack), renombrándolo al slug
    del estándar y reemplazando el chequeo de ejemplo por el real. El `Enfoque` del CR se pasa como
    argumento del chequeo (`'bloqueante'` / `'warning'`), no en el nombre del archivo.
-3. **Cablear el atajo nativo (opcional, según stack).** Si el repo tiene un mecanismo natural, añadir un
-   alias que llame al runner sin duplicar lógica: un script en `package.json`
-   (`"arch": "node scripts/arch/verify.mjs"`), un target de `Makefile`, o un job de CI. No es
-   obligatorio: el runner ya es el comando único.
+3. **Cablear las tareas `test:arch` y `test:all`.** Se hace **solo si el repo ya tiene un mecanismo de
+   tareas con nombre** — scripts de `package.json` o `composer.json`, targets de `Makefile`/`justfile`,
+   tareas de Gradle, entornos de `tox`/`nox`, etc. Si no lo tiene (p. ej. Maven, Go, Rust o .NET sin
+   `Makefile` ni equivalente), **no introducir uno solo para esto**: el runner queda como comando único
+   y este paso se omite. Los pipelines de CI no se tocan en este paso: si conviene enganchar el runner
+   al CI, se le sugiere al usuario en la confirmación final.
+
+   Cuando hay mecanismo, crear dos tareas que solo **invocan** (no duplican lógica):
+
+   - **`test:arch`** — llama al runner. El nombre es fijo en cualquier stack, para que todas las
+     tareas de pruebas del repo compartan el prefijo `test` (`test`, `test:it`, `test:e2e`,
+     `test:arch`…); nunca `arch`, `verify:arch` ni otra variante. Solo cambia el **separador**, según
+     lo que el mecanismo admita: `test:arch` donde `:` es válido (npm/pnpm/yarn, Composer),
+     `test-arch` donde no lo es (`Makefile`, `just`, `tox`/`nox`), `testArch` en Gradle. Si las tareas
+     de pruebas que el repo ya tiene usan otro separador válido, seguir el del repo.
+   - **`test:all`** (`test-all` / `testAll` con el mismo criterio) — el compuesto que ejecuta **todas
+     las suites de pruebas** del repo, con corte al primer fallo. Lo forman la tarea `test`, cada
+     tarea `test:<suite>` que ya exista y `test:arch`. No son suites y quedan fuera: las variantes de
+     ejecución de una misma suite (`test:watch`, `test:coverage`, `test:debug`, `test:ui`…) y el
+     propio `test:all`. Ante una tarea `test:<algo>` que no se sepa si es suite o variante,
+     **preguntar al usuario**. No inventar suites que el repo no tiene.
+     - **Si no existe:** crearlo con `test` primero, luego las demás suites en el orden en que
+       aparecen en el manifiesto, y `test:arch` al final.
+     - **Si ya existe:** añadir al final `test:arch` (y cualquier suite que le falte), sin reordenar ni
+       quitar lo que ya tenía.
+
+   | Mecanismo | `test:arch` | `test:all` |
+   |---|---|---|
+   | `package.json` | `"test:arch": "node scripts/arch/verify.mjs"` | `"test:all": "npm run test && npm run test:it && npm run test:arch"` (con el gestor del repo: `npm`/`pnpm`/`yarn`) |
+   | `composer.json` | `"test:arch": "php scripts/arch/verify.php"` | `"test:all": ["@test", "@test:it", "@test:arch"]` |
+   | `Makefile` | target `test-arch` cuya receta es `python scripts/arch/verify.py` | `test-all: test test-it test-arch` |
+   | Gradle | tarea `testArch` de tipo `Exec` que lanza el runner | tarea `testAll` con `dependsOn` de `test`, las demás suites y `testArch` |
+
+   **Si el repo ya tiene un alias del runner con otro nombre** (p. ej. `arch`): proponer al usuario
+   renombrarlo a `test:arch` y actualizar sus referencias (CI, README); no dejar dos alias.
+
+   `test:all` es un atajo **para personas y CI**. Los skills del plugin no lo usan para resolver
+   checks: `quality-check` y `arch-audit` ejecutan el runner directamente y cada suite por su propia
+   tarea.
 4. **No ejecutar** el runner ni el check por iniciativa propia si requiere instalar dependencias o
    correr suites pesadas; ofrecer el comando acotado y dejar que el usuario decida.
 

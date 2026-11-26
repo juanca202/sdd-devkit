@@ -64,7 +64,7 @@ Explorar en este orden, acumulando señales:
 
 ### 2a. Estructura de carpetas
 ```bash
-find . -maxdepth 3 -type d | grep -v node_modules | grep -v .git | grep -v __pycache__
+find . -maxdepth 3 -type d | grep -vE '/(\.git|node_modules|vendor|\.venv|venv|__pycache__|target|obj|dist|\.gradle|\.dart_tool)(/|$)'
 ```
 Inferir: monorepo vs monolito, separación por capas/dominios, presencia de módulos, microservicios, etc.
 
@@ -77,11 +77,17 @@ Leer **todos** los que apliquen según el stack detectado:
 | Python | `pyproject.toml`, `requirements.txt`, `setup.cfg`, `Pipfile` |
 | JVM | `pom.xml`, `build.gradle`, `build.gradle.kts` |
 | .NET | `*.csproj`, `*.sln` |
+| PHP | `composer.json`, `composer.lock` |
+| Ruby | `Gemfile`, `Gemfile.lock` |
 | Rust | `Cargo.toml` |
 | Go | `go.mod` |
+| Elixir | `mix.exs` |
+| Móvil | `pubspec.yaml` (Flutter), `Podfile`/`*.xcodeproj` (iOS), `build.gradle` + `AndroidManifest.xml` (Android) |
+
+Si el ecosistema no está en la tabla, leer su manifiesto equivalente — la lista no es exhaustiva.
 
 Señales clave a extraer:
-- Framework web principal (Express, FastAPI, Spring, etc.)
+- Framework web principal (Express, FastAPI, Spring, Laravel, ASP.NET, Rails, etc.)
 - ORM / cliente de base de datos
 - Bus de mensajes / queue
 - Herramientas de test
@@ -93,15 +99,18 @@ Señales clave a extraer:
 Buscar evidencia de patrones en el código:
 
 ```bash
+# <src> = carpeta(s) de código del stack: src/, app/, lib/, internal/, cmd/, el paquete Python, etc.
 # Detectar estructura de capas
-find src -type d | head -30
+find <src> -type d | head -30
 
-# Buscar patrones de diseño comunes
-grep -r "Repository\|Service\|Controller\|Handler\|UseCase\|Interactor" src --include="*.ts" --include="*.py" --include="*.java" -l 2>/dev/null | head -20
+# Buscar patrones de diseño comunes (sin filtrar por extensión: vale para cualquier lenguaje)
+grep -rE "Repository|Service|Controller|Handler|UseCase|Interactor" <src> -l 2>/dev/null | head -20
 
 # Detectar uso de inyección de dependencias
-grep -r "inject\|Injectable\|@Autowired\|provide\|container" src -l 2>/dev/null | head -10
+grep -rE "inject|Injectable|@Autowired|provide|container|AddScoped|AddSingleton|Depends\(" <src> -l 2>/dev/null | head -10
 ```
+
+Sustituir `<src>` por las carpetas reales observadas en 2a — no asumir que existe `src/`.
 
 ### 2d. Artefactos existentes
 
@@ -119,14 +128,14 @@ Para cada uno, leer solo lo clave (`## Decisión` de los ADR; el `title`/`domain
 Para cada señal encontrada, evaluar si amerita documentarse usando estos criterios:
 
 **Incluir como candidato si:**
-- Es una elección no obvia entre varias alternativas reales (ej: Redux vs Zustand, REST vs GraphQL)
+- Es una elección no obvia entre varias alternativas reales (ej: Redux vs Zustand, REST vs GraphQL, JPA vs jOOQ)
 - Tiene consecuencias que afectan a múltiples partes del sistema
 - Sería costoso revertir sin una razón documentada
 - Un desarrollador nuevo podría cuestionarla razonablemente
 
 **Excluir si:**
 - Ya está cubierta por un ADR o por un requerimiento de estándar existente
-- Es la opción por defecto obvia del stack (ej: usar Jest en un proyecto CRA)
+- Es la opción por defecto obvia del stack (ej: usar Jest en un proyecto CRA, JUnit en uno Spring Boot, `go test` en uno Go)
 - Es una decisión de implementación, no arquitectónica
 
 ### Clasificar cada candidato: ¿fija un requerimiento? ¿de qué dominio técnico/funcional?

@@ -10,7 +10,8 @@ auditoría vs. revalidación) ya está resuelto en `SKILL.md`; esto es solo el *
    `GraphQL → @apollo/server`, `Prisma`, `Spring Web`), no conceptos abstractos ("arquitectura
    hexagonal" no es una dependencia).
 2. **Comprobar si ya existen**, leyendo el manifiesto del ecosistema y su lockfile: `package.json`,
-   `pom.xml`/`build.gradle`, `pyproject.toml`/`requirements.txt`, `*.csproj`, `go.mod`, `Cargo.toml`, etc.
+   `pom.xml`/`build.gradle`, `pyproject.toml`/`requirements.txt`, `composer.json`, `*.csproj`, `go.mod`,
+   `Cargo.toml`, `Gemfile`, etc.
 3. **Si falta una o más, notificar al usuario y preguntar explícitamente** con la herramienta de
    preguntas estructuradas, agrupando todas las dependencias faltantes detectadas en la auditoría
    (una sola pregunta, no una por norma):
@@ -23,7 +24,7 @@ auditoría vs. revalidación) ya está resuelto en `SKILL.md`; esto es solo el *
 
 4. **Si acepta:**
    - Instalar con el gestor del ecosistema detectado (`npm`/`pnpm`/`yarn`, `pip`/`poetry`/`uv`,
-     Maven/Gradle, `dotnet add package`, `go get`, `cargo add`, etc.), respetando el que ya use el repo.
+     Maven/Gradle, `composer`, `dotnet add package`, `go get`, `cargo add`, etc.), respetando el que ya use el repo.
    - Aplicar la **configuración mínima** necesaria para que quede operativa (archivo de config, entrada
      en el manifiesto, wiring básico), sin construir la feature completa.
    - Mostrar los comandos ejecutados y los archivos tocados. No correr build ni despliegues por

@@ -12,7 +12,7 @@ con columnas para descubrimiento). Al proponer un candidato, clasificar su está
 | **Arquitectura y diseño** (`architecture`) | Capas (controller/service/repo), DDD, hexagonal, CQRS, límites de módulo | límites de capa, imports permitidos, desacoplamiento |
 | **Interfaces / APIs** (`api`) | REST vs GraphQL vs tRPC, versioning, formato de errores | protocolo obligatorio, versioning, payloads/errores |
 | **Seguridad** (`security`) | JWT vs sesiones, OAuth, refresh tokens, cifrado, secretos | mecanismo de auth, manejo de secretos, sanitización |
-| **Estilo de código** (`coding-style`) | ESLint/Prettier/Biome, EditorConfig, TypeScript strict, convenciones de nombres | reglas de linter/formato, nomenclatura, JSDoc |
+| **Estilo de código** (`coding-style`) | Linter/formateador del stack (ESLint/Prettier/Biome, Ruff/Black, Checkstyle/detekt, PHPStan/PHP-CS-Fixer, golangci-lint, clippy, analizadores .NET…), EditorConfig, modo estricto de tipos (TypeScript strict, mypy strict, nullable de C#…), convenciones de nombres | reglas de linter/formato, nomenclatura, comentarios de documentación |
 | **Frontend / UX** (`frontend`) | Estado global vs local, SSR vs CSR, design system, WCAG | gestión de estado, design system, accesibilidad |
 | **Persistencia y datos** (`persistence`) | Elección de BD, ORM vs query builder, migraciones, índices | ORM obligatorio, estrategia de migraciones, patrón repositorio |
 | **Infraestructura y DevOps** (`devops`) | Dockerfiles, pipeline CI/CD, deploy, feature flags, versión de runtime, SemVer, Conventional Commits u otra convención de mensajes de commit | gates de pipeline, estrategia de deploy/branching, variables por entorno, convención de mensajes de commit |

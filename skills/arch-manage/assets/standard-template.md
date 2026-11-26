@@ -110,7 +110,8 @@ Columnas:
     en el archivo de checks de su estándar, no en el nombre del archivo.
   - Verificación: si la verificación ya existe, ENLACE markdown al archivo donde vive: el archivo de
     checks de su estándar — scripts/arch/checks/<slug-del-estándar>.<ext>, p. ej.
-    [checks/testing.mjs](../../scripts/arch/checks/testing.mjs) desde docs/standards/<slug>.md (un ../
+    [checks/testing.mjs](../../scripts/arch/checks/testing.mjs) en un repo Node (testing.py, testing.php…
+    en otro stack) desde docs/standards/<slug>.md (un ../
     adicional en la forma de carpeta docs/standards/<slug>/README.md) —, donde el chequeo se identifica
     por su referencia CR-XXX; o el archivo/URL de la evidencia externa registrada en el requerimiento
     (archivo, job CI, etc.). Pending = aún no existe. Nunca yes/no a secas: el enlace hace la

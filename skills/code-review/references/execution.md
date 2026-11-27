@@ -15,7 +15,7 @@ Detalla **cómo** ejecutar la revisión cualitativa paso a paso y cómo actuar a
 
 > **Principio rector:** revisar el **diff**, no el repo. **Ninguna corrección se aplica sin autorización** —explícita del usuario, o de antemano vía `verification.codeReview.confirmFix: "never"` (ver [`SKILL.md` → Política de corrección](../SKILL.md#política-de-corrección))—. Tras aplicar una corrección autorizada (o cuando el usuario indique que corrigió manualmente), **reinicia la revisión desde el Paso 1** sobre el código ya corregido: los hallazgos anteriores pueden haber cambiado de forma o de severidad. Para ahorrar vueltas, si hay varias correcciones autorizadas, aplícalas juntas y reinicia **una sola vez**.
 >
-> **Este skill no ejecuta checks.** No corre pruebas, linter, tipado ni build; si la corrección de un hallazgo toca lógica cubierta por pruebas, **sugiere** re-ejecutar `quality-check` y sigue con la revisión.
+> **Este skill no ejecuta checks.** No corre pruebas, linter, tipado ni build; si se aplica la corrección de un hallazgo, el código cambió: **lo declara en su resultado** (hubo corrección, el `FINGERPRINT` se movió) y sigue con la revisión. En el cierre, el orquestador re-ejecuta `quality-check` por su comprobación de coherencia; fuera del cierre, se le **sugiere** al usuario.
 
 ### Paso 0 — Resolver la base, calcular la clave y comprobar frescura
 
@@ -169,7 +169,7 @@ Reglas al rellenar:
 | No se puede inferir la intención (sin US/WI/FT, rama genérica, commits opacos) | Pedir al usuario una frase con el objetivo del cambio; no inventar intención. Si no la aporta, la dimensión semántica queda sin evaluar → `INCOMPLETE`. |
 | El repo no documenta arquitectura ni patrones claros | Revisar contra el estilo predominante en el código vecino; no imponer un patrón ajeno al repo como si fuera regla. |
 | Usuario justifica un hallazgo 🔴/🟠 | Registrar la justificación; el hallazgo deja de bloquear. Incluirla en `code-review.md`. |
-| Corrección de un hallazgo (auto autorizada o manual) | Reiniciar **toda la revisión desde el Paso 1**. Si tocó lógica cubierta por pruebas, sugerir re-ejecutar `quality-check`. |
+| Corrección de un hallazgo (auto autorizada o manual) | Reiniciar **toda la revisión desde el Paso 1**. Declarar en el resultado que hubo corrección y que el `FINGERPRINT` cambió: el veredicto previo de `quality-check` quedó desactualizado (en el cierre lo re-ejecuta el orquestador; fuera de él, sugerirlo al usuario). |
 | Usuario pide "corrige tú" sin más contexto | Confirmar el alcance exacto a corregir antes de tocar nada; aplicar solo lo mínimo. |
 | Varias correcciones autorizadas a la vez | Aplicarlas juntas y reiniciar **una sola vez**. |
 | Bucle de correcciones que no converge | Tras 3 reinicios sin llegar a `✅`, resumir lo pendiente y preguntar al usuario cómo proceder. |

@@ -33,7 +33,7 @@ Plantilla canónica del reporte de trazabilidad (coverage-verify).
 
 ## Resumen
 
-{{1-3 frases: estado general de la cobertura y criterios faltantes/fallidos si los hay.}}
+{{1-3 frases: estado general de la cobertura, criterios sin cubrir y pruebas en rojo si las hay.}}
 
 **Pruebas:** {{procedencia — caché fresca de `quality-check` (commit abc1234, YYYY-MM-DD) | corrida `tests-only` disparada ahora | no ejecutable y por qué}}. {{Resultado por suite, solo las que traiga `suites[]`: unit `PASS` · coverage `PASS` · e2e `FAIL` (solo si el repo ejecuta e2e) · integration-testing `FAIL` (solo si el estándar de testing del repo la declara) — o «no ejecutado» si no hubo corrida}}.
 
@@ -62,7 +62,7 @@ Vista de veredicto: un criterio por fila. El detalle de qué lo prueba está en 
 | AC-001   | {{Criterio de aceptación}} | {{✅ COVERED}}   | {{Cobertura apoyada en TC-005 `Manual` (por diseño)}}        |
 | AC-002   | {{Criterio de aceptación}} | {{⚠️ PARTIAL}}   | {{E2E declarado en TC-002 sin automatizar}}                  |
 | AC-003   | {{Criterio de aceptación}} | {{❌ UNCOVERED}} | {{Hueco: sin caso de prueba ni artefacto asociado}}          |
-| AC-004   | {{Criterio de aceptación}} | {{❌ UNCOVERED}} | {{`ruta/al/test.integration.ext` falla — aislado a su test}} |
+| AC-004   | {{Criterio de aceptación}} | {{✅ COVERED}} | {{Prueba en rojo — la bloquea `quality-check`: `ruta/al/test.integration.ext` falla, aislado a su test}} |
 
 ## Matriz de trazabilidad
 

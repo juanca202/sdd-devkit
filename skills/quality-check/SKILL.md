@@ -384,6 +384,8 @@ Usar este skill **solo cuando se le invoca explícitamente** (ni de forma proact
 
 > **«Cobertura» significa dos cosas distintas en este cierre:** aquí es la métrica de líneas/ramas de un check; en `coverage-verify` es el estado de un criterio de aceptación (`COVERED`/`PARTIAL`/`UNCOVERED`). Un repo puede tener 95 % de líneas y un criterio sin probar, o al revés. Ambas bloquean, pero por motivos distintos; no usar una para justificar la otra.
 
+> **Una prueba en rojo es de este skill.** El `FAIL` de un test da `REJECTED` **aquí**. `coverage-verify` lo muestra en su matriz pero no lo convierte en criterio sin cubrir ni bloquea por él (salvo que esta puerta esté desactivada con `verification.qualityCheck.enabled: false`): cada fallo tiene un solo dueño en el cierre.
+
 El orden recomendado en el cierre es `quality-check` → `code-review` → `coverage-verify`: los dos primeros porque revisar diseño sobre código que ni compila suele ser trabajo perdido; el tercero **después de este skill** para que reutilice el `quality-check-run.json` sin re-ejecutar pruebas. Es una recomendación del orquestador, no una dependencia dura, y el usuario puede pedir solo uno de los tres.
 
 Es un proceso **posterior a la implementación**: no forma parte del desarrollo de tareas. Sin invocación explícita, no corresponde usarlo. (Que `work-implement` reciba una delegación de corrección **desde** este skill no invierte la relación: sigue siendo el cierre quien decide cuándo se ejecuta.)

@@ -7,13 +7,15 @@ license: MIT
 
 # Skill: Verificar la cobertura de los criterios de aceptación
 
-Verifica que el **código implementado cubre los criterios de aceptación** del artefacto. La evidencia son los **artefactos de prueba automatizada** (unit, integración, e2e) presentes en el repositorio y los **casos de prueba** (`TC-XXX`) cuando existen — basta con una de las dos fuentes, y se cruzan ambas cuando están disponibles. El resultado es un **reporte de cobertura** (`criteria-coverage.md`) que mapea cada criterio a lo que lo cubre y cierra con un **veredicto** sobre si el trabajo queda cubierto.
+Verifica que **cada criterio de aceptación del artefacto tiene una prueba que lo valida**. La evidencia son los **artefactos de prueba automatizada** (unit, integración, e2e) presentes en el repositorio y los **casos de prueba** (`TC-XXX`) cuando existen — basta con una de las dos fuentes, y se cruzan ambas cuando están disponibles. El resultado es un **reporte de cobertura** (`criteria-coverage.md`) que mapea cada criterio a lo que lo cubre y cierra con un **veredicto** sobre si el trabajo queda cubierto.
 
 El trazado primario es para **historias de usuario** (`US-XXX`) con sus **criterios de aceptación**. Sirve igual para cualquier otro artefacto que tenga criterios con **identificador codificado** — el formato es indiferente (`AC-001`, `1.1`, `R-3`…) y se usa **verbatim**, sin normalizar (ver [Tipos de trabajo y criterios](#tipos-de-trabajo-y-criterios)). Es el mismo contrato que produce `test-define`.
 
+> **Tres preguntas, tres puertas.** Aquí «criterio sin cubrir» significa que **ninguna prueba lo valida**. Si el código **no implementa** el criterio, eso lo detecta [`code-review`](../code-review/SKILL.md) (dimensión de intención). Y si la prueba existe pero está **en rojo**, quien bloquea es [`quality-check`](../quality-check/SKILL.md): aquí el resultado se muestra en la matriz, pero no cambia el estado de cobertura del criterio (ver [Estados de cobertura](#estados-de-cobertura) y [Veredicto](#veredicto)).
+>
 > **Qué hace:** lee, mapea, **obtiene los resultados de pruebas delegando en `quality-check`** y reporta. Es una actividad de **verificación**, no de desarrollo.
 >
-> **No ejecuta pruebas por sí mismo.** La ejecución de la batería de pruebas se **delega en `quality-check`**: si existe una corrida previa fresca de `quality-check` (sin cambios en el código desde entonces), se **reutilizan** sus resultados; si no, se invoca `quality-check` en modo `tests-only` para producirlos. Ver [Resultados de pruebas: delegación en quality-check](#resultados-de-pruebas-delegación-en-quality-check). **Repositorio solo de pruebas (`implementation.scope: tests`).** Allí `quality-check` **no ejecuta** los specs contra el sistema desplegado (API, E2E, Content, Style) —validan otro sistema, no el repo—, así que `quality-check-run.json` no trae sus resultados y **no se le invoca en `tests-only` para obtenerlos**. La fuente de ejecución es **`test-cases-automation.md`** del artefacto padre, que `work-implement` dejó al cerrar la unidad: cada archivo de `Pruebas` es evidencia; una línea en `Hallazgos` para el `TC-XXX` significa `Resultado = FAIL`; sin hallazgo, `PASS`. En la matriz, `Ejecución = work-implement`. **Ese `FAIL` no descubre el criterio:** existe una prueba fiel al TC, así que el criterio queda `COVERED`, y el fallo se reporta como hallazgo del sistema bajo prueba en «Observaciones y pendientes», con el `WI-XXX` de seguimiento si lo hay. Detectar ese rojo es el objetivo del repo, no una deuda de cobertura, y no degrada el veredicto. Con `scope: code` o sin la clave, esta nota no aplica.
+> **No ejecuta pruebas por sí mismo.** La ejecución de la batería de pruebas se **delega en `quality-check`**: si existe una corrida previa fresca de `quality-check` (sin cambios en el código desde entonces), se **reutilizan** sus resultados; si no, se invoca `quality-check` en modo `tests-only` para producirlos. Ver [Resultados de pruebas: delegación en quality-check](#resultados-de-pruebas-delegación-en-quality-check). **Repositorio solo de pruebas (`implementation.scope: tests`).** Allí `quality-check` **no ejecuta** los specs contra el sistema desplegado (API, E2E, Content, Style) —validan otro sistema, no el repo—, así que `quality-check-run.json` no trae sus resultados y **no se le invoca en `tests-only` para obtenerlos**. La fuente de ejecución es **`test-cases-automation.md`** del artefacto padre, que `work-implement` dejó al cerrar la unidad: cada archivo de `Pruebas` es evidencia; una línea en `Hallazgos` para el `TC-XXX` significa `Resultado = FAIL`; sin hallazgo, `PASS`. En la matriz, `Ejecución = work-implement`. **Ese `FAIL` no descubre el criterio** —como en cualquier repositorio—: existe una prueba fiel al TC, así que el criterio queda `COVERED`, y el fallo se reporta como hallazgo del sistema bajo prueba en «Observaciones y pendientes», con el incidente `BUG-XXX` de seguimiento si lo hay. Detectar ese rojo es el objetivo del repo, no una deuda de cobertura, y no degrada el veredicto. Con `scope: code` o sin la clave, esta nota no aplica.
 >
 > **Reporte idempotente.** Si no han cambiado ni el código, ni las pruebas, ni los criterios y casos de prueba del artefacto desde la última vez que se generó el `criteria-coverage.md`, **no se genera un documento nuevo**: se devuelven los mismos resultados del reporte existente. Ver [Reutilización del reporte (idempotencia)](#reutilización-del-reporte-idempotencia).
 >
@@ -158,11 +160,11 @@ Los valores de la columna `status` son **canónicos**: en el reporte se escribe 
 
 | Estado (canónico) | Símbolo | Cuándo aplicarlo |
 |-------------------|---------|------------------|
-| `COVERED` | `✅` | El criterio tiene al menos un caso de prueba **y** el artefacto que le corresponde, y lo valida de forma completa. Si se ejecutó automáticamente, pasó. **Un criterio cuyos TCs son `Manual` por diseño también es `COVERED`** si esos TCs lo validan por entero — ver la nota de abajo. |
-| `PARTIAL` | `⚠️` | El criterio está cubierto solo en parte: hay prueba pero no abarca todo el criterio, el artefacto existe pero no se pudo ejecutar, el resultado fue parcial, existe solo validación manual **no declarada como tal** (TC automatizable aún sin automatizar), o la suite que agrupa su test dio `FAIL` pero no se pudo aislar si el test específico del criterio fue el que falló (ver «Mapeo a la matriz» más abajo). Detallar el límite en Observaciones. |
-| `UNCOVERED` | `❌` | No existe caso de prueba ni artefacto que valide el criterio, o la prueba asociada **falló** y se pudo aislar que fue la suya. |
+| `COVERED` | `✅` | El criterio tiene al menos un caso de prueba **y** el artefacto que le corresponde, y lo valida de forma completa. **El resultado de la ejecución no cambia este estado:** si la prueba existe y está en `FAIL`, el criterio sigue `COVERED`, con el `FAIL` en la matriz y la Observación «prueba en rojo» (ver la nota de abajo). **Un criterio cuyos TCs son `Manual` por diseño también es `COVERED`** si esos TCs lo validan por entero. |
+| `PARTIAL` | `⚠️` | El criterio está cubierto solo en parte: hay prueba pero no abarca todo el criterio, el artefacto existe pero no se pudo ejecutar, o existe solo validación manual **no declarada como tal** (TC automatizable aún sin automatizar). Detallar el límite en Observaciones. |
+| `UNCOVERED` | `❌` | No existe caso de prueba ni artefacto que valide el criterio. |
 
-> **Cobertura ≠ ejecución.** Que exista prueba que valida el criterio es una cosa; que haya corrido y con qué resultado, otra. Un criterio cuya prueba **falló** —y se pudo aislar que fue la suya— se reporta `UNCOVERED` con el fallo en Observaciones (**salvo en un repositorio solo de pruebas**, `implementation.scope: tests`: ahí es `COVERED` con `Resultado = FAIL` y el hallazgo en Observaciones, ver la nota del encabezado); si la suite falló pero no se puede aislar el test, es `PARTIAL` (ver «Mapeo a la matriz»).
+> **Cobertura ≠ ejecución.** Que exista prueba que valida el criterio es una cosa; que haya corrido y con qué resultado, otra, y este skill solo juzga la primera. Una prueba en `FAIL` **no descubre el criterio**: el criterio queda `COVERED` (o `PARTIAL`, si lo era por otro motivo), la fila lleva `Resultado = FAIL` y la columna Observaciones dice «prueba en rojo — la bloquea `quality-check`», indicando si el fallo pudo **aislarse** a su test o solo se sabe que falló la suite. El dueño de ese rojo es `quality-check`, que da `REJECTED` por él; duplicar aquí el bloqueo no aporta señal. Es la misma regla en cualquier repositorio, incluido uno solo de pruebas (`implementation.scope: tests`). Su efecto en el veredicto está en [Veredicto](#veredicto).
 >
 > **El `status` del TC filtra la cobertura.** La fuente primaria es la **columna `status` del índice** `test-cases/README.md`; si el índice no la trae, abrir el `TC-XXX-*.md` y leer la clave `status` de su frontmatter. Los **valores** (`Draft`/`Ready`/`Obsolete`) son canónicos y no se traducen. Un TC **`Obsolete`** no cuenta como cobertura (dejar Observación); uno **`Draft`** cuenta como cobertura `PARTIAL` (aún no está listo para respaldar el criterio); solo los **`Ready`** cuentan como cobertura plena. Si el TC no trae el campo, tratarlo como `Ready`. Esto es distinto del `status` del **artefacto**, que este skill no exige (ver «Cuándo bloquear»).
 >
@@ -229,9 +231,9 @@ Semántica de las columnas:
 
 | # | Filas del criterio | Estado |
 |---|--------------------|--------|
-| 1 | **Ninguna** fila aporta cobertura — todas en `UNCOVERED`, o el criterio no tiene TC ni artefacto, o sus únicos TCs son `Obsolete` — **o** alguna fila dio `FAIL` **aislado a su test** (no en `scope: tests`, donde ese `FAIL` es hallazgo y el criterio sigue cubierto) | `UNCOVERED` |
-| 2 | **Alguna** fila en `UNCOVERED`/`NOT_RUN`, algún TC en `Draft` u `Obsolete` conviviendo con cobertura válida, o un `FAIL` de suite **no aislable** | `PARTIAL` |
-| 3 | **Todas** con `Resultado` ∈ {`PASS`, `N/A`} y todos los TCs en `Ready` (o sin campo `status`) | `COVERED` |
+| 1 | **Ninguna** fila aporta cobertura — todas en `UNCOVERED`, o el criterio no tiene TC ni artefacto, o sus únicos TCs son `Obsolete` | `UNCOVERED` |
+| 2 | **Alguna** fila en `UNCOVERED`/`NOT_RUN`, o algún TC en `Draft` u `Obsolete` conviviendo con cobertura válida | `PARTIAL` |
+| 3 | **Todas** con `Resultado` ∈ {`PASS`, `FAIL`, `N/A`} y todos los TCs en `Ready` (o sin campo `status`) — una fila en `FAIL` no rebaja el estado: lleva su Observación «prueba en rojo» | `COVERED` |
 
 > **Dos destinos de observación, no intercambiables.** La prueba para elegir: *¿se puede atribuir a un
 > criterio concreto?* Si sí, va en la **columna `Observaciones`** de la tabla 1; si no, en la **sección
@@ -239,18 +241,18 @@ Semántica de las columnas:
 >
 > | Destino | Qué recibe |
 > |---------|------------|
-> | **Columna `Observaciones`** (tabla 1) | Tipo declarado sin automatizar · TC en `Draft`/`Obsolete` · `FAIL` no aislable · suite efectiva distinta del tipo declarado · mapeo inferido en vez de declarado · **cobertura apoyada en TCs `Manual`** (aunque sea por diseño: es el caveat que justifica el `APPROVED_WITH_NOTES`) · límite de la cobertura |
+> | **Columna `Observaciones`** (tabla 1) | Tipo declarado sin automatizar · TC en `Draft`/`Obsolete` · **prueba en rojo** (`FAIL`, aislado a su test o solo a nivel de suite) · suite efectiva distinta del tipo declarado · mapeo inferido en vez de declarado · **cobertura apoyada en TCs `Manual`** (aunque sea por diseño: es el caveat que justifica el `APPROVED_WITH_NOTES`) · límite de la cobertura |
 > | **Sección «Observaciones y pendientes»** | Suite `coverage` en `FAIL` · `workingTreeClean: false` (árbol sucio) · clases de prueba ausentes en el repo · ejecución no delegable y su motivo · tests que no se pudieron vincular con certeza a ningún criterio · tests o fallos ajenos al artefacto |
 >
 > La sección global **se omite entera** si no hay ninguno. Cuando el skill diga «dejar Observación» sin más,
 > aplicar esta prueba.
 
-> **La derivación no es cerrada sobre la matriz: dos datos viven fuera de ella.** (a) el `status` del TC
-> (`Draft`/`Obsolete`/`Ready`, que viene del propio TC) y (b) si un `FAIL` pudo **aislarse** al test del
-> criterio. Ambos se anotan siempre en la columna **Observaciones de la tabla 1** — sin esa anotación, dos
-> criterios con filas idénticas quedarían con estados distintos sin explicación. Un `FAIL` no aislable se
-> escribe igual (`Resultado = FAIL`) en la matriz; lo que lo distingue es la Observación «suite `X` en
-> `FAIL`, no se pudo aislar el test» y el `Estado = `PARTIAL` resultante.
+> **La derivación no es cerrada sobre la matriz: un dato vive fuera de ella.** El `status` del TC
+> (`Draft`/`Obsolete`/`Ready`, que viene del propio TC) se anota siempre en la columna **Observaciones de
+> la tabla 1** — sin esa anotación, dos criterios con filas idénticas quedarían con estados distintos sin
+> explicación. Si un `FAIL` pudo **aislarse** al test del criterio no cambia el estado, pero sí se anota
+> («prueba en rojo, aislada a su test» / «suite `X` en `FAIL`, no se pudo aislar el test»): es lo que usa
+> la regla de [Veredicto](#veredicto) cuando `quality-check` está desactivada.
 >
 > **TCs `Obsolete`.** Sus filas se conservan en la matriz por trazabilidad con su valor real, pero **no
 > cuentan como cobertura** al derivar el estado: si son los únicos TCs del criterio, este cae en la fila 1
@@ -321,9 +323,9 @@ cacheada en el mismo archivo para `arch-audit`. **No es una clase de prueba**, n
 aceptación y **no se lista en la matriz**; si viene en `FAIL`, como mucho una línea en «Observaciones y
 pendientes». Su presencia o ausencia **nunca** degrada una fila a `NOT_RUN`. Mapeo al reporte: `PASS`→`PASS`,
 `FAIL`→`FAIL`, `SKIPPED`→`NOT_RUN`, `N/A` (el repo no tiene esa suite)→`NOT_RUN`, dejando en
-«Observaciones y pendientes» que esa clase de prueba no existe en el repo. Un criterio cuya prueba asociada dio `FAIL` **y
-se pudo aislar que fue la suya** se reporta `UNCOVERED` con el fallo en Observaciones; si la suite falló
-sin poder aislar el test, es `PARTIAL` (ver «Estados de cobertura» y la nota de granularidad más abajo).
+«Observaciones y pendientes» que esa clase de prueba no existe en el repo. Un `FAIL` **no cambia el estado
+de cobertura** del criterio: se escribe en la fila y se anota en Observaciones como «prueba en rojo»,
+indicando si se pudo aislar a su test (ver «Estados de cobertura» y la nota de granularidad más abajo).
 
 **El mapeo es por fila, no por criterio.** Cada fila de la matriz (criterio × TC × tipo) se resuelve así:
 
@@ -332,7 +334,7 @@ sin poder aislar el test, es `PARTIAL` (ver «Estados de cobertura» y la nota d
 | Tipo declarado sin artefacto en el repo | `—` | `—` | `UNCOVERED` |
 | Artefacto hallado y la suite que lo corre dio `PASS` | ruta | `quality-check` | `PASS` |
 | Artefacto hallado y su test dio `FAIL` (aislable) | ruta | `quality-check` | `FAIL` |
-| Artefacto hallado, suite en `FAIL` **sin** poder aislar el test | ruta | `quality-check` | `FAIL` (+ Observación «no aislable» → criterio `PARTIAL`) |
+| Artefacto hallado, suite en `FAIL` **sin** poder aislar el test | ruta | `quality-check` | `FAIL` (+ Observación «suite en rojo, test no aislable») |
 | Artefacto hallado, suite `SKIPPED` / ausente / no ejecutable | ruta | `—` | `NOT_RUN` |
 | TC `Manual` por diseño | ruta del TC | `Manual` | `N/A` |
 
@@ -342,9 +344,10 @@ solo se menciona cuando **no** coincide con el tipo declarado —un `API Test` q
 ejemplo—, y va en Observaciones, no en la matriz.
 
 > **Granularidad suite vs. criterio:** `result` es por **suite completa**, no por test individual. Si
-> varios criterios mapean a tests dentro de la misma suite y esa suite da `FAIL`, no propagar `FAIL`/`UNCOVERED` a todos ellos sin más: si el `summary` u otro detalle de `quality-check` permite aislar qué test
-> falló, marcar solo ese criterio; si no hay forma de aislarlo, marcar los criterios afectados como
-> `PARTIAL` (no `UNCOVERED`) con la ambigüedad explicada en Observaciones. Detalle completo en
+> varios criterios mapean a tests dentro de la misma suite y esa suite da `FAIL`, no propagar el `FAIL` a todos ellos sin más: si el `summary` u otro detalle de `quality-check` permite aislar qué test
+> falló, escribir `FAIL` solo en las filas de ese criterio (el resto, `PASS`); si no hay forma de aislarlo,
+> escribir `FAIL` en las filas afectadas con la Observación «suite en rojo, test no aislable». En ningún
+> caso cambia el estado de cobertura del criterio. Detalle completo en
 > `references/flow.md` (Paso 4).
 
 > Si el proyecto no usa `quality-check` (no está disponible en la sesión), degradar con elegancia: reportar
@@ -398,10 +401,12 @@ Solo el veredicto, el resumen de cobertura y lo que el usuario debe saber o deci
 | Veredicto (canónico) | Símbolo | Cuándo aplicarlo |
 |----------------------|---------|------------------|
 | `APPROVED` | `✅` | **Todos** los criterios del trabajo en estado `COVERED` y, si se ejecutaron pruebas automáticas, **todas pasaron**. |
-| `APPROVED_WITH_NOTES` | `⚠️` | **Ningún** criterio en `UNCOVERED`, pero hay caveats que el usuario debe conocer: algún criterio en `PARTIAL`, cobertura apoyada en TCs `Manual` (aunque sea por diseño), o pruebas que **no se pudieron ejecutar** y por tanto no confirman nada. Enumerar cada caveat. |
-| `REJECTED` | `❌` | Al menos un criterio en `UNCOVERED`, o una prueba asociada **falló** de forma aislable. Listar los criterios faltantes/fallidos. |
+| `APPROVED_WITH_NOTES` | `⚠️` | **Ningún** criterio en `UNCOVERED`, pero hay caveats que el usuario debe conocer: algún criterio en `PARTIAL`, cobertura apoyada en TCs `Manual` (aunque sea por diseño), pruebas que **no se pudieron ejecutar** y por tanto no confirman nada, o **alguna prueba en rojo** (`FAIL`) con la puerta `quality-check` activa, que es quien la bloquea. Enumerar cada caveat. |
+| `REJECTED` | `❌` | Al menos un criterio en `UNCOVERED`. **O** una prueba asociada en `FAIL` **aislado a su test** cuando la puerta `quality-check` está **desactivada** (`verification.qualityCheck.enabled: false`): ahí nadie más bloquearía ese rojo. Listar los criterios sin cubrir (y, en ese caso, los fallidos). |
 
-Precedencia: `REJECTED` > `APPROVED_WITH_NOTES` > `APPROVED`. Es decir, `APPROVED` exige **cero caveats**: si hay alguno (criterio `PARTIAL`, cobertura apoyada en TCs `Manual`, pruebas no ejecutadas), el veredicto es `APPROVED_WITH_NOTES` (`⚠️`), no `APPROVED` (`✅`).
+Precedencia: `REJECTED` > `APPROVED_WITH_NOTES` > `APPROVED`. Es decir, `APPROVED` exige **cero caveats**: si hay alguno (criterio `PARTIAL`, cobertura apoyada en TCs `Manual`, pruebas no ejecutadas, prueba en rojo), el veredicto es `APPROVED_WITH_NOTES` (`⚠️`), no `APPROVED` (`✅`).
+
+> **Una prueba en rojo es de `quality-check`.** Este skill no duplica ese bloqueo: con `quality-check` activa, un `FAIL` es un caveat (`APPROVED_WITH_NOTES`) cuya Observación remite a esa puerta, que ya da `REJECTED` por él. Si la puerta está activa o no se resuelve con el bloque de [`${PLUGIN_ROOT}/references/verification.md`](../../references/verification.md) (`qualityCheck.enabled`; sin `settings.json`, activa por defecto) — ejecutarlo, no razonarlo a mano. Solo con `quality-check` desactivada el `FAIL` aislado bloquea aquí, para que desactivar una puerta no deje una prueba fallida sin dueño. En `implementation.scope: tests` no aplica esa excepción: el rojo es un hallazgo del sistema bajo prueba (nota del encabezado).
 
 > **En el cierre, este `⚠️` no bloquea** (a diferencia del `INCOMPLETE` de `quality-check` y `code-review`, que sí): `work-integrate` y `pr-create` continúan mostrando las observaciones al usuario. Por eso cada caveat debe quedar enumerado y ser legible por sí solo — es lo único que el usuario verá antes de integrar.
 
@@ -418,6 +423,7 @@ Posición: **validación / cierre de calidad** — después de `work-implement`.
 | **Entrada** | Trabajo (`US-XXX` / `WI-XXX`, u otro artefacto) con **criterios de aceptación identificados**; código implementado; idealmente tests escritos por `quality-specialist` en el cierre de `work-implement`. Resultados de pruebas **vía `quality-check`** (caché `quality-check-run.json` o delegación `tests-only`). **O** un `FT-XXX` (registro de funcionalidad ya implementada — inferida de código legacy o documentada como existente) para comprobar si está cubierta por pruebas. |
 | **Salida** | `criteria-coverage.md` en la ubicación del tipo + veredicto sobre la cobertura. |
 | **Veredicto `REJECTED` (US/WI)** | Volver a `work-implement` (fase de pruebas con `quality-specialist`) para cubrir los criterios faltantes; revalidar después. |
+| **Prueba en rojo (`FAIL`)** | No es un hueco de cobertura: la corrige el flujo de `quality-check` (que delega en `work-implement`). Aquí solo queda anotada. |
 | **Veredicto `REJECTED` (FT)** | Hay comportamiento ya implementado **sin pruebas**: escribir los tests faltantes sobre el código existente (no código funcional) con `work-implement` en su tipo **feature** —que automatiza los `TC-XXX` del `FT-XXX`— y revalidar. Formalizar ese trabajo como una tarea de mantenimiento (`WI-XXX`) es opcional y lo decide el usuario. |
 | **Falta funcional en el trabajo** | Si la matriz revela que un criterio no es testeable o está mal definido, escalar a la definición/planificación del trabajo — para un `FT`, a quien lo registró (el flujo «Analizar legado» de `work-research` u otra fuente de la funcionalidad); no editar la especificación desde aquí. |
 

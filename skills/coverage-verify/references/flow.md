@@ -129,7 +129,7 @@ ejecución) y los mapea a los criterios.
    | Tipo declarado **sin** artefacto (pendiente de automatizar) | `—` | `—` | `UNCOVERED` |
    | Artefacto hallado y su suite dio `PASS` | ruta | `quality-check` | `PASS` |
    | Artefacto hallado y su test dio `FAIL` (aislable) | ruta | `quality-check` | `FAIL` |
-   | Artefacto hallado, suite en `FAIL` **sin** poder aislar el test | ruta | `quality-check` | `FAIL` (Observación «no aislable» → criterio `PARTIAL`) |
+   | Artefacto hallado, suite en `FAIL` **sin** poder aislar el test | ruta | `quality-check` | `FAIL` (Observación «suite en rojo, test no aislable») |
    | Artefacto hallado, suite `SKIPPED`/ausente/no ejecutable | ruta | `—` | `NOT_RUN` (razón en «Observaciones y pendientes») |
 
    `Ejecución` identifica **quién** produjo el resultado (`quality-check` / `Manual` / `—`), no la clase de
@@ -137,7 +137,7 @@ ejecución) y los mapea a los criterios.
    que corrió el test no coincide con el tipo declarado (un `API Test` que vive en `unit`), decirlo en
    Observaciones.
 
-   - **Granularidad suite vs. criterio:** `result` es por **suite completa** (p. ej. toda la suite `unit`), no por test individual. Cuando **varios criterios** mapean a tests dentro de la **misma suite** y esa suite da `FAIL`, no propagar automáticamente `FAIL`/`UNCOVERED` a todos ellos por igual: revisar si el `summary` (u otro detalle que `quality-check` haya incluido) identifica qué test(s) específico(s) fallaron y cotejarlo contra el archivo/nombre de test que el Paso 2 vinculó a cada criterio. Si se puede aislar, marcar `FAIL`/`UNCOVERED` solo en el/los criterio(s) cuyo test efectivamente falló; el resto de la suite se reporta `PASS`. Si el `summary` **no** trae detalle por test (solo un conteo agregado, p. ej. `"47 passed, 1 failed"` sin decir cuál), no asumir cuál criterio es el afectado: marcar esos criterios como `PARTIAL` (no `UNCOVERED`) con una Observación explicando que la suite falló pero no se pudo aislar el test específico, y sugerir revisar el log completo de `quality-check` o re-ejecutar el test de forma aislada.
+   - **Granularidad suite vs. criterio:** `result` es por **suite completa** (p. ej. toda la suite `unit`), no por test individual. Cuando **varios criterios** mapean a tests dentro de la **misma suite** y esa suite da `FAIL`, no propagar automáticamente el `FAIL` a todos ellos por igual: revisar si el `summary` (u otro detalle que `quality-check` haya incluido) identifica qué test(s) específico(s) fallaron y cotejarlo contra el archivo/nombre de test que el Paso 2 vinculó a cada criterio. Si se puede aislar, escribir `FAIL` solo en las filas del/los criterio(s) cuyo test efectivamente falló; el resto de la suite se reporta `PASS`. Si el `summary` **no** trae detalle por test (solo un conteo agregado, p. ej. `"47 passed, 1 failed"` sin decir cuál), no asumir cuál criterio es el afectado: escribir `FAIL` en las filas afectadas con una Observación explicando que la suite falló pero no se pudo aislar el test específico (el estado de cobertura del criterio **no cambia**: una prueba en rojo es de `quality-check`), y sugerir revisar el log completo de `quality-check` o re-ejecutar el test de forma aislada.
 4. **Si `quality-check` no puede ejecutarlas** (stack no detectable, entorno sin poder correr, dependencias
    faltantes, `quality-check` no disponible en la sesión, o el usuario declina la delegación), dejar las filas con
    artefacto en `Ejecución = —` y `Resultado = `NOT_RUN`, con la razón en «Observaciones y pendientes», y entregar
@@ -190,14 +190,14 @@ La prueba para elegir: *¿se puede atribuir a un criterio concreto?*
 
 | Destino | Qué recibe |
 |---------|------------|
-| **Columna `Observaciones`** de «Cobertura por criterio» | Todo lo **de un criterio**: tipo declarado sin automatizar · TC en `Draft`/`Obsolete` · `FAIL` no aislable · suite efectiva distinta del tipo declarado · mapeo inferido en vez de declarado · **cobertura apoyada en TCs `Manual`** (aunque sea por diseño: justifica el `APPROVED_WITH_NOTES`) · límite de la cobertura |
+| **Columna `Observaciones`** de «Cobertura por criterio» | Todo lo **de un criterio**: tipo declarado sin automatizar · TC en `Draft`/`Obsolete` · **prueba en rojo** (`FAIL`, aislado o a nivel de suite) · suite efectiva distinta del tipo declarado · mapeo inferido en vez de declarado · **cobertura apoyada en TCs `Manual`** (aunque sea por diseño: justifica el `APPROVED_WITH_NOTES`) · límite de la cobertura |
 | **Sección «Observaciones y pendientes»** | Todo lo **de la corrida**: suite `coverage` en `FAIL` · `workingTreeClean: false` (árbol sucio) · clases de prueba que el repo no tiene · ejecución no delegable y su motivo · tests no vinculables con certeza a ningún criterio · tests o fallos ajenos al artefacto |
 
 La matriz **no lleva** columna de observaciones, para que se lea de un vistazo. Cuando un paso diga «dejar Observación» sin especificar destino, aplicar la prueba de atribución.
 
 ### Paso 6 — Emitir el veredicto
 
-Aplicar la tabla de «Veredicto» (en `SKILL.md`) sobre el conjunto de criterios. El veredicto responde la pregunta central: **¿todos los criterios de aceptación quedan cubiertos?**
+Aplicar la tabla de «Veredicto» (en `SKILL.md`) sobre el conjunto de criterios. El veredicto responde la pregunta central: **¿todos los criterios de aceptación quedan cubiertos?** Una prueba en `FAIL` no descubre el criterio: es un caveat (`APPROVED_WITH_NOTES`) que remite a `quality-check`, salvo que esa puerta esté desactivada (`verification.qualityCheck.enabled: false`, resuelto con `verification.md`), en cuyo caso un `FAIL` aislado a su test da `REJECTED`.
 
 ### Paso 7 — Entregar y guardar el reporte
 
@@ -255,7 +255,7 @@ Reglas:
   de la matriz); como mucho, una observación si vino en `FAIL`.
   Listar solo las suites que la caché traiga: las fijas siempre, las configuradas si el estándar de testing
   del repo las declara. Si no hubo corrida, la línea dice «no ejecutable» y el motivo.
-- `result` por suite → `Resultado` **de la fila** (no del criterio; el `status` del criterio se deriva después de todas sus filas): `PASS`→`PASS`, `FAIL`→`FAIL`, `SKIPPED`→`NOT_RUN`, `N/A` (el repo no tiene esa suite)→`NOT_RUN`, con la constancia en «Observaciones y pendientes». **Excepción:** cuando varios criterios comparten suite y esta da `FAIL`, no basta con propagar `Fallo` a todos — ver «Granularidad suite vs. criterio» en el Paso 4 más arriba; si no se puede aislar el test que falló, la fila queda en `Fallo` con la Observación «no aislable» y el **`status` del criterio** es `PARTIAL`, no `UNCOVERED`.
+- `result` por suite → `Resultado` **de la fila** (no del criterio; el `status` del criterio se deriva después de todas sus filas): `PASS`→`PASS`, `FAIL`→`FAIL`, `SKIPPED`→`NOT_RUN`, `N/A` (el repo no tiene esa suite)→`NOT_RUN`, con la constancia en «Observaciones y pendientes». **Excepción:** cuando varios criterios comparten suite y esta da `FAIL`, no basta con propagar `FAIL` a todos — ver «Granularidad suite vs. criterio» en el Paso 4 más arriba; si no se puede aislar el test que falló, la fila queda en `Fallo` con la Observación «no aislable» y el **`status` del criterio** es `PARTIAL`, no `UNCOVERED`.
 - Filas de TCs marcados `Manual` (manual por diseño): `Ejecución = Manual`, `Resultado = N/A`. No confundir con filas de tipos automatizables (`Unit`/`Integration`/`API Test`/`Content Test`/`Style Test`/`E2E`) aún sin artefacto, que van `Evidencia = —`, `Ejecución = —`, `Resultado = `UNCOVERED` (pendiente de automatizar).
 - Si `workingTreeClean` es `false` en la caché, anotarlo como caveat en **«Observaciones y pendientes»**
   (resultado sobre un árbol sucio).

@@ -49,7 +49,7 @@ Referencia del skill `coverage-verify`. Casos de uso y errores a evitar.
 - **Publicar el reporte sin la marca de pie del fingerprint** (sí se eliminan los bloques de instrucciones de la plantilla, no la marca): sin ella, la próxima corrida no puede reutilizarlo.
 - Inventar cobertura, casos de prueba o vínculos criterio-test que no se desprenden del repo.
 - Reportar `PASS`/`FAIL` sin que `quality-check` haya ejecutado realmente la prueba (caché fresca o delegación `tests-only`).
-- Marcar `COVERED` un criterio cuya prueba falló: es `UNCOVERED` si se pudo aislar que el test suyo falló, o `PARTIAL` si la suite falló sin poder aislarlo (ver «Mapeo a la matriz» en `SKILL.md`).
+- Marcar `UNCOVERED` o `PARTIAL` un criterio **solo porque su prueba falló**: la prueba existe, así que el criterio sigue `COVERED`, con `Resultado = FAIL` en la matriz y la Observación «prueba en rojo — la bloquea `quality-check`». Y al revés: dar `APPROVED` a secas habiendo una prueba en rojo — es como mínimo `APPROVED_WITH_NOTES` (ver «Veredicto» en `SKILL.md`).
 - Escribir o modificar tests o código de aplicación desde este skill (eso es `quality-specialist` vía `work-implement`).
 - Modificar la especificación de producto (README de la US, `TK-XXX`, `WI-XXX`, `validation.md`, ADRs) durante la validación.
 - Generar un reporte parcial cuando el trabajo no tiene criterios de aceptación; debe bloquear.
